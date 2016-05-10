@@ -20,9 +20,9 @@ namespace GoodAI.ToyWorld
     {
         private readonly int m_controlsCount = 13;
 
-        public TWUpdateTask UpdateTask { get; private set; }
-
+        public TWInitTask InitTask { get; private set; }
         public TWGetInputTask GetInputTask { get; private set; }
+        public TWUpdateTask UpdateTask { get; private set; }
 
         public event EventHandler WorldInitialized = delegate { };
 
@@ -168,9 +168,9 @@ namespace GoodAI.ToyWorld
         public IGameController GameCtrl { get; set; }
         public IAvatarController AvatarCtrl { get; set; }
 
-        private IFovAvatarRR m_fovRR { get; set; }
-        private IFofAvatarRR m_fofRR { get; set; }
-        private IFreeMapRR m_freeRR { get; set; }
+        private IFovAvatarRR FovRR { get; set; }
+        private IFofAvatarRR FofRR { get; set; }
+        private IFreeMapRR FreeRR { get; set; }
 
 
         public ToyWorld()
@@ -206,134 +206,27 @@ namespace GoodAI.ToyWorld
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
         }
 
-        public override void UpdateMemoryBlocks()
-        {
-            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
-                return;
-
-            GameSetup setup = new GameSetup(new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read), new StreamReader(TilesetTable));
-            GameCtrl = GameFactory.GetThreadSafeGameController(setup);
-            GameCtrl.Init();
-
-            int[] avatarIds = GameCtrl.GetAvatarIds();
-            if (avatarIds.Length == 0)
-            {
-                MyLog.ERROR.WriteLine("No avatar found in map!");
-                return;
-            }
-
-            foreach (MyMemoryBlock<float> memBlock in new MyMemoryBlock<float>[3] { VisualFov, VisualFof, VisualFree })
-            {
-                memBlock.Unmanaged = !CopyDataThroughCPU;
-                memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
-            }
-
-            // Setup controllers
-            int myAvatarId = avatarIds[0];
-            AvatarCtrl = GameCtrl.GetAvatarController(myAvatarId);
-
-            // Setup render requests
-            m_fovRR = ObtainRR<IFovAvatarRR>(VisualFov, myAvatarId,
-                rr =>
-                {
-                    rr.Size = new SizeF(FoVSize, FoVSize);
-                    rr.Resolution = new Size(FoVResWidth, FoVResHeight);
-                    rr.MultisampleLevel = FoVMultisampleLevel;
-                });
-
-            m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId,
-                rr =>
-                {
-                    rr.FovAvatarRenderRequest = m_fovRR;
-                    rr.Size = new SizeF(FoFSize, FoFSize);
-                    rr.Resolution = new Size(FoFResWidth, FoFResHeight);
-                    rr.MultisampleLevel = FoFMultisampleLevel;
-                });
-
-            m_freeRR = ObtainRR<IFreeMapRR>(VisualFree,
-                rr =>
-                {
-                    rr.Size = new SizeF(Width, Height);
-                    rr.Resolution = new Size(ResolutionWidth, ResolutionHeight);
-                    rr.MultisampleLevel = FreeViewMultisampleLevel;
-                });
-            m_freeRR.SetPositionCenter(CenterX, CenterY);
-
-            WorldInitialized(this, EventArgs.Empty);
-
-            Text.Count = MaxMessageLength;
-        }
-
         private static string GetDllDirectory()
         {
             return Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
-        private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
+        public override void UpdateMemoryBlocks()
         {
-            // Setup the render request properties
-            rr.GatherImage = true;
+            if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
+                return;
 
-            if (initializer != null)
-                initializer.Invoke(rr);
-
-            rr.FlipYAxis = true;
-
-            rr.CopyImageThroughCpu = CopyDataThroughCPU;
-            targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
-
-            if (!CopyDataThroughCPU)
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree })
             {
-                // Setup data copying to our unmanaged memblocks
-                uint renderTextureHandle = 0;
-                CudaOpenGLBufferInteropResource renderResource = null;
-
-                rr.OnPreRenderingEvent += (sender, vbo) =>
-                {
-                    if (renderResource != null && renderResource.IsMapped)
-                        renderResource.UnMap();
-                };
-
-                rr.OnPostRenderingEvent += (sender, vbo) =>
-                {
-                    // Vbo can be allocated during drawing, create the resource after that
-                    MyKernelFactory.Instance.GetContextByGPU(GPU).SetCurrent();
-
-                    if (renderResource == null || vbo != renderTextureHandle)
-                    {
-                        if (renderResource != null)
-                            renderResource.Dispose();
-
-                        renderTextureHandle = vbo;
-                        renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
-                            CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
-                    }
-
-                    renderResource.Map();
-                    targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
-                    targetMemBlock.FreeDevice();
-                    targetMemBlock.AllocateDevice();
-                };
-
-
-                // Initialize the target memory block
-                targetMemBlock.ExternalPointer = 1;
-                // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+                memBlock.Unmanaged = !CopyDataThroughCPU;
+                memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
             }
-            targetMemBlock.Dims = new TensorDimensions(rr.Resolution.Width, rr.Resolution.Height);
-            return rr;
-        }
 
-        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<T> initializer = null) where T : class, IAvatarRenderRequest
-        {
-            T rr = GameCtrl.RegisterRenderRequest<T>(avatarId);
-            return InitRR(rr, targetMemBlock, initializer);
-        }
+            VisualFov.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
+            VisualFof.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
+            VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
-        private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequest
-        {
-            T rr = GameCtrl.RegisterRenderRequest<T>();
-            return InitRR(rr, targetMemBlock, initializer);
+            Text.Count = MaxMessageLength;
         }
     }
 }
