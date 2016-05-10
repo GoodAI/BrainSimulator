@@ -26,6 +26,9 @@ namespace GoodAI.ToyWorld
 
         public event EventHandler WorldInitialized = delegate { };
 
+
+        #region Memblocks
+
         [MyOutputBlock(0), MyUnmanaged]
         public MyMemoryBlock<float> VisualFov
         {
@@ -66,6 +69,10 @@ namespace GoodAI.ToyWorld
             get { return GetInput(1); }
         }
 
+        #endregion
+
+        #region BrainSim properties
+
         [MyBrowsable, Category("Runtime"), DisplayName("Run every Nth")]
         [YAXSerializableField(DefaultValue = 1)]
         public int RunEvery { get; set; }
@@ -78,6 +85,7 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = false)]
         public bool CopyDataThroughCPU { get; set; }
 
+
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string TilesetTable { get; set; }
@@ -85,6 +93,7 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string SaveFile { get; set; }
+
 
         [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
         [YAXSerializableField(DefaultValue = 3)]
@@ -98,6 +107,11 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoFResHeight { get; set; }
 
+        [MyBrowsable, Category("FoF view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = 2)]
+        public int FoFMultisampleLevel { get; set; }
+
+
         [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
         [YAXSerializableField(DefaultValue = 21)]
         public int FoVSize { get; set; }
@@ -109,6 +123,11 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoVResHeight { get; set; }
+
+        [MyBrowsable, Category("FoV view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = 2)]
+        public int FoVMultisampleLevel { get; set; }
+
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 25)]
@@ -126,17 +145,25 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 50)]
         public float Height { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("Resolution width")]
+        [MyBrowsable, Category("Free view"), DisplayName("\tResolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionWidth { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("Resolution height")]
+        [MyBrowsable, Category("Free view"), DisplayName("\tResolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionHeight { get; set; }
+
+        [MyBrowsable, Category("Free view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = 2)]
+        public int FreeViewMultisampleLevel { get; set; }
+
 
         [MyBrowsable, DisplayName("Maximum message length")]
         [YAXSerializableField(DefaultValue = 128)]
         public int MaxMessageLength { get; set; }
+
+        #endregion
+
 
         public IGameController GameCtrl { get; set; }
         public IAvatarController AvatarCtrl { get; set; }
@@ -144,6 +171,7 @@ namespace GoodAI.ToyWorld
         private IFovAvatarRR m_fovRR { get; set; }
         private IFofAvatarRR m_fofRR { get; set; }
         private IFreeMapRR m_freeRR { get; set; }
+
 
         public ToyWorld()
         {
@@ -170,6 +198,9 @@ namespace GoodAI.ToyWorld
             validator.AssertError(Height > 0, this, "Free view height has to be positive.");
             validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
+            validator.AssertError(FoFMultisampleLevel >= 0 && FoFMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
+            validator.AssertError(FoVMultisampleLevel >= 0 && FoVMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
+            validator.AssertError(FreeViewMultisampleLevel >= 0 && FreeViewMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
@@ -207,6 +238,7 @@ namespace GoodAI.ToyWorld
                 {
                     rr.Size = new SizeF(FoVSize, FoVSize);
                     rr.Resolution = new Size(FoVResWidth, FoVResHeight);
+                    rr.MultisampleLevel = FoVMultisampleLevel;
                 });
 
             m_fofRR = ObtainRR<IFofAvatarRR>(VisualFof, myAvatarId,
@@ -215,6 +247,7 @@ namespace GoodAI.ToyWorld
                     rr.FovAvatarRenderRequest = m_fovRR;
                     rr.Size = new SizeF(FoFSize, FoFSize);
                     rr.Resolution = new Size(FoFResWidth, FoFResHeight);
+                    rr.MultisampleLevel = FoFMultisampleLevel;
                 });
 
             m_freeRR = ObtainRR<IFreeMapRR>(VisualFree,
@@ -222,6 +255,7 @@ namespace GoodAI.ToyWorld
                 {
                     rr.Size = new SizeF(Width, Height);
                     rr.Resolution = new Size(ResolutionWidth, ResolutionHeight);
+                    rr.MultisampleLevel = FreeViewMultisampleLevel;
                 });
             m_freeRR.SetPositionCenter(CenterX, CenterY);
 
