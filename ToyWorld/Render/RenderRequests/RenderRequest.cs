@@ -202,7 +202,18 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
-        public bool CopyImageThroughCpu { get; set; }
+
+        private bool m_copyImageThroughCpu;
+        public bool CopyImageThroughCpu
+        {
+            get { return m_copyImageThroughCpu; }
+            set
+            {
+                m_copyImageThroughCpu = value;
+                m_dirtyParams |= DirtyParams.Image;
+            }
+        }
+
         public uint[] Image { get; private set; }
 
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;

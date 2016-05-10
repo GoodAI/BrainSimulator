@@ -46,14 +46,14 @@ namespace GoodAI.ToyWorld.Control
         bool GatherImage { get; set; }
 
         /// <summary>
-        /// location where data is copied if it should be transfered through CPU
-        /// </summary>
-        uint[] Image { get; }
-
-        /// <summary>
         /// set to true if the cuda/opengl interop is failing
         /// </summary>
         bool CopyImageThroughCpu { get; set; }
+
+        /// <summary>
+        /// location where data is copied if it should be transfered through CPU
+        /// </summary>
+        uint[] Image { get; }
 
         /// <summary>
         /// Called before the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
