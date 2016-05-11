@@ -52,6 +52,13 @@ namespace GoodAI.ToyWorld
             set { SetOutput(3, value); }
         }
 
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> Signals
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {

@@ -46,7 +46,9 @@ namespace World.ToyWorldCore
 
         private void RegisterSignals()
         {
-            //Func<IAtlas, float> inventoryItem = (x=>x.GetAvatars().First().Tool.)
+            Func<IAtlas, float> inventoryItem = (x => x.GetAvatars().First().Tool.TilesetId);
+
+            SignalDispatchers.Add(inventoryItem);
         }
 
         private void InitAtlas(Map tmxDeserializedMap)
