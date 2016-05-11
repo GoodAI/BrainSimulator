@@ -199,7 +199,6 @@ namespace GoodAI.Core.Observers
             }
         }
 
-        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
         public int TilesInColumn
         {
             get;
@@ -207,8 +206,6 @@ namespace GoodAI.Core.Observers
         }
 
         private int m_tileWidth = 1, m_tileHeight = 1;
-        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
-
         public int TileWidth
         {
             get { return m_tileWidth; }
@@ -220,7 +217,6 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
-        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
 
         public int TileHeight
         {
@@ -408,28 +404,23 @@ namespace GoodAI.Core.Observers
 
             if (Method == RenderingMethod.RGB)
             {
-                // in case that TileHeight or TileWidth is set so that there is no room for RGB channels
-                if (dims.ElementCount / TileWidth / TileHeight / 3 == 0)
+                // check if:
+                // memory block has 3 chanels
+                // chanels are divisible by requested TileWidth and TileHeight
+                // TileWidth and TileHeight are not too big
+                if (
+                    dims.ElementCount % 3 != 0 ||
+                    dims.ElementCount / TileWidth / TileHeight % 3 != 0 ||
+                    dims.ElementCount / TileWidth / TileHeight / 3 == 0)
                 {
                     MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
-                        "RGB rendering enabled, but TileWidth and TileHeight values incompatible with the RGB format! Use correct CustomDimensions." +
-                    " Swtiching to RedGreenScale.");
+                        "RGB rendering, but Memory block.count and TileWidth and TileHeight values incompatible with the RGB format!" +
+                        " Swtiching to RedGreenScale. Use correct CustomDimensions");
                     Method = RenderingMethod.RedGreenScale;
                     effectivePixelsDisplayed = dims.ElementCount;
                 }
                 else
                 {
-                    if (dims.ElementCount % 3 != 0)
-                    {
-                        MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
-                            "RGB rendering enabled, but the number of pixels is not divisible by 3! Number is: " + dims.ElementCount);
-                    }
-
-                    else if (dims.ElementCount / TileWidth / TileHeight % 3 != 0)
-                    {
-                        MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
-                        "RGB rendering enabled, but TileWidth and TileHeight values incompatible with the RGB format!");
-                    }
                     effectivePixelsDisplayed = (int)Math.Ceiling((decimal)dims.ElementCount / 3);
                 }
             }
