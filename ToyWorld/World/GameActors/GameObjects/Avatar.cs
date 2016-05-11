@@ -213,7 +213,7 @@ namespace World.GameActors.GameObjects
         private void RemoveSpeed(GameActorPosition target)
         {
             var actor = target.Actor as IForwardMovable;
-            var gameObject = target.Actor as ICharacter;
+            var gameObject = target.Actor as IGameObject;
             if (actor == null) return;
             Debug.Assert(gameObject != null, "gameObject != null");
             Energy -= actor.ForwardSpeed*gameObject.Weight*ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT;
