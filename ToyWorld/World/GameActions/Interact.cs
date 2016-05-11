@@ -1,5 +1,6 @@
 ﻿using World.GameActors;
 using World.GameActors.Tiles;
+using World.GameActors.Tiles.ObstacleInteractable;
 using World.ToyWorldCore;
 
 namespace World.GameActions

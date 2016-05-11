@@ -3,7 +3,7 @@ using VRageMath;
 using World.GameActions;
 using World.ToyWorldCore;
 
-namespace World.GameActors.Tiles
+namespace World.GameActors.Tiles.Obstacle
 {
     /// <summary>
     ///     Wall can be transformed to DamagedWall if pickaxe is used
@@ -34,7 +34,7 @@ namespace World.GameActors.Tiles
                 atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
                 return;
             }
-            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(((UsePickaxe)gameAction), tilesetTable));
+            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(usePickaxe.Damage, tilesetTable, Vector2I.Zero));
         }
     }
 
@@ -46,21 +46,16 @@ namespace World.GameActors.Tiles
     {
         public float Health { get; private set; }
 
-        private DamagedWall(ITilesetTable tilesetTable)
-            : base(tilesetTable)
+        private DamagedWall(ITilesetTable tilesetTable, Vector2I position)
+            : base(tilesetTable, position)
         {
             Health = 1f;
         }
 
-        public DamagedWall(float damage, TilesetTable tilesetTable)
-            : this(tilesetTable)
+        public DamagedWall(float damage, TilesetTable tilesetTable, Vector2I position)
+            : this(tilesetTable, position)
         {
             Health -= damage;
-        }
-
-        public DamagedWall(UsePickaxe usePickaxe, TilesetTable tilesetTable)
-            : this(usePickaxe.Damage, tilesetTable)
-        {
         }
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)

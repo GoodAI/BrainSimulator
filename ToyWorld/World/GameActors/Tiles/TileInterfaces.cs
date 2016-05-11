@@ -10,6 +10,9 @@ namespace World.GameActors.Tiles
     {
         void Update(IAtlas atlas);
 
+        /// <summary>
+        /// In steps. Set 0 for no update.
+        /// </summary>
         int NextUpdateAfter { get; }
     }
 

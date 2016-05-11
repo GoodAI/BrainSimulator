@@ -1,4 +1,4 @@
-﻿namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles.Background
 {
     public class Background : StaticTile
     {

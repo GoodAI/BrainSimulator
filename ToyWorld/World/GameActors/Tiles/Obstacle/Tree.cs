@@ -1,4 +1,6 @@
-﻿namespace World.GameActors.Tiles
+﻿using World.GameActors.Tiles.ObstacleInteractable;
+
+namespace World.GameActors.Tiles.Obstacle
 {
     public class Tree<T> : StaticTile where T : Fruit
     {

@@ -4,6 +4,7 @@ using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
+using World.GameActors.Tiles.Obstacle;
 using World.Physics;
 
 namespace World.ToyWorldCore

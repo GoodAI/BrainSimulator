@@ -149,8 +149,9 @@
     <Compile Include="GameActions\UsePickaxe.cs" />
     <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
-    <Compile Include="GameActors\Tiles\Fruit.cs" />
-    <Compile Include="GameActors\Tiles\Tree.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
+    <Compile Include="GameActors\Tiles\OnBackground\Trap.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
     <Compile Include="Physics\ICollisionResolver.cs" />
@@ -160,10 +161,10 @@
     <Compile Include="Physics\IAvatarMover.cs" />
     <Compile Include="Physics\IMovable.cs" />
     <Compile Include="GameActors\GameObjects\IUsable.cs" />
-    <Compile Include="GameActors\Tiles\OnBackground.cs" />
-    <Compile Include="GameActors\Tiles\Background.cs" />
-    <Compile Include="GameActors\Tiles\Obstacle.cs" />
-    <Compile Include="GameActors\Tiles\Path.cs" />
+    <Compile Include="GameActors\Tiles\OnBackground\OnBackground.cs" />
+    <Compile Include="GameActors\Tiles\Background\Background.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Obstacle.cs" />
+    <Compile Include="GameActors\Tiles\Path\Path.cs" />
     <Compile Include="Physics\Physics.cs" />
     <Compile Include="Physics\MovementPhysics.cs" />
     <Compile Include="Physics\PhysicalEntity.cs" />
@@ -184,7 +185,7 @@
     <Compile Include="GameActors\GameObjects\GameObject.cs" />
     <Compile Include="GameActors\Tiles\TileInterfaces.cs" />
     <Compile Include="GameActors\Tiles\TilesetTable.cs" />
-    <Compile Include="GameActors\Tiles\Wall.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Wall.cs" />
     <Compile Include="GameActors\Tiles\StaticTile.cs" />
     <Compile Include="ToyWorldCore\SimpleObjectLayer.cs" />
     <Compile Include="ToyWorldCore\SimpleTileLayer.cs" />
@@ -239,6 +240,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

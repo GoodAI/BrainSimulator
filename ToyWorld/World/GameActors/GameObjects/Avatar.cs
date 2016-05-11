@@ -8,7 +8,8 @@ using GoodAI.ToyWorldAPI;
 using VRageMath;
 using World.GameActions;
 using World.GameActors.Tiles;
-using World.Physics;
+﻿using World.GameActors.Tiles.ObstacleInteractable;
+﻿using World.Physics;
 using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects

@@ -6,6 +6,7 @@ using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
+using World.GameActors.Tiles.ObstacleInteractable;
 using World.ToyWorldCore;
 using Xunit;
 

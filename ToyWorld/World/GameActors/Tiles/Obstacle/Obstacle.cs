@@ -1,4 +1,4 @@
-﻿namespace World.GameActors.Tiles
+﻿namespace World.GameActors.Tiles.Obstacle
 {
     public class Obstacle : StaticTile
     {

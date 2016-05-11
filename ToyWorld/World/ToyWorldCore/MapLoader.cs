@@ -218,7 +218,7 @@ namespace World.ToyWorldCore
             string[] lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             Assembly assembly = Assembly.GetExecutingAssembly();
-            Type[] cachedTypes = assembly.GetTypes();
+            Type[] cachedTypes = assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(Tile))).ToArray();
             for (int i = 0; i < lines.Length; i++)
             {
                 string[] tiles = lines[i].Split(',');
@@ -227,18 +227,21 @@ namespace World.ToyWorldCore
                     if (tiles[j].Trim() == "")
                         continue;
                     int tileNumber = int.Parse(tiles[j]);
+
+                    int x = j;
+                    int y = layer.Height - 1 - i;
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
-                        newSimpleLayer.Tiles[j][layer.Height - 1 - i] = staticTilesContainer[tileNumber];
+                        newSimpleLayer.Tiles[x][y] = staticTilesContainer[tileNumber];
                     }
                     else
                     {
                         string tileName = tilesetTable.TileName(tileNumber);
                         if (tileName != null)
                         {
-                            Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes);
+                            Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes, new Vector2I(x,y));
                             initializer.Invoke(newTile);
-                            newSimpleLayer.Tiles[j][layer.Height - 1 - i] = newTile;
+                            newSimpleLayer.Tiles[x][y] = newTile;
                             if (newTile is StaticTile)
                             {
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);
@@ -254,12 +257,24 @@ namespace World.ToyWorldCore
             return newSimpleLayer;
         }
 
-        private static Tile CreateInstance(string className, int tileNumber, Type[] types)
+        private static Tile CreateInstance(string className, int tileNumber, Type[] types, Vector2I position)
         {
-            for (int i = 0; i < types.Length; i++)
+            foreach (Type t in types)
             {
-                if (types[i].Name == className)
-                    return (Tile)Activator.CreateInstance(types[i], tileNumber);
+                if (t.Name == className)
+                {
+                    Tile instance;
+
+                    if (t.IsSubclassOf(typeof(DynamicTile)))
+                    {
+                        instance = (Tile)Activator.CreateInstance(t, tileNumber, position);
+                    }
+                    else {
+                        instance = (Tile)Activator.CreateInstance(t, tileNumber);
+                    }
+
+                    return instance;
+                }
             }
             // TODO : make sure next line is active before release
             //            throw new Exception("MapLoader cannot find class " + className);

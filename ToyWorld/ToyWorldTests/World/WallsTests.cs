@@ -7,6 +7,7 @@ using Moq;
 using VRageMath;
 using World.ToyWorldCore;
 using World.GameActors;
+using World.GameActors.Tiles.Obstacle;
 
 namespace ToyWorldTests.World
 {
@@ -73,7 +74,7 @@ namespace ToyWorldTests.World
 
             UsePickaxe pickaxe = new UsePickaxe(actorMock.Object) { Damage = damage };
             float initialDamage = 0.5f;
-            DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable);
+            DamagedWall damagedWall = new DamagedWall(initialDamage, m_tilesetTable, Vector2I.Zero);
 
             // Act
             damagedWall.ApplyGameAction(atlasMock.Object, pickaxe, new Vector2(), m_tilesetTable);
