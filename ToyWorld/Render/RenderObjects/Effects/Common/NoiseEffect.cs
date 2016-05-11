@@ -12,7 +12,7 @@ namespace Render.RenderObjects.Effects
             mw,
             mvp,
 
-            smokeColor,
+            sceneTexture,
             timeMean,
         }
 
@@ -38,9 +38,9 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        public void SmokeColorUniform(Vector4 val)
+        public void SceneTextureUniform(int val)
         {
-            SetUniform4(base[Uniforms.smokeColor], val);
+            SetUniform1(base[Uniforms.sceneTexture], val);
         }
 
         public void TimeMeanUniform(Vector4 val)

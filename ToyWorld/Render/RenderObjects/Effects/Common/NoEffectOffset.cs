@@ -13,7 +13,7 @@ namespace Render.RenderObjects.Effects
             tileBorder,
             mvp,
 
-            tex,
+            tilesetTexture,
         }
 
 
@@ -45,7 +45,7 @@ namespace Render.RenderObjects.Effects
         
         public void TextureUniform(int val)
         {
-            SetUniform1(base[Uniforms.tex], val);
+            SetUniform1(base[Uniforms.tilesetTexture], val);
         }
     }
 }
