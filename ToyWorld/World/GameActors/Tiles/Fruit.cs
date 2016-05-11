@@ -16,14 +16,18 @@ namespace World.GameActors.Tiles
         }
     }
 
-    public class Apple : Fruit
+    public interface IEatable
+    {
+    }
+
+    public class Apple : Fruit, IEatable
     {
         public Apple(ITilesetTable tilesetTable) : base(tilesetTable) { }
 
         public Apple(int tileType) : base(tileType) { }
     }
 
-    public class Pear : Fruit
+    public class Pear : Fruit, IEatable
     {
         public Pear(ITilesetTable tilesetTable) : base(tilesetTable) { }
 

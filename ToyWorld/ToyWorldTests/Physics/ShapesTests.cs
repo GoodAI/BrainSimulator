@@ -64,8 +64,8 @@ namespace ToyWorldTests.Physics
         [InlineData(1.5, 2, 1.05)]
         public void CircleCoverTiles(float x, float y, float radius)
         {
-            var rectangle = new CircleShape(new Vector2(x, y), radius);
-            List<Vector2I> coverTiles = rectangle.CoverTiles();
+            var circle = new CircleShape(new Vector2(x, y), radius);
+            List<Vector2I> coverTiles = circle.CoverTiles();
 
             if (TestUtils.FloatEq(x, 0.7f) && TestUtils.FloatEq(y, 0.7f) && TestUtils.FloatEq(radius, 0.1f))
             {

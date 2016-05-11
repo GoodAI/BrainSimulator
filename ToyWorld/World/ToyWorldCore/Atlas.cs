@@ -140,17 +140,15 @@ namespace World.ToyWorldCore
             return TileLayers.First(x => x.LayerType == layerType);
         }
 
-        private List<ILayer<GameActor>> GetObstaceLayers()
+        private IEnumerable<ILayer<GameActor>> GetObstaceLayers()
         {
-            var obstacleLayers = new List<ILayer<GameActor>>();
             foreach (ILayer<GameActor> layer in Layers)
             {
                 if ((layer.LayerType & LayerType.Obstacles) > 0)
                 {
-                    obstacleLayers.Add(layer);
+                    yield return layer;
                 }
             }
-            return obstacleLayers;
         }
 
         public bool AddAvatar(IAvatar avatar)
@@ -195,14 +193,12 @@ namespace World.ToyWorldCore
         {
             Vector2 position = new Vector2(x, y);
 
-            var SelectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
+            List<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
             // for all layers except object layer
-            IEnumerable<ILayer<GameActor>> selectedTileLayers = SelectedLayers.Where(t => LayerType.TileLayers.HasFlag(t.LayerType));
-            foreach (
-                ILayer<GameActor> layer in
-                    selectedTileLayers)
+            IEnumerable<ILayer<GameActor>> selectedTileLayers = selectedLayers.Where(t => LayerType.TileLayers.HasFlag(t.LayerType));
+            foreach (ILayer<GameActor> layer in selectedTileLayers)
             {
-                var actorPosition = TileAt(layer, position);
+                GameActorPosition actorPosition = TileAt(layer, position);
                 if (actorPosition != null)
                 {
                     yield return actorPosition;
@@ -210,12 +206,12 @@ namespace World.ToyWorldCore
             }
 
             var circle = new CircleShape(position, width);
-            IEnumerable<ILayer<GameActor>> selectedObjectLayers = SelectedLayers.Where(t => LayerType.ObjectLayers.HasFlag(t.LayerType));
+            IEnumerable<ILayer<GameActor>> selectedObjectLayers = selectedLayers.Where(t => LayerType.ObjectLayers.HasFlag(t.LayerType));
             foreach (ILayer<GameActor> layer in selectedObjectLayers)
             {
                 foreach (IGameObject gameObject in ((IObjectLayer) layer).GetGameObjects())
                 {
-                    var actorPosition = GameObjectAt(gameObject, circle, position, layer);
+                    GameActorPosition actorPosition = GameObjectAt(gameObject, circle, position, layer);
                     if (actorPosition != null)
                     {
                         yield return actorPosition;
@@ -224,10 +220,10 @@ namespace World.ToyWorldCore
             }
         }
 
-        private static GameActorPosition GameObjectAt(IGameObject gameObject, IShape circle, Vector2 position, ILayer<GameActor> layer)
+        private static GameActorPosition GameObjectAt(IGameObject gameObject, IShape shape, Vector2 position, ILayer<GameActor> layer)
         {
-            IShape shape = gameObject.PhysicalEntity.Shape;
-            if (!shape.CollidesWith(circle)) return null;
+            IShape gameObjectShape = gameObject.PhysicalEntity.Shape;
+            if (!gameObjectShape.CollidesWith(shape)) return null;
             GameActor actor = (GameActor) gameObject;
             GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
             return actorPosition;
@@ -244,8 +240,8 @@ namespace World.ToyWorldCore
         public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All,
             float distance = 1, float width = 0.5f) where T : class, IDirectable, IGameObject
         {
-            var target = PositionInFrontOf(sender, distance);
-            var actorsInFrontOf = ActorsAt(target.X, target.Y, type, width);
+            Vector2 target = PositionInFrontOf(sender, distance);
+            IEnumerable<GameActorPosition> actorsInFrontOf = ActorsAt(target.X, target.Y, type, width);
             return actorsInFrontOf;
         }
 
@@ -270,7 +266,6 @@ namespace World.ToyWorldCore
             IObjectLayer gameObjectLayer = GetLayer(LayerType.Object) as IObjectLayer;
             Debug.Assert(gameObjectLayer != null, "gameObjectLayer != null");
             Vector2 position = gameActorPosition.Position;
-            Circle circle = new Circle(position, 50);
             GameActor actor = gameActorPosition.Actor;
             IPhysicalEntity physicalEntity;
             if (actor is IGameObject)
@@ -284,9 +279,9 @@ namespace World.ToyWorldCore
             }
             else
             {
-                throw new ArgumentException("actor");
+                throw new ArgumentException("actor is unknown Type");
             }
-            bool anyCollision = gameObjectLayer.GetPhysicalEntities(circle).Any(x => x.CollidesWith(physicalEntity));
+            bool anyCollision = gameObjectLayer.GetPhysicalEntities().Any(x => x.CollidesWith(physicalEntity));
             if (anyCollision)
             {
                 return false;

@@ -37,7 +37,7 @@ namespace World.GameActors.GameObjects
 
         private float m_energy;
         private const float ENERGY_FOR_CARRYING = 0.001f;
-        private const float ENERGY_FOR_EATING_APPLE = 0.25f;
+        private const float ENERGY_FOR_EATING_FRUIT = 0.25f;
         private const float ENERGY_FOR_ACTION = 0.001f;
         private const float ENERGY_FOR_MOVE = 0.0001f;
         private const float ENERGY_FOR_ROTATION = 0.00001f;
@@ -116,11 +116,11 @@ namespace World.GameActors.GameObjects
 
             if (Interact)
             {
-                GameActorPosition tileInFrontOf = GetTilesInFrontOf(atlas);
+                GameActorPosition tileInFrontOf = GetInteractableTileInFrontOf(atlas);
 
-                if (tileInFrontOf != null && (tileInFrontOf.Actor is Apple || tileInFrontOf.Actor is Pear))
+                if (tileInFrontOf != null && tileInFrontOf.Actor is Fruit)
                 {
-                    EatApple(atlas, tileInFrontOf);
+                    EatFruit(atlas, tileInFrontOf);
                 }
 
                 Interact = false;
@@ -148,13 +148,16 @@ namespace World.GameActors.GameObjects
 
         }
 
-        private void EatApple(IAtlas atlas, GameActorPosition applePosition)
+        private void EatFruit(IAtlas atlas, GameActorPosition applePosition)
         {
-            var apple = applePosition.Actor as Fruit;
-            Debug.Assert(apple != null, "apple != null");
-            apple.ApplyGameAction(atlas, new Interact(this), applePosition.Position);
+            var fruit = applePosition.Actor as Fruit;
+            Debug.Assert(fruit != null, "fruit != null");
+            fruit.ApplyGameAction(atlas, new Interact(this), applePosition.Position);
 
-            Energy += ENERGY_FOR_EATING_APPLE;
+            if (fruit is IEatable)
+            {
+                Energy += ENERGY_FOR_EATING_FRUIT;
+            }
         }
 
         private void LooseEnergy()
@@ -180,7 +183,7 @@ namespace World.GameActors.GameObjects
 
         private bool PerformLayDown(IAtlas atlas)
         {
-            var positionInFrontOf = atlas.PositionInFrontOf(this, 1);
+            Vector2 positionInFrontOf = atlas.PositionInFrontOf(this, 1);
             GameAction layDownAction = new LayDown(this);
             Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf);
             return true;
@@ -189,11 +192,11 @@ namespace World.GameActors.GameObjects
         private bool PerformPickup(IAtlas atlas)
         {
             // check tile in front of
-            var target = GetTilesInFrontOf(atlas);
+            GameActorPosition target = GetInteractableTileInFrontOf(atlas);
             // if no tile, check objects
             if (target == null)
             {
-                target = GetObjectInFrontOf(atlas);
+                target = GetInteractableObjectInFrontOf(atlas);
             }
             if (target == null) return false;
 
@@ -211,15 +214,13 @@ namespace World.GameActors.GameObjects
         {
             var actor = target.Actor as IForwardMovable;
             var gameObject = target.Actor as ICharacter;
-            if (actor != null)
-            {
-                Debug.Assert(gameObject != null, "gameObject != null");
-                Energy -= actor.ForwardSpeed*gameObject.Weight*ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT;
-                actor.ForwardSpeed = 0;
-            }
+            if (actor == null) return;
+            Debug.Assert(gameObject != null, "gameObject != null");
+            Energy -= actor.ForwardSpeed*gameObject.Weight*ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT;
+            actor.ForwardSpeed = 0;
         }
 
-        private GameActorPosition GetObjectInFrontOf(IAtlas atlas)
+        private GameActorPosition GetInteractableObjectInFrontOf(IAtlas atlas)
         {
             // check circle in front of avatar 
             float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
@@ -229,7 +230,7 @@ namespace World.GameActors.GameObjects
             return target;
         }
 
-        private GameActorPosition GetTilesInFrontOf(IAtlas atlas)
+        private GameActorPosition GetInteractableTileInFrontOf(IAtlas atlas)
         {
             GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
             return target;
