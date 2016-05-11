@@ -25,6 +25,11 @@ namespace World.ToyWorldCore
             return GetGameObjects(new RectangleF(x, y, 1, 1)).FirstOrDefault() as GameObject;
         }
 
+        public List<IGameObject> GetGameObjects(Vector2I tilePosition)
+        {
+            return GetGameObjects(new RectangleF(new Vector2(tilePosition), Vector2.One));
+        }
+
         public GameObject GetActorAt(Shape shape)
         {
             foreach (IGameObject gameObject in GameObjects)

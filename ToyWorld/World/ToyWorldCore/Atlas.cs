@@ -96,6 +96,8 @@ namespace World.ToyWorldCore
         /// <param name="original"></param>
         /// <param name="replacement"></param>
         void ReplaceWith(GameActorPosition original, GameActor replacement);
+
+        List<IGameObject> StayingOnTile(Vector2I tilePosition);
     }
 
     public class Atlas : IAtlas
@@ -308,6 +310,23 @@ namespace World.ToyWorldCore
                 bool result = layer.ReplaceWith(original, replacement);
                 if (result) return;
             }
+        }
+
+        public List<IGameObject> StayingOnTile(Vector2I tilePosition)
+        {
+            return ((IObjectLayer) GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
+        }
+
+        public static bool InsideTile(Vector2I tilePosition, Vector2 position)
+        {
+            Vector2 start = new Vector2(tilePosition);
+            Vector2 end = new Vector2(tilePosition) + Vector2.One;
+            return position.X >= start.X && position.X <= end.X && position.X >= start.Y && position.Y <= end.Y;
+        }
+
+        public static Vector2I OnTile(Vector2 position)
+        {
+            return new Vector2I(Vector2.Floor(position));
         }
     }
 }

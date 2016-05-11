@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
 using Circle = VRageMath.Circle;
@@ -12,13 +13,19 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="rectangle"></param>
         /// <returns></returns>
-        List<IGameObject> GetGameObjects(VRageMath.RectangleF rectangle);
+        List<IGameObject> GetGameObjects(RectangleF rectangle);
 
         /// <summary>
         /// Gets all game objects.
         /// </summary>
         /// <returns></returns>
         List<IGameObject> GetGameObjects();
+
+        /// <summary>
+        /// Gets all game objects.
+        /// </summary>
+        /// <returns></returns>
+        List<IGameObject> GetGameObjects(Vector2I tilePosition);
 
         GameObject GetActorAt(Shape shape);
 
@@ -32,7 +39,7 @@ namespace World.ToyWorldCore
 
         List<IPhysicalEntity> GetPhysicalEntities();
 
-        List<IPhysicalEntity> GetPhysicalEntities(VRageMath.RectangleF rectangle);
+        List<IPhysicalEntity> GetPhysicalEntities(RectangleF rectangle);
 
         /// <summary>
         /// Adds game object to the layer. If object cannot be added, return false.
