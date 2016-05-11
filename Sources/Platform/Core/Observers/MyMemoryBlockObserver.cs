@@ -199,26 +199,39 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
         public int TilesInColumn
         {
-            get
-            {
-                Size textureSize = ComputeTiledTextureSize(GetTileDimensions(), Target);
-                return TilesInColumn = textureSize.Height * textureSize.Width / m_tileWidth / m_tileHeight / TilesInRow;
-            }
-            set { }
+            get;
+            private set;
         }
 
         private int m_tileWidth = 1, m_tileHeight = 1;
+        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
+
         public int TileWidth
         {
             get { return m_tileWidth; }
-            set { }
+            private set
+            {
+                if (value > 0)
+                {
+                    m_tileWidth = value;
+                }
+            }
         }
+        [ReadOnly(true), MyBrowsable, Category("Tensor Observer"), Description("")]
+
         public int TileHeight
         {
             get { return m_tileHeight; }
-            set { }
+            private set
+            {
+                if (value > 0)
+                {
+                    m_tileHeight = value;
+                }
+            }
         }
 
         #endregion
@@ -281,13 +294,13 @@ namespace GoodAI.Core.Observers
                 if (Method == RenderingMethod.RGB)
                 {
                     m_tiledRGBKernel.SetupExecution(TextureSize);
-                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureWidth, TextureHeight, TextureSize, m_tileWidth, m_tileHeight, TilesInRow, TilesInColumn, MaxValue);
+                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureWidth, TextureHeight, TextureSize, TileWidth, TileHeight, TilesInRow, TilesInColumn, MaxValue);
                 }
                 else
                 {
                     int pixelsInOrigImage = Target.Dims.ElementCount;
                     m_tiledKernel.SetupExecution(pixelsInOrigImage);
-                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, pixelsInOrigImage, m_tileWidth, m_tileHeight, TilesInRow);
+                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, pixelsInOrigImage, TileWidth, TileHeight, TilesInRow);
                 }
             }
             else
@@ -359,27 +372,24 @@ namespace GoodAI.Core.Observers
             {
                 TensorDimensions d = GetTileDimensions();
                 int i = 0;
-                m_tileWidth = m_tileHeight = 1;
-                while (i < d.Rank && m_tileWidth <= 1) // first non-one value is width
+                TileWidth = 1;
+                TileHeight = 1;
+                while (i < d.Rank && TileWidth <= 1) // first non-one value is width
                 {
-                    m_tileWidth = d[i];
+                    TileWidth = d[i];
                     i++;
                 }
-                while (i < d.Rank && m_tileHeight <= 1) // second non-one value is width
+                while (i < d.Rank && TileHeight <= 1) // second non-one value is width
                 {
-                    m_tileHeight = d[i];
+                    TileHeight = d[i];
                     i++;
                 }
 
                 textureSize = ComputeTiledTextureSize(d, Target);
-                if (Method == RenderingMethod.RGB)
-                {
-                    textureSize.Height /= 3;
-                }
+
                 // add boundaries between tiles
                 textureSize.Height += TilesInColumn - 1;
                 textureSize.Width += TilesInRow - 1;
-
             }
             else
             {
@@ -394,18 +404,53 @@ namespace GoodAI.Core.Observers
 
         private Size ComputeTiledTextureSize(TensorDimensions dims, MyAbstractMemoryBlock target)
         {
-            if (m_tileWidth * m_tileHeight * TilesInRow > dims.ElementCount)
+            int effectivePixelsDisplayed;
+
+            if (Method == RenderingMethod.RGB)
             {
-                TilesInRow = dims.ElementCount / (m_tileWidth * m_tileHeight);
+                // in case that TileHeight or TileWidth is set so that there is no room for RGB channels
+                if (dims.ElementCount / TileWidth / TileHeight / 3 == 0)
+                {
+                    MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
+                        "RGB rendering enabled, but TileWidth and TileHeight values incompatible with the RGB format! Use correct CustomDimensions." +
+                    " Swtiching to RedGreenScale.");
+                    Method = RenderingMethod.RedGreenScale;
+                    effectivePixelsDisplayed = dims.ElementCount;
+                }
+                else
+                {
+                    if (dims.ElementCount % 3 != 0)
+                    {
+                        MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
+                            "RGB rendering enabled, but the number of pixels is not divisible by 3! Number is: " + dims.ElementCount);
+                    }
+
+                    else if (dims.ElementCount / TileWidth / TileHeight % 3 != 0)
+                    {
+                        MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
+                        "RGB rendering enabled, but TileWidth and TileHeight values incompatible with the RGB format!");
+                    }
+                    effectivePixelsDisplayed = (int)Math.Ceiling((decimal)dims.ElementCount / 3);
+                }
+            }
+            else
+            {
+                effectivePixelsDisplayed = dims.ElementCount;
+            }
+
+            if (TileWidth * TileHeight * TilesInRow > effectivePixelsDisplayed)
+            {
+                TilesInRow = effectivePixelsDisplayed / (TileWidth * TileHeight);
                 MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
                     "TilesInRow too big, adjusting to the maximum value of " + TilesInRow);
             }
 
-            int noBlocks = dims.ElementCount / (m_tileWidth * m_tileHeight);
+            int noBlocks = effectivePixelsDisplayed / (TileWidth * TileHeight);
+            TilesInColumn = effectivePixelsDisplayed / (TileWidth * TileHeight * TilesInRow);
 
             // in case the noBlocks is not divisible by TilesInRow, allocate enough space
             int height = (int)Math.Ceiling((decimal)noBlocks / TilesInRow);
-            return new Size(m_tileWidth * TilesInRow, height * m_tileHeight);
+            return new Size(TileWidth * TilesInRow, height * TileHeight);
         }
 
         // TODO(Premek): Report warnings using a logger interface.
