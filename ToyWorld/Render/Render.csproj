@@ -124,8 +124,8 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />

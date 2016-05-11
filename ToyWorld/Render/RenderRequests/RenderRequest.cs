@@ -23,7 +23,7 @@ namespace Render.RenderRequests
             Size = 1,
             Resolution = 1 << 1,
             Image = 1 << 2,
-            Noise = 1 << 3,
+            Smoke = 1 << 3,
         }
 
 
@@ -47,7 +47,7 @@ namespace Render.RenderRequests
         private Matrix m_viewProjectionMatrix;
 
         private DirtyParams m_dirtyParams;
-        private double m_simTime;
+        private uint m_simTime;
 
         #endregion
 
@@ -221,9 +221,12 @@ namespace Render.RenderRequests
 
 
         private bool m_drawNoise;
-        private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
-        private float m_noiseTransformationSpeedCoefficient = 1f;
-        private float m_noiseMeanOffset = 0.6f;
+        private float m_noiseIntensityCoefficient = 1.0f;
+
+        private bool m_drawSmoke;
+        private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
+        private float m_smokeTransformationSpeedCoefficient = 1f;
+        private float m_smokeMeanOffset = 0.6f;
 
         public bool DrawNoise
         {
@@ -231,35 +234,42 @@ namespace Render.RenderRequests
             set
             {
                 m_drawNoise = value;
-                m_dirtyParams |= DirtyParams.Noise;
+                m_dirtyParams |= DirtyParams.Smoke;
             }
         }
-        public System.Drawing.Color NoiseColor
+        public float NoiseIntensityCoefficient
         {
-            get { return m_noiseColor; }
+            get { return m_noiseIntensityCoefficient; }
+            set { m_noiseIntensityCoefficient = value; }
+        }
+
+        public bool DrawSmoke
+        {
+            get { return m_drawSmoke; }
             set
             {
-                m_noiseColor = value;
-                m_dirtyParams |= DirtyParams.Noise;
+                m_drawSmoke = value;
+                m_dirtyParams |= DirtyParams.Smoke;
             }
         }
-        public float NoiseTransformationSpeedCoefficient
+        public System.Drawing.Color SmokeColor
         {
-            get { return m_noiseTransformationSpeedCoefficient; }
+            get { return m_smokeColor; }
             set
             {
-                m_noiseTransformationSpeedCoefficient = value;
-                m_dirtyParams |= DirtyParams.Noise;
+                m_smokeColor = value;
+                m_dirtyParams |= DirtyParams.Smoke;
             }
         }
-        public float NoiseMeanOffset
+        public float SmokeTransformationSpeedCoefficient
         {
-            get { return m_noiseMeanOffset; }
-            set
-            {
-                m_noiseMeanOffset = value;
-                m_dirtyParams |= DirtyParams.Noise;
-            }
+            get { return m_smokeTransformationSpeedCoefficient; }
+            set { m_smokeTransformationSpeedCoefficient = value; }
+        }
+        public float SmokeMeanOffset
+        {
+            get { return m_smokeMeanOffset; }
+            set { m_smokeMeanOffset = value; }
         }
 
         #endregion
@@ -372,10 +382,10 @@ namespace Render.RenderRequests
                         m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
                 }
             }
-            if (m_dirtyParams.HasFlag(DirtyParams.Noise))
+            if (m_dirtyParams.HasFlag(DirtyParams.Smoke))
             {
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-                m_noiseEffect.NoiseColorUniform(new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
+                m_noiseEffect.SmokeColorUniform(new Vector4(SmokeColor.R, SmokeColor.G, SmokeColor.B, SmokeColor.A) / 255f);
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -501,11 +511,10 @@ namespace Render.RenderRequests
 
         private void DrawEffects(RendererBase renderer)
         {
-            if (DrawNoise)
-            {
-                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
-                m_simTime = (m_simTime + 0.005f * NoiseTransformationSpeedCoefficient) % 3e15;
+            m_simTime++;
 
+            if (DrawSmoke)
+            {
                 renderer.EffectManager.Use(m_noiseEffect);
 
                 // Set up transformation to world and screen space for noise effect
@@ -519,7 +528,10 @@ namespace Render.RenderRequests
                 transform *= m_viewProjectionMatrix;
                 m_noiseEffect.ModelViewProjectionUniform(ref transform);
 
-                m_noiseEffect.TimeMeanUniform(new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
+                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
+                double step = 0.005d * SmokeTransformationSpeedCoefficient;
+                double seed = m_simTime * step % 3e6d;
+                m_noiseEffect.TimeMeanUniform(new Vector4((float)seed, (float)step, SmokeMeanOffset, NoiseIntensityCoefficient));
 
                 m_quad.Draw();
             }

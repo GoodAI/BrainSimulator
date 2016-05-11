@@ -12,16 +12,16 @@ namespace Render.RenderObjects.Effects
             mw,
             mvp,
 
-            noiseColor,
+            smokeColor,
             timeMean,
         }
 
 
         public NoiseEffect()
-            : base(typeof(Uniforms), "Noise.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("Noise.perlinNoise3D.glsl"))
+            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetSmokeSrcStream("Noise.perlinNoise3D.glsl"))
         { }
 
-        private static Stream GetNoiseSrcStream(string path)
+        private static Stream GetSmokeSrcStream(string path)
         {
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
         }
@@ -38,9 +38,9 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        public void NoiseColorUniform(Vector4 val)
+        public void SmokeColorUniform(Vector4 val)
         {
-            SetUniform4(base[Uniforms.noiseColor], val);
+            SetUniform4(base[Uniforms.smokeColor], val);
         }
 
         public void TimeMeanUniform(Vector4 val)
