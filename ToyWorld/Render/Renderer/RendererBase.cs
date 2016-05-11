@@ -15,6 +15,8 @@ namespace Render.Renderer
     {
         #region Fields
 
+        public uint SimTime { get; private set; }
+
         private readonly IterableQueue<RenderRequest> m_renderRequestQueue = new IterableQueue<RenderRequest>();
 
         internal readonly GeometryManager GeometryManager = new GeometryManager();
@@ -61,6 +63,7 @@ namespace Render.Renderer
 
         public virtual void ProcessRequests(ToyWorld world)
         {
+            SimTime++;
             MakeContextCurrent();
 
             foreach (RenderRequest renderRequest in m_renderRequestQueue)

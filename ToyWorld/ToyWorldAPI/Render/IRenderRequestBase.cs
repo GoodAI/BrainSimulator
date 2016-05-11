@@ -103,6 +103,11 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        float SmokeMeanOffset { get; set; }
+        float SmokeIntensityCoefficient { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float SmokeScaleCoefficient { get; set; }
     }
 }
