@@ -68,6 +68,7 @@ namespace ToyWorldConversation
 
         private void ConnectToToyWorld(object sender, EventArgs e)
         {
+            if (m_gameCtrl == null || m_avatarCtrl == null) return;
             m_gameCtrl.NewMessage += WorldNewMessage;
             m_avatarCtrl.NewMessage += AvatarNewMessage;
         }
