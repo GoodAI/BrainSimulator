@@ -67,6 +67,7 @@ namespace Game
                 catch (Exception)
                 {
                     // Should not ever happen
+                    Debug.Assert(false);
                     m_buffer.Clear();
                     continue;
                 }

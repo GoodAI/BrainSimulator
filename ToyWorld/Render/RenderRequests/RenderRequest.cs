@@ -353,11 +353,9 @@ namespace Render.RenderRequests
 
                         m_fboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
                     }
-
-                    GL.Enable(EnableCap.Multisample);
+                    // no need to enable Multisample capability, it is enabled automatically
+                    // GL.Enable(EnableCap.Multisample);
                 }
-                else
-                    GL.Disable(EnableCap.Multisample);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
