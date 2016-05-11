@@ -43,9 +43,15 @@ namespace GoodAI.ToyWorld.Control
         IAvatarController GetAvatarController(int avatarId);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         int[] GetAvatarIds();
+
+        /// <summary>
+        /// Returns results from signal dispatchers of IWorld
+        /// </summary>
+        /// <returns></returns>
+        float[] GetSignals();
     }
 }

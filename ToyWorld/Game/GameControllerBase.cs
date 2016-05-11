@@ -150,6 +150,11 @@ namespace Game
             return m_avatarControllers.Keys.ToArray();
         }
 
+        public float[] GetSignals()
+        {
+            return World.SignalDispatchers.Select(x => x(World.Atlas)).ToArray();
+        }
+
         #endregion
     }
 }

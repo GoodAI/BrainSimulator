@@ -321,6 +321,15 @@ namespace GoodAI.ToyWorld
 
                 ObtainMessageFromBrain();
                 SendMessageToBrain();
+
+                ObtainSignals();
+            }
+
+            private void ObtainSignals()
+            {
+                float[] signals = Owner.GameCtrl.GetSignals();
+                Array.Copy(signals, 0, Owner.Signals.Host, 0, signals.Length);
+                Owner.Signals.SafeCopyToDevice();
             }
 
             private void SendMessageToBrain()
