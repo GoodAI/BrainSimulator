@@ -8,6 +8,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
+using GoodAI.ToyWorld.Language;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
@@ -303,6 +304,30 @@ namespace GoodAI.ToyWorld
             private void SendMessageToBrain()
             {
                 string message = Owner.AvatarCtrl.MessageIn;
+
+                SetMessageTextBlock(message);
+                SetTextInputLayer(message);
+            }
+
+            private void SetTextInputLayer(string message)
+            {   
+                if (TextProcessing.IsEmpty(message))
+                {
+                    /* TODO: Add input layer */
+                    /* TODO: set empty input layer */
+                }
+                List<string> tokens = TextProcessing.Tokenize(message);
+                foreach (string token in tokens)
+                {
+                    /* TODO: vector from token 
+                     Get WordVector class from word vector code
+                     */
+
+                }
+            }
+
+            private void SetMessageTextBlock(string message)
+            {
                 if (message == null)
                 {
                     Owner.Text.Fill(0);

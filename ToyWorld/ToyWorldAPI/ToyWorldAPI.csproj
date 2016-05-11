@@ -109,6 +109,7 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
+    <Compile Include="Language\TextProcessing.cs" />
     <Compile Include="MessageEvent.cs" />
     <Compile Include="Render\IRenderRequestBase.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
