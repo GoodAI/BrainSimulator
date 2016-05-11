@@ -69,6 +69,7 @@
   <ItemGroup>
     <Compile Include="Renderer\GLRenderer.cs" />
     <Compile Include="Renderer\RendererBase.cs" />
+    <Compile Include="RenderObjects\Buffers\BasicFboMultisample.cs" />
     <Compile Include="RenderObjects\Buffers\Pbo.cs" />
     <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
@@ -78,7 +79,9 @@
     <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Fbo.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />
+    <Compile Include="RenderObjects\Textures\RenderTargetTexturesMultisample.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
+    <Compile Include="RenderObjects\Textures\BasicTexture.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />

@@ -103,11 +103,15 @@ namespace Render.Renderer
         {
             base.CheckError();
 
-            ErrorCode error, previousError = ErrorCode.NoError;
+            ErrorCode error, previousError;
+
+            if ((previousError = GL.GetError()) != ErrorCode.NoError)
+                Debug.Fail("GL error: " + previousError);
 
             while ((error = GL.GetError()) != ErrorCode.NoError)
             {
                 // TODO: log
+
                 if (previousError == error)
                 {
                     // the same error repeated twice indicates an infinite loop of errors

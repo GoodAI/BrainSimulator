@@ -2,17 +2,150 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
 using Logger;
+using ManagedCuda;
+using ManagedCuda.BasicTypes;
+using ToyWorldFactory;
 
 namespace GoodAI.ToyWorld
 {
     public partial class ToyWorld
     {
+        [MyTaskInfo(OneShot = true, Disabled = false)]
+        public class TWInitTask : MyTask<ToyWorld>
+        {
+            public override void Init(int nGPU)
+            {
+                if (Owner.GameCtrl != null)
+                    Owner.GameCtrl.Dispose(); // Should dispose RRs and controllers too
+
+
+                GameSetup setup = new GameSetup(
+                    new FileStream(Owner.SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read),
+                    new StreamReader(Owner.TilesetTable));
+                Owner.GameCtrl = GameFactory.GetThreadSafeGameController(setup);
+                Owner.GameCtrl.Init();
+
+                int[] avatarIds = Owner.GameCtrl.GetAvatarIds();
+                if (avatarIds.Length == 0)
+                {
+                    MyLog.ERROR.WriteLine("No avatar found in map!");
+                    return;
+                }
+
+
+                // Setup controllers
+                int myAvatarId = avatarIds[0];
+                Owner.AvatarCtrl = Owner.GameCtrl.GetAvatarController(myAvatarId);
+
+                // Setup render requests
+                Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, myAvatarId,
+                    rr =>
+                    {
+                        rr.Size = new SizeF(Owner.FoVSize, Owner.FoVSize);
+                        rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
+                        rr.MultisampleLevel = Owner.FoVMultisampleLevel;
+                    });
+
+                Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
+                    rr =>
+                    {
+                        rr.FovAvatarRenderRequest = Owner.FovRR;
+                        rr.Size = new SizeF(Owner.FoFSize, Owner.FoFSize);
+                        rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
+                        rr.MultisampleLevel = Owner.FoFMultisampleLevel;
+                    });
+
+                Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
+                    rr =>
+                    {
+                        rr.Size = new SizeF(Owner.Width, Owner.Height);
+                        rr.Resolution = new Size(Owner.ResolutionWidth, Owner.ResolutionHeight);
+                        rr.MultisampleLevel = Owner.FreeViewMultisampleLevel;
+                        rr.SetPositionCenter(Owner.CenterX, Owner.CenterY);
+                    });
+
+                Owner.WorldInitialized(this, EventArgs.Empty);
+            }
+
+            private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
+            {
+                // Setup the render request properties
+                rr.GatherImage = true;
+
+                if (initializer != null)
+                    initializer.Invoke(rr);
+
+                rr.FlipYAxis = true;
+
+                rr.CopyImageThroughCpu = Owner.CopyDataThroughCPU;
+                targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
+
+                if (Owner.CopyDataThroughCPU)
+                    return rr;
+
+                // Setup data copying to our unmanaged memblocks
+                uint renderTextureHandle = 0;
+                CudaOpenGLBufferInteropResource renderResource = null;
+
+                rr.OnPreRenderingEvent += (sender, vbo) =>
+                {
+                    if (renderResource != null && renderResource.IsMapped)
+                        renderResource.UnMap();
+                };
+
+                rr.OnPostRenderingEvent += (sender, vbo) =>
+                {
+                    // Vbo can be allocated during drawing, create the resource after that
+                    MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).SetCurrent();
+
+                    if (renderResource == null || vbo != renderTextureHandle)
+                    {
+                        if (renderResource != null)
+                            renderResource.Dispose();
+
+                        renderTextureHandle = vbo;
+                        renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
+                            CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                    }
+
+                    renderResource.Map();
+                    targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                    targetMemBlock.FreeDevice();
+                    targetMemBlock.AllocateDevice();
+                };
+
+
+                // Initialize the target memory block
+                targetMemBlock.ExternalPointer = 1;
+                // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+
+                return rr;
+            }
+
+            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<T> initializer = null) where T : class, IAvatarRenderRequest
+            {
+                T rr = Owner.GameCtrl.RegisterRenderRequest<T>(avatarId);
+                return InitRR(rr, targetMemBlock, initializer);
+            }
+
+            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequest
+            {
+                T rr = Owner.GameCtrl.RegisterRenderRequest<T>();
+                return InitRR(rr, targetMemBlock, initializer);
+            }
+
+            public override void Execute()
+            { }
+        }
+
         public class TWGetInputTask : MyTask<ToyWorld>
         {
             private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
@@ -168,9 +301,9 @@ namespace GoodAI.ToyWorld
 
                 if (Owner.CopyDataThroughCPU)
                 {
-                    TransferFromRRToMemBlock(Owner.m_fovRR, Owner.VisualFov);
-                    TransferFromRRToMemBlock(Owner.m_fofRR, Owner.VisualFof);
-                    TransferFromRRToMemBlock(Owner.m_freeRR, Owner.VisualFree);
+                    TransferFromRRToMemBlock(Owner.FovRR, Owner.VisualFov);
+                    TransferFromRRToMemBlock(Owner.FofRR, Owner.VisualFof);
+                    TransferFromRRToMemBlock(Owner.FreeRR, Owner.VisualFree);
                 }
 
                 ObtainMessageFromBrain();

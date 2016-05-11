@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using VRageMath;
 
 namespace Render.RenderObjects.Textures
@@ -10,23 +6,24 @@ namespace Render.RenderObjects.Textures
     internal abstract class RenderTargetTexture : TextureBase
     {
         protected RenderTargetTexture(Vector2I size)
-            : base(null,
-                   size.X, size.Y,
-                // Use default pixel format
-                   minFilter: TextureMinFilter.Nearest,
-                   magFilter: TextureMagFilter.Nearest,
-                   wrapMode: TextureWrapMode.ClampToEdge)
-        { }
-
-        protected RenderTargetTexture(Vector2I size, PixelFormat pixelFormat, PixelInternalFormat internalFormat)
-            : base(null,
-                   size.X, size.Y,
-                   pixelFormat,
-                   internalFormat,
+            : base(size.X, size.Y) // Use default pixel format)
+        {
+            Init(null);
+            SetParameters(
                    TextureMinFilter.Nearest,
                    TextureMagFilter.Nearest,
-                   TextureWrapMode.ClampToEdge)
-        { }
+                   TextureWrapMode.ClampToEdge);
+        }
+
+        protected RenderTargetTexture(Vector2I size, PixelFormat pixelFormat, PixelInternalFormat internalFormat)
+            : base(size.X, size.Y)
+        {
+            Init(null, pixelFormat, internalFormat);
+            SetParameters(
+                   TextureMinFilter.Nearest,
+                   TextureMagFilter.Nearest,
+                   TextureWrapMode.ClampToEdge);
+        }
     }
 
     internal class RenderTargetColorTexture : RenderTargetTexture

@@ -34,6 +34,12 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         Size Resolution { get; set; }
 
+        /// <summary>
+        /// The level of multisampling to use (each pixel uses 2^MultisampleLevel samples). Must be between 0 (no AA) and 4 (16x MSAA).
+        /// Currently level 1 is equal to level 2 (both are 4x MSAA).
+        /// </summary>
+        int MultisampleLevel { get; set; }
+
 
         /// <summary>
         /// 
@@ -41,14 +47,14 @@ namespace GoodAI.ToyWorld.Control
         bool GatherImage { get; set; }
 
         /// <summary>
-        /// location where data is copied if it should be transfered through CPU
-        /// </summary>
-        uint[] Image { get; }
-
-        /// <summary>
         /// set to true if the cuda/opengl interop is failing
         /// </summary>
         bool CopyImageThroughCpu { get; set; }
+
+        /// <summary>
+        /// location where data is copied if it should be transfered through CPU
+        /// </summary>
+        uint[] Image { get; }
 
         /// <summary>
         /// Called before the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.

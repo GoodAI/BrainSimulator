@@ -20,6 +20,7 @@ namespace Render.Renderer
         internal readonly GeometryManager GeometryManager = new GeometryManager();
         internal readonly EffectManager EffectManager = new EffectManager();
         internal readonly TextureManager TextureManager = new TextureManager();
+        internal readonly RenderTargetManager RenderTargetManager = new RenderTargetManager();
 
         #endregion
 

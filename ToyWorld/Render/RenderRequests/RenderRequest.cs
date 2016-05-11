@@ -30,6 +30,7 @@ namespace Render.RenderRequests
         #region Fields
 
         private BasicFbo m_fbo;
+        private BasicFboMultisample m_fboMs;
 
         private NoEffectOffset m_effect;
         private NoiseEffect m_noiseEffect;
@@ -165,10 +166,28 @@ namespace Render.RenderRequests
                 if (value.Width < minResolution || value.Height < minResolution)
                     throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be greater than " + minResolution + " pixels.");
                 if (value.Width > maxResolution || value.Height > maxResolution)
-                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be smaller than " + maxResolution + " pixels.");
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be at most " + maxResolution + " pixels.");
 
                 m_resolution = value;
                 m_dirtyParams |= DirtyParams.Resolution | DirtyParams.Image;
+            }
+        }
+
+        private int m_multisampleLevel = 2;
+        public int MultisampleLevel
+        {
+            get { return m_multisampleLevel; }
+            set
+            {
+                const int minSamples = 0;
+                const int maxSamples = 4;
+                if (value < minSamples)
+                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be positive.");
+                if (value > maxSamples)
+                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be at most " + maxSamples + ".");
+
+                m_multisampleLevel = value;
+                m_dirtyParams |= DirtyParams.Resolution;
             }
         }
 
@@ -183,10 +202,23 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Image;
             }
         }
-        public bool CopyImageThroughCpu { get; set; }
+
+        private bool m_copyImageThroughCpu;
+        public bool CopyImageThroughCpu
+        {
+            get { return m_copyImageThroughCpu; }
+            set
+            {
+                m_copyImageThroughCpu = value;
+                m_dirtyParams |= DirtyParams.Image;
+            }
+        }
+
         public uint[] Image { get; private set; }
+
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
+
 
         private bool m_drawNoise;
         private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
@@ -243,15 +275,14 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
+            // Set up tileset textures
             string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
             TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
+
             for (int i = 0; i < tilesetImages.Length; i++)
-            {
                 tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
                                                     world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
-            }
             
-            // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
             // Set up the noise shader
@@ -276,9 +307,7 @@ namespace Render.RenderRequests
 
             // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
             if (!CopyImageThroughCpu)
-            {
                 m_pbo = new Pbo();
-            }
 
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
@@ -300,10 +329,33 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
             {
-                if (m_fbo != null)
-                    m_fbo.Dispose();
+                bool newRes = m_fbo == null || Resolution.Width != m_fbo.Size.X || Resolution.Height != m_fbo.Size.Y;
 
-                m_fbo = new BasicFbo(renderer.TextureManager, (Vector2I)Resolution);
+                if (newRes)
+                {
+                    if (m_fbo != null)
+                        m_fbo.Dispose();
+
+                    m_fbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                }
+
+                if (MultisampleLevel > 0)
+                {
+                    int multisampleCount = 1 << MultisampleLevel; // 4x to 32x (4 levels)
+
+                    if (MultisampleLevel == 1)
+                        multisampleCount = 4; // 2x does not seem to be working, force it to be at least 4x
+
+                    if (newRes || m_fboMs == null || multisampleCount != m_fboMs.MultisampleCount)
+                    {
+                        if (m_fboMs != null)
+                            m_fboMs.Dispose();
+
+                        m_fboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
+                    }
+                    // no need to enable Multisample capability, it is enabled automatically
+                    // GL.Enable(EnableCap.Multisample);
+                }
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Image))
             {
@@ -311,13 +363,13 @@ namespace Render.RenderRequests
                 {
                     if (!GatherImage)
                         Image = new uint[0];
-                    else if (Image.Length < Resolution.Width*Resolution.Height)
-                        Image = new uint[Resolution.Width*Resolution.Height];
+                    else if (Image.Length < Resolution.Width * Resolution.Height)
+                        Image = new uint[Resolution.Width * Resolution.Height];
                 }
                 else
                 {
                     if (m_pbo.ByteCount != Resolution.Width * Resolution.Height * sizeof(uint))
-                        m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);    
+                        m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
                 }
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
@@ -360,6 +412,11 @@ namespace Render.RenderRequests
 
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
+            if (MultisampleLevel > 0)
+                m_fboMs.Bind();
+            else
+                m_fbo.Bind();
+
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // View and proj transforms
@@ -367,7 +424,6 @@ namespace Render.RenderRequests
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            m_fbo.Bind();
             renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
 
@@ -473,29 +529,43 @@ namespace Render.RenderRequests
 
         private void GatherAndDistributeData(RendererBase renderer)
         {
+            if (MultisampleLevel > 0)
+            {
+                // We have to blit to another fbo to resolve multisampling before readPixels, unfortunatelly
+                m_fboMs.Bind(FramebufferTarget.ReadFramebuffer);
+                m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
+                GL.BlitFramebuffer(
+                    0, 0, m_fboMs.Size.X, m_fboMs.Size.Y,
+                    0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                    ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
+                    BlitFramebufferFilter.Linear);
+            }
+
+            // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+            m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            GL.BlitFramebuffer(
+                0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                0, 0, renderer.Width, renderer.Height,
+                ClearBufferMask.ColorBufferBit,
+                BlitFramebufferFilter.Linear);
+
             // Gather data to host mem
             if (GatherImage)
             {
+                m_fbo.Bind();
+                GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
+
                 if (CopyImageThroughCpu)
                 {
-                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte,
-                        Image);
+                    GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Image);
                 }
                 else
                 {
                     m_pbo.Bind();
-                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));   
+                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                 }
-
-                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-                m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
-                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-                GL.BlitFramebuffer(
-                    0, 0, Resolution.Width, Resolution.Height,
-                    0, 0, renderer.Width, renderer.Height,
-                    ClearBufferMask.ColorBufferBit,
-                    BlitFramebufferFilter.Linear);
             }
         }
 
