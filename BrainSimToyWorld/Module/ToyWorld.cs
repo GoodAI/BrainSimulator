@@ -198,9 +198,12 @@ namespace GoodAI.ToyWorld
             validator.AssertError(Height > 0, this, "Free view height has to be positive.");
             validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
-            validator.AssertError(FoFMultisampleLevel >= 0 && FoFMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
-            validator.AssertError(FoVMultisampleLevel >= 0 && FoVMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
-            validator.AssertError(FreeViewMultisampleLevel >= 0 && FreeViewMultisampleLevel <= 5, this, "Multisample level must be between zero and five.");
+            validator.AssertError(FoFMultisampleLevel >= 0 && FoFMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
+            validator.AssertError(FoVMultisampleLevel >= 0 && FoVMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
+            validator.AssertError(FreeViewMultisampleLevel >= 0 && FreeViewMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
+            validator.AssertWarning(
+                FoFMultisampleLevel == 1 || FoVMultisampleLevel == 1 || FreeViewMultisampleLevel == 1,
+                this, "Multisample level of 1 is the same as level 2 (4x MSAA). Don't ask why.");
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");

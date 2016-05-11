@@ -180,7 +180,7 @@ namespace Render.RenderRequests
             set
             {
                 const int minSamples = 0;
-                const int maxSamples = 5;
+                const int maxSamples = 4;
                 if (value < minSamples)
                     throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be positive.");
                 if (value > maxSamples)
