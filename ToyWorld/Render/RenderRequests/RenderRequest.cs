@@ -241,7 +241,7 @@ namespace Render.RenderRequests
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.Enable(EnableCap.Blend);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
             string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
             TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
@@ -250,7 +250,7 @@ namespace Render.RenderRequests
                 tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
                                                     world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
             }
-
+            
             // Set up tileset textures
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 

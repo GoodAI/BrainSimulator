@@ -145,6 +145,8 @@ namespace Render.RenderObjects.Textures
                         iColumnNew = ClonePixel(dataOrig, dataNew, tileBorder, dataBytesOrig, iRowOrig, iColumnOrig - 1, dataBytesNew, iRowNew, iColumnNew);
                     }
 
+                    PremultiplyAlpha(dataBytesNew, dataNew.Stride, iRowNew);
+
                     // if first or last tile row was copied, duplicate it (tileBorder.Y times)
                     if (iTileY == 0 || iTileY == tileSize.Y - 1)
                     {
@@ -165,6 +167,19 @@ namespace Render.RenderObjects.Textures
             }
 
             System.Runtime.InteropServices.Marshal.Copy(dataBytesNew, 0, dataNewPtr, bytesNew);
+        }
+
+        // needed for correct blended texture filtering (scaling and interpolation)
+        private static void PremultiplyAlpha(byte[] dataBytesNew, int stride, int iRowNew)
+        {
+            for (int i = iRowNew * stride; i < (iRowNew+1) * stride; i += 4)
+            {
+                float alpha = dataBytesNew[i + 3] / 255.0f;
+                for (int j = 0; j < 3; j++)
+                {
+                    dataBytesNew[i + j] = (byte)(dataBytesNew[i + j]*alpha);
+                }
+            }
         }
 
         private static int ClonePixel(BitmapData dataOrig, BitmapData dataNew, VRageMath.Vector2I tileBorder, byte[] dataBytesOrig,
