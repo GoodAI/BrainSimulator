@@ -198,7 +198,7 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
-
+        
         public int TilesInColumn
         {
             get;
@@ -217,7 +217,7 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
-
+        
         public int TileHeight
         {
             get { return m_tileHeight; }
@@ -368,17 +368,27 @@ namespace GoodAI.Core.Observers
             {
                 TensorDimensions d = GetTileDimensions();
                 int i = 0;
-                TileWidth = 1;
-                TileHeight = 1;
-                while (i < d.Rank && TileWidth <= 1) // first non-one value is width
+                // if CustomDimensions specified, use the first two dimensions
+                if (UseCustomDimensions)
                 {
-                    TileWidth = d[i];
-                    i++;
+                    TileWidth = d[0];
+                    TileHeight = d[1];
                 }
-                while (i < d.Rank && TileHeight <= 1) // second non-one value is width
+                // if not, try to find suitable dimensions in a smarter way
+                else
                 {
-                    TileHeight = d[i];
-                    i++;
+                    TileWidth = 1;
+                    TileHeight = 1;
+                    while (i < d.Rank && TileWidth <= 1) // first non-one value is width
+                    {
+                        TileWidth = d[i];
+                        i++;
+                    }
+                    while (i < d.Rank && TileHeight <= 1) // second non-one value is width
+                    {
+                        TileHeight = d[i];
+                        i++;
+                    }
                 }
 
                 textureSize = ComputeTiledTextureSize(d, Target);
