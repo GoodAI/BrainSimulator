@@ -136,6 +136,7 @@
     <None Include="packages.config" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\random.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
