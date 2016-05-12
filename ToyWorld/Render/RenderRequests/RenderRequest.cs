@@ -561,7 +561,8 @@ namespace Render.RenderRequests
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 double step = 0.005d * SmokeTransformationSpeedCoefficient;
                 double seed = renderer.SimTime * step % 3e6d;
-                m_smokeEffect.TimeMeanUniform(new Vector4((float)seed, (float)step, SmokeIntensityCoefficient, SmokeScaleCoefficient));
+                m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
+                m_smokeEffect.MeanScaleUniform(new Vector2(SmokeIntensityCoefficient, SmokeScaleCoefficient));
 
                 m_quad.Draw();
             }

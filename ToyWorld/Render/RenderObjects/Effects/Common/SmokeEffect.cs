@@ -13,7 +13,8 @@ namespace Render.RenderObjects.Effects
             mvp,
 
             smokeColor,
-            timeMeanScale,
+            timeStep,
+            meanScale,
         }
 
 
@@ -43,9 +44,14 @@ namespace Render.RenderObjects.Effects
             SetUniform4(base[Uniforms.smokeColor], val);
         }
 
-        public void TimeMeanUniform(Vector4 val)
+        public void TimeStepUniform(Vector2 val)
         {
-            SetUniform4(base[Uniforms.timeMeanScale], val);
+            SetUniform2(base[Uniforms.timeStep], val);
+        }
+
+        public void MeanScaleUniform(Vector2 val)
+        {
+            SetUniform2(base[Uniforms.meanScale], val);
         }
     }
 }

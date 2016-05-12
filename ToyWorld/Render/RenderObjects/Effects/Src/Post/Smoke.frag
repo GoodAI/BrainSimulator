@@ -4,9 +4,10 @@
 uniform vec4 smokeColor = vec4(1, 1, 1, 1);
 // Time			  -- third dimension for perlin noise
 // Step			  -- amount between time steps
+uniform vec2 timeStep = vec2(0, 0.01f);
 // MeanCoef		  -- noise results are in interval (0,2), values are scaled from (0,1) to (0,mean) and from (1,2) to (mean,1)
 // ScaleCoef	  -- the "zoom" of the noise
-uniform vec4 timeMeanScale = vec4(0, 0.01f, 1, 1);
+uniform vec2 meanScale = vec2(1, 1);
 
 
 smooth in vec2 f_worldPos;
@@ -18,8 +19,8 @@ float snoise(vec3 P);
 
 void main()
 {
-	float noise = 1 + snoise(vec3(f_worldPos * 0.6f * timeMeanScale.w, timeMeanScale.x)); // Should be between (-1,1), offset to (0,2)
-	float mean = 0.6f * timeMeanScale.z;
+	float noise = 1 + snoise(vec3(f_worldPos * 0.6f * meanScale.y, timeStep.x)); // Should be between (-1,1), offset to (0,2)
+	float mean = 0.6f * meanScale.x;
 
 	if (noise < 1f)
 		// scale (0,1) to (0,mean)
