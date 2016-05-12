@@ -1,17 +1,12 @@
-﻿using GoodAI.Core;
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
-using ManagedCuda;
-using ManagedCuda.BasicTypes;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
-using ToyWorldFactory;
 using YAXLib;
 
 namespace GoodAI.ToyWorld

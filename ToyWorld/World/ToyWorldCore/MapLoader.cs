@@ -239,7 +239,7 @@ namespace World.ToyWorldCore
                         string tileName = tilesetTable.TileName(tileNumber);
                         if (tileName != null)
                         {
-                            Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes, new Vector2I(x,y));
+                            Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes, new Vector2I(x, y));
                             initializer.Invoke(newTile);
                             newSimpleLayer.Tiles[x][y] = newTile;
                             if (newTile is StaticTile)
@@ -269,7 +269,8 @@ namespace World.ToyWorldCore
                     {
                         instance = (Tile)Activator.CreateInstance(t, tileNumber, position);
                     }
-                    else {
+                    else
+                    {
                         instance = (Tile)Activator.CreateInstance(t, tileNumber);
                     }
 

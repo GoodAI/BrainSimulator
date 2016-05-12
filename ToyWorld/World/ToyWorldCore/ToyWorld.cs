@@ -41,12 +41,8 @@ namespace World.ToyWorldCore
             Action<GameActor> initializer = delegate(GameActor actor)
             {
                 IAutoupdateable updateable = actor as IAutoupdateable;
-                if (updateable != null)
-                {
-                    updateable.Update(Atlas);
-                    if (updateable.NextUpdateAfter > 0)
-                        AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
-                }
+                if (updateable != null && updateable.NextUpdateAfter > 0)
+                    AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
