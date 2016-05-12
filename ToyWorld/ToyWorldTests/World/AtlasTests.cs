@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -39,7 +40,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestActorsAt()
         {
-            List<GameActorPosition> results = m_atlas.ActorsAt(2, 2).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsAt(new Vector2(2,2)).ToList();
 
             Assert.IsType<Background>(results[0].Actor);
             Assert.IsType<Avatar>(results[1].Actor);
@@ -48,7 +49,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestInteractableActorsAt()
         {
-            List<GameActorPosition> results = m_atlas.ActorsAt(2, 0, LayerType.Interactable).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsAt(new Vector2(2,0), LayerType.Interactable).ToList();
 
             Assert.IsType<Apple>(results[0].Actor);
         }

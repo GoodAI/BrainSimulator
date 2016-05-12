@@ -20,6 +20,7 @@ namespace World.ToyWorldCore
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
+        public TileDetectorRegister TileDetectorRegister { get; protected set; }
         public Atlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
@@ -46,6 +47,7 @@ namespace World.ToyWorldCore
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
+            TileDetectorRegister = new TileDetectorRegister(Atlas, TilesetTable);
 
             // physics
             Physics = new Physics.Physics();
@@ -91,7 +93,8 @@ namespace World.ToyWorldCore
 
         private void UpdateScheduled()
         {
-            AutoupdateRegister.UpdateItems(Atlas);
+            TileDetectorRegister.Update();
+            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             AutoupdateRegister.Tick();
         }
 
@@ -101,7 +104,7 @@ namespace World.ToyWorldCore
             UpdateTiles();
             UpdateAvatars();
             UpdateCharacters();
-            AutoupdateRegister.UpdateItems(Atlas);
+            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             UpdatePhysics();
             Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Step performed");
         }

@@ -14,7 +14,7 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
         {
             gameAction.Resolve(new GameActorPosition(this, position), atlas);
         }

@@ -13,7 +13,9 @@ Paths;Path;136;1;
 ;Path;137;0;
 OnGroundInteractable;Water;196;1;
 ;FireplaceBurning;197;1;
-;Trap;198;1;in fact it is fireplace
+;Fireplace;198;1;
+;TrapCharged;199;1;
+;TrapDischarged;200;1;
 ;Water;211;0;
 Obstacle;Obstacle;256;1;Non destroyable Wall
 ;AppleTree;257;1;

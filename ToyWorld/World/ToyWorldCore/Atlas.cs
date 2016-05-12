@@ -62,8 +62,24 @@ namespace World.ToyWorldCore
         /// <returns></returns>
         bool ContainsCollidingTile(Vector2I coordinates);
 
-        IEnumerable<GameActorPosition> ActorsAt(float x, float y, LayerType type = LayerType.All, float width = 1);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tilePosition"></param>
+        /// <param name="type"></param>
+        /// <param name="width"></param>
+        /// <returns>All game actors from all given layers colliding with given tile position.</returns>
+        IEnumerable<GameActorPosition> ActorsAt(Vector2 tilePosition, LayerType type = LayerType.All, float width = 1);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T">IDirectable and IGameObject</typeparam>
+        /// <param name="sender"></param>
+        /// <param name="type"></param>
+        /// <param name="distance"> Distance to center of observation.</param>
+        /// <param name="width">If searching through Object layers, width of searching circle.</param>
+        /// <returns>GameActors in front.</returns>
         IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All, float distance = 1,
             float width = 1) where T : class, IDirectable, IGameObject;
 
@@ -97,13 +113,29 @@ namespace World.ToyWorldCore
         /// <param name="replacement"></param>
         void ReplaceWith(GameActorPosition original, GameActor replacement);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tilePosition"></param>
+        /// <returns>All objects from Object layer standing on given position.</returns>
         List<IGameObject> StayingOnTile(Vector2I tilePosition);
+
+        /// <summary>
+        /// List of newly added IAutoupdatables.
+        /// </summary>
+        List<IAutoupdateable> NewAutoupdateables { get; }
+
+        /// <summary>
+        /// This method adds actor to automatically updated queue.
+        /// </summary>
+        /// <param name="actor"></param>
+        void RegisterToAutoupdate(IAutoupdateable actor);
     }
 
     public class Atlas : IAtlas
     {
+        public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
-
         public List<IObjectLayer> ObjectLayers { get; private set; }
 
         private IEnumerable<ILayer<GameActor>> Layers
@@ -125,6 +157,7 @@ namespace World.ToyWorldCore
 
         public Atlas()
         {
+            NewAutoupdateables = new List<IAutoupdateable>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
             TileLayers = new List<ITileLayer>();
@@ -190,11 +223,9 @@ namespace World.ToyWorldCore
             return false;
         }
 
-        public IEnumerable<GameActorPosition> ActorsAt(float x, float y, LayerType type = LayerType.All,
+        public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All,
             float width = 0.5f)
         {
-            Vector2 position = new Vector2(x, y);
-
             List<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
             // for all layers except object layer
             IEnumerable<ILayer<GameActor>> selectedTileLayers = selectedLayers.Where(t => LayerType.TileLayers.HasFlag(t.LayerType));
@@ -243,7 +274,7 @@ namespace World.ToyWorldCore
             float distance = 1, float width = 0.5f) where T : class, IDirectable, IGameObject
         {
             Vector2 target = PositionInFrontOf(sender, distance);
-            IEnumerable<GameActorPosition> actorsInFrontOf = ActorsAt(target.X, target.Y, type, width);
+            IEnumerable<GameActorPosition> actorsInFrontOf = ActorsAt(target, type, width);
             return actorsInFrontOf;
         }
 
@@ -305,11 +336,8 @@ namespace World.ToyWorldCore
             {
                 throw new ArgumentException("atlas.ReplaceWith tries replace Tile with GameObject or GameObject with Tile");
             }
-            foreach (ILayer<GameActor> layer in Layers)
-            {
-                bool result = layer.ReplaceWith(original, replacement);
-                if (result) return;
-            }
+
+            GetLayer(original.Layer).ReplaceWith(original, replacement);
         }
 
         public List<IGameObject> StayingOnTile(Vector2I tilePosition)
@@ -321,12 +349,17 @@ namespace World.ToyWorldCore
         {
             Vector2 start = new Vector2(tilePosition);
             Vector2 end = new Vector2(tilePosition) + Vector2.One;
-            return position.X >= start.X && position.X <= end.X && position.X >= start.Y && position.Y <= end.Y;
+            return position.X >= start.X && position.X <= end.X && position.Y >= start.Y && position.Y <= end.Y;
         }
 
         public static Vector2I OnTile(Vector2 position)
         {
             return new Vector2I(Vector2.Floor(position));
+        }
+
+        public void RegisterToAutoupdate(IAutoupdateable actor)
+        {
+            NewAutoupdateables.Add(actor);
         }
     }
 }

@@ -126,7 +126,7 @@ namespace Render.RenderRequests
                     new Vector2I(
                         (int)Math.Ceiling(rect.Position.X),
                         (int)Math.Ceiling(rect.Position.Y)),
-                    (Vector2I)rect.Size);
+                    new Vector2I(rect.Size));
             }
         }
 

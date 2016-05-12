@@ -126,26 +126,26 @@ namespace ToyWorldTests.World
 
             AutoupdateRegister register = new AutoupdateRegister();
             Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
-            mock1.Setup(x => x.Update(It.IsAny<IAtlas>()));
+            mock1.Setup(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
             Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
-            mock2.Setup(x => x.Update(It.IsAny<IAtlas>()));
+            mock2.Setup(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
             register.Register(mock1.Object, 1);
             register.Register(mock2.Object, 2);
 
             // Act
             register.Tick();
-            register.UpdateItems(mockAtlas.Object);
+            register.UpdateItems(mockAtlas.Object, It.IsAny<TilesetTable>());
 
             // Assert
-            mock1.Verify(x => x.Update(It.IsAny<IAtlas>()));
-            mock2.Verify(x => x.Update(It.IsAny<IAtlas>()), Times.Never());
+            mock1.Verify(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
+            mock2.Verify(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()), Times.Never());
 
             // Act
             register.Tick();
-            register.UpdateItems(mockAtlas.Object);
+            register.UpdateItems(mockAtlas.Object, It.IsAny<TilesetTable>());
 
             // Assert
-            mock2.Verify(x => x.Update(It.IsAny<IAtlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
         }
 
         private class TestingAutoupdateRegister : AutoupdateRegister

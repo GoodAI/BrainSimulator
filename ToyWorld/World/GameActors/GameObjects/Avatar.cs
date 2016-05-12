@@ -110,7 +110,7 @@ namespace World.GameActors.GameObjects
             return tool;
         }
 
-        public void Update(IAtlas atlas)
+        public void Update(IAtlas atlas, ITilesetTable table)
         {
             Log.Instance.Debug("Energy of avatar {" +  Id + "} is " + Energy);
             LooseEnergy();
