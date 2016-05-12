@@ -151,6 +151,7 @@
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
     <Compile Include="Physics\ICollisionResolver.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="ToyWorldCore\Atlas.cs" />
     <Compile Include="ToyWorldCore\ITileLayer.cs" />
     <Compile Include="ToyWorldCore\MapLoader.cs" />
+    <Compile Include="ToyWorldCore\TileDetectorRegister.cs" />
     <Compile Include="ToyWorldCore\ToyWorld.cs" />
     <Compile Include="WorldInterfaces\IWorld.cs" />
   </ItemGroup>

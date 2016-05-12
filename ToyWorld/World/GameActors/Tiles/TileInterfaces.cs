@@ -1,5 +1,6 @@
 ﻿using VRageMath;
 using World.GameActions;
+using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
@@ -8,7 +9,13 @@ namespace World.GameActors.Tiles
     /// </summary>
     public interface IAutoupdateable
     {
-        void Update(IAtlas atlas);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="atlas"></param>
+        /// <param name="table"></param>
+        /// <returns>True if want to be updated again.</returns>
+        void Update(IAtlas atlas, ITilesetTable table);
 
         /// <summary>
         /// In steps. Set 0 for no update.
@@ -23,7 +30,7 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null);
     }
 
     public interface IPickable : IInteractable { }
@@ -33,5 +40,15 @@ namespace World.GameActors.Tiles
         bool AddToInventory(IPickable item);
 
         IPickable RemoveFromInventory();
+    }
+
+    public interface ITileDetector
+    {
+        /// <summary>
+        /// If this is true, object is not detected until center of object is within tile.
+        /// </summary>
+        bool RequiresCenterOfObject { get; }
+
+        void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable);
     }
 }

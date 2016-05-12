@@ -61,14 +61,14 @@ namespace ToyWorldTests.World
             toyWorld.Update();
 
             // Assert
-            mock1.Verify(x => x.Update(It.IsAny<Atlas>()));
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>()), Times.Never());
+            mock1.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()), Times.Never());
 
             // Act
             toyWorld.Update();
 
             // Assert
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()));
         }
 
         [Fact]

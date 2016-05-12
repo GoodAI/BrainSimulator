@@ -20,7 +20,7 @@ namespace World.GameActors.Tiles.Obstacle
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
         {
             if (!(gameAction is UsePickaxe))
                 return;
@@ -52,13 +52,13 @@ namespace World.GameActors.Tiles.Obstacle
             Health = 1f;
         }
 
-        public DamagedWall(float damage, TilesetTable tilesetTable, Vector2I position)
+        public DamagedWall(float damage, ITilesetTable tilesetTable, Vector2I position)
             : this(tilesetTable, position)
         {
             Health -= damage;
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, TilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
         {
             UsePickaxe action = gameAction as UsePickaxe;
             if (action != null)

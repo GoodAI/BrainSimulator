@@ -47,11 +47,16 @@ namespace World.ToyWorldCore
             m_register.MoveNext();
         }
 
-        public void UpdateItems(IAtlas atlas)
+        public void UpdateItems(IAtlas atlas, TilesetTable table)
         {
+            if (atlas.NewAutoupdateables != null)
+            {
+                CurrentUpdateRequests.AddRange(atlas.NewAutoupdateables);
+                atlas.NewAutoupdateables.Clear();
+            }
             foreach (IAutoupdateable actor in CurrentUpdateRequests)
             {
-                actor.Update(atlas);
+                actor.Update(atlas, table);
                 if (actor.NextUpdateAfter > 0)
                     Register(actor, actor.NextUpdateAfter);
             }

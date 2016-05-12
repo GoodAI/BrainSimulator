@@ -22,7 +22,12 @@ namespace World.ToyWorldCore
 
         public GameObject GetActorAt(int x, int y)
         {
-            return GetGameObjects(new RectangleF(x, y, 1, 1)).FirstOrDefault() as GameObject;
+            return GetGameObjects(new RectangleF(x + 0.5f, y + 0.5f, 1, 1)).FirstOrDefault() as GameObject;
+        }
+
+        public List<IGameObject> GetGameObjects(Vector2I tilePosition)
+        {
+            return GetGameObjects(new RectangleF(new Vector2(tilePosition) + Vector2.One / 2, Vector2.One));
         }
 
         public GameObject GetActorAt(Shape shape)

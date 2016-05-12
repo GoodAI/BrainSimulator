@@ -24,7 +24,7 @@ namespace World.GameActors.GameObjects
         /// <summary>
         /// Energy of Avatar. In [0,1].
         /// </summary>
-        float Energy { get; }
+        float Energy { get; set; }
 
         /// <summary>
         /// Tool in hand. Can be picked up and laid down.
@@ -49,7 +49,7 @@ namespace World.GameActors.GameObjects
         public float Energy
         {
             get { return m_energy; }
-            private set
+            set
             {
                 m_energy = value;
                 BoundEnergy();
@@ -110,7 +110,7 @@ namespace World.GameActors.GameObjects
             return tool;
         }
 
-        public void Update(IAtlas atlas)
+        public void Update(IAtlas atlas, ITilesetTable table)
         {
             Log.Instance.Debug("Energy of avatar {" +  Id + "} is " + Energy);
             LooseEnergy();
