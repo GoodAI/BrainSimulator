@@ -384,7 +384,6 @@ namespace GoodAI.BrainSimulator.Forms
                             int values_row = py % (th+1);                        // id int he tile
                             int values_col = px % (tw+1);                        // id in the tile
                             index = id_tile * ta + values_col + values_row * tw;
-                            System.Console.WriteLine("  :px=" + px + ", py=" + py + ", tile_row=" + tile_row + ", tile_col=" + tile_col + ",values_row = " + values_row + ",values_row = " + values_col);
                         }
                         else // RGB here
                         {
