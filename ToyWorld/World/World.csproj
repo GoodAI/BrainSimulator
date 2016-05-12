@@ -151,6 +151,7 @@
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\PoisonusTile.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
