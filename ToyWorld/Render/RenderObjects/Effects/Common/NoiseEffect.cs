@@ -13,12 +13,14 @@ namespace Render.RenderObjects.Effects
             mvp,
 
             sceneTexture,
-            timeMean,
+            viewportSize,
+            timeStep,
+            variance,
         }
 
 
         public NoiseEffect()
-            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetSmokeSrcStream("Noise.perlinNoise3D.glsl"))
+            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetSmokeSrcStream("Noise.random.glsl"))
         { }
 
         private static Stream GetSmokeSrcStream(string path)
@@ -27,25 +29,24 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        public void ModelWorldUniform(ref Matrix val)
-        {
-            SetUniformMatrix4(base[Uniforms.mw], val);
-        }
-
-        public void ModelViewProjectionUniform(ref Matrix val)
-        {
-            SetUniformMatrix4(base[Uniforms.mvp], val);
-        }
-
-
         public void SceneTextureUniform(int val)
         {
             SetUniform1(base[Uniforms.sceneTexture], val);
         }
 
-        public void TimeMeanUniform(Vector4 val)
+        public void ViewportSizeUniform(Vector2I val)
         {
-            SetUniform4(base[Uniforms.timeMean], val);
+            SetUniform2(base[Uniforms.viewportSize], val);
+        }
+
+        public void TimeStepUniform(Vector2 val)
+        {
+            SetUniform2(base[Uniforms.timeStep], val);
+        }
+
+        public void VarianceUniform(float val)
+        {
+            SetUniform1(base[Uniforms.variance], val);
         }
     }
 }

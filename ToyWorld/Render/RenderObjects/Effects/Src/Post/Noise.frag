@@ -3,11 +3,13 @@
 
 uniform sampler2D sceneTexture;
 
-uniform vec4 noiseColor = vec4(1, 1, 1, 1);
+uniform ivec2 viewportSize = ivec2(1024, 1024);
+
 // Time			  -- third dimension for perlin noise
 // Step			  -- amount between time steps
-// Mean			  -- noise results are in interval (0,2), values are scaled from (0,1) to (0,mean) and from (1,2) to (mean,1)
-uniform vec4 timeMean = vec4(0, 0.01f, 0.8f, 0);
+uniform vec2 timeStep = vec2(0, 0.01f);
+// Variance		  -- the noise variance
+uniform float variance = 1;
 
 
 smooth in vec2 f_worldPos;
@@ -15,20 +17,27 @@ smooth in vec2 f_worldPos;
 layout(location = 0) out vec4 out_color;
 
 
-float cnoise(vec3 P);
+float rand(vec2 co);
+vec2 gaussrand(vec2 randoms);
 
 void main()
 {
-	float noise = 1 + cnoise(vec3(f_worldPos, timeMean.x)); // Should be between (-1,1), offset to (0,2)
-	float mean = timeMean.z;
+	float fragIdx = gl_FragCoord.y * viewportSize.x + gl_FragCoord.x;
 
-	if (noise < 1f)
-		// scale (0,1) to (0,mean)
-		noise *= mean;
-	else
-		// offset (1,2) to (0,1), scale to (1-mean), offset to (mean,1)
-		noise = (noise - 1f) * (1 - mean) + mean;
+	vec4 rands;
+	float step = timeStep.y * 0.2f; // pre-multiply step -- we want to get 4 unique numbers within the interval (timestep.x, timestep.x + timestep.y)
+	vec2 seed = vec2(timeStep.x, rand(vec2(fragIdx, fragIdx))); // scatter fragIdx to reduce artifacts
 
-	out_color = noiseColor;
-	out_color.w *= noise;
+	// Generate 4 uniform randoms, use unique seed from within the timestep interval
+	for (int i = 0; i < 4; ++i)
+	{
+		rands[i] = rand(seed);
+		seed.x += step;
+	}
+
+	// Generate 4 gaussian randoms
+	vec4 gaussRands = vec4(gaussrand(rands.xy), gaussrand(rands.zw)) * variance * 0.1f;
+
+	out_color = texture(sceneTexture, gl_FragCoord.xy / viewportSize);
+	out_color.xyz = out_color.xyz + gaussRands.xyz;
 }
