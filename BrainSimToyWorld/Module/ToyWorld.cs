@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
+using ToyWorldFactory;
 using YAXLib;
 
 namespace GoodAI.ToyWorld
@@ -256,7 +257,7 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
-            Signals.Count = GameCtrl.GetSignals().Count;
+            Signals.Count = GameFactory.GetSignalCount();
         }
     }
 }

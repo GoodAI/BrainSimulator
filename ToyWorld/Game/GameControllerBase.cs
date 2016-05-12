@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
 using Render.Renderer;
@@ -10,7 +8,6 @@ using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using World.GameActors.GameObjects;
 using World.ToyWorldCore;
-using World.WorldInterfaces;
 
 namespace Game
 {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
@@ -18,6 +18,7 @@ namespace World.ToyWorldCore
     public class ToyWorld : IWorld
     {
         private ICollisionResolver m_collisionResolver;
+        public static int SignalCount = 2;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -60,8 +61,12 @@ namespace World.ToyWorldCore
             };
 
             SignalDispatchers = new Dictionary<string, Func<IAtlas, float>>();
+
             SignalDispatchers.Add("Item", inventoryItem);
             SignalDispatchers.Add("Energy", avatarEnergy);
+            // if you add a new signal, change the SignalCount variable accordingly
+
+            Debug.Assert(SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
         }
 
         private void InitAtlas(Map tmxDeserializedMap)
