@@ -20,10 +20,10 @@ namespace Render.RenderObjects.Effects
 
 
         public NoiseEffect()
-            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetSmokeSrcStream("Noise.random.glsl"))
+            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetAddendumSrcStream("Noise.random.glsl"))
         { }
 
-        private static Stream GetSmokeSrcStream(string path)
+        private static Stream GetAddendumSrcStream(string path)
         {
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
         }

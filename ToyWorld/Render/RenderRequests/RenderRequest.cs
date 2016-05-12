@@ -359,7 +359,7 @@ namespace Render.RenderRequests
                     m_fbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
                     if (DrawNoise)
-                        m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform
+                        m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
                 }
 
                 if (MultisampleLevel > 0)
@@ -408,7 +408,6 @@ namespace Render.RenderRequests
                     m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
                 m_noiseEffect.ViewportSizeUniform((Vector2I)Resolution);
-                m_noiseEffect.VarianceUniform(NoiseIntensityCoefficient);
                 m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
             }
 
@@ -587,9 +586,10 @@ namespace Render.RenderRequests
                 renderer.TextureManager.Bind(m_fbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition);
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
-                double step = 0.005d * SmokeTransformationSpeedCoefficient;
+                double step = 0.005d;
                 double seed = renderer.SimTime * step % 3e6d;
                 m_noiseEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
+                m_noiseEffect.VarianceUniform(NoiseIntensityCoefficient);
 
                 m_quad.Draw();
             }

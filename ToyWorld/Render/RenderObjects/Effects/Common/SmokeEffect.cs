@@ -19,10 +19,10 @@ namespace Render.RenderObjects.Effects
 
 
         public SmokeEffect()
-            : base(typeof(Uniforms), "Post.Smoke.vert", "Post.Smoke.frag", fragAddendum: GetSmokeSrcStream("Noise.simplexNoise3D.glsl"))
+            : base(typeof(Uniforms), "Post.Smoke.vert", "Post.Smoke.frag", fragAddendum: GetAddendumSrcStream("Noise.simplexNoise3D.glsl"))
         { }
 
-        private static Stream GetSmokeSrcStream(string path)
+        private static Stream GetAddendumSrcStream(string path)
         {
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
         }

@@ -5,8 +5,8 @@ uniform sampler2D sceneTexture;
 
 uniform ivec2 viewportSize = ivec2(1024, 1024);
 
-// Time			  -- third dimension for perlin noise
-// Step			  -- amount between time steps
+// Time			  -- this is our seed base along with the fragment's index
+// Step			  -- amount between time steps, used to generate unique (wrt. multiple simulation steps) seeds from Time
 uniform vec2 timeStep = vec2(0, 0.01f);
 // Variance		  -- the noise variance
 uniform float variance = 1;
@@ -36,8 +36,8 @@ void main()
 	}
 
 	// Generate 4 gaussian randoms
-	vec4 gaussRands = vec4(gaussrand(rands.xy), gaussrand(rands.zw)) * variance * 0.1f;
+	vec4 gaussRands = vec4(gaussrand(rands.xy), gaussrand(rands.zw)) * 0.1f * variance;
 
 	out_color = texture(sceneTexture, gl_FragCoord.xy / viewportSize);
-	out_color.xyz = out_color.xyz + gaussRands.xyz;
+	out_color.xyz = out_color.xyz + gaussRands.xyz; // There is no blending here (this is post-process) -- don't pre-multiply by alpha
 }
