@@ -52,6 +52,12 @@ namespace GoodAI.ToyWorld
                         rr.Size = new SizeF(Owner.FoVSize, Owner.FoVSize);
                         rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
                         rr.MultisampleLevel = Owner.FoVMultisampleLevel;
+                        rr.DrawNoise = Owner.DrawNoise;
+                        rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
+                        rr.DrawSmoke = Owner.DrawSmoke;
+                        rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
+                        rr.SmokeScaleCoefficient = Owner.SmokeScale;
+                        rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
                     });
 
                 Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
@@ -61,6 +67,12 @@ namespace GoodAI.ToyWorld
                         rr.Size = new SizeF(Owner.FoFSize, Owner.FoFSize);
                         rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
                         rr.MultisampleLevel = Owner.FoFMultisampleLevel;
+                        rr.DrawNoise = Owner.DrawNoise;
+                        rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
+                        rr.DrawSmoke = Owner.DrawSmoke;
+                        rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
+                        rr.SmokeScaleCoefficient = Owner.SmokeScale;
+                        rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
                     });
 
                 Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
@@ -70,6 +82,7 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.ResolutionWidth, Owner.ResolutionHeight);
                         rr.MultisampleLevel = Owner.FreeViewMultisampleLevel;
                         rr.SetPositionCenter(Owner.CenterX, Owner.CenterY);
+                        // no noise or smoke, this view is for the researcher
                     });
 
                 Owner.WorldInitialized(this, EventArgs.Empty);

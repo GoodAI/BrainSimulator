@@ -13,15 +13,19 @@ float rand(vec2 co)
 
 #define M_PI 3.1415926535897932384626433832795
 
+// * 0.9998 + 0.0001: to avoid numerical instability when dealing with random numbers too close to 0 or 1
+#define STABILIZE(x) ((x) * 0.9998 + 0.0001)
+
 // Box-Muller method for sampling from the normal distribution
 // http://en.wikipedia.org/wiki/Normal_distribution#Generating_values_from_normal_distribution
 // This method requires 2 uniform [0,1] random inputs and produces 2 
 vec2 gaussrand(vec2 randoms)
 {
-	float v1 = sqrt(-2.0 * log(randoms.x));
-	float v2 = 2.0 * M_PI * randoms.y;
+	float v1 = sqrt(-2.0 * log(STABILIZE(randoms.x)));
+	float v2 = 2.0 * M_PI * STABILIZE(randoms.y);
 
 	return vec2(
 		v1 * sin(v2),
 		v1 * cos(v2));
 }
+

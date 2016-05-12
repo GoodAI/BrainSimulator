@@ -90,6 +90,30 @@ namespace GoodAI.ToyWorld
         public string SaveFile { get; set; }
 
 
+        [MyBrowsable, Category("Noise"), DisplayName(" Draw noise")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool DrawNoise { get; set; }
+
+        [MyBrowsable, Category("Noise"), DisplayName("Noise intensity")]
+        [YAXSerializableField(DefaultValue = 0.5f)]
+        public float NoiseIntensity { get; set; }
+
+        [MyBrowsable, Category("Smoke"), DisplayName(" Draw smoke")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool DrawSmoke { get; set; }
+
+        [MyBrowsable, Category("Smoke"), DisplayName("Smoke intensity")]
+        [YAXSerializableField(DefaultValue = 0.5f)]
+        public float SmokeIntensity { get; set; }
+
+        [MyBrowsable, Category("Smoke"), DisplayName("Smoke scale")]
+        [YAXSerializableField(DefaultValue = 1.0f)]
+        public float SmokeScale { get; set; }
+
+        [MyBrowsable, Category("Smoke"), DisplayName("Smoke transf. speed")]
+        [YAXSerializableField(DefaultValue = 1.0f)]
+        public float SmokeTransformationSpeed { get; set; }
+
         [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
         [YAXSerializableField(DefaultValue = 3)]
         public int FoFSize { get; set; }
