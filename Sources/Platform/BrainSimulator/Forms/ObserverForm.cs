@@ -364,7 +364,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     int px = (int)pixelPos.x;
                     int py = (int)pixelPos.y;
-                    int index = py * Observer.TextureWidth + px; // Normal value if not tensor observ is used (tiles + borders between tiles)
+                    int index;
                     if (mbObserver.ObserveTensors == true)
                     {
                         if (mbObserver.Method == RenderingMethod.RedGreenScale)
@@ -390,6 +390,10 @@ namespace GoodAI.BrainSimulator.Forms
                             peekLabel.Text = "N/A";
                             return;
                         }
+                    }
+                    else
+                    {
+                         index = py * Observer.TextureWidth + px; // Normal value if not tensor observ is used (tiles + borders between tiles)
                     }
                     
 
