@@ -73,6 +73,8 @@ namespace ToyWorldTests.Render
                     if (key == Key.Number1)
                         rr.DrawSmoke = !rr.DrawSmoke;
                     if (key == Key.Number2)
+                        rr.DrawNoise = !rr.DrawNoise;
+                    if (key == Key.Number3)
                         rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
                 });
 
