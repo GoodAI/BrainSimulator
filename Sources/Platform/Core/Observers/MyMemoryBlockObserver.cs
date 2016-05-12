@@ -198,7 +198,7 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
-        
+
         public int TilesInColumn
         {
             get;
@@ -217,7 +217,7 @@ namespace GoodAI.Core.Observers
                 }
             }
         }
-        
+
         public int TileHeight
         {
             get { return m_tileHeight; }
@@ -442,8 +442,9 @@ namespace GoodAI.Core.Observers
             if (TileWidth * TileHeight * TilesInRow > effectivePixelsDisplayed)
             {
                 TilesInRow = effectivePixelsDisplayed / (TileWidth * TileHeight);
+                String message = " (Parsed from " + (UseCustomDimensions ? "CustomDimensions)" : "MemoryBlock.Dims)");
                 MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
-                    "TilesInRow too big, adjusting to the maximum value of " + TilesInRow);
+                    "TilesInRow too big, adjusting to the max. value " + TilesInRow+"\n\t\t..for TileWidth="+TileWidth+", TileHeight="+TileHeight+message);
             }
 
             int noBlocks = effectivePixelsDisplayed / (TileWidth * TileHeight);
