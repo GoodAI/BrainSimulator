@@ -256,7 +256,7 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
-            Signals.Count = GameCtrl.GetSignals().Length;
+            Signals.Count = GameCtrl.GetSignals().Count;
         }
     }
 }

@@ -150,9 +150,9 @@ namespace Game
             return m_avatarControllers.Keys.ToArray();
         }
 
-        public float[] GetSignals()
+        public Dictionary<string, float> GetSignals()
         {
-            return World.SignalDispatchers.Select(x => x(World.Atlas)).ToArray();
+            return World.SignalDispatchers.ToDictionary(pair => pair.Key, pair => pair.Value(World.Atlas));
         }
 
         #endregion

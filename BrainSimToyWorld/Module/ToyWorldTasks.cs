@@ -327,7 +327,7 @@ namespace GoodAI.ToyWorld
 
             private void ObtainSignals()
             {
-                float[] signals = Owner.GameCtrl.GetSignals();
+                float[] signals = Owner.GameCtrl.GetSignals().Values.ToArray();
                 Array.Copy(signals, 0, Owner.Signals.Host, 0, signals.Length);
                 Owner.Signals.SafeCopyToDevice();
             }

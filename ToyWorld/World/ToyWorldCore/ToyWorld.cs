@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
@@ -24,7 +25,7 @@ namespace World.ToyWorldCore
         public Atlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
-        public List<Func<IAtlas, float>> SignalDispatchers { get; protected set; }
+        public Dictionary<string, Func<IAtlas, float>> SignalDispatchers { get; protected set; }
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
         {
@@ -52,7 +53,15 @@ namespace World.ToyWorldCore
                 return tool != null ? tool.TilesetId : 0;
             };
 
-            SignalDispatchers = new List<Func<IAtlas, float>> { inventoryItem };
+            Func<IAtlas, float> avatarEnergy = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.Energy : -1;
+            };
+
+            SignalDispatchers = new Dictionary<string, Func<IAtlas, float>>();
+            SignalDispatchers.Add("Item", inventoryItem);
+            SignalDispatchers.Add("Energy", avatarEnergy);
         }
 
         private void InitAtlas(Map tmxDeserializedMap)

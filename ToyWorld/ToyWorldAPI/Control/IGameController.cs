@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using GoodAI.ToyWorldAPI;
 
 namespace GoodAI.ToyWorld.Control
@@ -52,6 +53,6 @@ namespace GoodAI.ToyWorld.Control
         /// Returns results from signal dispatchers of IWorld
         /// </summary>
         /// <returns></returns>
-        float[] GetSignals();
+        Dictionary<string, float> GetSignals();
     }
 }
