@@ -82,16 +82,32 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        Color NoiseColor { get; set; }
+        float NoiseIntensityCoefficient { get; set; }
+
 
         /// <summary>
         /// 
         /// </summary>
-        float NoiseTransformationSpeedCoefficient { get; set; }
+        bool DrawSmoke { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        float NoiseMeanOffset { get; set; }
+        Color SmokeColor { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float SmokeTransformationSpeedCoefficient { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float SmokeIntensityCoefficient { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float SmokeScaleCoefficient { get; set; }
     }
 }

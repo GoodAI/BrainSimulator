@@ -23,16 +23,20 @@ namespace Render.RenderRequests
             Size = 1,
             Resolution = 1 << 1,
             Image = 1 << 2,
-            Noise = 1 << 3,
+            Smoke = 1 << 3,
+            Noise = 1 << 4,
         }
 
 
         #region Fields
 
+        const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
+
         private BasicFbo m_fbo;
         private BasicFboMultisample m_fboMs;
 
         private NoEffectOffset m_effect;
+        private SmokeEffect m_smokeEffect;
         private NoiseEffect m_noiseEffect;
 
         private TilesetTexture m_tex;
@@ -47,7 +51,6 @@ namespace Render.RenderRequests
         private Matrix m_viewProjectionMatrix;
 
         private DirtyParams m_dirtyParams;
-        private double m_simTime;
 
         #endregion
 
@@ -66,9 +69,14 @@ namespace Render.RenderRequests
         {
             if (m_fbo != null)
                 m_fbo.Dispose();
+            if (m_fboMs != null)
+                m_fboMs.Dispose();
 
             m_effect.Dispose();
-            m_noiseEffect.Dispose();
+            if (m_smokeEffect != null)
+                m_smokeEffect.Dispose();
+            if (m_noiseEffect != null)
+                m_noiseEffect.Dispose();
 
             m_tex.Dispose();
 
@@ -221,9 +229,13 @@ namespace Render.RenderRequests
 
 
         private bool m_drawNoise;
-        private System.Drawing.Color m_noiseColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
-        private float m_noiseTransformationSpeedCoefficient = 1f;
-        private float m_noiseMeanOffset = 0.6f;
+        private float m_noiseIntensityCoefficient = 1.0f;
+
+        private bool m_drawSmoke;
+        private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
+        private float m_smokeTransformationSpeedCoefficient = 1f;
+        private float m_smokeIntensityCoefficient = 1f;
+        private float m_smokeScaleCoefficient = 1f;
 
         public bool DrawNoise
         {
@@ -234,32 +246,44 @@ namespace Render.RenderRequests
                 m_dirtyParams |= DirtyParams.Noise;
             }
         }
-        public System.Drawing.Color NoiseColor
+        public float NoiseIntensityCoefficient
         {
-            get { return m_noiseColor; }
+            get { return m_noiseIntensityCoefficient; }
+            set { m_noiseIntensityCoefficient = value; }
+        }
+
+        public bool DrawSmoke
+        {
+            get { return m_drawSmoke; }
             set
             {
-                m_noiseColor = value;
-                m_dirtyParams |= DirtyParams.Noise;
+                m_drawSmoke = value;
+                m_dirtyParams |= DirtyParams.Smoke;
             }
         }
-        public float NoiseTransformationSpeedCoefficient
+        public System.Drawing.Color SmokeColor
         {
-            get { return m_noiseTransformationSpeedCoefficient; }
+            get { return m_smokeColor; }
             set
             {
-                m_noiseTransformationSpeedCoefficient = value;
-                m_dirtyParams |= DirtyParams.Noise;
+                m_smokeColor = value;
+                m_dirtyParams |= DirtyParams.Smoke;
             }
         }
-        public float NoiseMeanOffset
+        public float SmokeTransformationSpeedCoefficient
         {
-            get { return m_noiseMeanOffset; }
-            set
-            {
-                m_noiseMeanOffset = value;
-                m_dirtyParams |= DirtyParams.Noise;
-            }
+            get { return m_smokeTransformationSpeedCoefficient; }
+            set { m_smokeTransformationSpeedCoefficient = value; }
+        }
+        public float SmokeIntensityCoefficient
+        {
+            get { return m_smokeIntensityCoefficient; }
+            set { m_smokeIntensityCoefficient = value; }
+        }
+        public float SmokeScaleCoefficient
+        {
+            get { return m_smokeScaleCoefficient; }
+            set { m_smokeScaleCoefficient = value; }
         }
 
         #endregion
@@ -271,7 +295,6 @@ namespace Render.RenderRequests
             // Setup color and blending
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
-            GL.Enable(EnableCap.Blend);
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
@@ -284,9 +307,6 @@ namespace Render.RenderRequests
                                                     world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
             
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-
-            // Set up the noise shader
-            m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -337,6 +357,9 @@ namespace Render.RenderRequests
                         m_fbo.Dispose();
 
                     m_fbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+
+                    if (DrawNoise)
+                        m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
                 }
 
                 if (MultisampleLevel > 0)
@@ -353,7 +376,7 @@ namespace Render.RenderRequests
 
                         m_fboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
                     }
-                    // no need to enable Multisample capability, it is enabled automatically
+                    // No need to enable Multisample capability, it is enabled automatically
                     // GL.Enable(EnableCap.Multisample);
                 }
             }
@@ -372,10 +395,20 @@ namespace Render.RenderRequests
                         m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
                 }
             }
+            if (m_dirtyParams.HasFlag(DirtyParams.Smoke))
+            {
+                if (m_smokeEffect == null)
+                    m_smokeEffect = renderer.EffectManager.Get<SmokeEffect>();
+                renderer.EffectManager.Use(m_smokeEffect); // Need to use the effect to set uniforms
+                m_smokeEffect.SmokeColorUniform(new Vector4(SmokeColor.R, SmokeColor.G, SmokeColor.B, SmokeColor.A) / 255f);
+            }
             if (m_dirtyParams.HasFlag(DirtyParams.Noise))
             {
+                if (m_noiseEffect == null)
+                    m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-                m_noiseEffect.NoiseColorUniform(new Vector4(NoiseColor.R, NoiseColor.G, NoiseColor.B, NoiseColor.A) / 255f);
+                m_noiseEffect.ViewportSizeUniform((Vector2I)Resolution);
+                m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
             }
 
             m_dirtyParams = DirtyParams.None;
@@ -418,6 +451,7 @@ namespace Render.RenderRequests
                 m_fbo.Bind();
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Enable(EnableCap.Blend);
 
             // View and proj transforms
             m_viewProjectionMatrix = GetViewMatrix(PositionCenterV);
@@ -433,6 +467,22 @@ namespace Render.RenderRequests
 
             // Draw effects
             DrawEffects(renderer);
+
+            if (MultisampleLevel > 0)
+            {
+                // We have to blit to another fbo to resolve multisampling before readPixels and postprocessing, unfortunatelly
+                m_fboMs.Bind(FramebufferTarget.ReadFramebuffer);
+                m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
+                GL.BlitFramebuffer(
+                    0, 0, m_fboMs.Size.X, m_fboMs.Size.Y,
+                    0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                    ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
+                    BlitFramebufferFilter.Linear);
+            }
+
+            // Apply post-processing
+            GL.Disable(EnableCap.Blend);
+            ApplyPostProcessingEffects(renderer);
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
@@ -501,12 +551,9 @@ namespace Render.RenderRequests
 
         private void DrawEffects(RendererBase renderer)
         {
-            if (DrawNoise)
+            if (DrawSmoke)
             {
-                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
-                m_simTime = (m_simTime + 0.005f * NoiseTransformationSpeedCoefficient) % 3e15;
-
-                renderer.EffectManager.Use(m_noiseEffect);
+                renderer.EffectManager.Use(m_smokeEffect);
 
                 // Set up transformation to world and screen space for noise effect
                 Matrix transform = Matrix.Identity;
@@ -514,12 +561,16 @@ namespace Render.RenderRequests
                 transform *= Matrix.CreateScale(ViewV.Size / 2);
                 // World transform -- move center to view center
                 transform *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
-                m_noiseEffect.ModelWorldUniform(ref transform);
+                m_smokeEffect.ModelWorldUniform(ref transform);
                 // View and projection transforms
                 transform *= m_viewProjectionMatrix;
-                m_noiseEffect.ModelViewProjectionUniform(ref transform);
+                m_smokeEffect.ModelViewProjectionUniform(ref transform);
 
-                m_noiseEffect.TimeMeanUniform(new Vector4((float)m_simTime, NoiseMeanOffset, 0, 0));
+                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
+                double step = 0.005d * SmokeTransformationSpeedCoefficient;
+                double seed = renderer.SimTime * step % 3e6d;
+                m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
+                m_smokeEffect.MeanScaleUniform(new Vector2(SmokeIntensityCoefficient, SmokeScaleCoefficient));
 
                 m_quad.Draw();
             }
@@ -527,20 +578,27 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private void GatherAndDistributeData(RendererBase renderer)
+        private void ApplyPostProcessingEffects(RendererBase renderer)
         {
-            if (MultisampleLevel > 0)
+            if (DrawNoise)
             {
-                // We have to blit to another fbo to resolve multisampling before readPixels, unfortunatelly
-                m_fboMs.Bind(FramebufferTarget.ReadFramebuffer);
-                m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
-                GL.BlitFramebuffer(
-                    0, 0, m_fboMs.Size.X, m_fboMs.Size.Y,
-                    0, 0, m_fbo.Size.X, m_fbo.Size.Y,
-                    ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
-                    BlitFramebufferFilter.Linear);
+                renderer.EffectManager.Use(m_noiseEffect);
+                renderer.TextureManager.Bind(m_fbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition);
+
+                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
+                double step = 0.005d;
+                double seed = renderer.SimTime * step % 3e6d;
+                m_noiseEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
+                m_noiseEffect.VarianceUniform(NoiseIntensityCoefficient);
+
+                m_quad.Draw();
             }
 
+            // more stuffs
+        }
+
+        private void GatherAndDistributeData(RendererBase renderer)
+        {
             // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
             m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);

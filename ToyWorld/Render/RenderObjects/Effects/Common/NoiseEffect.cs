@@ -12,40 +12,41 @@ namespace Render.RenderObjects.Effects
             mw,
             mvp,
 
-            noiseColor,
-            timeMean,
+            sceneTexture,
+            viewportSize,
+            timeStep,
+            variance,
         }
 
 
         public NoiseEffect()
-            : base(typeof(Uniforms), "Noise.vert", "Noise.frag", fragAddendum: GetNoiseSrcStream("Noise.perlinNoise3D.glsl"))
+            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetAddendumSrcStream("Noise.random.glsl"))
         { }
 
-        private static Stream GetNoiseSrcStream(string path)
+        private static Stream GetAddendumSrcStream(string path)
         {
             return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
         }
 
 
-        public void ModelWorldUniform(ref Matrix val)
+        public void SceneTextureUniform(int val)
         {
-            SetUniformMatrix4(base[Uniforms.mw], val);
+            SetUniform1(base[Uniforms.sceneTexture], val);
         }
 
-        public void ModelViewProjectionUniform(ref Matrix val)
+        public void ViewportSizeUniform(Vector2I val)
         {
-            SetUniformMatrix4(base[Uniforms.mvp], val);
+            SetUniform2(base[Uniforms.viewportSize], val);
         }
 
-
-        public void NoiseColorUniform(Vector4 val)
+        public void TimeStepUniform(Vector2 val)
         {
-            SetUniform4(base[Uniforms.noiseColor], val);
+            SetUniform2(base[Uniforms.timeStep], val);
         }
 
-        public void TimeMeanUniform(Vector4 val)
+        public void VarianceUniform(float val)
         {
-            SetUniform4(base[Uniforms.timeMean], val);
+            SetUniform1(base[Uniforms.variance], val);
         }
     }
 }

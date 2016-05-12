@@ -71,8 +71,10 @@ namespace ToyWorldTests.Render
                 key =>
                 {
                     if (key == Key.Number1)
-                        rr.DrawNoise = !rr.DrawNoise;
+                        rr.DrawSmoke = !rr.DrawSmoke;
                     if (key == Key.Number2)
+                        rr.DrawNoise = !rr.DrawNoise;
+                    if (key == Key.Number3)
                         rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
                 });
 
@@ -81,7 +83,7 @@ namespace ToyWorldTests.Render
             {
                 try
                 {
-                    Task.Delay(15, token).Wait(token);
+                    //Task.Delay(15, token).Wait(token);
                 }
                 catch (OperationCanceledException)
                 {

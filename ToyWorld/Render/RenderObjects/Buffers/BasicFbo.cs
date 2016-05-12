@@ -19,5 +19,10 @@ namespace Render.RenderObjects.Buffers
         }
 
         #endregion
+
+        public TextureBase this[FramebufferAttachment index]
+        {
+            get { return AttachedTextures[index]; }
+        }
     }
 }

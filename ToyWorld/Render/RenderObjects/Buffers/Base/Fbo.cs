@@ -12,7 +12,7 @@ namespace Render.RenderObjects.Buffers
     {
         private readonly uint m_handle;
 
-        private readonly Dictionary<FramebufferAttachment, TextureBase> m_attachedTextures =
+        protected readonly Dictionary<FramebufferAttachment, TextureBase> AttachedTextures =
             new Dictionary<FramebufferAttachment, TextureBase>();
 
         public Vector2I Size { get; private set; }
@@ -29,7 +29,7 @@ namespace Render.RenderObjects.Buffers
         {
             GL.DeleteFramebuffer(m_handle);
 
-            m_attachedTextures.Clear();
+            AttachedTextures.Clear();
         }
 
         #endregion
@@ -43,20 +43,20 @@ namespace Render.RenderObjects.Buffers
             if (texture == null)
             {
                 GL.FramebufferTexture(FramebufferTarget.Framebuffer, attachmentTarget, 0, 0);
-                Debug.Assert(m_attachedTextures.ContainsKey(attachmentTarget));
-                m_attachedTextures.Remove(attachmentTarget);
+                Debug.Assert(AttachedTextures.ContainsKey(attachmentTarget));
+                AttachedTextures.Remove(attachmentTarget);
                 return;
             }
 
             Debug.Assert(
-                m_attachedTextures.All(pair => pair.Value.Size == texture.Size),
+                AttachedTextures.All(pair => pair.Value.Size == texture.Size),
                 "All render target sizes for a framebuffer object must be equal.");
             Size = texture.Size;
 
             texture.Bind();
 
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, attachmentTarget, texture.Target, texture.Handle, 0);
-            m_attachedTextures[attachmentTarget] = texture;
+            AttachedTextures[attachmentTarget] = texture;
         }
 
         #endregion

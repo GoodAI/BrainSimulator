@@ -74,6 +74,7 @@
     <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
     <Compile Include="RenderObjects\Effects\Common\NoiseEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Common\SmokeEffect.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
@@ -124,8 +125,8 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.frag" />
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.vert" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
@@ -133,6 +134,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.frag" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.vert" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\random.glsl" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
