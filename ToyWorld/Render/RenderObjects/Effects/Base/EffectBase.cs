@@ -106,6 +106,11 @@ namespace Render.RenderObjects.Effects
             GL.Uniform1(pos, val);
         }
 
+        protected void SetUniform1(int pos, float val)
+        {
+            GL.Uniform1(pos, val);
+        }
+
         protected void SetUniform2(int pos, Vector2I val)
         {
             GL.Uniform2(pos, val.X, val.Y);
