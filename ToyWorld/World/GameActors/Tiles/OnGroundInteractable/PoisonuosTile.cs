@@ -6,19 +6,19 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class PoisonusTile : DynamicTile, IAutoupdateable, ITileDetector
+    public class PoisonuosTile : DynamicTile, IAutoupdateable, ITileDetector
     {
         private float ENERGY_FOR_STEP_OR_WAIT_A_SECOND_ON_POISON = 0.1f;
         public int NextUpdateAfter { get; private set; }
         public bool SomeoneOnTile { get; set; }
         public bool RequiresCenterOfObject { get; private set; }
 
-        public PoisonusTile(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public PoisonuosTile(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
             Ctor();
         }
 
-        public PoisonusTile(int tileType, Vector2I position) : base(tileType, position)
+        public PoisonuosTile(int tileType, Vector2I position) : base(tileType, position)
         {
             Ctor();
         }
