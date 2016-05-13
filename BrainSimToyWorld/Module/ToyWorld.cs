@@ -3,6 +3,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
@@ -12,7 +13,7 @@ using YAXLib;
 
 namespace GoodAI.ToyWorld
 {
-    public partial class ToyWorld : MyWorld
+    public partial class ToyWorld : MyWorld, IMyVariableBranchViewNodeBase
     {
         private readonly int m_controlsCount = 13;
 
@@ -51,13 +52,6 @@ namespace GoodAI.ToyWorld
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
-        }
-
-        [MyOutputBlock(4)]
-        public MyMemoryBlock<float> Signals
-        {
-            get { return GetOutput(4); }
-            set { SetOutput(4, value); }
         }
 
         [MyInputBlock(0)]
@@ -206,6 +200,23 @@ namespace GoodAI.ToyWorld
                 TilesetTable = GetDllDirectory() + @"\res\GameActors\Tiles\Tilesets\TilesetTable.csv";
             if (SaveFile == null)
                 SaveFile = GetDllDirectory() + @"\res\Worlds\mockup999_pantry_world.tmx";
+
+            int oldOutputBranches = OutputBranches;
+            List<MyAbstractMemoryBlock> backup = new List<MyAbstractMemoryBlock>();
+            for (int i = 0; i < oldOutputBranches; ++i)
+                backup.Add(m_outputs[i]);
+
+            OutputBranches = 4 + GameFactory.GetSignalCount();
+
+            for (int i = 0; i < oldOutputBranches; ++i)
+                m_outputs[i] = backup[i];
+
+            for (int i = oldOutputBranches; i < OutputBranches; ++i)
+            {
+                MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+                mb.Name = "TEST" + i;
+                m_outputs[i] = mb;
+            }
         }
 
         public override void Validate(MyValidator validator)
@@ -257,7 +268,6 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
-            Signals.Count = GameFactory.GetSignalCount();
         }
     }
 }
