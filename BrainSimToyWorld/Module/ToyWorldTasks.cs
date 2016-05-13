@@ -327,7 +327,17 @@ namespace GoodAI.ToyWorld
 
             private void ObtainSignals()
             {
+                int i = 0;
+                foreach (KeyValuePair<string, float> signal in Owner.GameCtrl.GetSignals())
+                {
+                    int offset = Owner.OutputBranches - Owner.GameCtrl.GetSignals().Count;
+                    Owner.Owner.Network.GroupInputNodes[offset + i].Name = signal.Key;
+                    Owner.Owner.Network.GroupInputNodes[offset + i].Updated();
 
+                    (Owner.m_outputs[offset + i] as MyMemoryBlock<float>).Host[0] = signal.Value;
+                    Owner.m_outputs[offset + i].SafeCopyToDevice();
+                    i++;
+                }
             }
 
             private void SendMessageToBrain()

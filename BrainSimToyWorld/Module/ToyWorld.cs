@@ -215,6 +215,7 @@ namespace GoodAI.ToyWorld
             {
                 MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
                 mb.Name = "TEST" + i;
+                mb.Count = 1;
                 m_outputs[i] = mb;
             }
         }
