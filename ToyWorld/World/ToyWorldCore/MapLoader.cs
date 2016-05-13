@@ -73,7 +73,14 @@ namespace World.ToyWorldCore
                 }
             }
 
+            SetTileRelations(atlas);
+
             return atlas;
+        }
+
+        private static void SetTileRelations(IAtlas atlas)
+        {
+            // TODO now
         }
 
         private static IObjectLayer FillObjectLayer(
@@ -87,17 +94,16 @@ namespace World.ToyWorldCore
             int worldHeight
             )
         {
-            objectLayer.TmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
-            objectLayer.TmxMapObjects.ForEach(TransformObjectPosition);
+            List<TmxObject> tmxMapObjects = objectLayer.TmxMapObjects;
+            tmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
+            tmxMapObjects.ForEach(TransformObjectPosition);
 
-            //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
             // avatars list
-            IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
+            List<TmxObject> avatars = tmxMapObjects.Where(x => x.Type == "Avatar").ToList();
 
-            List<TmxObject> tmxObjects = avatars.ToList();
-            foreach (TmxObject avatar in tmxObjects)
+            foreach (TmxObject avatar in avatars)
             {
                 Avatar gameAvatar = LoadAgent(avatar, tilesets);
                 initializer.Invoke(gameAvatar);
@@ -105,15 +111,19 @@ namespace World.ToyWorldCore
                 atlas.AddAvatar(gameAvatar);
             }
 
-            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(tmxObjects);
+            List<TmxObject> others = tmxMapObjects.Except(avatars).ToList();
+            List<TmxObject> characters = others.Where(x => x.Gid != 0).ToList();
 
-            foreach (TmxObject tmxObject in others)
+            foreach (TmxObject tmxObject in characters)
             {
                 Character character = LoadCharacter(tmxObject, tilesets);
                 initializer.Invoke(character);
                 simpleObjectLayer.AddGameObject(character);
                 atlas.Characters.Add(character);
             }
+            others = others.Except(characters).ToList();
+
+            // TODO : other objects
 
             return simpleObjectLayer;
         }
