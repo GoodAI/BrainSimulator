@@ -138,7 +138,7 @@ namespace World.GameActors.GameObjects
             }
             else
             {
-                Log.Instance.Debug("Name of current location of Avatar is unknown.");
+                Log.Instance.Debug("Avatar is in unknown location.");
             }
 
             string roomName = atlas.NamedAreasCarrier.RoomName(Position);
@@ -149,7 +149,7 @@ namespace World.GameActors.GameObjects
             }
             else
             {
-                Log.Instance.Debug("Avatar is in unknown room.");
+                Log.Instance.Debug("Avatar is in no room.");
             }
 
             LooseEnergy();
