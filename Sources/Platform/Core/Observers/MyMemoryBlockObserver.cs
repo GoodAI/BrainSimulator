@@ -230,6 +230,8 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        private int m_noBlocks;
+
         #endregion
 
         private bool m_showCoordinatesSelected;
@@ -430,7 +432,7 @@ namespace GoodAI.Core.Observers
                 }
                 else
                 {
-                    effectivePixelsDisplayed = (int)Math.Ceiling((decimal)dims.ElementCount / 3);
+                    effectivePixelsDisplayed = (int)Math.Ceiling((decimal)((float)dims.ElementCount / (float)3));
                 }
             }
             else
@@ -443,16 +445,15 @@ namespace GoodAI.Core.Observers
                 TilesInRow = effectivePixelsDisplayed / (TileWidth * TileHeight);
                 String message = " (Parsed from " + (UseCustomDimensions ? "CustomDimensions)" : "MemoryBlock.Dims)");
                 MyLog.WARNING.WriteLine("Memory block '{0}: {1}' observer: {2}", Target.Owner.Name, Target.Name,
-                    "TilesInRow too big, adjusting to the max. value " + TilesInRow+"\n\t\t..for TileWidth="+TileWidth+", TileHeight="+TileHeight+message);
+                    "TilesInRow too big, adjusting to the max. value " + TilesInRow + "\n\t\t..for TileWidth=" + TileWidth + ", TileHeight=" + TileHeight + message);
             }
 
-            int noBlocks = effectivePixelsDisplayed / (TileWidth * TileHeight);
-            TilesInColumn = effectivePixelsDisplayed / (TileWidth * TileHeight * TilesInRow);
+            m_noBlocks = effectivePixelsDisplayed / (TileWidth * TileHeight);
+            TilesInColumn = (int)Math.Ceiling((decimal)((float)m_noBlocks / (float)TilesInRow));
 
-            // in case the noBlocks is not divisible by TilesInRow, allocate enough space
-            int height = (int)Math.Ceiling((decimal)noBlocks / TilesInRow);
-            return new Size(TileWidth * TilesInRow, height * TileHeight);
+            return new Size(TileWidth * TilesInRow, TilesInColumn * TileHeight);
         }
+
 
         // TODO(Premek): Report warnings using a logger interface.
         internal static Size ComputeCustomTextureSize(TensorDimensions dims, CustomDimensionsHint customDims,
