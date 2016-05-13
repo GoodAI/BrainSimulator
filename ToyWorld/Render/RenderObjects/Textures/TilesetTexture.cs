@@ -62,7 +62,7 @@ namespace Render.RenderObjects.Textures
                             BasicTexture texture = new BasicTexture(bmpTextureWithBorders.Width, bmpTextureWithBorders.Height);
 
                             texture.Init(
-                                dataNew.Scan0.ArgbToRgbaArray(dataNew.Width * dataNew.Height),
+                                dataNew.Scan0.ArgbToArgbArray(dataNew.Width * dataNew.Height),
                                 generateMipmap: true);
 
                             texture.SetParameters(TextureMinFilter.LinearMipmapLinear);
