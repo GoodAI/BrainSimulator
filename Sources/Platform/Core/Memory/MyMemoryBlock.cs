@@ -8,7 +8,9 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using GoodAI.Core.Execution;
 using GoodAI.TypeMapping;
+using System.Diagnostics;
 
 namespace GoodAI.Core.Memory
 {
@@ -31,7 +33,24 @@ namespace GoodAI.Core.Memory
         public bool IsOutput { get; internal set; }
         public bool IsDynamic { get; set; }
 
-        public bool Unmanaged { get; internal set; }
+        private bool m_unmanaged;
+        public bool Unmanaged { 
+            get { return m_unmanaged; } 
+            set
+            {
+                if (Owner != null && Owner.Owner != null)
+                {
+                    bool isSimStopped = (Owner.Owner.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED);
+                    Debug.Assert(isSimStopped);
+                    if (isSimStopped)
+                        m_unmanaged = value;
+                }
+                else
+                {
+                    m_unmanaged = value;
+                }
+            }
+    }
         public SizeT ExternalPointer { get; set; }
 
         public abstract void AllocateHost();
