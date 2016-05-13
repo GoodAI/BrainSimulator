@@ -74,6 +74,8 @@ namespace GoodAI.ToyWorld
                         // no noise or smoke, this view is for the researcher
                     });
 
+                Vocabulary.Instance.Initialize(Owner.WordVectorDimensions);
+
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
 
@@ -313,16 +315,21 @@ namespace GoodAI.ToyWorld
             {   
                 if (TextProcessing.IsEmpty(message))
                 {
-                    /* TODO: Add input layer */
-                    /* TODO: set empty input layer */
+                    Owner.WordVectors.Fill(0);
                 }
-                List<string> tokens = TextProcessing.Tokenize(message);
-                foreach (string token in tokens)
-                {
-                    /* TODO: vector from token 
-                     Get WordVector class from word vector code
-                     */
-
+                else
+                { 
+                    List<string> tokens = TextProcessing.Tokenize(message);
+                    int index = 0;
+                    foreach (string token in tokens)
+                    {
+                        float[] vector = Vocabulary.Instance.VectorFromLabel(token);
+                        foreach (float value in vector)
+                        {
+                            Owner.WordVectors.Host[index++] = value;
+                        }
+                    }
+                    Owner.Text.SafeCopyToDevice();
                 }
             }
 

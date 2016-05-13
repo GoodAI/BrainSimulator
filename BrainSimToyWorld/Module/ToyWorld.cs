@@ -62,6 +62,13 @@ namespace GoodAI.ToyWorld
             set { SetOutput(4, value); }
         }
 
+        [MyOutputBlock(5)]
+        public MyMemoryBlock<float> WordVectors
+        {
+            get { return GetOutput(5); }
+            set { SetOutput(5, value); }
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {
@@ -72,6 +79,12 @@ namespace GoodAI.ToyWorld
         public MyMemoryBlock<float> TextIn
         {
             get { return GetInput(1); }
+        }
+
+        [MyInputBlock(2)]
+        public MyMemoryBlock<float> WordVectorsReply
+        {
+            get { return GetInput(2); }
         }
 
         #endregion
@@ -187,9 +200,17 @@ namespace GoodAI.ToyWorld
         public int FreeViewMultisampleLevel { get; set; }
 
 
-        [MyBrowsable, DisplayName("Maximum message length")]
+        [MyBrowsable, Category("Language interface"), DisplayName("Maximum message length")]
         [YAXSerializableField(DefaultValue = 128)]
         public int MaxMessageLength { get; set; }
+
+        [MyBrowsable, Category("Language interface"), DisplayName("Word vector dimensions")]
+        [YAXSerializableField(DefaultValue = 50)]
+        public int WordVectorDimensions { get; set; }
+
+        [MyBrowsable, Category("Language interface"), DisplayName("Maximum input words")]
+        [YAXSerializableField(DefaultValue = 4)]
+        public int MaxInputWordCount { get; set; }
 
         #endregion
 
@@ -338,6 +359,7 @@ namespace GoodAI.ToyWorld
                 m_controlIndexes["use"] = 78; // N
                 m_controlIndexes["pickup"] = 77; // M
             }
+            WordVectors.Count = WordVectorDimensions * MaxInputWordCount;
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
