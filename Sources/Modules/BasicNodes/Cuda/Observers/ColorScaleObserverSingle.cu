@@ -47,28 +47,46 @@ extern "C"
     *            21 22 23
     *            24 25 26
     */
-	__global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int tw, int th, int tilesInRow)
+    __device__ int TileObserverGetIdInPixels (int method, int tw, int th, int pw, int pixels_id, int tilesInRow)
+    {
+        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col;
+        ta           = tw*th;                                       // tile area
+        pixels_row   = pixels_id / pw;                              // row-id in the final pixels mem. block (observer)
+        pixels_col   = pixels_id % pw;                              // column-id in the final pixels mem. block (observer)
+        if (((pixels_col + 1) % (tw + 1) == 0) || ((pixels_row + 1) % (th + 1) == 0)) // it is point between tiles
+        {
+           return -1;
+        }
+        tile_row     = pixels_row / (th+1);                         // in which tile-row it is
+        tile_col     = pixels_col / (tw+1);                         // in which tile-column it is
+        id_tile      = tile_col + tile_row*tilesInRow;              // which tile it is
+        values_row   = pixels_row % (th+1);
+        values_col   = pixels_col % (tw+1);
+        if (method==6) /// RGB
+        {
+            ta *= 3;  // needs to move three tiles for each tile for RGB :)
+        }
+        return id_tile*ta + values_col + values_row*tw;   // final oid in the values for red Color:)
+    }
+
+    __global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int pw, int ph, int tw, int th, int tilesInRow)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x
+		int pixels_id = blockDim.x*blockIdx.y*gridDim.x
 			+ blockDim.x*blockIdx.x
 			+ threadIdx.x;
 
-        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col, pixles_id, pixels_in_row;
-		if (id < numOfPixels)
+        int id;
+		if (pixels_id < numOfPixels)
 		{
-            ta                = tw*th;                                   // tile area
-            values_row        = (id % ta) / tw;                          // tile specific row id, in the value smemory block
-            values_col        = id % tw;                                 // tile-specific colum id, in the value smemory block
-            id_tile           = id / ta;                                 // which tile it is
-            tile_row          = id_tile / tilesInRow;                    // in which tile-row it is
-            tile_col          = id_tile % tilesInRow;                    // in which tile-column it is
-            pixels_row        = values_row + tile_row*tw + tile_row;     // row-id in the final pixels mem. block (observer)
-            pixels_col        = values_col + tile_col*th + tile_col;     // column-id in the final pixels mem. block (observer)
-            pixels_in_row     = tilesInRow*tw + tilesInRow-1;            // numer of pixels in row is the tile's size + spaces between tiles
-            pixles_id         = pixels_row*pixels_in_row + pixels_col;   // id in the final pixels memory block (observer)
-			pixels[pixles_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
-		}
+            id = TileObserverGetIdInPixels (method, tw, th, pw, pixels_id, tilesInRow);
+            if (id<0) // in the space between tiles
+            {
+                return;
+            }
+            pixels[pixels_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
+        }
 	}
+
 	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int pw, int ph, int numOfPixels, int tw, int th, int tilesInRow, int tilesInCol, float maxValue) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	
@@ -76,14 +94,12 @@ extern "C"
 				+ threadIdx.x;
 
         float fred, fgreen, fblue;
-        int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col, id_R_values;
+        int id_R_value, ta;
 		if(id < numOfPixels) //id of the thread is valid
 		{
-            ta           = tw*th;                                       // tile area
-            pixels_row   = id / pw;                                     // row-id in the final pixels mem. block (observer)
-            pixels_col   = id % pw;                                     // column-id in the final pixels mem. block (observer)
-
-            if (((pixels_col + 1) % (tw + 1) == 0) || ((pixels_row + 1) % (th + 1) == 0)) // it is point between tiles
+            id_R_value = TileObserverGetIdInPixels (6, tw, th, pw, id, tilesInRow); // nethod == 6 is RGB :)
+            ta = tw*th;      
+            if (id_R_value<0) // it is point between tiles
             {
                 fred = 0.5f;
                 fgreen = 0.5f;
@@ -91,16 +107,9 @@ extern "C"
             }
             else
             {     
-                tile_row     = pixels_row / (th+1);                         // in which tile-row it is
-                tile_col     = pixels_col / (tw+1);                         // in which tile-column it is
-                id_tile      = tile_col + tile_row*tilesInRow;              // which tile it is
-                values_row   = pixels_row % (th+1);
-                values_col   = pixels_col % (tw+1);
-                id_R_values  = id_tile*ta*3 + values_col + values_row*tw;   // final oid in the values for red Color:)
-            
-			    fred   = values[id_R_values]/maxValue;
-			    fgreen = values[1 * ta + id_R_values]/maxValue;
-			    fblue  = values[2 * ta + id_R_values]/maxValue;
+			    fred   = values[id_R_value]/maxValue;
+			    fgreen = values[1 * ta + id_R_value]/maxValue;
+			    fblue  = values[2 * ta + id_R_value]/maxValue;
             }
 
 	        fred   = fminf(fmaxf((fred+1)/2,   0), 1) * 255;    // normalize colors to be -1 and 1
@@ -115,8 +124,6 @@ extern "C"
 		}
 	}
 
-
-	
 	__global__ void DrawVectorsKernel(float* values, int elements, float maxValue, unsigned int* pixels, int numOfPixels) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	

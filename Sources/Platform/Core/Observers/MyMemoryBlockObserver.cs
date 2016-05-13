@@ -294,9 +294,8 @@ namespace GoodAI.Core.Observers
                 }
                 else
                 {
-                    int pixelsInOrigImage = Target.Dims.ElementCount;
-                    m_tiledKernel.SetupExecution(pixelsInOrigImage);
-                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, pixelsInOrigImage, TileWidth, TileHeight, TilesInRow);
+                    m_tiledKernel.SetupExecution(TextureSize);
+                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, TextureWidth, TextureHeight, TileWidth, TileHeight, TilesInRow);
                 }
             }
             else
