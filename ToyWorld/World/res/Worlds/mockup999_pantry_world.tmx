@@ -495,7 +495,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="ForegroundObject" offsetx="0.0416667" offsety="0.0833333">
+ <objectgroup name="ForegroundObject">
   <object id="98" type="LeverRDoor" x="504.292" y="345.25">
    <polyline points="0,0 30,30.6667"/>
   </object>
