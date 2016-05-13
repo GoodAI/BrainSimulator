@@ -109,6 +109,9 @@
   <ItemGroup>
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
+    <Compile Include="Language\Heap.cs" />
+    <Compile Include="Language\LabeledVector.cs" />
+    <Compile Include="Language\NBestList.cs" />
     <Compile Include="Language\Vocabulary.cs" />
     <Compile Include="Language\TextProcessing.cs" />
     <Compile Include="MessageEvent.cs" />

@@ -105,5 +105,58 @@ namespace GoodAI.ToyWorld.Language
             return vector;
         }
 
+        /// <summary>
+        /// Returns true if the argument is the zero vector.
+        /// </summary>
+        /// <param name="vector">The input vector</param>
+        /// <returns>True if all elements are zero</returns>
+        public static bool IsZero(float[] vector)
+        {
+            foreach (float element in vector)
+            {
+                if (element != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Finds the vectors most similar to the input vector. If the input is
+        /// the zero vector, an empty list is returned.
+        /// </summary>
+        /// <param name="vector">The input vector</param>
+        /// <param name="neighborhoodSize">The number of neighbors to retrieve</param>
+        /// <returns>A list of neighboring vectors sorted by descending cosine similarity</returns>
+        public List<Tuple<float, LabeledVector>> FindNearestNeighbors(LabeledVector vector, int neighborhoodSize)
+        {
+            return FindNearestNeighbors(vector.Vector, neighborhoodSize);
+        }
+
+        /// <summary>
+        /// Finds the vectors most similar to the input vector. If the input is
+        /// the zero vector, an empty list is returned.
+        /// </summary>
+        /// <param name="vector">The input vector</param>
+        /// <param name="neighborhoodSize">The number of neighbors to retrieve</param>
+        /// <returns>A list of neighboring vectors sorted by descending cosine similarity</returns>
+        public List<Tuple<float, LabeledVector>> FindNearestNeighbors(float[] vector, int neighborhoodSize)
+        {
+            var nBestList = new NBestList<LabeledVector>(neighborhoodSize);
+            if (!IsZero(vector))
+            {
+                foreach (var wordVectorPair in labeledVectorDictionary)
+                {
+                    float cosine = LabeledVector.Cosine(wordVectorPair.Value, vector);
+                    if (nBestList.IsBetter(cosine))
+                    {
+                        nBestList.Insert(cosine, new LabeledVector(wordVectorPair.Key, wordVectorPair.Value));
+                    }
+                }
+            }
+            return nBestList.GetSortedList();
+        }
+
     }
 }
