@@ -1,4 +1,4 @@
-﻿﻿using System.Drawing;
+﻿using System.Drawing;
 using System.Linq;
 using GoodAI.ToyWorldAPI;
 ﻿﻿using System.Collections.Generic;
@@ -126,35 +126,32 @@ namespace World.GameActors.GameObjects
             PuppetControlled = false;
         }
 
-        public void ResetControls()
-        {
-            DesiredSpeed = 0f;
-            DesiredRotation = 0f;
-            Interact = false;
-            UseTool = false;
-            PickUp = false;
-            Fof = default(PointF);
-        }
-
-        public bool AddToInventory(IPickable item)
-        {
-            if (Tool != null)
-                return false;
-
-            Tool = item;
-            return true;
-        }
-
-        public IPickable RemoveFromInventory()
-        {
-            IPickable tool = Tool;
-            Tool = null;
-            return tool;
-        }
-
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
+            Log.Instance.Debug("Energy of Avatar is " + Energy);
+
+            string areaName = atlas.NamedAreasCarrier.AreaName(Position);
+
+            if (areaName != null)
+            {
+                Log.Instance.Debug("Name of current Avatar's location is " + areaName + ".");
+            }
+            else
+            {
+                Log.Instance.Debug("Name of current location of Avatar is unknown.");
+            }
+
+            string roomName = atlas.NamedAreasCarrier.RoomName(Position);
+
+            if (roomName != null)
+            {
+                Log.Instance.Debug("Avatar is in room " + roomName + ".");
+            }
+            else
+            {
+                Log.Instance.Debug("Avatar is in unknown room.");
+            }
+
             LooseEnergy();
             Rested -= FATIGUE_FOR_LIVING;
 
@@ -190,6 +187,32 @@ namespace World.GameActors.GameObjects
 
             }
 
+        }
+
+        public void ResetControls()
+        {
+            DesiredSpeed = 0f;
+            DesiredRotation = 0f;
+            Interact = false;
+            UseTool = false;
+            PickUp = false;
+            Fof = default(PointF);
+        }
+
+        public bool AddToInventory(IPickable item)
+        {
+            if (Tool != null)
+                return false;
+
+            Tool = item;
+            return true;
+        }
+
+        public IPickable RemoveFromInventory()
+        {
+            IPickable tool = Tool;
+            Tool = null;
+            return tool;
         }
 
         private void EatFruit(IAtlas atlas, GameActorPosition applePosition)

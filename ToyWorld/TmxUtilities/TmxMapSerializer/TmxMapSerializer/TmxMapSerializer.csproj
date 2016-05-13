@@ -107,6 +107,7 @@
     <Compile Include="Elements\Layer.cs" />
     <Compile Include="Elements\Map.cs" />
     <Compile Include="Elements\ObjectGroup.cs" />
+    <Compile Include="Elements\Polyline.cs" />
     <Compile Include="Elements\Properties.cs" />
     <Compile Include="Elements\Property.cs" />
     <Compile Include="Elements\TmxObject.cs" />
@@ -116,6 +117,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Utils\Utils.csproj">
+      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

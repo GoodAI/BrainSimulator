@@ -1,5 +1,8 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Xml.Serialization;
+using VRageMath;
 
 namespace TmxMapSerializer.Elements
 {
@@ -34,5 +37,14 @@ namespace TmxMapSerializer.Elements
 
         [XmlElement("properties")]
         public Properties Properties { get; set; }
+
+        [XmlElement("polyline")]
+        public Polyline Polyline { get; set; }
+
+        public IEnumerable<Vector2> GetPolyline()
+        {
+            Debug.Assert(Polyline != null, "Polyline != null");
+            return Polyline.GetPoints().Select(z => new Vector2(z.X + X, z.Y + Y));
+        }
     }
 }

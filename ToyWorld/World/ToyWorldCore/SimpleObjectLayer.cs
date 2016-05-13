@@ -12,6 +12,7 @@ namespace World.ToyWorldCore
     {
         private List<IGameObject> GameObjects { get; set; }
 
+        public bool Render { get; set; }
         public LayerType LayerType { get; set; }
 
         public SimpleObjectLayer(LayerType layerType)

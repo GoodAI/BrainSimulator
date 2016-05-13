@@ -22,12 +22,22 @@ namespace World.ToyWorldCore
         /// <param name="size"></param>
         /// <param name="pos"></param>
         int[] GetRectangle(Vector2I pos, Vector2I size);
+
+        int Width { get; set; }
+
+        int Height { get; set; }
     }
 
 
     [ContractClassFor(typeof(ITileLayer))]
     internal abstract class TileLayerContracts : ITileLayer
     {
+        public int Width { get; set; }
+        public int Height { get; set; }
+
+        public bool Render { get; set; }
+        public LayerType LayerType { get; set; }
+
         public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
         {
             if ((x2 - x1 + 1) <= 0)
@@ -87,8 +97,6 @@ namespace World.ToyWorldCore
 
             return default(int[]);
         }
-
-        public LayerType LayerType { get; set; }
 
         public Tile GetTile(int x, int y)
         {

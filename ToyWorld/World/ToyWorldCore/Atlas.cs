@@ -130,6 +130,8 @@ namespace World.ToyWorldCore
         /// </summary>
         /// <param name="actor"></param>
         void RegisterToAutoupdate(IAutoupdateable actor);
+
+        INamedAreasCarrier NamedAreasCarrier { get; set; }
     }
 
     public class Atlas : IAtlas
@@ -137,6 +139,7 @@ namespace World.ToyWorldCore
         public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
+        public INamedAreasCarrier NamedAreasCarrier { get; set; }
 
         private IEnumerable<ILayer<GameActor>> Layers
         {
