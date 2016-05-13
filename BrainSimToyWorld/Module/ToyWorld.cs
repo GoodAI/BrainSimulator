@@ -193,6 +193,8 @@ namespace GoodAI.ToyWorld
         private IFofAvatarRR FofRR { get; set; }
         private IFreeMapRR FreeRR { get; set; }
 
+        private int SignalCount { get; set; }
+
 
         public ToyWorld()
         {
@@ -201,23 +203,9 @@ namespace GoodAI.ToyWorld
             if (SaveFile == null)
                 SaveFile = GetDllDirectory() + @"\res\Worlds\mockup999_pantry_world.tmx";
 
-            int oldOutputBranches = OutputBranches;
-            List<MyAbstractMemoryBlock> backup = new List<MyAbstractMemoryBlock>();
-            for (int i = 0; i < oldOutputBranches; ++i)
-                backup.Add(m_outputs[i]);
-
-            OutputBranches = 4 + GameFactory.GetSignalCount();
-
-            for (int i = 0; i < oldOutputBranches; ++i)
-                m_outputs[i] = backup[i];
-
-            for (int i = oldOutputBranches; i < OutputBranches; ++i)
-            {
-                MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-                mb.Name = "TEST" + i;
-                mb.Count = 1;
-                m_outputs[i] = mb;
-            }
+            SignalCount = GameFactory.GetSignalCount();
+            AddOutputs(SignalCount);
+            SetDummyOutputs(SignalCount, "Signal_", 1);
         }
 
         public override void Validate(MyValidator validator)
@@ -269,6 +257,43 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
+        }
+
+        private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
+        {
+            int idx = 1;
+            for (int i = OutputBranches - howMany; i < OutputBranches; ++i)
+            {
+                MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+                mb.Name = dummyName + idx++;
+                mb.Count = dummySize;
+                m_outputs[i] = mb;
+            }
+        }
+
+        private void AddOutputs(int branchesToAdd)
+        {
+            int oldOutputBranches = OutputBranches;
+            List<MyAbstractMemoryBlock> backup = new List<MyAbstractMemoryBlock>();
+            for (int i = 0; i < oldOutputBranches; ++i)
+                backup.Add(m_outputs[i]);
+
+            OutputBranches = oldOutputBranches + branchesToAdd;
+
+            for (int i = 0; i < oldOutputBranches; ++i)
+                m_outputs[i] = backup[i];
+        }
+
+        public MyNode GetSignalNode(int index)
+        {
+            int offset = OutputBranches - SignalCount;
+            return Owner.Network.GroupInputNodes[offset + index];
+        }
+
+        public MyMemoryBlock<float> GetSignalMemoryBlock(int index)
+        {
+            int offset = OutputBranches - SignalCount;
+            return m_outputs[offset + index] as MyMemoryBlock<float>;
         }
     }
 }

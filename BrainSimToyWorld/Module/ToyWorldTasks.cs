@@ -248,6 +248,7 @@ namespace GoodAI.ToyWorld
         public class TWUpdateTask : MyTask<ToyWorld>
         {
             private Stopwatch m_fpsStopwatch;
+            private bool m_signalNodesNamed = false;
 
             public override void Init(int nGPU)
             {
@@ -321,23 +322,24 @@ namespace GoodAI.ToyWorld
 
                 ObtainMessageFromBrain();
                 SendMessageToBrain();
-
                 ObtainSignals();
             }
 
             private void ObtainSignals()
             {
-                int i = 0;
-                foreach (KeyValuePair<string, float> signal in Owner.GameCtrl.GetSignals())
+                foreach (var item in Owner.GameCtrl.GetSignals().Select((signal, i) => new { signal, i }))
                 {
-                    int offset = Owner.OutputBranches - Owner.GameCtrl.GetSignals().Count;
-                    Owner.Owner.Network.GroupInputNodes[offset + i].Name = signal.Key;
-                    Owner.Owner.Network.GroupInputNodes[offset + i].Updated();
+                    if (!m_signalNodesNamed)
+                    {
+                        Owner.GetSignalNode(item.i).Name = item.signal.Key;
+                        Owner.GetSignalNode(item.i).Updated();
+                    }
 
-                    (Owner.m_outputs[offset + i] as MyMemoryBlock<float>).Host[0] = signal.Value;
-                    Owner.m_outputs[offset + i].SafeCopyToDevice();
-                    i++;
+                    Owner.GetSignalMemoryBlock(item.i).Host[0] = item.signal.Value;
+                    Owner.GetSignalMemoryBlock(item.i).SafeCopyToDevice();
                 }
+
+                m_signalNodesNamed = true;
             }
 
             private void SendMessageToBrain()
