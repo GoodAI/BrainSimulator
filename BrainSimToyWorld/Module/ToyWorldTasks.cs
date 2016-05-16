@@ -329,7 +329,7 @@ namespace GoodAI.ToyWorld
                             Owner.WordVectors.Host[index++] = value;
                         }
                     }
-                    Owner.Text.SafeCopyToDevice();
+                    Owner.WordVectors.SafeCopyToDevice();
                 }
             }
 
