@@ -42,6 +42,20 @@ namespace World.GameActors.GameObjects
         /// Name of source Tileset for texture.
         /// </summary>
         string TilesetName { get; set; }
+
+        /// <summary>
+        /// Check if this GameObject center is inside given Shape
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        bool Inside(IShape shape);
+
+        /// <summary>
+        /// Check if this GameObject have any common point with given Shape.
+        /// </summary>
+        /// <param name="shape"></param>
+        /// <returns></returns>
+        bool Intersects(IShape shape);
     }
 
     public abstract class GameObject : GameActor, IGameObject
@@ -77,6 +91,16 @@ namespace World.GameActors.GameObjects
             TilesetId = tilesetID;
             TilesetName = tilesetName;
             Name = name;
+        }
+
+        public bool Inside(IShape shape)
+        {
+            return shape.CollidesWith(new CircleShape(Position, 0));
+        }
+
+        public bool Intersects(IShape shape)
+        {
+            return shape.CollidesWith(PhysicalEntity.Shape);
         }
     }
 }
