@@ -359,7 +359,9 @@ namespace GoodAI.ToyWorld
                 m_controlIndexes["use"] = 78; // N
                 m_controlIndexes["pickup"] = 77; // M
             }
-            WordVectors.Count = WordVectorDimensions * MaxInputWordCount;
+
+            // K x N matrix, where K = number of words, N = vector dimension
+            WordVectors.Dims = new TensorDimensions(WordVectorDimensions, MaxInputWordCount);
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
