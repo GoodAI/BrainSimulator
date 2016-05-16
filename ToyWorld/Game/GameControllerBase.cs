@@ -1,7 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
-using System.Threading;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
 using Render.Renderer;
@@ -10,7 +8,6 @@ using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using World.GameActors.GameObjects;
 using World.ToyWorldCore;
-using World.WorldInterfaces;
 
 namespace Game
 {
@@ -148,6 +145,11 @@ namespace Game
         public int[] GetAvatarIds()
         {
             return m_avatarControllers.Keys.ToArray();
+        }
+
+        public Dictionary<string, float> GetSignals()
+        {
+            return World.SignalDispatchers.ToDictionary(pair => pair.Key, pair => pair.Value(World.Atlas));
         }
 
         #endregion

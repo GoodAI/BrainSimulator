@@ -103,7 +103,7 @@ namespace World.ToyWorldCore
                 {
                     var tile = Tiles[i][j];
                     if (tile != null)
-                        m_tileTypes[idx++] = tile.TileType;
+                        m_tileTypes[idx++] = tile.TilesetId;
                     else
                         m_tileTypes[idx++] = 0; // inside map: must be always 0
                 }

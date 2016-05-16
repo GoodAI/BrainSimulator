@@ -14,5 +14,10 @@ namespace GoodAI.ToyWorld.Control
         {
             return new ThreadSafeGameController(new GLRenderer(), gameSetup);
         }
+
+        public static int GetSignalCount()
+        {
+            return World.ToyWorldCore.ToyWorld.SignalCount;
+        }
     }
 }

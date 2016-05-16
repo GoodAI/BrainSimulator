@@ -13,5 +13,10 @@ namespace ToyWorldFactory
         {
             return ControllerFactory.GetThreadSafeController(gameSetup);
         }
+
+        public static int GetSignalCount()
+        {
+            return ControllerFactory.GetSignalCount();
+        }
     }
 }

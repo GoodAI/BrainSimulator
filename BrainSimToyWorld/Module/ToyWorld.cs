@@ -3,15 +3,17 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
+using ToyWorldFactory;
 using YAXLib;
 
 namespace GoodAI.ToyWorld
 {
-    public partial class ToyWorld : MyWorld
+    public partial class ToyWorld : MyWorld, IMyVariableBranchViewNodeBase
     {
         private readonly int m_controlsCount = 13;
 
@@ -191,6 +193,8 @@ namespace GoodAI.ToyWorld
         private IFofAvatarRR FofRR { get; set; }
         private IFreeMapRR FreeRR { get; set; }
 
+        private int SignalCount { get; set; }
+
 
         public ToyWorld()
         {
@@ -198,6 +202,9 @@ namespace GoodAI.ToyWorld
                 TilesetTable = GetDllDirectory() + @"\res\GameActors\Tiles\Tilesets\TilesetTable.csv";
             if (SaveFile == null)
                 SaveFile = GetDllDirectory() + @"\res\Worlds\mockup999_pantry_world.tmx";
+
+            SignalCount = GameFactory.GetSignalCount();
+            AddOutputs(SignalCount, "Signal_");
         }
 
         public override void Validate(MyValidator validator)
@@ -249,6 +256,55 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
+        }
+
+        private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
+        {
+            int idx = 1;
+            for (int i = OutputBranches - howMany; i < OutputBranches; ++i)
+            {
+                MyMemoryBlock<float> mb = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
+                mb.Name = dummyName + idx++;
+                mb.Count = dummySize;
+                m_outputs[i] = mb;
+            }
+        }
+
+        private void AddOutputs(int branchesToAdd, string dummyName, int dummySize = 1)
+        {
+            int oldOutputBranches = OutputBranches;
+            // backup current state of memory blocks -- setting value to OutputBranches will reset m_outputs
+            List<MyAbstractMemoryBlock> backup = new List<MyAbstractMemoryBlock>();
+            for (int i = 0; i < oldOutputBranches; ++i)
+                backup.Add(m_outputs[i]);
+
+            OutputBranches = oldOutputBranches + branchesToAdd;
+
+            for (int i = 0; i < oldOutputBranches; ++i)
+                m_outputs[i] = backup[i];
+
+            SetDummyOutputs(SignalCount, dummyName, dummySize);
+        }
+
+        /// <summary>
+        /// Returns Signal node with given index (from 0 to SignalCount)
+        /// </summary>
+        /// <param name="index">Index of Signal node</param>
+        /// <returns></returns>
+        public MyParentInput GetSignalNode(int index)
+        {
+            int offset = OutputBranches - SignalCount;
+            return Owner.Network.GroupInputNodes[offset + index];
+        }
+
+        /// <summary>
+        /// Returns memory block assigned to Signal with given index (from 0 to SignalCount)
+        /// </summary>
+        /// <param name="index">Index of Signal</param>
+        /// <returns></returns>
+        public MyMemoryBlock<float> GetSignalMemoryBlock(int index)
+        {
+            return GetSignalNode(index).Output;
         }
     }
 }
