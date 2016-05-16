@@ -313,11 +313,8 @@ namespace GoodAI.ToyWorld
 
             private void SetTextInputLayer(string message)
             {   
-                if (TextProcessing.IsEmpty(message))
-                {
-                    Owner.WordVectors.Fill(0);
-                }
-                else
+                Owner.WordVectors.Fill(0);
+                if (!TextProcessing.IsEmpty(message))
                 { 
                     List<string> tokens = TextProcessing.Tokenize(message, Owner.MaxInputWordCount);
                     int index = 0;
@@ -329,7 +326,7 @@ namespace GoodAI.ToyWorld
                             Owner.WordVectors.Host[index++] = value;
                         }
                     }
-                    Owner.WordVectors.SafeCopyToDevice();
+                    Owner.WordVectors.SafeCopyToDevice(0, index);
                 }
             }
 
