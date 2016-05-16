@@ -24,5 +24,11 @@ namespace GoodAI.ToyWorld.Language
         {
             return text.Split((char[])null, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
+
+        // Tokenizes and returns at most the given number of tokens.
+        public static List<string> Tokenize(string text, int maxNumberOfTokens)
+        {
+            return Tokenize(text).Take(maxNumberOfTokens).ToList();
+        }
     }
 }

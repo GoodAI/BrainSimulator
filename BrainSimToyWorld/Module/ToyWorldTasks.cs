@@ -319,7 +319,7 @@ namespace GoodAI.ToyWorld
                 }
                 else
                 { 
-                    List<string> tokens = TextProcessing.Tokenize(message);
+                    List<string> tokens = TextProcessing.Tokenize(message, Owner.MaxInputWordCount);
                     int index = 0;
                     foreach (string token in tokens)
                     {
