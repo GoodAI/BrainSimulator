@@ -34,6 +34,10 @@ namespace World.ToyWorldCore
 
                 Debug.Assert(layerName != null);
 
+                int type = (int) layerType;
+                bool simpleType = type > 0 && (type & (type - 1)) == 0;
+                if(!simpleType) continue;
+
                 if (layerName.Contains("Object"))
                 {
                     ObjectGroup objectLayer = map.ObjectGroups.FirstOrDefault(x => x.Name == layerName);
