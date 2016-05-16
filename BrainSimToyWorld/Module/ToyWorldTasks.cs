@@ -327,16 +327,16 @@ namespace GoodAI.ToyWorld
 
             private void ObtainSignals()
             {
-                foreach (var item in Owner.GameCtrl.GetSignals().Select((signal, i) => new { signal, i }))
+                foreach (var item in Owner.GameCtrl.GetSignals().Select((signal, index) => new { signal, index }))
                 {
                     if (!m_signalNodesNamed)
                     {
-                        Owner.GetSignalNode(item.i).Name = item.signal.Key;
-                        Owner.GetSignalNode(item.i).Updated();
+                        Owner.GetSignalNode(item.index).Name = item.signal.Key;
+                        Owner.GetSignalNode(item.index).Updated();
                     }
 
-                    Owner.GetSignalMemoryBlock(item.i).Host[0] = item.signal.Value;
-                    Owner.GetSignalMemoryBlock(item.i).SafeCopyToDevice();
+                    Owner.GetSignalMemoryBlock(item.index).Host[0] = item.signal.Value;
+                    Owner.GetSignalMemoryBlock(item.index).SafeCopyToDevice();
                 }
 
                 m_signalNodesNamed = true;

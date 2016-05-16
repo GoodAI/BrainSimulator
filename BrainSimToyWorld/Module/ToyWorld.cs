@@ -204,8 +204,7 @@ namespace GoodAI.ToyWorld
                 SaveFile = GetDllDirectory() + @"\res\Worlds\mockup999_pantry_world.tmx";
 
             SignalCount = GameFactory.GetSignalCount();
-            AddOutputs(SignalCount);
-            SetDummyOutputs(SignalCount, "Signal_", 1);
+            AddOutputs(SignalCount, "Signal_");
         }
 
         public override void Validate(MyValidator validator)
@@ -271,9 +270,10 @@ namespace GoodAI.ToyWorld
             }
         }
 
-        private void AddOutputs(int branchesToAdd)
+        private void AddOutputs(int branchesToAdd, string dummyName, int dummySize = 1)
         {
             int oldOutputBranches = OutputBranches;
+            // backup current state of memory blocks -- setting value to OutputBranches will reset m_outputs
             List<MyAbstractMemoryBlock> backup = new List<MyAbstractMemoryBlock>();
             for (int i = 0; i < oldOutputBranches; ++i)
                 backup.Add(m_outputs[i]);
@@ -282,18 +282,29 @@ namespace GoodAI.ToyWorld
 
             for (int i = 0; i < oldOutputBranches; ++i)
                 m_outputs[i] = backup[i];
+
+            SetDummyOutputs(SignalCount, dummyName, dummySize);
         }
 
-        public MyNode GetSignalNode(int index)
+        /// <summary>
+        /// Returns Signal node with given index (from 0 to SignalCount)
+        /// </summary>
+        /// <param name="index">Index of Signal node</param>
+        /// <returns></returns>
+        public MyParentInput GetSignalNode(int index)
         {
             int offset = OutputBranches - SignalCount;
             return Owner.Network.GroupInputNodes[offset + index];
         }
 
+        /// <summary>
+        /// Returns memory block assigned to Signal with given index (from 0 to SignalCount)
+        /// </summary>
+        /// <param name="index">Index of Signal</param>
+        /// <returns></returns>
         public MyMemoryBlock<float> GetSignalMemoryBlock(int index)
         {
-            int offset = OutputBranches - SignalCount;
-            return m_outputs[offset + index] as MyMemoryBlock<float>;
+            return GetSignalNode(index).Output;
         }
     }
 }
