@@ -82,7 +82,7 @@ namespace World.ToyWorldCore
 
         private static void SetTileRelations(IAtlas atlas, Map map)
         {
-            // TODO now
+            // TODO : Doors
         }
         
         private static void FillNamedAreas(IAtlas atlas, Map map)

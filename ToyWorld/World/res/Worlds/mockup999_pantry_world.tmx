@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="143">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="145">
  <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
   <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
@@ -114,7 +114,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Path" width="50" height="50">
+ <layer name="Path" width="50" height="50" visible="0">
   <properties>
    <property name="Render" value="false"/>
   </properties>
@@ -520,13 +520,13 @@
   <object id="138" name="Cornucopia" type="AreaLabel" x="356.667" y="104.666">
    <ellipse/>
   </object>
-  <object id="139" name="Bowling Hall" type="AreaLabel" x="142" y="117.333">
+  <object id="139" name="Bowling Hall" type="AreaLabel" x="127.333" y="127.666">
    <ellipse/>
   </object>
   <object id="141" name="Great Labyrinth" type="AreaLabel" x="30.6667" y="38">
    <ellipse/>
   </object>
-  <object id="142" name="Trap Room" type="AreaLabel" x="338" y="397.333">
+  <object id="142" name="Trap Room" type="AreaLabel" x="349" y="387.333">
    <ellipse/>
   </object>
  </objectgroup>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GoodAI.Logging;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors.Tiles;
@@ -58,6 +59,17 @@ namespace World.ToyWorldCore
 
         private void FillArea(int x, int y, string name, ITileLayer pathLayer)
         {
+            if (Areas[x][y] != null)
+            {
+                if (Areas[x][y] == name)
+                {
+                    Log.Instance.Info("Area \"" + name + "\" has two AreaLabels.");
+                }
+                else
+                {
+                    Log.Instance.Warn("Two AreaLabels in one Area: \"" + Areas[x][y] + "\", \"" + name + "\".");
+                }
+            }
             ExpandArea(x, y, name, pathLayer);
         }
 
@@ -75,6 +87,16 @@ namespace World.ToyWorldCore
 
         private void FillRoom(int x, int y, string name, ITileLayer pathLayer)
         {
+            if (Rooms[x][y] != null)
+            {
+                if (Rooms[x][y] == name)
+                {
+                    Log.Instance.Info("Room " + name + " has two AreaLabels.");
+                }
+                else {
+                    Log.Instance.Warn("Two AreaLabels in one Room: \"" + Rooms[x][y] + "\", \"" + name + "\".");
+                }
+            }
             ExpandRoom(x, y, name, pathLayer);
         }
 
