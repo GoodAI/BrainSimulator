@@ -70,7 +70,7 @@ namespace World.GameActors.GameObjects
             set
             {
                 m_energy = value;
-                BoundEnergy();
+                BoundValue(ref m_energy, 0, 1);
             }
         }
 
@@ -90,7 +90,7 @@ namespace World.GameActors.GameObjects
             set
             {
                 m_rested = value;
-                BoundFatigue();
+                BoundValue(ref m_rested, 0, 1);
             }
         }
 
@@ -157,7 +157,6 @@ namespace World.GameActors.GameObjects
             Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
             LooseEnergy();
             Rested -= FATIGUE_FOR_LIVING;
-            BoundFatigue();
 
             if (Interact)
             {
@@ -222,8 +221,6 @@ namespace World.GameActors.GameObjects
             {
                 Energy -= ENERGY_FOR_CARRYING * ((IGameObject)Tool).Weight;
             }
-
-            BoundEnergy();
         }
 
         private bool PerformLayDown(IAtlas atlas)
@@ -279,16 +276,6 @@ namespace World.GameActors.GameObjects
         {
             GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
             return target;
-        }
-
-        private void BoundEnergy()
-        {
-            BoundValue(ref m_energy, 0, 1);
-        }
-
-        private void BoundFatigue()
-        {
-            BoundValue(ref m_rested, 0, 1);
         }
 
         private void BoundValue(ref float value, float min, float max)

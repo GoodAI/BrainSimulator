@@ -26,6 +26,12 @@ namespace World.ToyWorldCore
         public Atlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
+
+        /// <summary>
+        /// Dictionary with signal names as keys. This prevents user from defining two signals with the same name.
+        /// Keys are delegates which takes IAtlas and return float -- value of the signal.
+        /// To obtain values of signals, just iterate the dictionary and call the items with IAtlas parameter
+        /// </summary>
         public Dictionary<string, Func<IAtlas, float>> SignalDispatchers { get; protected set; }
 
         public ToyWorld(Map tmxDeserializedMap, StreamReader tileTable)
