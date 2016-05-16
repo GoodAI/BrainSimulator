@@ -55,6 +55,22 @@ namespace GoodAI.ToyWorld.Language
         }
     }
 
+    public class NBiggestComparer<T> : Comparer<Tuple<float, T>>
+    {
+        public override int Compare(Tuple<float, T> x, Tuple<float, T> y)
+        {
+            return x.Item1.CompareTo(y.Item1);
+        }
+    }
+
+    public class NSmallestComparer<T> : Comparer<Tuple<float, T>>
+    {
+        public override int Compare(Tuple<float, T> x, Tuple<float, T> y)
+        {
+            return y.Item1.CompareTo(x.Item1);
+        }
+    }
+
     /// <summary>
     /// The concrete N-best list is implemented using a heap.
     /// </summary>
@@ -77,6 +93,7 @@ namespace GoodAI.ToyWorld.Language
 
         public override bool IsBetter(float score)
         {
+            // TODO use comparer
             return heap.Count() < NumberOfItems || heap.GetMin().Item1 < score;
         }
 
