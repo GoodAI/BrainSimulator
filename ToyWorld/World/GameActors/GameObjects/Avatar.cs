@@ -27,6 +27,21 @@ namespace World.GameActors.GameObjects
         float Energy { get; set; }
 
         /// <summary>
+        /// Temperature of Avatar. In [0,2].
+        /// </summary>
+        float Temperature { get; set; }
+
+        /// <summary>
+        /// How much of rest Avatar had. Can be replenished only by sleeping.
+        /// </summary>
+        float Rested { get; set; }
+
+        /// <summary>
+        /// True if Avatar is controlled by somebody else
+        /// </summary>
+        bool PuppetControlled { get; set; }
+
+        /// <summary>
         /// Tool in hand. Can be picked up and laid down.
         /// </summary>
         IPickable Tool { get; set; }
@@ -37,6 +52,8 @@ namespace World.GameActors.GameObjects
         public event MessageEventHandler NewMessage = delegate { };
 
         private float m_energy;
+        private float m_rested;
+        private float m_temperature;
         private const float ENERGY_FOR_CARRYING = 0.001f;
         private const float ENERGY_FOR_EATING_FRUIT = 0.25f;
         private const float ENERGY_FOR_ACTION = 0.001f;
@@ -44,6 +61,7 @@ namespace World.GameActors.GameObjects
         private const float ENERGY_FOR_ROTATION = 0.00001f;
         private const float ENERGY_FOR_LIVING = 0.00001f;
         private const float ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT = 0.001f;
+        private const float FATIGUE_FOR_LIVING = 0.000005f;
         public int Id { get; private set; }
 
         public float Energy
@@ -55,6 +73,28 @@ namespace World.GameActors.GameObjects
                 BoundEnergy();
             }
         }
+
+        public float Temperature
+        {
+            get { return m_temperature; }
+            set
+            {
+                m_temperature = value;
+                BoundValue(ref m_temperature, 0, 2);
+            }
+        }
+
+        public float Rested
+        {
+            get { return m_rested; }
+            set
+            {
+                m_rested = value;
+                BoundFatigue();
+            }
+        }
+
+        public bool PuppetControlled { get; set; }
 
         public IPickable Tool { get; set; }
 
@@ -82,6 +122,8 @@ namespace World.GameActors.GameObjects
             Id = id;
             NextUpdateAfter = 1;
             Energy = 1f;
+            Rested = 1f;
+            PuppetControlled = false;
         }
 
         public void ResetControls()
@@ -112,8 +154,10 @@ namespace World.GameActors.GameObjects
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            Log.Instance.Debug("Energy of avatar {" +  Id + "} is " + Energy);
+            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
             LooseEnergy();
+            Rested -= FATIGUE_FOR_LIVING;
+            BoundFatigue();
 
             if (Interact)
             {
@@ -144,7 +188,7 @@ namespace World.GameActors.GameObjects
 
             if (UseTool)
             {
-                
+
             }
 
         }
@@ -168,9 +212,9 @@ namespace World.GameActors.GameObjects
                 Energy -= ENERGY_FOR_ACTION;
             }
 
-            Energy -= Math.Abs(DesiredSpeed)*ENERGY_FOR_MOVE;
+            Energy -= Math.Abs(DesiredSpeed) * ENERGY_FOR_MOVE;
 
-            Energy -= Math.Abs(DesiredRotation)*ENERGY_FOR_ROTATION;
+            Energy -= Math.Abs(DesiredRotation) * ENERGY_FOR_ROTATION;
 
             Energy -= ENERGY_FOR_LIVING;
 
@@ -217,14 +261,14 @@ namespace World.GameActors.GameObjects
             var gameObject = target.Actor as IGameObject;
             if (actor == null) return;
             Debug.Assert(gameObject != null, "gameObject != null");
-            Energy -= actor.ForwardSpeed*gameObject.Weight*ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT;
+            Energy -= actor.ForwardSpeed * gameObject.Weight * ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT;
             actor.ForwardSpeed = 0;
         }
 
         private GameActorPosition GetInteractableObjectInFrontOf(IAtlas atlas)
         {
-            // check circle in front of avatar 
-            float radius = ((CircleShape) PhysicalEntity.Shape).Radius;
+            // check circle in front of avatar
+            float radius = ((CircleShape)PhysicalEntity.Shape).Radius;
             IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object,
                 0.2f + radius, radius);
             GameActorPosition target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
@@ -239,14 +283,18 @@ namespace World.GameActors.GameObjects
 
         private void BoundEnergy()
         {
-            if (m_energy > 1f)
-            {
-                m_energy = 1f;
-            }
-            if (m_energy < 0f)
-            {
-                m_energy = 0f;
-            }
+            BoundValue(ref m_energy, 0, 1);
+        }
+
+        private void BoundFatigue()
+        {
+            BoundValue(ref m_rested, 0, 1);
+        }
+
+        private void BoundValue(ref float value, float min, float max)
+        {
+            value = Math.Max(value, min);
+            value = Math.Min(value, max);
         }
     }
 }

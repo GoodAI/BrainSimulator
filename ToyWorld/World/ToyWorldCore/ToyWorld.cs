@@ -18,7 +18,7 @@ namespace World.ToyWorldCore
     public class ToyWorld : IWorld
     {
         private ICollisionResolver m_collisionResolver;
-        public static int SignalCount = 2;
+        public static int SignalCount = 4;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -60,10 +60,24 @@ namespace World.ToyWorldCore
                 return avatar != null ? avatar.Energy : -1;
             };
 
+            Func<IAtlas, float> avatarRested = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.Rested : -1;
+            };
+
+            Func<IAtlas, float> puppetControl = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.PuppetControlled ? 1 : 0 : -1;
+            };
+
             SignalDispatchers = new Dictionary<string, Func<IAtlas, float>>();
 
             SignalDispatchers.Add("Item", inventoryItem);
             SignalDispatchers.Add("Energy", avatarEnergy);
+            SignalDispatchers.Add("Rested", avatarRested);
+            SignalDispatchers.Add("Puppet", puppetControl);
             // if you add a new signal, change the SignalCount variable accordingly
 
             Debug.Assert(SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
