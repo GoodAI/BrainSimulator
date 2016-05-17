@@ -142,6 +142,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Troschuetz.Random, Version=4.0.3.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\Troschuetz.Random.4.0.4\lib\net45\Troschuetz.Random.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameActions\Interact.cs" />
@@ -182,6 +186,7 @@
     <Compile Include="GameActors\GameObjects\Character.cs" />
     <Compile Include="GameActors\Tiles\DynamicTile.cs" />
     <Compile Include="GameActors\GameActor.cs" />
+    <Compile Include="ToyWorldCore\Atmosphere.cs" />
     <Compile Include="ToyWorldCore\ILayer.cs" />
     <Compile Include="ToyWorldCore\IObjectLayer.cs" />
     <Compile Include="ToyWorldCore\LayerType.cs" />
@@ -241,6 +246,7 @@
     <EmbeddedResource Include="res\Worlds\mock_small_pickup_world.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">

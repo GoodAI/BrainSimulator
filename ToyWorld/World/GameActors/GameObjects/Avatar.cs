@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Linq;
 using GoodAI.ToyWorldAPI;
-﻿﻿using System.Collections.Generic;
+﻿using System.Collections.Generic;
 ﻿using System;
 ﻿﻿using System.Diagnostics;
 ﻿﻿using GoodAI.Logging;
@@ -62,6 +62,8 @@ namespace World.GameActors.GameObjects
         private const float ENERGY_FOR_LIVING = 0.00001f;
         private const float ENERGY_COEF_FOR_CATCHING_MOVING_OBJECT = 0.001f;
         private const float FATIGUE_FOR_LIVING = 0.000005f;
+        private const int ENERGY_TO_HEAT_RATIO = 30;
+        private const float TEMPERATURE_BALANCE_RATIO = 0.01f;
         public int Id { get; private set; }
 
         public float Energy
@@ -122,6 +124,7 @@ namespace World.GameActors.GameObjects
             Id = id;
             NextUpdateAfter = 1;
             Energy = 1f;
+            Temperature = 1f;
             Rested = 1f;
             PuppetControlled = false;
         }
@@ -152,8 +155,11 @@ namespace World.GameActors.GameObjects
                 Log.Instance.Debug("Avatar is in no room.");
             }
 
+            float oldEnergy = Energy;
             LooseEnergy();
-            Rested -= FATIGUE_FOR_LIVING;
+            var temperatureAround = atlas.Temperature(Position);
+            BalanceTemperature(temperatureAround, oldEnergy - Energy);
+            LooseRest();
 
             if (Interact)
             {
@@ -187,6 +193,20 @@ namespace World.GameActors.GameObjects
 
             }
 
+            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
+            Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
+            Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
+        }
+
+        private void BalanceTemperature(float temperatureAround, float energyDiff)
+        {
+            Temperature += energyDiff * ENERGY_TO_HEAT_RATIO;
+            Temperature += (temperatureAround - Temperature)*TEMPERATURE_BALANCE_RATIO;
+        }
+
+        private void LooseRest()
+        {
+            Rested -= FATIGUE_FOR_LIVING;
         }
 
         public void ResetControls()

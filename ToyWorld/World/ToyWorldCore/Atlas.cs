@@ -132,14 +132,23 @@ namespace World.ToyWorldCore
         void RegisterToAutoupdate(IAutoupdateable actor);
 
         INamedAreasCarrier NamedAreasCarrier { get; set; }
+
+        float Temperature(Vector2 position);
+
+        DateTime Time();
+
+        void IncrementTime();
     }
 
     public class Atlas : IAtlas
     {
+        public IAtmosphere Atmosphere { get; set; }
         public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
         public INamedAreasCarrier NamedAreasCarrier { get; set; }
+
+        private DateTime m_time = new DateTime(2000,1,1,0,0,0);
 
         private IEnumerable<ILayer<GameActor>> Layers
         {
@@ -363,6 +372,21 @@ namespace World.ToyWorldCore
         public void RegisterToAutoupdate(IAutoupdateable actor)
         {
             NewAutoupdateables.Add(actor);
+        }
+
+        public float Temperature(Vector2 position)
+        {
+            return Atmosphere.Temperature(position);
+        }
+
+        public DateTime Time()
+        {
+            return m_time;
+        }
+
+        public void IncrementTime()
+        {
+            m_time = m_time.Add(new TimeSpan(0,0,0,10));
         }
     }
 }
