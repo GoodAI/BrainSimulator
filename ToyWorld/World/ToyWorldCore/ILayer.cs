@@ -5,6 +5,8 @@ namespace World.ToyWorldCore
 {
     public interface ILayer<out T> where T : GameActor
     {
+        bool Render { get; set; }
+
         LayerType LayerType { get; set; }
 
         T GetActorAt(int x, int y);

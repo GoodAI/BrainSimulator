@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
@@ -512,7 +514,9 @@ namespace Render.RenderRequests
 
 
             // Draw tile layers
-            foreach (var tileLayer in world.Atlas.TileLayers)
+            List<ITileLayer> tileLayers = world.Atlas.TileLayers;
+            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+            foreach (ITileLayer tileLayer in toRender)
             {
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();

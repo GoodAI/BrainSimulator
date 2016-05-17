@@ -34,12 +34,16 @@ namespace World.ToyWorldCore
 
                 Debug.Assert(layerName != null);
 
+                int type = (int) layerType;
+                bool simpleType = type > 0 && (type & (type - 1)) == 0;
+                if(!simpleType) continue;
+
                 if (layerName.Contains("Object"))
                 {
                     ObjectGroup objectLayer = map.ObjectGroups.FirstOrDefault(x => x.Name == layerName);
                     if (objectLayer == null)    // TMX does not contain such layer
                     {
-                        Log.Instance.Info("Layer " + layerName + " not found in given .tmx file!");
+                        Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
                     atlas.ObjectLayers.Add(
@@ -59,7 +63,7 @@ namespace World.ToyWorldCore
                     Layer tileLayer = map.Layers.FirstOrDefault(x => x.Name == layerName);
                     if (tileLayer == null)  // TMX does not contain such layer
                     {
-                        Log.Instance.Info("Layer " + layerName + " not found in given .tmx file!");
+                        Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
                     atlas.TileLayers.Add(
@@ -73,9 +77,32 @@ namespace World.ToyWorldCore
                 }
             }
 
+            FillNamedAreas(atlas, map);
+
+            SetTileRelations(atlas, map);
+
             return atlas;
         }
 
+        private static void SetTileRelations(IAtlas atlas, Map map)
+        {
+            // TODO : Doors
+        }
+        
+        private static void FillNamedAreas(IAtlas atlas, Map map)
+        {
+            ObjectGroup foregroundObjects = map.ObjectGroups.First(x => x.Name == "ForegroundObject");
+
+            List<TmxObject> tmxMapObjects = foregroundObjects.TmxMapObjects;
+            List<TmxObject> areaLabels = tmxMapObjects.Where(x => x.Type.Trim() == "AreaLabel").ToList();
+
+            IEnumerable<Vector2I> positions = areaLabels.Select(x => new Vector2I((int)Math.Floor(x.X), (int)Math.Floor(x.Y)));
+            IEnumerable<string> names = areaLabels.Select(x => x.Name);
+            List<Tuple<Vector2I, string>> namesPositions = positions.Zip(names, (x, y) => new Tuple<Vector2I, string>(x, y)).ToList();
+
+            atlas.NamedAreasCarrier = new NamedAreasCarrier((ITileLayer) atlas.GetLayer(LayerType.Path), namesPositions);
+        }
+        
         private static IObjectLayer FillObjectLayer(
             Atlas atlas,
             ObjectGroup objectLayer,
@@ -87,17 +114,16 @@ namespace World.ToyWorldCore
             int worldHeight
             )
         {
-            objectLayer.TmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
-            objectLayer.TmxMapObjects.ForEach(TransformObjectPosition);
+            List<TmxObject> tmxMapObjects = objectLayer.TmxMapObjects;
+            tmxMapObjects.ForEach(x => NormalizeObjectPosition(x, tileWidth, tileHeight, worldHeight));
+            tmxMapObjects.ForEach(TransformObjectPosition);
 
-            //            TODO : write loading of objects
             var simpleObjectLayer = new SimpleObjectLayer(layerType);
 
             // avatars list
-            IEnumerable<TmxObject> avatars = objectLayer.TmxMapObjects.Where(x => x.Type == "Avatar");
+            List<TmxObject> avatars = tmxMapObjects.Where(x => x.Type == "Avatar").ToList();
 
-            List<TmxObject> tmxObjects = avatars.ToList();
-            foreach (TmxObject avatar in tmxObjects)
+            foreach (TmxObject avatar in avatars)
             {
                 Avatar gameAvatar = LoadAgent(avatar, tilesets);
                 initializer.Invoke(gameAvatar);
@@ -105,15 +131,21 @@ namespace World.ToyWorldCore
                 atlas.AddAvatar(gameAvatar);
             }
 
-            IEnumerable<TmxObject> others = objectLayer.TmxMapObjects.Except(tmxObjects);
+            List<TmxObject> others = tmxMapObjects.Except(avatars).ToList();
+            List<TmxObject> characters = others.Where(x => x.Gid != 0).ToList();
 
-            foreach (TmxObject tmxObject in others)
+            foreach (TmxObject tmxObject in characters)
             {
                 Character character = LoadCharacter(tmxObject, tilesets);
                 initializer.Invoke(character);
                 simpleObjectLayer.AddGameObject(character);
                 atlas.Characters.Add(character);
             }
+            others = others.Except(characters).ToList();
+
+            // TODO : other objects
+
+
 
             return simpleObjectLayer;
         }
@@ -215,7 +247,7 @@ namespace World.ToyWorldCore
             Action<GameActor> initializer)
         {
             SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
-            string[] lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
+            string[] lines = layer.Data.RawData.Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             Assembly assembly = Assembly.GetExecutingAssembly();
             Type[] cachedTypes = assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(Tile))).ToArray();
@@ -251,9 +283,16 @@ namespace World.ToyWorldCore
                         //                        else
                         //                            Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
                     }
-
                 }
             }
+
+            if (layer.Properties != null)
+            {
+                Property render = layer.Properties.PropertiesList.FirstOrDefault(x => x.Name.Trim() == "Render");
+                if (render != null)
+                    newSimpleLayer.Render = bool.Parse(render.Value);
+            }
+
             return newSimpleLayer;
         }
 

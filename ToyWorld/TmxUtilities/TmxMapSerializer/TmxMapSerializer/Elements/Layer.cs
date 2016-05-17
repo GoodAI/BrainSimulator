@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace TmxMapSerializer.Elements
 {
@@ -15,5 +16,8 @@ namespace TmxMapSerializer.Elements
 
         [XmlElement("data")]
         public Data Data { get; set; }
+
+        [XmlElement("properties")]
+        public Properties Properties { get; set; }
     }
 }

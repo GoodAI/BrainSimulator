@@ -151,8 +151,12 @@
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Recharger.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\PoisonuosTile.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
+    <Compile Include="GameActors\Tiles\Path\AreaBorder.cs" />
+    <Compile Include="GameActors\Tiles\Path\AreaBorderPath.cs" />
+    <Compile Include="GameActors\Tiles\Path\Room.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
     <Compile Include="Physics\ICollisionResolver.cs" />
@@ -172,6 +176,7 @@
     <Compile Include="Physics\Shapes.cs" />
     <Compile Include="Physics\StaticPhysicalEntity.cs" />
     <Compile Include="Physics\Utils.cs" />
+    <Compile Include="ToyWorldCore\NamedAreasCarrier.cs" />
     <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
     <Compile Include="GameActors\GameObjects\Avatar.cs" />
     <Compile Include="GameActors\GameObjects\Character.cs" />

@@ -158,7 +158,7 @@ namespace World.ToyWorldCore
             UpdateCharacters();
             AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             UpdatePhysics();
-            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Step performed");
+            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
         }
 
         public List<int> GetAvatarsIds()

@@ -18,6 +18,12 @@ namespace World.ToyWorldCore
         public int Height { get; set; }
 
 
+        public Tile[][] Tiles { get; set; }
+
+        public bool Render { get; set; }
+
+        public LayerType LayerType { get; set; }
+
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
             if (width <= 0)
@@ -31,11 +37,8 @@ namespace World.ToyWorldCore
             Height = height;
             Width = width;
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
+            Render = true;
         }
-
-        public Tile[][] Tiles { get; set; }
-
-        public LayerType LayerType { get; set; }
 
         public Tile GetActorAt(int x, int y)
         {
