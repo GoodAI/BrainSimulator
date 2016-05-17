@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
@@ -347,6 +348,12 @@ namespace GoodAI.ToyWorld
             {
                 if (Owner.TextIn == null)
                     return;
+                /*  TODO Get words from vectors  */
+                /* Get words from vectors */
+                StringBuilder outputText;
+                /* maintain n-best list somewhere? Memblock? */
+
+
                 Owner.TextIn.SafeCopyToHost();
                 Owner.AvatarCtrl.MessageOut = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
             }
