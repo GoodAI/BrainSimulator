@@ -174,7 +174,7 @@ namespace World.ToyWorldCore
         private void UpdateTime()
         {
             Atlas.IncrementTime();
-            Log.Instance.Debug("ToyWorld time is: " + Atlas.Time());
+            Log.Instance.Debug("ToyWorld time is: " + Atlas.Time);
         }
 
         public List<int> GetAvatarsIds()

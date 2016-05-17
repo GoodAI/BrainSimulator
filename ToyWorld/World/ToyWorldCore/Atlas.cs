@@ -133,11 +133,23 @@ namespace World.ToyWorldCore
 
         INamedAreasCarrier NamedAreasCarrier { get; set; }
 
+        /// <summary>
+        /// Temperature at given point.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
         float Temperature(Vector2 position);
 
-        DateTime Time();
+        /// <summary>
+        /// Date and Time is currently affecting Temperature.
+        /// </summary>
+        /// <returns>Time in simulation</returns>
+        DateTime Time { get; }
 
-        void IncrementTime();
+        /// <summary>
+        /// Increment time of simulation.
+        /// </summary>
+        void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0);
     }
 
     public class Atlas : IAtlas
@@ -148,7 +160,7 @@ namespace World.ToyWorldCore
         public List<IObjectLayer> ObjectLayers { get; private set; }
         public INamedAreasCarrier NamedAreasCarrier { get; set; }
 
-        private DateTime m_time = new DateTime(2000,1,1,0,0,0);
+        public DateTime Time { get; private set; }
 
         private IEnumerable<ILayer<GameActor>> Layers
         {
@@ -169,6 +181,7 @@ namespace World.ToyWorldCore
 
         public Atlas()
         {
+            Time = new DateTime(2000,1,1,0,0,0);
             NewAutoupdateables = new List<IAutoupdateable>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
@@ -379,14 +392,9 @@ namespace World.ToyWorldCore
             return Atmosphere.Temperature(position);
         }
 
-        public DateTime Time()
+        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0,int seconds = 10, int millis = 0)
         {
-            return m_time;
-        }
-
-        public void IncrementTime()
-        {
-            m_time = m_time.Add(new TimeSpan(0,0,0,10));
+            Time = Time.Add(new TimeSpan(days, hours, minutes, seconds, millis));
         }
     }
 }
