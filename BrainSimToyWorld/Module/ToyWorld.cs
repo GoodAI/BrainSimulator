@@ -54,6 +54,13 @@ namespace GoodAI.ToyWorld
             set { SetOutput(3, value); }
         }
 
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> ChosenActions
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {
@@ -256,6 +263,9 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
+
+            IAvatarControls tmp = new AvatarControls();
+            ChosenActions.Count = tmp.ToArray().Length;
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)

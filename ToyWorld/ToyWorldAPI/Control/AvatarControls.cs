@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -47,6 +49,12 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         /// <param name="actions"></param>
         void Update(IAvatarControls actions);
+
+        /// <summary>
+        /// Returns actions as a float array
+        /// </summary>
+        /// <returns></returns>
+        float[] ToArray();
     }
 
     /// <summary>
@@ -67,7 +75,7 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public AvatarAction<float> DesiredForwardSpeed { get { return m_desiredForwardSpeed; } set { m_desiredForwardSpeed += value; } }
 
-        public AvatarAction<float> DesiredRightSpeed { get { return m_desiredRightSpeed; } set { m_desiredRightSpeed += value; }}
+        public AvatarAction<float> DesiredRightSpeed { get { return m_desiredRightSpeed; } set { m_desiredRightSpeed += value; } }
 
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
@@ -96,7 +104,7 @@ namespace GoodAI.ToyWorld.Control
 
 
         ///  <summary>
-        /// 
+        ///
         ///  </summary>
         ///  <param name="priority"></param>
         /// <param name="desiredForwardSpeed"></param>
@@ -153,6 +161,23 @@ namespace GoodAI.ToyWorld.Control
             Use = actions.Use;
             PickUp = actions.PickUp;
             Fof = actions.Fof;
+        }
+
+        public float[] ToArray()
+        {
+            List<float> result = new List<float>
+            {
+                DesiredForwardSpeed,
+                DesiredRightSpeed,
+                DesiredRotation,
+                Interact.Value ? 1 : 0,
+                Use.Value ? 1 : 0,
+                PickUp.Value ? 1 : 0,
+                Fof.Value.X,
+                Fof.Value.Y
+            };
+
+            return result.ToArray();
         }
     }
 }

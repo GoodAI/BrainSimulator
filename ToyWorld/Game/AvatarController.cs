@@ -45,6 +45,11 @@ namespace Game
             SetAvatarActionsControllable();
         }
 
+        public IAvatarControls GetActions()
+        {
+            return m_avatarControls;
+        }
+
         public IStats GetStats()
         {
             throw new NotImplementedException();

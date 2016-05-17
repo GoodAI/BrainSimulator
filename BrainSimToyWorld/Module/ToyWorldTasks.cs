@@ -311,6 +311,7 @@ namespace GoodAI.ToyWorld
                     m_fpsStopwatch.Restart();
                 }
 
+                ObtainActions();
                 Owner.GameCtrl.MakeStep();
 
                 if (Owner.CopyDataThroughCPU)
@@ -323,6 +324,13 @@ namespace GoodAI.ToyWorld
                 ObtainMessageFromBrain();
                 SendMessageToBrain();
                 ObtainSignals();
+            }
+
+            private void ObtainActions()
+            {
+                IAvatarControls actions = Owner.AvatarCtrl.GetActions();
+                Array.Copy(actions.ToArray(), Owner.ChosenActions.Host, Owner.ChosenActions.Count);
+                Owner.ChosenActions.SafeCopyToDevice();
             }
 
             private void ObtainSignals()
