@@ -113,6 +113,7 @@
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Game\AvatarControllerTests.cs" />
     <Compile Include="Game\GameControllerTests.cs" />
+    <Compile Include="Language\LanguageInputTests.cs" />
     <Compile Include="Physics\BasicAvatarMoverTest.cs" />
     <Compile Include="Physics\MomentumCollisionResolverTest.cs" />
     <Compile Include="Physics\MovementPhysicsTest.cs" />
@@ -191,9 +192,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Language\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
