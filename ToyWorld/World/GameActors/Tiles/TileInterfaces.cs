@@ -51,4 +51,16 @@ namespace World.GameActors.Tiles
 
         void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable);
     }
+
+    public interface ISwitchable
+    {
+        GameActor Switch(IAtlas atlas, ITilesetTable table);
+    }
+
+    public interface ISwitcher
+    {
+        void Switch(IAtlas atlas, ITilesetTable table);
+
+        ISwitchable Switchable { get; set; }
+    }
 }

@@ -11,11 +11,18 @@ namespace World.GameActions
         {
         }
 
-        public override void Resolve(GameActorPosition target, IAtlas atlas)
+        public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
         {
             if (target.Actor is Apple || target.Actor is Pear)
             {
                 atlas.Remove(target);
+            }
+
+            var switcher = target.Actor as ISwitcher;
+
+            if (switcher != null)
+            {
+                switcher.Switch(atlas, table);
             }
         }
     }

@@ -46,8 +46,7 @@ namespace World.ToyWorldCore
                         Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
-                    atlas.ObjectLayers.Add(
-                        FillObjectLayer(
+                    IObjectLayer filledObjectLayer = FillObjectLayer(
                         atlas,
                         objectLayer,
                         layerType,
@@ -56,7 +55,9 @@ namespace World.ToyWorldCore
                         map.Tilewidth,
                         map.Tileheight,
                         map.Height
-                        ));
+                        );
+                    atlas.ObjectLayers.Add(
+                        filledObjectLayer);
                 }
                 else
                 {
@@ -66,13 +67,14 @@ namespace World.ToyWorldCore
                         Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
-                    atlas.TileLayers.Add(
-                        FillTileLayer(
+                    ITileLayer filledTileLayer = FillTileLayer(
                         tileLayer,
                         layerType,
                         atlas.StaticTilesContainer,
                         tilesetTable,
-                        initializer)
+                        initializer);
+                    atlas.TileLayers.Add(
+                        filledTileLayer
                         );
                 }
             }
@@ -86,9 +88,44 @@ namespace World.ToyWorldCore
 
         private static void SetTileRelations(IAtlas atlas, Map map)
         {
-            // TODO : Doors
+            ObjectGroup foregroundObjects = map.ObjectGroups.FirstOrDefault(x => x.Name == "ForegroundObject");
+            List<TmxObject> tmxMapObjects = foregroundObjects.TmxMapObjects;
+            IEnumerable<TmxObject> leverRDoors = tmxMapObjects.Where(x => x.Type == "LeverRDoor");
+            foreach (TmxObject leverRDoor in leverRDoors)
+            {
+                Polyline polyline = leverRDoor.Polyline;
+                if (polyline == null)
+                {
+                    throw new ArgumentException("Foreground object leverRDoor is wrong type. Should be Polyline.");
+                }
+                IEnumerable<Vector2> polylinePoints = PolylineTransform(map, leverRDoor);
+                Vector2 startPoint = new Vector2(leverRDoor.X, leverRDoor.Y);
+                Vector2 source = polylinePoints.First();
+                Vector2 target = polylinePoints.Last();
+                IEnumerable<GameActorPosition> sourceGameActors = atlas.ActorsAt(source);
+                ISwitcher switcher = sourceGameActors.First(x => x.Actor is ISwitcher).Actor as ISwitcher;
+
+                IEnumerable<GameActorPosition> targetGameActors = atlas.ActorsAt(target);
+                ISwitchable switchable = targetGameActors.First(x => x.Actor is ISwitchable).Actor as ISwitchable;
+
+                Debug.Assert(switcher != null, "switcher != null");
+                Debug.Assert(switchable != null, "switchable != null");
+                switcher.Switchable = switchable;
+            }
         }
-        
+
+        private static IEnumerable<Vector2> PolylineTransform(Map map, TmxObject polyline)
+        {
+            float tilewidth = map.Tilewidth;
+            float tileheight = map.Tileheight;
+            float polX = polyline.X;
+            float polY = polyline.Y;
+            foreach (Vector2 point in polyline.Polyline.GetPoints())
+            {
+                yield return new Vector2(polX + point.X/tilewidth, polY - point.Y/tileheight);
+            }
+        }
+
         private static void FillNamedAreas(IAtlas atlas, Map map)
         {
             ObjectGroup foregroundObjects = map.ObjectGroups.First(x => x.Name == "ForegroundObject");

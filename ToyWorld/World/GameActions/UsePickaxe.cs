@@ -1,4 +1,5 @@
 using World.GameActors;
+using World.GameActors.Tiles;
 using World.ToyWorldCore;
 
 namespace World.GameActions
@@ -9,7 +10,7 @@ namespace World.GameActions
 
         public UsePickaxe(GameActor sender) : base(sender) { }
 
-        public override void Resolve(GameActorPosition target, IAtlas atlas)
+        public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
         {
             throw new System.NotImplementedException();
         }

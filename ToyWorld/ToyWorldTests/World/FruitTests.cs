@@ -18,15 +18,15 @@ namespace ToyWorldTests.World
             Mock<IAtlas> atlas = new Mock<IAtlas>();
             Mock<GameActor> sender = new Mock<GameActor>();
             Mock<PickUp> pickUp = new Mock<PickUp>(sender.Object);
-            pickUp.Setup(x => x.Resolve(It.IsAny<GameActorPosition>(), It.IsAny<IAtlas>()));
+            pickUp.Setup(x => x.Resolve(It.IsAny<GameActorPosition>(), It.IsAny<IAtlas>(), It.IsAny<ITilesetTable>()));
 
             Mock<Fruit> fruit = new Mock<Fruit>(mockTilesetTable.Object, Vector2I.Zero);
 
             // Act
-            fruit.Object.ApplyGameAction(atlas.Object, pickUp.Object, Vector2.Zero);
+            fruit.Object.ApplyGameAction(atlas.Object, pickUp.Object, Vector2.Zero, It.IsAny<ITilesetTable>());
 
             // Assert
-            pickUp.Verify(x => x.Resolve(It.IsAny<GameActorPosition>(), atlas.Object));
+            pickUp.Verify(x => x.Resolve(It.IsAny<GameActorPosition>(), atlas.Object, It.IsAny<ITilesetTable>()));
         }
     }
 }

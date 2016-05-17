@@ -29,7 +29,7 @@ namespace World.GameActors.GameObjects
         {
             if (gameAction is PickUp || gameAction is LayDown)
             {
-                gameAction.Resolve(new GameActorPosition(this, position, LayerType.Object), atlas);
+                gameAction.Resolve(new GameActorPosition(this, position, LayerType.Object), atlas, tilesetTable);
             }
         }
     }
