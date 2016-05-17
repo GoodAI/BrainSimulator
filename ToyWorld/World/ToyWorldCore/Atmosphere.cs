@@ -35,7 +35,7 @@ namespace World.ToyWorldCore
 
         private float m_dailyTemperature = 1f;
 
-        private readonly NormalDistribution m_random = new NormalDistribution(42);
+        private readonly NormalDistribution m_random = new NormalDistribution(42, 0, 1);
 
         public Atmosphere(IAtlas atlas)
         {
@@ -79,9 +79,8 @@ namespace World.ToyWorldCore
             m_dailyTemperature = SUMMER_MID_TEMPERATURE + winterPart*-SUMMER_WINTER_DIFF;
 
             bool getCold = actualTime.Hour >= 18;
-
             float newTemperature = m_oldTemperature + m_newDiff;
-            float newDiff = Math.Abs(newTemperature - m_dailyTemperature)*(float) (m_random.NextDouble() - 1) / 10 + 0.2f;
+            float newDiff = Math.Abs(newTemperature - m_dailyTemperature)*(float) (m_random.NextDouble()) / 10 + 0.2f;
             if (getCold)
             {
                 m_newDiff = - newDiff;
