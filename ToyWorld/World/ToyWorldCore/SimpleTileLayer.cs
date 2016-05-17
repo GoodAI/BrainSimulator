@@ -14,18 +14,13 @@ namespace World.ToyWorldCore
         private int[] m_tileTypes;
         private readonly int BACKGROUND_TILE_NUMBER = 6;
         private readonly int OBSTACLE_TILE_NUMBER = 7;
-        private bool m_render = true;
         public int Width { get; set; }
         public int Height { get; set; }
 
 
         public Tile[][] Tiles { get; set; }
 
-        public bool Render
-        {
-            get { return m_render; }
-            set { m_render = value; }
-        }
+        public bool Render { get; set; }
 
         public LayerType LayerType { get; set; }
 
@@ -42,6 +37,7 @@ namespace World.ToyWorldCore
             Height = height;
             Width = width;
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
+            Render = true;
         }
 
         public Tile GetActorAt(int x, int y)

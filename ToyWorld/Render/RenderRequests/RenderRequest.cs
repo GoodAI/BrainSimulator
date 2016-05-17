@@ -515,8 +515,8 @@ namespace Render.RenderRequests
 
             // Draw tile layers
             List<ITileLayer> tileLayers = world.Atlas.TileLayers;
-            var toRender = tileLayers.Where(x => x.Render);
-            foreach (var tileLayer in toRender)
+            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+            foreach (ITileLayer tileLayer in toRender)
             {
                 m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
                 m_grid.Draw();

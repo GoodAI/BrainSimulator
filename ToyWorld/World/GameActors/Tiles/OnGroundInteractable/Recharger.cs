@@ -8,22 +8,22 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 {
     public class Recharger : DynamicTile, IAutoupdateable, ITileDetector
     {
-        private float ENERGY_FOR_STEP_OR_WAIT_A_SECOND_ON_RECHARGER = 0.1f;
+        private float ENERGY_RECHARGED = 0.1f;
         public int NextUpdateAfter { get; private set; }
         public bool SomeoneOnTile { get; set; }
         public bool RequiresCenterOfObject { get; private set; }
 
         public Recharger(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
-            Ctor();
+            Init();
         }
 
         public Recharger(int tileType, Vector2I position) : base(tileType, position)
         {
-            Ctor();
+            Init();
         }
 
-        private void Ctor()
+        private void Init()
         {
             NextUpdateAfter = 0;
             RequiresCenterOfObject = true;
@@ -47,7 +47,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 var avatar = gameActor as IAvatar;
                 if (avatar != null)
                 {
-                    avatar.Energy += ENERGY_FOR_STEP_OR_WAIT_A_SECOND_ON_RECHARGER;
+                    avatar.Energy += ENERGY_RECHARGED;
                 }
             }
         }
