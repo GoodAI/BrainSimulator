@@ -53,14 +53,33 @@ namespace GoodAI.Modules.Common
             }
         }
 
-        public int Period { 
-            get 
-            { 
+        public int Period
+        {
+            get
+            {
                 return PeriodTask.Period;
             }
             set
             {
                 PeriodTask.Period = value;
+            }
+        }
+
+        private int m_rndSeed;
+        [MyBrowsable, Category("Params"), Description("Random seed for the node. 0 = no seed, each run will use different random values.")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public int RandomSeed
+        {
+            get
+            {
+                return m_rndSeed;
+            }
+            set
+            {
+                if (value >= 0)
+                {
+                    m_rndSeed = value;
+                }
             }
         }
 
@@ -101,6 +120,17 @@ namespace GoodAI.Modules.Common
 
         public override void UpdateMemoryBlocks()
         {
+            if (RandomSeed > 0)
+            {
+                m_rnd = new Random(RandomSeed);
+                MyKernelFactory.Instance.GetRandDevice(this).SetPseudoRandomGeneratorSeed((ulong)RandomSeed);   // set random seed defining the sequence
+                MyKernelFactory.Instance.GetRandDevice(this).SetOffset(0);                                      // and offset in this random sequence
+            }
+            else
+            {
+                m_rnd = new Random(DateTime.Now.Millisecond);
+            }
+
             RandomNumbers.Count = Output.Count + 1;
 
             if (UniformRNG.Enabled)
@@ -117,7 +147,7 @@ namespace GoodAI.Modules.Common
         {
             validator.AssertError(RandomPeriodMin > 0, this, "RandomPeriodMin have to be greater than 0.");
             validator.AssertError(RandomPeriodMax > RandomPeriodMin, this, "RandomPeriodMax have to be greater than RandomPeriodMin");
-            if(CombinationRNG.Enabled)
+            if (CombinationRNG.Enabled)
             {
                 validator.AssertError(CombinationRNG.Min < CombinationRNG.Max, this, "Min has to be smaller than Max for Combination task.");
                 validator.AssertError(Output.Count <= CombinationRNG.Max - CombinationRNG.Min, this, "Output is larger than Combination's task range.");
@@ -151,7 +181,7 @@ namespace GoodAI.Modules.Common
                 m_setKernel.Run(Output, 0, keep, Output.Count);
             }
         }
-        
+
         public void UpdatePeriod(MyTask caller)
         {
             if (RandomPeriod && (caller.SimulationStep >= NextPeriodChange))
@@ -166,7 +196,7 @@ namespace GoodAI.Modules.Common
 
     /// <summary>This task holds information about period. Period information is in the task, so it can be changed during runtime.</summary>
     [Description("Period settings")]
-    public class PeriodRNGTask: MyTask<MyRandomNode>
+    public class PeriodRNGTask : MyTask<MyRandomNode>
     {
         //Period should be randomized?
         [MyBrowsable, Category("\tPeriod parameters"), Description("Period will change randomly during simulation if set to True. RandomPeriodMin is a lower bound while RandomPeriodMax is an upper bound. First value is determined by Period parameter.")]
@@ -193,7 +223,7 @@ namespace GoodAI.Modules.Common
 
         public override void Execute()
         {
-            
+
         }
     }
 
@@ -275,7 +305,7 @@ namespace GoodAI.Modules.Common
             Owner.Output.MinValueHint = -3 * StdDev;
         }
 
-        public override void Init(int nGPU){ }
+        public override void Init(int nGPU) { }
 
         public override void Execute()
         {
