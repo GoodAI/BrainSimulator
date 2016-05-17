@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -47,6 +49,12 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         /// <param name="actions"></param>
         void Update(IAvatarControls actions);
+
+        /// <summary>
+        /// Returns actions as a float array
+        /// </summary>
+        /// <returns></returns>
+        Dictionary<string, float> ToDictionary();
     }
 
     /// <summary>
@@ -67,7 +75,7 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public AvatarAction<float> DesiredForwardSpeed { get { return m_desiredForwardSpeed; } set { m_desiredForwardSpeed += value; } }
 
-        public AvatarAction<float> DesiredRightSpeed { get { return m_desiredRightSpeed; } set { m_desiredRightSpeed += value; }}
+        public AvatarAction<float> DesiredRightSpeed { get { return m_desiredRightSpeed; } set { m_desiredRightSpeed += value; } }
 
         /// <summary>
         /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
@@ -96,7 +104,7 @@ namespace GoodAI.ToyWorld.Control
 
 
         ///  <summary>
-        /// 
+        ///
         ///  </summary>
         ///  <param name="priority"></param>
         /// <param name="desiredForwardSpeed"></param>
@@ -153,6 +161,27 @@ namespace GoodAI.ToyWorld.Control
             Use = actions.Use;
             PickUp = actions.PickUp;
             Fof = actions.Fof;
+        }
+
+        public Dictionary<string, float> ToDictionary()
+        {
+            Dictionary<string, float> result = new Dictionary<string, float>();
+
+            result["forward"] = DesiredForwardSpeed > 0 ? DesiredForwardSpeed : 0;
+            result["backward"] = DesiredForwardSpeed < 0 ? -DesiredForwardSpeed : 0;
+            result["left"] = DesiredRightSpeed < 0 ? -DesiredRightSpeed : 0;
+            result["right"] = DesiredRightSpeed > 0 ? DesiredRightSpeed : 0;
+            result["rot_left"] = DesiredRotation < 0 ? -DesiredRotation : 0;
+            result["rot_right"] = DesiredRotation > 0 ? DesiredRotation : 0;
+            result["fof_right"] = Fof.Value.X > 0 ? Fof.Value.X : 0;
+            result["fof_left"] = Fof.Value.X < 0 ? -Fof.Value.X : 0;
+            result["fof_up"] = Fof.Value.Y > 0 ? Fof.Value.Y : 0;
+            result["fof_down"] = Fof.Value.Y < 0 ? -Fof.Value.Y : 0;
+            result["interact"] = Interact.Value ? 1 : 0;
+            result["use"] = Use.Value ? 1 : 0;
+            result["pickup"] = PickUp.Value ? 1 : 0;
+
+            return result;
         }
     }
 }

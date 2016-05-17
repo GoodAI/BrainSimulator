@@ -32,5 +32,10 @@ namespace GoodAI.ToyWorld.Control
         /// Sets initial values to controls. Agent should not move.
         /// </summary>
         void ResetControls();
+
+        /// <summary>
+        /// Returns currently set actions
+        /// </summary>
+        IAvatarControls GetActions();
     }
 }

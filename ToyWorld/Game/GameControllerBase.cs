@@ -84,7 +84,10 @@ namespace Game
             World.Update();
 
             Renderer.ProcessRequests(World);
+        }
 
+        public virtual void FinishStep()
+        {
             ResetAvatarControllers();
         }
 

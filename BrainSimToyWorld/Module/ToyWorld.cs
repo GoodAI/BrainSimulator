@@ -54,6 +54,13 @@ namespace GoodAI.ToyWorld
             set { SetOutput(3, value); }
         }
 
+        [MyOutputBlock(4)]
+        public MyMemoryBlock<float> ChosenActions
+        {
+            get { return GetOutput(4); }
+            set { SetOutput(4, value); }
+        }
+
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {
@@ -195,6 +202,7 @@ namespace GoodAI.ToyWorld
 
         private int SignalCount { get; set; }
 
+        private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
 
         public ToyWorld()
         {
@@ -256,6 +264,46 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
+            ChosenActions.Count = Controls.Count;
+
+            if (Controls.Count == m_controlsCount)
+            {
+                MyLog.INFO.WriteLine("ToyWorld: Controls set to WSAD mode.");
+
+                m_controlIndexes["forward"] = 0;
+                m_controlIndexes["backward"] = 1;
+                m_controlIndexes["left"] = 2;
+                m_controlIndexes["right"] = 3;
+                m_controlIndexes["rot_left"] = 4;
+                m_controlIndexes["rot_right"] = 5;
+                m_controlIndexes["fof_left"] = 6;
+                m_controlIndexes["fof_right"] = 7;
+                m_controlIndexes["fof_up"] = 8;
+                m_controlIndexes["fof_down"] = 9;
+                m_controlIndexes["interact"] = 10;
+                m_controlIndexes["use"] = 11;
+                m_controlIndexes["pickup"] = 12;
+            }
+            else if (Controls.Count >= 84)
+            {
+                MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
+
+                m_controlIndexes["forward"] = 87; // W
+                m_controlIndexes["backward"] = 83; // S
+                m_controlIndexes["rot_left"] = 65; // A
+                m_controlIndexes["rot_right"] = 68; // D
+                m_controlIndexes["left"] = 81; // Q
+                m_controlIndexes["right"] = 69; // E
+
+                m_controlIndexes["fof_up"] = 73; // I
+                m_controlIndexes["fof_left"] = 76; // J
+                m_controlIndexes["fof_down"] = 75; // K
+                m_controlIndexes["fof_right"] = 74; // L
+
+                m_controlIndexes["interact"] = 66; // B
+                m_controlIndexes["use"] = 78; // N
+                m_controlIndexes["pickup"] = 77; // M
+            }
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
