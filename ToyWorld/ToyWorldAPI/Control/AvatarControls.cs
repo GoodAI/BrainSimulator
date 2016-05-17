@@ -54,7 +54,7 @@ namespace GoodAI.ToyWorld.Control
         /// Returns actions as a float array
         /// </summary>
         /// <returns></returns>
-        float[] ToArray();
+        Dictionary<string, float> ToDictionary();
     }
 
     /// <summary>
@@ -163,21 +163,25 @@ namespace GoodAI.ToyWorld.Control
             Fof = actions.Fof;
         }
 
-        public float[] ToArray()
+        public Dictionary<string, float> ToDictionary()
         {
-            List<float> result = new List<float>
-            {
-                DesiredForwardSpeed,
-                DesiredRightSpeed,
-                DesiredRotation,
-                Interact.Value ? 1 : 0,
-                Use.Value ? 1 : 0,
-                PickUp.Value ? 1 : 0,
-                Fof.Value.X,
-                Fof.Value.Y
-            };
+            Dictionary<string, float> result = new Dictionary<string, float>();
 
-            return result.ToArray();
+            result["forward"] = DesiredForwardSpeed > 0.1 ? 1 : 0;
+            result["backward"] = DesiredForwardSpeed < -0.1 ? 1 : 0;
+            result["left"] = DesiredRightSpeed < -0.1 ? 1 : 0;
+            result["right"] = DesiredRightSpeed > 0.1 ? 1 : 0;
+            result["rot_left"] = DesiredRotation < -0.1 ? 1 : 0;
+            result["rot_right"] = DesiredRotation > 0.1 ? 1 : 0;
+            result["fof_right"] = Fof.Value.X > 0.1 ? 1 : 0;
+            result["fof_left"] = Fof.Value.X < -0.1 ? 1 : 0;
+            result["fof_up"] = Fof.Value.Y > 0.1 ? 1 : 0;
+            result["fof_down"] = Fof.Value.Y < -0.1 ? 1 : 0;
+            result["interact"] = Interact.Value ? 1 : 0;
+            result["use"] = Use.Value ? 1 : 0;
+            result["pickup"] = PickUp.Value ? 1 : 0;
+
+            return result;
         }
     }
 }

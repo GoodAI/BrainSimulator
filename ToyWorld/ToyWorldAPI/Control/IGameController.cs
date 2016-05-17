@@ -19,6 +19,8 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         void MakeStep();
 
+        void FinishStep();
+
         /// <summary>
         ///
         /// </summary>

@@ -161,49 +161,8 @@ namespace GoodAI.ToyWorld
 
         public class TWGetInputTask : MyTask<ToyWorld>
         {
-            private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
 
-            public override void Init(int nGPU)
-            {
-                if (Owner.Controls.Count == Owner.m_controlsCount)
-                {
-                    MyLog.INFO.WriteLine("ToyWorld: Controls set to WSAD mode.");
-
-                    m_controlIndexes["forward"] = 0;
-                    m_controlIndexes["backward"] = 1;
-                    m_controlIndexes["left"] = 2;
-                    m_controlIndexes["right"] = 3;
-                    m_controlIndexes["rot_left"] = 4;
-                    m_controlIndexes["rot_right"] = 5;
-                    m_controlIndexes["fof_right"] = 6;
-                    m_controlIndexes["fof_left"] = 7;
-                    m_controlIndexes["fof_up"] = 8;
-                    m_controlIndexes["fof_down"] = 9;
-                    m_controlIndexes["interact"] = 10;
-                    m_controlIndexes["use"] = 11;
-                    m_controlIndexes["pickup"] = 12;
-                }
-                else if (Owner.Controls.Count >= 84)
-                {
-                    MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
-
-                    m_controlIndexes["forward"] = 87; // W
-                    m_controlIndexes["backward"] = 83; // S
-                    m_controlIndexes["rot_left"] = 65; // A
-                    m_controlIndexes["rot_right"] = 68; // D
-                    m_controlIndexes["left"] = 81; // Q
-                    m_controlIndexes["right"] = 69; // E
-
-                    m_controlIndexes["fof_up"] = 73; // I
-                    m_controlIndexes["fof_left"] = 76; // J
-                    m_controlIndexes["fof_down"] = 75; // K
-                    m_controlIndexes["fof_right"] = 74; // L
-
-                    m_controlIndexes["interact"] = 66; // B
-                    m_controlIndexes["use"] = 78; // N
-                    m_controlIndexes["pickup"] = 77; // M
-                }
-            }
+            public override void Init(int nGPU) { }
 
             public override void Execute()
             {
@@ -212,27 +171,27 @@ namespace GoodAI.ToyWorld
 
                 Owner.Controls.SafeCopyToHost();
 
-                float leftSignal = Owner.Controls.Host[m_controlIndexes["left"]];
-                float rightSignal = Owner.Controls.Host[m_controlIndexes["right"]];
-                float fwSignal = Owner.Controls.Host[m_controlIndexes["forward"]];
-                float bwSignal = Owner.Controls.Host[m_controlIndexes["backward"]];
-                float rotLeftSignal = Owner.Controls.Host[m_controlIndexes["rot_left"]];
-                float rotRightSignal = Owner.Controls.Host[m_controlIndexes["rot_right"]];
+                float leftSignal = Owner.Controls.Host[Owner.m_controlIndexes["left"]];
+                float rightSignal = Owner.Controls.Host[Owner.m_controlIndexes["right"]];
+                float fwSignal = Owner.Controls.Host[Owner.m_controlIndexes["forward"]];
+                float bwSignal = Owner.Controls.Host[Owner.m_controlIndexes["backward"]];
+                float rotLeftSignal = Owner.Controls.Host[Owner.m_controlIndexes["rot_left"]];
+                float rotRightSignal = Owner.Controls.Host[Owner.m_controlIndexes["rot_right"]];
 
-                float fof_left = Owner.Controls.Host[m_controlIndexes["fof_left"]];
-                float fof_right = Owner.Controls.Host[m_controlIndexes["fof_right"]];
-                float fof_up = Owner.Controls.Host[m_controlIndexes["fof_up"]];
-                float fof_down = Owner.Controls.Host[m_controlIndexes["fof_down"]];
+                float fof_left = Owner.Controls.Host[Owner.m_controlIndexes["fof_left"]];
+                float fof_right = Owner.Controls.Host[Owner.m_controlIndexes["fof_right"]];
+                float fof_up = Owner.Controls.Host[Owner.m_controlIndexes["fof_up"]];
+                float fof_down = Owner.Controls.Host[Owner.m_controlIndexes["fof_down"]];
 
-                float rotation = ConvertBiControlToUniControl(rotLeftSignal, rotRightSignal);
+                float rotation = ConvertBiControlToUniControl(rotRightSignal, rotLeftSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
-                float rightSpeed = ConvertBiControlToUniControl(leftSignal, rightSignal);
-                float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
+                float rightSpeed = ConvertBiControlToUniControl(rightSignal, leftSignal);
+                float fof_x = ConvertBiControlToUniControl(fof_right, fof_left);
                 float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
 
-                bool interact = Owner.Controls.Host[m_controlIndexes["interact"]] > 0.5;
-                bool use = Owner.Controls.Host[m_controlIndexes["use"]] > 0.5;
-                bool pickup = Owner.Controls.Host[m_controlIndexes["pickup"]] > 0.5;
+                bool interact = Owner.Controls.Host[Owner.m_controlIndexes["interact"]] > 0.5;
+                bool use = Owner.Controls.Host[Owner.m_controlIndexes["use"]] > 0.5;
+                bool pickup = Owner.Controls.Host[Owner.m_controlIndexes["pickup"]] > 0.5;
 
                 IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup,
                     fof: new PointF(fof_x, fof_y));
@@ -311,8 +270,9 @@ namespace GoodAI.ToyWorld
                     m_fpsStopwatch.Restart();
                 }
 
-                ObtainActions();
                 Owner.GameCtrl.MakeStep();
+                ObtainActions();
+                Owner.GameCtrl.FinishStep();
 
                 if (Owner.CopyDataThroughCPU)
                 {
@@ -328,8 +288,10 @@ namespace GoodAI.ToyWorld
 
             private void ObtainActions()
             {
-                IAvatarControls actions = Owner.AvatarCtrl.GetActions();
-                Array.Copy(actions.ToArray(), Owner.ChosenActions.Host, Owner.ChosenActions.Count);
+                Dictionary<string, float> actions = Owner.AvatarCtrl.GetActions().ToDictionary();
+                foreach (KeyValuePair<string, float> pair in actions)
+                    Owner.ChosenActions.Host[Owner.m_controlIndexes[pair.Key]] = pair.Value;
+
                 Owner.ChosenActions.SafeCopyToDevice();
             }
 
