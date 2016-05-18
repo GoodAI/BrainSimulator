@@ -2,12 +2,12 @@ Layer;NameOfTile;PositionInTileset;IsDefault;Note
 Background;Background;31;1;Grass
 ;Background;32;0;Tile
 ;Background;45;0;
-;Path;38;1;
-;Path;53;0;
-;Room;42;1;
-;Room;43;0;
-;Room;57;0;
-;Room;58;0;
+;PathTile;38;1;
+;PathTile;53;0;
+;RoomTile;42;1;
+;RoomTile;43;0;
+;RoomTile;57;0;
+;RoomTile;58;0;
 OnBackground;OnBackground;76;1;Small plant
 ;OnBackground;91;0;Small plant
 Area;AreaBorder;136;1;

@@ -8,21 +8,22 @@ using World.GameActors.Tiles.Path;
 
 namespace World.ToyWorldCore
 {
-    public interface INamedAreasCarrier
+    public interface IAreasCarrier
     {
         string AreaName(Vector2 coordinates);
         string RoomName(Vector2 coordinates);
+        Room Room(Vector2 coordinates);
     }
 
-    public class NamedAreasCarrier : INamedAreasCarrier
+    public class AreasCarrier : IAreasCarrier
     {
-        private string[][] Rooms { get; set; }
-        private string[][] Areas { get; set; }
+        private Room[][] Rooms { get; set; }
+        private string[][] AreaNames { get; set; }
 
-        public NamedAreasCarrier(ITileLayer pathLayer, ITileLayer areaLayer, List<Tuple<Vector2I, string>> positionsNamesTuples)
+        public AreasCarrier(ITileLayer pathLayer, ITileLayer areaLayer, List<Tuple<Vector2I, string>> positionsNamesTuples)
         {
-            Rooms = ArrayCreator.CreateJaggedArray<string[][]>(pathLayer.Width, pathLayer.Height);
-            Areas = ArrayCreator.CreateJaggedArray<string[][]>(pathLayer.Width, pathLayer.Height);
+            Rooms = ArrayCreator.CreateJaggedArray<Room[][]>(pathLayer.Width, pathLayer.Height);
+            AreaNames = ArrayCreator.CreateJaggedArray<string[][]>(pathLayer.Width, pathLayer.Height);
 
             foreach (Tuple<Vector2I, string> positionNameTuple in positionsNamesTuples)
             {
@@ -35,10 +36,16 @@ namespace World.ToyWorldCore
         public string AreaName(Vector2 coordinates)
         {
             Vector2I v = new Vector2I(Vector2.Floor(coordinates));
-            return Areas[v.X][v.Y];
+            return AreaNames[v.X][v.Y];
         }
 
         public string RoomName(Vector2 coordinates)
+        {
+            Vector2I v = new Vector2I(Vector2.Floor(coordinates));
+            return Rooms[v.X][v.Y] == null ? null : Rooms[v.X][v.Y].Name;
+        }
+
+        public Room Room(Vector2 coordinates)
         {
             Vector2I v = new Vector2I(Vector2.Floor(coordinates));
             return Rooms[v.X][v.Y];
@@ -47,7 +54,7 @@ namespace World.ToyWorldCore
         private void FillNamedArea(int x, int y, string name, ITileLayer pathLayer, ITileLayer areaLayer)
         {
             Tile tile = pathLayer.GetActorAt(x, y);
-            if (tile is Room)
+            if (tile is RoomTile)
             {
                 FillRoom(x, y, name, pathLayer);
             }
@@ -59,15 +66,15 @@ namespace World.ToyWorldCore
 
         private void FillArea(int x, int y, string name, ITileLayer pathLayer)
         {
-            if (Areas[x][y] != null)
+            if (AreaNames[x][y] != null)
             {
-                if (Areas[x][y] == name)
+                if (AreaNames[x][y] == name)
                 {
                     Log.Instance.Info("Area \"" + name + "\" has two AreaLabels.");
                 }
                 else
                 {
-                    Log.Instance.Warn("Two AreaLabels in one Area: \"" + Areas[x][y] + "\", \"" + name + "\".");
+                    Log.Instance.Warn("Two AreaLabels in one Area: \"" + AreaNames[x][y] + "\", \"" + name + "\".");
                 }
             }
             ExpandArea(x, y, name, pathLayer);
@@ -75,10 +82,10 @@ namespace World.ToyWorldCore
 
         private void ExpandArea(int x, int y, string name, ITileLayer pathLayer)
         {
-            if (Areas[x][y] != null) return;
+            if (AreaNames[x][y] != null) return;
             Tile tile = pathLayer.GetActorAt(x,y);
             if (tile is AreaBorder) return;
-            Areas[x][y] = name;
+            AreaNames[x][y] = name;
             ExpandArea(x + 1, y, name, pathLayer);
             ExpandArea(x, y + 1, name, pathLayer);
             ExpandArea(x, y - 1, name, pathLayer);
@@ -89,26 +96,29 @@ namespace World.ToyWorldCore
         {
             if (Rooms[x][y] != null)
             {
-                if (Rooms[x][y] == name)
+                if (Rooms[x][y].Name == name)
                 {
-                    Log.Instance.Info("Room " + name + " has two AreaLabels.");
+                    Log.Instance.Info("RoomTile " + name + " has two AreaLabels.");
                 }
                 else {
-                    Log.Instance.Warn("Two AreaLabels in one Room: \"" + Rooms[x][y] + "\", \"" + name + "\".");
+                    Log.Instance.Warn("Two AreaLabels in one RoomTile: \"" + Rooms[x][y] + "\", \"" + name + "\".");
                 }
+                return;
             }
-            ExpandRoom(x, y, name, pathLayer);
+            var room = new Room(name);
+            ExpandRoom(x, y, room, pathLayer);
         }
 
-        private void ExpandRoom(int x, int y, string name, ITileLayer pathLayer)
+        private void ExpandRoom(int x, int y, Room room, ITileLayer pathLayer)
         {
             if (Rooms[x][y] != null) return;
-            if (!(pathLayer.GetActorAt(x, y) is Room)) return;
-            Rooms[x][y] = name;
-            ExpandRoom(x + 1, y, name, pathLayer);
-            ExpandRoom(x, y + 1, name, pathLayer);
-            ExpandRoom(x, y - 1, name, pathLayer);
-            ExpandRoom(x - 1, y, name, pathLayer);
+            if (!(pathLayer.GetActorAt(x, y) is RoomTile)) return;
+            Rooms[x][y] = room;
+            room.Size++;
+            ExpandRoom(x + 1, y, room, pathLayer);
+            ExpandRoom(x, y + 1, room, pathLayer);
+            ExpandRoom(x, y - 1, room, pathLayer);
+            ExpandRoom(x - 1, y, room, pathLayer);
         }
     }
 }

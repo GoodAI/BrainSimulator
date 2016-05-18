@@ -11,7 +11,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void NullTilesetTableThrows()
         {
-            Assert.Throws<ArgumentNullException>(() => new Path(null));
+            Assert.Throws<ArgumentNullException>(() => new PathTile(null));
         }
 
         [Fact]

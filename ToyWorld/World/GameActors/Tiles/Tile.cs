@@ -43,5 +43,10 @@ namespace World.GameActors.Tiles
         {
             return new StaticPhysicalEntity(new RectangleShape(new Vector2(position), Vector2.One));
         }
+
+        public static Vector2 Center(Vector2I position)
+        {
+            return new Vector2(position) + Vector2.One/2;
+        }
     }
 }

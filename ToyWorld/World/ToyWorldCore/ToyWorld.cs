@@ -43,7 +43,7 @@ namespace World.ToyWorldCore
             Contract.EndContractBlock();
 
             Size = new Vector2I(tmxDeserializedMap.Width, tmxDeserializedMap.Height);
-            AutoupdateRegister = new AutoupdateRegister();
+            AutoupdateRegister = new AutoupdateRegister(100000);
             TilesetTable = new TilesetTable(tmxDeserializedMap, tileTable);
 
             InitAtlas(tmxDeserializedMap);

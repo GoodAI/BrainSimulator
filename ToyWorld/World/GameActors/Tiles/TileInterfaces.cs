@@ -30,7 +30,7 @@ namespace World.GameActors.Tiles
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable);
     }
 
     public interface IPickable : IInteractable { }
@@ -50,6 +50,11 @@ namespace World.GameActors.Tiles
         bool RequiresCenterOfObject { get; }
 
         void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable);
+    }
+
+    public interface IHeatSource : IDynamicTile
+    {
+        float Heat { get; }
     }
 
     public interface ISwitchable
