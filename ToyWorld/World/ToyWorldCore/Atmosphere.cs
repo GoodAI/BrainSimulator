@@ -64,8 +64,8 @@ namespace World.ToyWorldCore
             TimeSpan timeSpan = m_atlas.Time - m_prevCycleStart;
             int seconds = (int)timeSpan.TotalSeconds;
 
-            float cyclePhaze = MathHelper.Pi*seconds/SECONDS_IN_12_HOURS + MathHelper.Pi;
-            float increase = (1f + (float)Math.Cos(cyclePhaze)) / 2;
+            float cyclePhase = MathHelper.Pi*seconds/SECONDS_IN_12_HOURS + MathHelper.Pi;
+            float increase = (1f + (float)Math.Cos(cyclePhase)) / 2;
             return m_oldTemperature + increase*m_newDiff;
         }
 
