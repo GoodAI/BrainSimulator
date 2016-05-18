@@ -18,7 +18,7 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 
         public void Switch(IAtlas atlas, ITilesetTable table)
         {
-            LeverSwitchOff leverOff = new LeverSwitchOff(table, Position);
+            var leverOff = new LeverSwitchOff(table, Position);
             atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position), leverOff);
             if (Switchable == null) return;
             leverOff.Switchable = Switchable.Switch(atlas, table) as ISwitchable;
