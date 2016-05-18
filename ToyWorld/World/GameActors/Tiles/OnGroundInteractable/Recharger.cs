@@ -26,7 +26,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         private void Init()
         {
             NextUpdateAfter = 0;
-            RequiresCenterOfObject = true;
+            RequiresCenterOfObject = false;
         }
 
         public void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable)
@@ -38,11 +38,11 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            List<GameActorPosition> gameActorPositions = atlas.ActorsAt(new Vector2(Position), LayerType.Object).ToList();
+            List<IGameObject> gameActorPositions = atlas.StayingOnTile(Position);
 
             SomeoneOnTile = gameActorPositions.Any();
 
-            foreach (GameActor gameActor in gameActorPositions.Select(x => x.Actor))
+            foreach (IGameObject gameActor in gameActorPositions)
             {
                 var avatar = gameActor as IAvatar;
                 if (avatar != null)
