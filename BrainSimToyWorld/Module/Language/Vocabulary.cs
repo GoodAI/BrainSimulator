@@ -66,6 +66,16 @@ namespace GoodAI.ToyWorld.Language
         }
 
         /// <summary>
+        /// Adds a labeled vector to the vocabulary, assigning a default (random) value
+        /// to the vector.
+        /// </summary>
+        /// <param name="label">The label</param>
+        public void Add(string label)
+        {
+            Add(label, MakeRandomVector());
+        }
+
+        /// <summary>
         /// Retrieves the vector that corresponds to a label.
         /// </summary>
         /// <param name="label">The label to look up</param>

@@ -114,6 +114,7 @@
     <Compile Include="Game\AvatarControllerTests.cs" />
     <Compile Include="Game\GameControllerTests.cs" />
     <Compile Include="Language\LanguageInputTests.cs" />
+    <Compile Include="Language\LanguageOutputTests.cs" />
     <Compile Include="Physics\BasicAvatarMoverTest.cs" />
     <Compile Include="Physics\MomentumCollisionResolverTest.cs" />
     <Compile Include="Physics\MovementPhysicsTest.cs" />
