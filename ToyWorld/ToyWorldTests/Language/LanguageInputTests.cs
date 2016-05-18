@@ -10,6 +10,7 @@ namespace ToyWorldTests.Language
 {
     public class LanguageInputTests
     {
+        // Size of word vectors
         private const int NumberOfWordVectorDimensions = 50;
 
         // Initialization
@@ -43,21 +44,6 @@ namespace ToyWorldTests.Language
             float[] vector1 = Vocabulary.Instance.VectorFromLabel("hello");
             float[] vector2 = Vocabulary.Instance.VectorFromLabel("hello");
             Assert.True(vector1.SequenceEqual(vector2));
-        }
-
-        // Handles text with more tokens than the input
-        // layer can contain
-        [Fact]
-        public void InputTooManyTokens()
-        {
-
-        }
-
-        // Ensures that in the input layer, the vectors after last word are zero
-        [Fact]
-        public void PutZerosAfterLastWord()
-        {
-
         }
     }
 }
