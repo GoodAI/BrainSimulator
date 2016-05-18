@@ -98,6 +98,9 @@ namespace World.ToyWorldCore
                     AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
+
+            IAtmosphere atmosphere = new Atmosphere(Atlas);
+            Atlas.Atmosphere = atmosphere;
         }
 
         private void InitPhysics()
@@ -150,15 +153,28 @@ namespace World.ToyWorldCore
             AutoupdateRegister.Tick();
         }
 
+        private void UpdateAtmosphere()
+        {
+            Atlas.Atmosphere.Update();
+        }
+
         public void Update()
         {
+            UpdateTime();
             UpdateScheduled();
             UpdateTiles();
             UpdateAvatars();
             UpdateCharacters();
             AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             UpdatePhysics();
+            UpdateAtmosphere();
             Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
+        }
+
+        private void UpdateTime()
+        {
+            Atlas.IncrementTime();
+            Log.Instance.Debug("ToyWorld time is: " + Atlas.Time);
         }
 
         public List<int> GetAvatarsIds()

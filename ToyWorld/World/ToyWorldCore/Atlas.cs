@@ -132,14 +132,35 @@ namespace World.ToyWorldCore
         void RegisterToAutoupdate(IAutoupdateable actor);
 
         INamedAreasCarrier NamedAreasCarrier { get; set; }
+
+        /// <summary>
+        /// Temperature at given point.
+        /// </summary>
+        /// <param name="position"></param>
+        /// <returns></returns>
+        float Temperature(Vector2 position);
+
+        /// <summary>
+        /// Date and Time is currently affecting Temperature.
+        /// </summary>
+        /// <returns>Time in simulation</returns>
+        DateTime Time { get; }
+
+        /// <summary>
+        /// Increment time of simulation.
+        /// </summary>
+        void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0);
     }
 
     public class Atlas : IAtlas
     {
+        public IAtmosphere Atmosphere { get; set; }
         public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
         public INamedAreasCarrier NamedAreasCarrier { get; set; }
+
+        public DateTime Time { get; private set; }
 
         private IEnumerable<ILayer<GameActor>> Layers
         {
@@ -160,6 +181,7 @@ namespace World.ToyWorldCore
 
         public Atlas()
         {
+            Time = new DateTime(2000,1,1,0,0,0);
             NewAutoupdateables = new List<IAutoupdateable>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
@@ -363,6 +385,16 @@ namespace World.ToyWorldCore
         public void RegisterToAutoupdate(IAutoupdateable actor)
         {
             NewAutoupdateables.Add(actor);
+        }
+
+        public float Temperature(Vector2 position)
+        {
+            return Atmosphere.Temperature(position);
+        }
+
+        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0,int seconds = 10, int millis = 0)
+        {
+            Time = Time.Add(new TimeSpan(days, hours, minutes, seconds, millis));
         }
     }
 }

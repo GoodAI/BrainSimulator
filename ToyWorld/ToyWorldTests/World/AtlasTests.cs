@@ -7,7 +7,6 @@ using TmxMapSerializer.Serializer;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
-using World.GameActors.Tiles;
 using World.GameActors.Tiles.Background;
 using World.GameActors.Tiles.ObstacleInteractable;
 using World.ToyWorldCore;
