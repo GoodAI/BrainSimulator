@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration RootNamespace="GoodAI.ToyWorld">
   <KnownNodes>
+    <Node type="GoodAI.ToyWorld.ToyWorldGUI" CanBeAdded="true" />
   </KnownNodes>
   <KnownWorlds>
     <World type="GoodAI.ToyWorld.ToyWorld" CanBeAdded="true"/>

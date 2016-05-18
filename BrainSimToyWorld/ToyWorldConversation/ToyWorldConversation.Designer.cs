@@ -30,8 +30,8 @@
         {
             this.textBox_send = new System.Windows.Forms.TextBox();
             this.label_show = new System.Windows.Forms.Label();
-            this.checkBox_show_agent = new System.Windows.Forms.CheckBox();
-            this.checkBox_show_world = new System.Windows.Forms.CheckBox();
+            this.checkBox_show_message = new System.Windows.Forms.CheckBox();
+            this.checkBox_show_string = new System.Windows.Forms.CheckBox();
             this.richTextBox_messages = new System.Windows.Forms.RichTextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -60,29 +60,29 @@
             this.label_show.TabIndex = 1;
             this.label_show.Text = "Show";
             // 
-            // checkBox_show_agent
+            // checkBox_show_message
             // 
-            this.checkBox_show_agent.AutoSize = true;
-            this.checkBox_show_agent.Checked = true;
-            this.checkBox_show_agent.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_show_agent.Location = new System.Drawing.Point(43, 6);
-            this.checkBox_show_agent.Name = "checkBox_show_agent";
-            this.checkBox_show_agent.Size = new System.Drawing.Size(54, 17);
-            this.checkBox_show_agent.TabIndex = 2;
-            this.checkBox_show_agent.Text = "Agent";
-            this.checkBox_show_agent.UseVisualStyleBackColor = true;
+            this.checkBox_show_message.AutoSize = true;
+            this.checkBox_show_message.Checked = true;
+            this.checkBox_show_message.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_show_message.Location = new System.Drawing.Point(43, 6);
+            this.checkBox_show_message.Name = "checkBox_show_message";
+            this.checkBox_show_message.Size = new System.Drawing.Size(69, 17);
+            this.checkBox_show_message.TabIndex = 2;
+            this.checkBox_show_message.Text = "Message";
+            this.checkBox_show_message.UseVisualStyleBackColor = true;
             // 
-            // checkBox_show_world
+            // checkBox_show_string
             // 
-            this.checkBox_show_world.AutoSize = true;
-            this.checkBox_show_world.Checked = true;
-            this.checkBox_show_world.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_show_world.Location = new System.Drawing.Point(103, 6);
-            this.checkBox_show_world.Name = "checkBox_show_world";
-            this.checkBox_show_world.Size = new System.Drawing.Size(54, 17);
-            this.checkBox_show_world.TabIndex = 3;
-            this.checkBox_show_world.Text = "World";
-            this.checkBox_show_world.UseVisualStyleBackColor = true;
+            this.checkBox_show_string.AutoSize = true;
+            this.checkBox_show_string.Checked = true;
+            this.checkBox_show_string.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_show_string.Location = new System.Drawing.Point(118, 6);
+            this.checkBox_show_string.Name = "checkBox_show_string";
+            this.checkBox_show_string.Size = new System.Drawing.Size(53, 17);
+            this.checkBox_show_string.TabIndex = 3;
+            this.checkBox_show_string.Text = "String";
+            this.checkBox_show_string.UseVisualStyleBackColor = true;
             // 
             // richTextBox_messages
             // 
@@ -113,9 +113,9 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_world);
+            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_string);
             this.splitContainer1.Panel2.Controls.Add(this.label_show);
-            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_agent);
+            this.splitContainer1.Panel2.Controls.Add(this.checkBox_show_message);
             this.splitContainer1.Panel2.Controls.Add(this.textBox_send);
             this.splitContainer1.Size = new System.Drawing.Size(236, 304);
             this.splitContainer1.SplitterDistance = 251;
@@ -144,8 +144,8 @@
 
         private System.Windows.Forms.TextBox textBox_send;
         private System.Windows.Forms.Label label_show;
-        private System.Windows.Forms.CheckBox checkBox_show_agent;
-        private System.Windows.Forms.CheckBox checkBox_show_world;
+        private System.Windows.Forms.CheckBox checkBox_show_message;
+        private System.Windows.Forms.CheckBox checkBox_show_string;
         private System.Windows.Forms.RichTextBox richTextBox_messages;
         private System.Windows.Forms.SplitContainer splitContainer1;
 

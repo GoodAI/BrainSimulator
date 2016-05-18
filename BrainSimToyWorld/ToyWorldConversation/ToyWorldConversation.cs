@@ -1,10 +1,9 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Execution;
+using GoodAI.Core.Nodes;
 using GoodAI.ToyWorld;
-using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -16,30 +15,16 @@ namespace ToyWorldConversation
         private readonly MainForm m_mainForm;
         private readonly Font m_boldFont;
         private readonly Font m_normalFont;
+        private ToyWorldGUI m_guiNode;
 
-        private IAvatarController m_avatarCtrl
+        private bool m_showStrings
         {
-            get { return m_toyWorld.AvatarCtrl; }
+            get { return checkBox_show_string.Checked; }
         }
 
-        private IGameController m_gameCtrl
+        private bool m_showMessages
         {
-            get { return m_toyWorld.GameCtrl; }
-        }
-
-        private ToyWorld m_toyWorld
-        {
-            get { return m_mainForm.Project.World as ToyWorld; }
-        }
-
-        private bool m_showAvatarMessages
-        {
-            get { return checkBox_show_agent.Checked; }
-        }
-
-        private bool m_showWorldMessages
-        {
-            get { return checkBox_show_world.Checked; }
+            get { return checkBox_show_message.Checked; }
         }
 
         public ToyWorldConversation(MainForm mainForm)
@@ -47,30 +32,31 @@ namespace ToyWorldConversation
             InitializeComponent();
 
             m_mainForm = mainForm;
-            m_mainForm.WorldChanged += m_mainForm_WorldChanged;
             m_mainForm.SimulationHandler.StateChanged += SimulationHandler_StateChanged;
 
             m_boldFont = new Font(richTextBox_messages.Font, FontStyle.Bold);
             m_normalFont = richTextBox_messages.Font;
+            FindGUINode();
+        }
+
+        private void FindGUINode()
+        {
+            if (m_guiNode != null) return;
+            foreach (MyNode node in m_mainForm.Project.Network.Children)
+                if (node.GetType() == typeof(ToyWorldGUI))
+                {
+                    m_guiNode = node as ToyWorldGUI;
+                    m_guiNode.MessageObtained += NewMessage;
+                    m_guiNode.StringObtained += NewString;
+                    return;
+                }
         }
 
         private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
-            if (e.OldState == MySimulationHandler.SimulationState.STOPPED)
-                richTextBox_messages.Clear();
-        }
-
-        private void m_mainForm_WorldChanged(object sender, MainForm.WorldChangedEventArgs e)
-        {
-            if (m_toyWorld == null) return;
-            m_toyWorld.WorldInitialized += ConnectToToyWorld;
-        }
-
-        private void ConnectToToyWorld(object sender, EventArgs e)
-        {
-            if (m_gameCtrl == null || m_avatarCtrl == null) return;
-            m_gameCtrl.NewMessage += WorldNewMessage;
-            m_avatarCtrl.NewMessage += AvatarNewMessage;
+            if (e.OldState != MySimulationHandler.SimulationState.STOPPED) return;
+            richTextBox_messages.Clear();
+            FindGUINode();
         }
 
         private void PrintMessageFrom(string message, string sender)
@@ -81,30 +67,32 @@ namespace ToyWorldConversation
             richTextBox_messages.AppendText(message + "\n");
         }
 
-        private void WorldNewMessage(object sender, MessageEventArgs e)
+        private void NewMessage(object sender, MessageEventArgs e)
         {
-            if (m_showWorldMessages)
+            if (m_showMessages)
                 Invoke((MethodInvoker)(() =>
                 {
-                    PrintMessageFrom(e.Message, "World");
+                    PrintMessageFrom(e.Message, "Message");
                 }));
         }
 
-        private void AvatarNewMessage(object sender, MessageEventArgs e)
+        private void NewString(object sender, MessageEventArgs e)
         {
-            if (m_showAvatarMessages)
+            if (m_showStrings)
                 Invoke((MethodInvoker)(() =>
                 {
-                    PrintMessageFrom(e.Message, "Avatar");
+                    PrintMessageFrom(e.Message, "String");
                 }));
         }
 
         private void textBox_send_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode != Keys.Enter || m_avatarCtrl == null) return;
+            if (e.KeyCode != Keys.Enter) return;
 
             e.SuppressKeyPress = true;  // for disabling the "ding" sound
-            m_avatarCtrl.MessageIn = textBox_send.Text;
+
+            m_guiNode.Message = textBox_send.Text;
+
             Invoke((MethodInvoker)(() =>
             {
                 PrintMessageFrom(textBox_send.Text, "You");
