@@ -268,7 +268,7 @@ namespace GoodAI.ToyWorld
 
             if (Controls.Count == m_controlsCount)
             {
-                MyLog.INFO.WriteLine("ToyWorld: Controls set to WSAD mode.");
+                MyLog.INFO.WriteLine("ToyWorld: Controls set to vector mode.");
 
                 m_controlIndexes["forward"] = 0;
                 m_controlIndexes["backward"] = 1;
