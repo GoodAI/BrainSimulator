@@ -183,10 +183,10 @@ namespace GoodAI.ToyWorld
                 float fof_up = Owner.Controls.Host[Owner.m_controlIndexes["fof_up"]];
                 float fof_down = Owner.Controls.Host[Owner.m_controlIndexes["fof_down"]];
 
-                float rotation = ConvertBiControlToUniControl(rotRightSignal, rotLeftSignal);
+                float rotation = ConvertBiControlToUniControl(rotLeftSignal, rotRightSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
-                float rightSpeed = ConvertBiControlToUniControl(rightSignal, leftSignal);
-                float fof_x = ConvertBiControlToUniControl(fof_right, fof_left);
+                float rightSpeed = ConvertBiControlToUniControl(leftSignal, rightSignal);
+                float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
                 float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
 
                 bool interact = Owner.Controls.Host[Owner.m_controlIndexes["interact"]] > 0.5;
