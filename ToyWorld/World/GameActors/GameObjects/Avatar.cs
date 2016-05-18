@@ -131,8 +131,7 @@ namespace World.GameActors.GameObjects
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            Log.Instance.Debug("Energy of Avatar is " + Energy);
-
+            #region log
             string areaName = atlas.NamedAreasCarrier.AreaName(Position);
 
             if (areaName != null)
@@ -154,6 +153,11 @@ namespace World.GameActors.GameObjects
             {
                 Log.Instance.Debug("Avatar is in no room.");
             }
+            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
+            Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
+            Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
+
+        #endregion
 
             float oldEnergy = Energy;
             LooseEnergy();
@@ -192,10 +196,6 @@ namespace World.GameActors.GameObjects
             {
 
             }
-
-            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
-            Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
-            Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
         }
 
         private void BalanceTemperature(float temperatureAround, float energyDiff)
