@@ -133,34 +133,7 @@ namespace World.GameActors.GameObjects
         {
             var temperatureAround = atlas.Temperature(Position);
 
-            #region log
-            string areaName = atlas.NamedAreasCarrier.AreaName(Position);
-
-            if (areaName != null)
-            {
-                Log.Instance.Debug("Name of current Avatar's location is " + areaName + ".");
-            }
-            else
-            {
-                Log.Instance.Debug("Avatar is in unknown location.");
-            }
-
-            string roomName = atlas.NamedAreasCarrier.RoomName(Position);
-
-            if (roomName != null)
-            {
-                Log.Instance.Debug("Avatar is in room " + roomName + ".");
-            }
-            else
-            {
-                Log.Instance.Debug("Avatar is in no room.");
-            }
-            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
-
-            Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
-            Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
-
-        #endregion
+            LogAvatarStatus(atlas, temperatureAround);
 
             float oldEnergy = Energy;
             LooseEnergy();
@@ -198,6 +171,35 @@ namespace World.GameActors.GameObjects
             {
 
             }
+        }
+
+        private void LogAvatarStatus(IAtlas atlas, float temperatureAround)
+        {
+            string areaName = atlas.NamedAreasCarrier.AreaName(Position);
+
+            if (areaName != null)
+            {
+                Log.Instance.Debug("Name of current Avatar's location is " + areaName + ".");
+            }
+            else
+            {
+                Log.Instance.Debug("Avatar is in unknown location.");
+            }
+
+            string roomName = atlas.NamedAreasCarrier.RoomName(Position);
+
+            if (roomName != null)
+            {
+                Log.Instance.Debug("Avatar is in room " + roomName + ".");
+            }
+            else
+            {
+                Log.Instance.Debug("Avatar is in no room.");
+            }
+            Log.Instance.Debug("Energy of avatar {" + Id + "} is " + Energy);
+
+            Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
+            Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
         }
 
         private void BalanceTemperature(float temperatureAround, float energyDiff)
