@@ -155,6 +155,7 @@
     <Compile Include="GameActions\Interact.cs" />
     <Compile Include="GameActions\PickUp.cs" />
     <Compile Include="GameActions\UsePickaxe.cs" />
+    <Compile Include="GameActors\GameActorInterfaces.cs" />
     <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />

@@ -2,7 +2,7 @@
 using VRageMath;
 using World.GameActions;
 using World.GameActors;
-using World.GameActors.Tiles;
+using World.GameActors.GameObjects;
 using Xunit;
 using World.ToyWorldCore;
 
