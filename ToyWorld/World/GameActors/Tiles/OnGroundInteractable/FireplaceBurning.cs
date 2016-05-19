@@ -31,12 +31,14 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         {
             if (Heat < 0)
             {
-                Heat = 0;
+                // first update - fire starts
+                Heat = 0.2f;
                 atlas.RegisterHeatSource(this);
                 NextUpdateAfter = 60;
             }
             if (Heat >= MAX_HEAT)
             {
+                // fourth update - fire is extinguished.
                 Heat = 0;
                 NextUpdateAfter = 0;
                 var fireplace = new Fireplace(table, Position);
@@ -46,10 +48,12 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             }
             if (Heat < MAX_HEAT)
             {
+                // second update - fire is growing
                 Heat += 0.1f;
             }
             if(Heat >= MAX_HEAT)
             {
+                // third update - fire is stable
                 NextUpdateAfter = 1000;
             }
         }

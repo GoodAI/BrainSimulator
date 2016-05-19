@@ -138,9 +138,9 @@ namespace World.GameActors.GameObjects
             string roomName = atlas.AreasCarrier.RoomName(Position);
 
             float oldEnergy = Energy;
-            LooseEnergy();
+            LoseEnergy();
             BalanceTemperature(temperatureAround, oldEnergy - Energy);
-            LooseRest();
+            LoseRest();
 
             if (Interact)
             {
@@ -219,7 +219,7 @@ namespace World.GameActors.GameObjects
             Temperature += (temperatureAround - Temperature)*TEMPERATURE_BALANCE_RATIO;
         }
 
-        private void LooseRest()
+        private void LoseRest()
         {
             Rested -= FATIGUE_FOR_LIVING;
         }
@@ -260,7 +260,7 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private void LooseEnergy()
+        private void LoseEnergy()
         {
             if (UseTool || Interact || PickUp)
             {

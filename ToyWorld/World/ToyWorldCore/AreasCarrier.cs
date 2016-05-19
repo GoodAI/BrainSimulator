@@ -41,8 +41,8 @@ namespace World.ToyWorldCore
 
         public string RoomName(Vector2 coordinates)
         {
-            Vector2I v = new Vector2I(Vector2.Floor(coordinates));
-            return Rooms[v.X][v.Y] == null ? null : Rooms[v.X][v.Y].Name;
+            Room room = Room(coordinates);
+            return room == null ? null : room.Name;
         }
 
         public Room Room(Vector2 coordinates)
