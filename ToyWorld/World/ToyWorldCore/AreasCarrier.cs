@@ -64,7 +64,7 @@ namespace World.ToyWorldCore
             }
         }
 
-        private void FillArea(int x, int y, string name, ITileLayer pathLayer)
+        private void FillArea(int x, int y, string name, ITileLayer areaLayer)
         {
             if (AreaNames[x][y] != null)
             {
@@ -77,19 +77,19 @@ namespace World.ToyWorldCore
                     Log.Instance.Warn("Two AreaLabels in one Area: \"" + AreaNames[x][y] + "\", \"" + name + "\".");
                 }
             }
-            ExpandArea(x, y, name, pathLayer);
+            ExpandArea(x, y, name, areaLayer);
         }
 
-        private void ExpandArea(int x, int y, string name, ITileLayer pathLayer)
+        private void ExpandArea(int x, int y, string name, ITileLayer areaLayer)
         {
             if (AreaNames[x][y] != null) return;
-            Tile tile = pathLayer.GetActorAt(x,y);
+            Tile tile = areaLayer.GetActorAt(x,y);
             if (tile is AreaBorder) return;
             AreaNames[x][y] = name;
-            ExpandArea(x + 1, y, name, pathLayer);
-            ExpandArea(x, y + 1, name, pathLayer);
-            ExpandArea(x, y - 1, name, pathLayer);
-            ExpandArea(x - 1, y, name, pathLayer);
+            ExpandArea(x + 1, y, name, areaLayer);
+            ExpandArea(x, y + 1, name, areaLayer);
+            ExpandArea(x, y - 1, name, areaLayer);
+            ExpandArea(x - 1, y, name, areaLayer);
         }
 
         private void FillRoom(int x, int y, string name, ITileLayer pathLayer)
