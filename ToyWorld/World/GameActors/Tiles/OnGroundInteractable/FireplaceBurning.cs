@@ -5,7 +5,9 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 {
     class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateable
     {
+        private const float MAX_HEAT = 4;
         public float Heat { get; private set; }
+        public float MaxDistance { get; private set; }
         public int NextUpdateAfter { get; private set; }
 
         public FireplaceBurning(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
@@ -22,6 +24,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         {
             NextUpdateAfter = 1;
             Heat = -1f;
+            MaxDistance = 1.5f;
         }
 
         public void Update(IAtlas atlas, ITilesetTable table)
@@ -32,7 +35,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 atlas.RegisterHeatSource(this);
                 NextUpdateAfter = 60;
             }
-            if (Heat >= 1)
+            if (Heat >= MAX_HEAT)
             {
                 Heat = 0;
                 NextUpdateAfter = 0;
@@ -41,11 +44,11 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 atlas.ReplaceWith(ThisGameActorPosition(LayerType.OnGroundInteractable), fireplace);
                 return;
             }
-            if (Heat < 1)
+            if (Heat < MAX_HEAT)
             {
                 Heat += 0.1f;
             }
-            if(Heat >= 1)
+            if(Heat >= MAX_HEAT)
             {
                 NextUpdateAfter = 1000;
             }

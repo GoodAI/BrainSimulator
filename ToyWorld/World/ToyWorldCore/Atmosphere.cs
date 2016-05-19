@@ -45,7 +45,6 @@ namespace World.ToyWorldCore
         private readonly NormalDistribution m_random = new NormalDistribution(42, 0, 1);
 
         private readonly List<IHeatSource> m_heatSources;
-        private const float MAX_AFFECTED_DISTANCE = 10f;
 
         public Atmosphere(IAtlas atlas)
         {
@@ -82,8 +81,7 @@ namespace World.ToyWorldCore
             float innerTemperature = 0;
             string actualRoomName = m_atlas.AreasCarrier.RoomName(position);
             IEnumerable<IHeatSource> heatSources = m_heatSources.Where(
-                x => Vector2.Distance(position, (Vector2) x.Position) < MAX_AFFECTED_DISTANCE);
-            // WolframAlpha.com: Plot(a-(11 a x)/60+(a x^2)/120, {x,0,10},{a,0,10})
+                x => Vector2.Distance(position, (Vector2) x.Position) < x.MaxDistance);
             foreach (IHeatSource source in heatSources)
             {
                 string sourceRoomName = m_atlas.AreasCarrier.RoomName((Vector2)source.Position);
@@ -91,7 +89,16 @@ namespace World.ToyWorldCore
                 if(!inSameRoom) continue;
                 float distance = Vector2.Distance(Tile.Center(source.Position), position);
                 float heat = source.Heat;
-                innerTemperature += heat - (11f*heat*distance)/60f + (heat*distance*distance)/120f;
+                // WolframAlpha.com: Plot(a-(11 a x)/60+(a x^2)/120, {x,0,10},{a,0,10})
+                //innerTemperature += heat - (11f*heat*distance)/60f + (heat*distance*distance)/120f;
+                // WolframAlpha.com: interpolation[{0,t},{z,0},{z+1,0}]
+                float maxDist = source.MaxDistance;
+                innerTemperature +=
+                    heat
+                    - (heat*distance)/maxDist
+                    - (heat*distance)/(1 + maxDist)
+                    + (heat*distance*distance)/(maxDist*(1 + maxDist));
+
             }
 
             return weatherTemperature + innerTemperature;

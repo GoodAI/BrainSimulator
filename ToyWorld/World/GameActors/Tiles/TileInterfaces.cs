@@ -55,6 +55,8 @@ namespace World.GameActors.Tiles
     public interface IHeatSource : IDynamicTile
     {
         float Heat { get; }
+
+        float MaxDistance { get; }
     }
 
     public interface ISwitchable
