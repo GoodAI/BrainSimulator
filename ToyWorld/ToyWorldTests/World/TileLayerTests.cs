@@ -1,7 +1,7 @@
 ﻿using System;
 using VRageMath;
+using World.GameActors.Tiles.Background;
 using World.GameActors.Tiles.Obstacle;
-using World.GameActors.Tiles.Path;
 using World.ToyWorldCore;
 using Xunit;
 

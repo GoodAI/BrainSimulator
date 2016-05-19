@@ -1,7 +1,6 @@
-﻿using Moq;
-using System;
+﻿using System;
 using World.GameActors.Tiles;
-using World.GameActors.Tiles.Path;
+using World.GameActors.Tiles.Background;
 using Xunit;
 
 namespace ToyWorldTests.World

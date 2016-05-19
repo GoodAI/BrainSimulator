@@ -3,6 +3,7 @@ using VRageMath;
 using World.GameActions;
 using World.GameActors;
 using World.GameActors.GameObjects;
+using World.GameActors.Tiles;
 using Xunit;
 using World.ToyWorldCore;
 
