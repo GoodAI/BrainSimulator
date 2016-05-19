@@ -89,6 +89,7 @@ namespace World.ToyWorldCore
         private static void SetTileRelations(IAtlas atlas, Map map)
         {
             ObjectGroup foregroundObjects = map.ObjectGroups.FirstOrDefault(x => x.Name == "ForegroundObject");
+            Debug.Assert(foregroundObjects != null, "foregroundObjects != null");
             List<TmxObject> tmxMapObjects = foregroundObjects.TmxMapObjects;
             IEnumerable<TmxObject> leverRDoors = tmxMapObjects.Where(x => x.Type == "LeverRDoor");
             foreach (TmxObject leverRDoor in leverRDoors)
@@ -98,8 +99,7 @@ namespace World.ToyWorldCore
                 {
                     throw new ArgumentException("Foreground object leverRDoor is wrong type. Should be Polyline.");
                 }
-                IEnumerable<Vector2> polylinePoints = PolylineTransform(map, leverRDoor);
-                Vector2 startPoint = new Vector2(leverRDoor.X, leverRDoor.Y);
+                List<Vector2> polylinePoints = PolylineTransform(map, leverRDoor).ToList();
                 Vector2 source = polylinePoints.First();
                 Vector2 target = polylinePoints.Last();
                 IEnumerable<GameActorPosition> sourceGameActors = atlas.ActorsAt(source);

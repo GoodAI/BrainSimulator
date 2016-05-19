@@ -2,8 +2,8 @@ Layer;NameOfTile;PositionInTileset;IsDefault;Note
 Background;Background;31;1;Grass
 ;Background;32;0;Tile
 ;Background;45;0;
-;Path;38;1;
-;Path;53;0;
+;PathTile;38;1;
+;PathTile;53;0;
 ;RoomTile;42;1;
 ;RoomTile;43;0;
 ;RoomTile;57;0;
