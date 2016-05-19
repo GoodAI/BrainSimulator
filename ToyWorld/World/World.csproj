@@ -168,7 +168,7 @@
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
     <Compile Include="GameActors\Tiles\Path\AreaBorder.cs" />
     <Compile Include="GameActors\Tiles\Path\AreaBorderPath.cs" />
-    <Compile Include="GameActors\Tiles\Path\RoomTile.cs" />
+    <Compile Include="GameActors\Tiles\Path\Room.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
     <Compile Include="Physics\ICollisionResolver.cs" />
