@@ -81,7 +81,7 @@ namespace World.ToyWorldCore
         /// <param name="width">If searching through Object layers, width of searching circle.</param>
         /// <returns>GameActors in front.</returns>
         IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All, float distance = 1,
-            float width = 1) where T : class, IDirectable, IGameObject;
+            float width = 1) where T : class, IRotatable, IGameObject;
 
         /// <summary>
         /// 
@@ -90,7 +90,7 @@ namespace World.ToyWorldCore
         /// <param name="sender"></param>
         /// <param name="distance">Distance from center of given object.</param>
         /// <returns>Coordinates of position in front of given sender.</returns>
-        Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IDirectable, IGameObject;
+        Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IRotatable, IGameObject;
 
         /// <summary>
         /// Removes given GameActor from Layer specified in GameActorPosition.
@@ -308,17 +308,17 @@ namespace World.ToyWorldCore
         }
 
         public IEnumerable<GameActorPosition> ActorsInFrontOf<T>(T sender, LayerType type = LayerType.All,
-            float distance = 1, float width = 0.5f) where T : class, IDirectable, IGameObject
+            float distance = 1, float width = 0.5f) where T : class, IRotatable, IGameObject
         {
             Vector2 target = PositionInFrontOf(sender, distance);
             IEnumerable<GameActorPosition> actorsInFrontOf = ActorsAt(target, type, width);
             return actorsInFrontOf;
         }
 
-        public Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IDirectable, IGameObject
+        public Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IRotatable, IGameObject
         {
             Vector2 direction = Vector2.UnitY*distance;
-            direction.Rotate(sender.Direction);
+            direction.Rotate(sender.Rotation);
             Vector2 target = sender.Position + direction;
             return target;
         }
