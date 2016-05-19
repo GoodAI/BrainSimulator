@@ -1,5 +1,4 @@
-﻿using System;
-using Moq;
+﻿using Moq;
 using VRageMath;
 using World.GameActions;
 using World.GameActors;
@@ -20,12 +19,12 @@ namespace ToyWorldTests.World
             picker.Setup(x => x.AddToInventory(It.IsAny<IPickable>()));
 
             Mock<GameActor> targetActor = new Mock<GameActor>();
-            Mock<IPickable> target = targetActor.As<IPickable>();
+            targetActor.As<IPickable>();
 
             PickUp pickUp = new PickUp(actor.Object);
 
             // Act
-            pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2()), atlas.Object, It.IsAny<ITilesetTable>());
+            pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2(), LayerType.ObstacleInteractable), atlas.Object, It.IsAny<ITilesetTable>());
 
             // Assert
             picker.Verify(x => x.AddToInventory(It.IsAny<IPickable>()));

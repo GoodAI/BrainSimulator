@@ -16,7 +16,7 @@ namespace World.GameActors.Tiles.Obstacle
 
         public GameActor Switch(IAtlas atlas, ITilesetTable table)
         {
-            atlas.Remove(new GameActorPosition(this, (Vector2)Position));
+            atlas.Remove(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable));
             RcDoorOpened openedDoor = new RcDoorOpened(table, Position);
             atlas.Add(new GameActorPosition(openedDoor, (Vector2)Position, LayerType.OnGroundInteractable));
             return openedDoor;

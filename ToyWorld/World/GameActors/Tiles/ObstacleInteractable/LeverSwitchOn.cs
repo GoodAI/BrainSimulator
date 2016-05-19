@@ -19,14 +19,14 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         public void Switch(IAtlas atlas, ITilesetTable table)
         {
             var leverOff = new LeverSwitchOff(table, Position);
-            atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position), leverOff);
+            atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable), leverOff);
             if (Switchable == null) return;
             leverOff.Switchable = Switchable.Switch(atlas, table) as ISwitchable;
         }
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
         {
-            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity), atlas, tilesetTable);
+            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity, LayerType.ObstacleInteractable), atlas, tilesetTable);
         }
     }
 }

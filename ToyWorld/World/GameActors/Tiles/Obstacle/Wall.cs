@@ -31,10 +31,10 @@ namespace World.GameActors.Tiles.Obstacle
 
             if (usePickaxe.Damage >= 1.0f)
             {
-                atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall(tilesetTable));
                 return;
             }
-            atlas.ReplaceWith(new GameActorPosition(this, position), new DamagedWall(usePickaxe.Damage, tilesetTable, Vector2I.Zero));
+            atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DamagedWall(usePickaxe.Damage, tilesetTable, Vector2I.Zero));
         }
     }
 
@@ -68,7 +68,7 @@ namespace World.GameActors.Tiles.Obstacle
             }
 
             if (Health <= 0f)
-                atlas.ReplaceWith(new GameActorPosition(this, position), new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall(tilesetTable));
         }
     }
 
