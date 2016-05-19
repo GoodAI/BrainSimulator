@@ -264,6 +264,10 @@ namespace GoodAI.ToyWorld
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
 
             Text.Count = MaxMessageLength;
+
+            if (Controls == null)
+                return;
+
             ChosenActions.Count = Controls.Count;
 
             if (Controls.Count == m_controlsCount)
