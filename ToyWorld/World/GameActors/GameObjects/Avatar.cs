@@ -1,8 +1,8 @@
 ﻿using System.Drawing;
 using System.Linq;
 using GoodAI.ToyWorldAPI;
-﻿using System.Collections.Generic;
-﻿using System;
+using System.Collections.Generic;
+using System;
 ﻿﻿using System.Diagnostics;
 ﻿﻿using GoodAI.Logging;
 using VRageMath;
@@ -134,11 +134,13 @@ namespace World.GameActors.GameObjects
             var temperatureAround = atlas.Temperature(Position);
 
             LogAvatarStatus(atlas, temperatureAround);
+            string areaName = atlas.AreasCarrier.AreaName(Position);
+            string roomName = atlas.AreasCarrier.RoomName(Position);
 
             float oldEnergy = Energy;
-            LooseEnergy();
+            LoseEnergy();
             BalanceTemperature(temperatureAround, oldEnergy - Energy);
-            LooseRest();
+            LoseRest();
 
             if (Interact)
             {
@@ -146,6 +148,8 @@ namespace World.GameActors.GameObjects
                 if (tileInFrontOf != null)
                 {
                     var interactable = tileInFrontOf.Actor as IInteractable;
+
+
                     if (interactable != null)
                     {
                         interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position, table);
@@ -164,11 +168,11 @@ namespace World.GameActors.GameObjects
             {
                 if (Tool == null)
                 {
-                    PerformPickup(atlas);
+                    PerformPickup(atlas, table);
                 }
                 else
                 {
-                    PerformLayDown(atlas);
+                    PerformLayDown(atlas, table);
                 }
                 PickUp = false;
                 return;
@@ -182,7 +186,7 @@ namespace World.GameActors.GameObjects
 
         private void LogAvatarStatus(IAtlas atlas, float temperatureAround)
         {
-            string areaName = atlas.NamedAreasCarrier.AreaName(Position);
+            string areaName = atlas.AreasCarrier.AreaName(Position);
 
             if (areaName != null)
             {
@@ -193,7 +197,7 @@ namespace World.GameActors.GameObjects
                 Log.Instance.Debug("Avatar is in unknown location.");
             }
 
-            string roomName = atlas.NamedAreasCarrier.RoomName(Position);
+            string roomName = atlas.AreasCarrier.RoomName(Position);
 
             if (roomName != null)
             {
@@ -215,7 +219,7 @@ namespace World.GameActors.GameObjects
             Temperature += (temperatureAround - Temperature)*TEMPERATURE_BALANCE_RATIO;
         }
 
-        private void LooseRest()
+        private void LoseRest()
         {
             Rested -= FATIGUE_FOR_LIVING;
         }
@@ -256,7 +260,7 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private void LooseEnergy()
+        private void LoseEnergy()
         {
             if (UseTool || Interact || PickUp)
             {
@@ -275,15 +279,15 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private bool PerformLayDown(IAtlas atlas)
+        private bool PerformLayDown(IAtlas atlas, ITilesetTable tilesetTable)
         {
             Vector2 positionInFrontOf = atlas.PositionInFrontOf(this, 1);
             GameAction layDownAction = new LayDown(this);
-            Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf);
+            Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf, tilesetTable);
             return true;
         }
 
-        private bool PerformPickup(IAtlas atlas)
+        private bool PerformPickup(IAtlas atlas, ITilesetTable tilesetTable)
         {
             // check tile in front of
             GameActorPosition target = GetInteractableTileInFrontOf(atlas);
@@ -298,7 +302,7 @@ namespace World.GameActors.GameObjects
             if (interactableTarget == null) return false;
 
             GameAction pickUpAction = new PickUp(this);
-            interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position);
+            interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position, tilesetTable);
 
             RemoveSpeed(target);
             return true;

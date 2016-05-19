@@ -43,4 +43,11 @@ namespace World.GameActors.GameObjects
         /// </summary>
         PointF Fof { get; set; }
     }
+
+    public interface ICanPick
+    {
+        bool AddToInventory(IPickable item);
+
+        IPickable RemoveFromInventory();
+    }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
+using World.GameActors;
 using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore

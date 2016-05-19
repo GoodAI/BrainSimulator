@@ -1,7 +1,7 @@
 ﻿using System;
 using VRageMath;
+using World.GameActors.Tiles.Background;
 using World.GameActors.Tiles.Obstacle;
-using World.GameActors.Tiles.Path;
 using World.ToyWorldCore;
 using Xunit;
 
@@ -20,7 +20,7 @@ namespace ToyWorldTests.World
         public void TestGetActor()
         {
             SimpleTileLayer layer = new SimpleTileLayer(LayerType.All, 7, 7);
-            Path path = new Path(0);
+            PathTile path = new PathTile(0);
             layer.Tiles[3][2] = path;
 
             Assert.Equal(path, layer.GetActorAt(3, 2));

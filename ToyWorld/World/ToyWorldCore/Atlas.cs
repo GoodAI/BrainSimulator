@@ -131,7 +131,7 @@ namespace World.ToyWorldCore
         /// <param name="actor"></param>
         void RegisterToAutoupdate(IAutoupdateable actor);
 
-        INamedAreasCarrier NamedAreasCarrier { get; set; }
+        IAreasCarrier AreasCarrier { get; set; }
 
         /// <summary>
         /// Temperature at given point.
@@ -150,6 +150,18 @@ namespace World.ToyWorldCore
         /// Increment time of simulation.
         /// </summary>
         void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0);
+
+        /// <summary>
+        /// Must be called in init of every IHeatSource;
+        /// </summary>
+        /// <param name="heatSource"></param>
+        void RegisterHeatSource(IHeatSource heatSource);
+
+        /// <summary>
+        /// Must be called in IHeatSource when it is getting inactive;
+        /// </summary>
+        /// <param name="heatSource"></param>
+        void UnregisterHeatSource(IHeatSource heatSource);
     }
 
     public class Atlas : IAtlas
@@ -158,7 +170,7 @@ namespace World.ToyWorldCore
         public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
-        public INamedAreasCarrier NamedAreasCarrier { get; set; }
+        public IAreasCarrier AreasCarrier { get; set; }
 
         public DateTime Time { get; private set; }
 
@@ -395,6 +407,16 @@ namespace World.ToyWorldCore
         public void IncrementTime(int days = 0, int hours = 0, int minutes = 0,int seconds = 10, int millis = 0)
         {
             Time = Time.Add(new TimeSpan(days, hours, minutes, seconds, millis));
+        }
+
+        public void RegisterHeatSource(IHeatSource heatSource)
+        {
+            Atmosphere.RegisterHeatSource(heatSource);
+        }
+
+        public void UnregisterHeatSource(IHeatSource heatSource)
+        {
+            Atmosphere.UnregisterHeatSource(heatSource);
         }
     }
 }

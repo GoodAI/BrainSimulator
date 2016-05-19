@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using World.GameActors;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;

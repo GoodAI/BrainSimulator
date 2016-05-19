@@ -6,42 +6,8 @@ using World.ToyWorldCore;
 namespace World.GameActors.Tiles
 {
     /// <summary>
+    /// Tile which want to detect object colliding or standing on him.
     /// </summary>
-    public interface IAutoupdateable
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="atlas"></param>
-        /// <param name="table"></param>
-        /// <returns>True if want to be updated again.</returns>
-        void Update(IAtlas atlas, ITilesetTable table);
-
-        /// <summary>
-        /// In steps. Set 0 for no update.
-        /// </summary>
-        int NextUpdateAfter { get; }
-    }
-
-    /// <summary>
-    /// </summary>
-    public interface IInteractable : IGameActor
-    {
-        /// <summary>
-        /// Method is called when something apply GameAction on this object.
-        /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null);
-    }
-
-    public interface IPickable : IInteractable { }
-
-    public interface ICanPick
-    {
-        bool AddToInventory(IPickable item);
-
-        IPickable RemoveFromInventory();
-    }
-
     public interface ITileDetector
     {
         /// <summary>
@@ -49,7 +15,31 @@ namespace World.GameActors.Tiles
         /// </summary>
         bool RequiresCenterOfObject { get; }
 
+        /// <summary>
+        /// When any GameObject was detected, it is passed as parameter.
+        /// Can be called multiple times per step.
+        /// </summary>
+        /// <param name="gameObject"></param>
+        /// <param name="atlas"></param>
+        /// <param name="tilesetTable"></param>
         void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public interface IHeatSource : IDynamicTile
+    {
+        /// <summary>
+        /// Adds temperature equal of heat at center.
+        /// Then decreasing polynomially to the MaxDistance
+        /// </summary>
+        float Heat { get; }
+
+        /// <summary>
+        /// Distance from center of source where temperature change is 0;
+        /// </summary>
+        float MaxDistance { get; }
     }
 
     public interface ISwitchable

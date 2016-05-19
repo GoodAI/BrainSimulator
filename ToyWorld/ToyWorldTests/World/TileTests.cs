@@ -1,7 +1,6 @@
-﻿using Moq;
-using System;
+﻿using System;
 using World.GameActors.Tiles;
-using World.GameActors.Tiles.Path;
+using World.GameActors.Tiles.Background;
 using Xunit;
 
 namespace ToyWorldTests.World
@@ -11,7 +10,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void NullTilesetTableThrows()
         {
-            Assert.Throws<ArgumentNullException>(() => new Path(null));
+            Assert.Throws<ArgumentNullException>(() => new PathTile(null));
         }
 
         [Fact]

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using VRageMath;
 using Troschuetz.Random.Distributions.Continuous;
+using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {
@@ -17,6 +20,10 @@ namespace World.ToyWorldCore
         /// Call before Temperature() call or every step.
         /// </summary>
         void Update();
+
+        void RegisterHeatSource(IHeatSource heatSource);
+
+        void UnregisterHeatSource(IHeatSource heatSource);
     }
 
     public class Atmosphere : IAtmosphere
@@ -37,9 +44,12 @@ namespace World.ToyWorldCore
 
         private readonly NormalDistribution m_random = new NormalDistribution(42, 0, 1);
 
+        private readonly List<IHeatSource> m_heatSources;
+
         public Atmosphere(IAtlas atlas)
         {
             m_atlas = atlas;
+            m_heatSources = new List<IHeatSource>();
             m_oldTemperature = 1f;
             
 
@@ -62,11 +72,36 @@ namespace World.ToyWorldCore
         public float Temperature(Vector2 position)
         {
             TimeSpan timeSpan = m_atlas.Time - m_prevCycleStart;
-            int seconds = (int)timeSpan.TotalSeconds;
+            int seconds = (int) timeSpan.TotalSeconds;
 
             float cyclePhase = MathHelper.Pi*seconds/SECONDS_IN_12_HOURS + MathHelper.Pi;
-            float increase = (1f + (float)Math.Cos(cyclePhase)) / 2;
-            return m_oldTemperature + increase*m_newDiff;
+            float increase = (1f + (float) Math.Cos(cyclePhase))/2;
+            float weatherTemperature = m_oldTemperature + increase*m_newDiff;
+
+            float innerTemperature = 0;
+            string actualRoomName = m_atlas.AreasCarrier.RoomName(position);
+            IEnumerable<IHeatSource> heatSources = m_heatSources.Where(
+                x => Vector2.Distance(position, (Vector2) x.Position) < x.MaxDistance);
+            foreach (IHeatSource source in heatSources)
+            {
+                string sourceRoomName = m_atlas.AreasCarrier.RoomName((Vector2)source.Position);
+                bool inSameRoom = sourceRoomName == actualRoomName;
+                if(!inSameRoom) continue;
+                float distance = Vector2.Distance(Tile.Center(source.Position), position);
+                float heat = source.Heat;
+                // WolframAlpha.com: Plot(a-(11 a x)/60+(a x^2)/120, {x,0,10},{a,0,10})
+                //innerTemperature += heat - (11f*heat*distance)/60f + (heat*distance*distance)/120f;
+                // WolframAlpha.com: interpolation[{0,t},{z,0},{z+1,0}]
+                float maxDist = source.MaxDistance;
+                innerTemperature +=
+                    heat
+                    - (heat*distance)/maxDist
+                    - (heat*distance)/(1 + maxDist)
+                    + (heat*distance*distance)/(maxDist*(1 + maxDist));
+
+            }
+
+            return weatherTemperature + innerTemperature;
         }
 
         public void Update()
@@ -91,6 +126,16 @@ namespace World.ToyWorldCore
             }
             m_oldTemperature = newTemperature;
             m_prevCycleStart  = m_prevCycleStart.Add(new TimeSpan(TICKS_IN_12_HOURS));
+        }
+
+        public void RegisterHeatSource(IHeatSource heatSource)
+        {
+            m_heatSources.Add(heatSource);
+        }
+
+        public void UnregisterHeatSource(IHeatSource heatSource)
+        {
+            m_heatSources.Remove(heatSource);
         }
     }
 }
