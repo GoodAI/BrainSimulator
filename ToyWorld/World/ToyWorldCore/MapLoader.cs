@@ -100,7 +100,8 @@ namespace World.ToyWorldCore
             IEnumerable<string> names = areaLabels.Select(x => x.Name);
             List<Tuple<Vector2I, string>> namesPositions = positions.Zip(names, (x, y) => new Tuple<Vector2I, string>(x, y)).ToList();
 
-            atlas.NamedAreasCarrier = new NamedAreasCarrier((ITileLayer) atlas.GetLayer(LayerType.Path), namesPositions);
+            atlas.NamedAreasCarrier = new NamedAreasCarrier((ITileLayer) atlas.GetLayer(LayerType.Background),
+                (ITileLayer) atlas.GetLayer(LayerType.Area), namesPositions);
         }
         
         private static IObjectLayer FillObjectLayer(

@@ -19,7 +19,7 @@ namespace World.ToyWorldCore
         private string[][] Rooms { get; set; }
         private string[][] Areas { get; set; }
 
-        public NamedAreasCarrier(ITileLayer pathLayer, List<Tuple<Vector2I, string>> positionsNamesTuples)
+        public NamedAreasCarrier(ITileLayer pathLayer, ITileLayer areaLayer, List<Tuple<Vector2I, string>> positionsNamesTuples)
         {
             Rooms = ArrayCreator.CreateJaggedArray<string[][]>(pathLayer.Width, pathLayer.Height);
             Areas = ArrayCreator.CreateJaggedArray<string[][]>(pathLayer.Width, pathLayer.Height);
@@ -28,7 +28,7 @@ namespace World.ToyWorldCore
             {
                 Vector2I position = positionNameTuple.Item1;
                 string name = positionNameTuple.Item2;
-                FillNamedArea(position.X, position.Y, name, pathLayer);
+                FillNamedArea(position.X, position.Y, name, pathLayer, areaLayer);
             }
         }
 
@@ -44,7 +44,7 @@ namespace World.ToyWorldCore
             return Rooms[v.X][v.Y];
         }
 
-        private void FillNamedArea(int x, int y, string name, ITileLayer pathLayer)
+        private void FillNamedArea(int x, int y, string name, ITileLayer pathLayer, ITileLayer areaLayer)
         {
             Tile tile = pathLayer.GetActorAt(x, y);
             if (tile is Room)
@@ -53,7 +53,7 @@ namespace World.ToyWorldCore
             }
             else
             {
-                FillArea(x, y, name, pathLayer);
+                FillArea(x, y, name, areaLayer);
             }
         }
 
@@ -77,7 +77,7 @@ namespace World.ToyWorldCore
         {
             if (Areas[x][y] != null) return;
             Tile tile = pathLayer.GetActorAt(x,y);
-            if (tile is AreaBorder || tile is AreaBorderPath) return;
+            if (tile is AreaBorder) return;
             Areas[x][y] = name;
             ExpandArea(x + 1, y, name, pathLayer);
             ExpandArea(x, y + 1, name, pathLayer);

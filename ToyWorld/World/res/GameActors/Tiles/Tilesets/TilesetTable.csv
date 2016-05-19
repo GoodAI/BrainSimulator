@@ -1,20 +1,16 @@
 Layer;NameOfTile;PositionInTileset;IsDefault;Note
-Background;Background;16;1;Grass
-;Background;17;0;Tile
-;Background;18;0;Small rocks
-;Background;19;0;Larger rocks
-;Background;31;0;Grass
+Background;Background;31;1;Grass
 ;Background;32;0;Tile
-;Background;33;0;Small rocks
-;Background;34;0;Larger rocks
-;Background;20;0;PathOutside
-;Background;35;0;Floor
+;Background;45;0;
+;Path;38;1;
+;Path;53;0;
+;Room;42;1;
+;Room;43;0;
+;Room;57;0;
+;Room;58;0;
 OnBackground;OnBackground;76;1;Small plant
 ;OnBackground;91;0;Small plant
-Paths;AreaBorderPath;136;1;
-;Path;137;1;
-;Room;138;1;
-;AreaBorder;151;1;
+Area;AreaBorder;136;1;
 OnGroundInteractable;Water;196;1;
 ;Water;211;0;
 ;FireplaceBurning;197;1;
@@ -38,6 +34,6 @@ ObstacleInteractable;Apple;316;1;
 ;LeverPosition1;323;1;
 ;LeverPosition2;324;1;
 ;LeverPosition3;325;1;
-;Pickaxe;331;1;
-;OpenedWoodeDoor;334;1;
+;Pickaxe;326;1;
+;OpenedWoodenDoor;334;1;
 ;OpenedIronDoor;335;1;

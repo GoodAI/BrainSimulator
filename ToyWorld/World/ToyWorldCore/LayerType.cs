@@ -12,7 +12,7 @@ namespace World.ToyWorldCore
     {
         Background = 1,
         OnBackground = 2,
-        Path = 4,
+        Area = 4,
         OnGroundInteractable = 8,
         ObstacleInteractable = 16,
         Obstacle = 32,
@@ -22,8 +22,8 @@ namespace World.ToyWorldCore
 
         Obstacles = Obstacle | ObstacleInteractable,
         Interactable = OnGroundInteractable | ObstacleInteractable,
-        All = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Object | Foreground | ForegroundObject,
+        All = Background | OnBackground | Area | OnGroundInteractable | ObstacleInteractable | Obstacle | Object | Foreground | ForegroundObject,
         ObjectLayers = Object | ForegroundObject,
-        TileLayers = Background | OnBackground | Path | OnGroundInteractable | ObstacleInteractable | Obstacle | Foreground,
+        TileLayers = Background | OnBackground | Area | OnGroundInteractable | ObstacleInteractable | Obstacle | Foreground,
     }
 }
