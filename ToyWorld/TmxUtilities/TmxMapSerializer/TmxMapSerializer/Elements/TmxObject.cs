@@ -40,11 +40,5 @@ namespace TmxMapSerializer.Elements
 
         [XmlElement("polyline")]
         public Polyline Polyline { get; set; }
-
-        public IEnumerable<Vector2> GetPolyline()
-        {
-            Debug.Assert(Polyline != null, "Polyline != null");
-            return Polyline.GetPoints().Select(z => new Vector2(z.X + X, z.Y + Y));
-        }
     }
 }

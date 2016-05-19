@@ -143,10 +143,17 @@ namespace World.GameActors.GameObjects
             if (Interact)
             {
                 GameActorPosition tileInFrontOf = GetInteractableTileInFrontOf(atlas);
-
-                if (tileInFrontOf != null && tileInFrontOf.Actor is Fruit)
+                if (tileInFrontOf != null)
                 {
-                    EatFruit(atlas, tileInFrontOf);
+                    var interactable = tileInFrontOf.Actor as IInteractable;
+                    if (interactable != null)
+                    {
+                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position, table);
+                    }
+                    if (tileInFrontOf.Actor is Fruit)
+                    {
+                        EatFruit(tileInFrontOf);
+                    }
                 }
 
                 Interact = false;
@@ -239,11 +246,9 @@ namespace World.GameActors.GameObjects
             return tool;
         }
 
-        private void EatFruit(IAtlas atlas, GameActorPosition applePosition)
+        private void EatFruit(GameActorPosition applePosition)
         {
             var fruit = applePosition.Actor as Fruit;
-            Debug.Assert(fruit != null, "fruit != null");
-            fruit.ApplyGameAction(atlas, new Interact(this), applePosition.Position);
 
             if (fruit is IEatable)
             {

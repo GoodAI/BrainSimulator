@@ -25,7 +25,7 @@ namespace World.GameActors
         public Vector2 Position { get; private set; }
         public LayerType Layer { get; private set; }
 
-        public GameActorPosition(GameActor actor, Vector2 position, LayerType layer = LayerType.ObstacleInteractable)
+        public GameActorPosition(GameActor actor, Vector2 position, LayerType layer)
         {
             Actor = actor;
             Position = position;

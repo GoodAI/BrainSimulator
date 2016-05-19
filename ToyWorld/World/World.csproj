@@ -158,7 +158,11 @@
     <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOff.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Recharger.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\PoisonuosTile.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
