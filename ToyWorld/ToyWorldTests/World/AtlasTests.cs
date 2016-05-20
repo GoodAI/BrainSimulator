@@ -48,7 +48,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void TestInteractableActorsAt()
         {
-            List<GameActorPosition> results = m_atlas.ActorsAt(new Vector2(2,0), LayerType.Interactable).ToList();
+            List<GameActorPosition> results = m_atlas.ActorsAt(new Vector2(2,0), LayerType.Interactables).ToList();
 
             Assert.IsType<Apple>(results[0].Actor);
         }

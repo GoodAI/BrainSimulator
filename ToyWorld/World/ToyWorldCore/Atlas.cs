@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using VRageMath;
+using World.GameActions;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -330,38 +331,40 @@ namespace World.ToyWorldCore
 
         public bool Add(GameActorPosition gameActorPosition)
         {
+            if ((LayerType.Obstacles | LayerType.Object).HasFlag(gameActorPosition.Layer))
+            {
+                IObjectLayer gameObjectLayer = GetLayer(LayerType.Object) as IObjectLayer;
+                Debug.Assert(gameObjectLayer != null, "gameObjectLayer != null");
+                Vector2 position = gameActorPosition.Position;
+                GameActor actor = gameActorPosition.Actor;
+                IPhysicalEntity physicalEntity;
+                if (actor is IGameObject)
+                {
+                    physicalEntity = (actor as IGameObject).PhysicalEntity;
+                    physicalEntity.Position = position;
+                }
+                else if (actor is Tile)
+                {
+                    physicalEntity = (actor as Tile).GetPhysicalEntity(new Vector2I(gameActorPosition.Position));
+                }
+                else
+                {
+                    throw new ArgumentException("actor is unknown Type");
+                }
+                bool anyCollision = gameObjectLayer.GetPhysicalEntities().Any(x => x.CollidesWith(physicalEntity));
+                if (anyCollision)
+                {
+                    return false;
+                }
+                bool anyObstacleOnPosition =
+                    GetObstaceLayers().Any(x => x.GetActorAt(new Vector2I(gameActorPosition.Position)) != null);
+                if (anyObstacleOnPosition)
+                {
+                    return false;
+                }
+            }
+
             ILayer<GameActor> layer = GetLayer(gameActorPosition.Layer);
-
-
-            IObjectLayer gameObjectLayer = GetLayer(LayerType.Object) as IObjectLayer;
-            Debug.Assert(gameObjectLayer != null, "gameObjectLayer != null");
-            Vector2 position = gameActorPosition.Position;
-            GameActor actor = gameActorPosition.Actor;
-            IPhysicalEntity physicalEntity;
-            if (actor is IGameObject)
-            {
-                physicalEntity = (actor as IGameObject).PhysicalEntity;
-                physicalEntity.Position = position;
-            }
-            else if (actor is Tile)
-            {
-                physicalEntity = (actor as Tile).GetPhysicalEntity(new Vector2I(gameActorPosition.Position));
-            }
-            else
-            {
-                throw new ArgumentException("actor is unknown Type");
-            }
-            bool anyCollision = gameObjectLayer.GetPhysicalEntities().Any(x => x.CollidesWith(physicalEntity));
-            if (anyCollision)
-            {
-                return false;
-            }
-            bool anyObstacleOnPosition =
-                GetObstaceLayers().Any(x => x.GetActorAt(new Vector2I(gameActorPosition.Position)) != null);
-            if (anyObstacleOnPosition)
-            {
-                return false;
-            }
 
             return layer.Add(gameActorPosition);
         }

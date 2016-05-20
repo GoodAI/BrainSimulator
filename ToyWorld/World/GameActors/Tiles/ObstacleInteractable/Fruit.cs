@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
-    public class Fruit : DynamicTile, IPickable
+    public class Fruit : DynamicTile, IPickable, ICombustible
     {
         public Fruit(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
@@ -17,6 +17,11 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
         {
             gameAction.Resolve(new GameActorPosition(this, position, LayerType.ObstacleInteractable), atlas, tilesetTable);
+        }
+
+        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        {
+            atlas.Remove(gameActorPosition);
         }
     }
 

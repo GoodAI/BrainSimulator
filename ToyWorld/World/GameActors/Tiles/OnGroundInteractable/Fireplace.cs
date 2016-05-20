@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class Fireplace : DynamicTile, IInteractable
+    public class Fireplace : DynamicTile, IInteractable, ICombustible
     {
         public Fireplace(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
@@ -20,10 +20,20 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 
             if (interact != null)
             {
-                var fireplaceBurning = new FireplaceBurning(tilesetTable, Position);
-                atlas.ReplaceWith(ThisGameActorPosition(LayerType.OnGroundInteractable), fireplaceBurning);
-                atlas.RegisterToAutoupdate(fireplaceBurning);
+                Ignite(atlas, tilesetTable);
             }
+        }
+
+        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        {
+            Ignite(atlas, table);
+        }
+
+        private void Ignite(IAtlas atlas, ITilesetTable tilesetTable)
+        {
+            var fireplaceBurning = new FireplaceBurning(tilesetTable, Position);
+            atlas.ReplaceWith(ThisGameActorPosition(LayerType.OnGroundInteractable), fireplaceBurning);
+            atlas.RegisterToAutoupdate(fireplaceBurning);
         }
     }
 }

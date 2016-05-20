@@ -1,10 +1,13 @@
-﻿using VRageMath;
+﻿using System.Collections.Generic;
+using VRageMath;
+using World.GameActions;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
     class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateable
     {
+        private int m_counter;
         private const float MAX_HEAT = 4;
         public float Heat { get; private set; }
         public float MaxDistance { get; private set; }
@@ -25,6 +28,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             NextUpdateAfter = 1;
             Heat = -1f;
             MaxDistance = 1.5f;
+            m_counter = 0;
         }
 
         public void Update(IAtlas atlas, ITilesetTable table)
@@ -36,7 +40,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 atlas.RegisterHeatSource(this);
                 NextUpdateAfter = 60;
             }
-            if (Heat >= MAX_HEAT)
+            if (Heat >= MAX_HEAT && m_counter > 1000)
             {
                 // fourth update - fire is extinguished.
                 Heat = 0;
@@ -49,12 +53,21 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             if (Heat < MAX_HEAT)
             {
                 // second update - fire is growing
-                Heat += 0.1f;
+                Heat += 0.4f;
             }
             if(Heat >= MAX_HEAT)
             {
                 // third update - fire is stable
-                NextUpdateAfter = 1000;
+                IEnumerable<GameActorPosition> gameActorPositions = atlas.ActorsAt((Vector2) Position, LayerType.All);
+                foreach (GameActorPosition gameActorPosition in gameActorPositions)
+                {
+                    ICombustible combustible = gameActorPosition.Actor as ICombustible;
+                    if (combustible != null)
+                    {
+                        combustible.Burn(gameActorPosition, atlas, table);
+                    }
+                }
+                m_counter++;
             }
         }
     }

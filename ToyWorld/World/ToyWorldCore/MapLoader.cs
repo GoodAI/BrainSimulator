@@ -298,6 +298,8 @@ namespace World.ToyWorldCore
                         continue;
                     int tileNumber = int.Parse(tiles[j]);
 
+                    if (tileNumber == 0) continue;
+
                     int x = j;
                     int y = layer.Height - 1 - i;
                     if (staticTilesContainer.ContainsKey(tileNumber))
@@ -317,9 +319,10 @@ namespace World.ToyWorldCore
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);
                             }
                         }
-                        //                        TODO : before release check code below is active
-                        //                        else
-                        //                            Debug.Assert(false, "Tile with number " + tileNumber + " was not found in TilesetTable");
+                        else
+                        {
+                            Log.Instance.Error("Tile with number " + tileNumber + " was not found in TilesetTable");
+                        }
                     }
                 }
             }
@@ -354,8 +357,7 @@ namespace World.ToyWorldCore
                     return instance;
                 }
             }
-            // TODO : make sure next line is active before release
-            //            throw new Exception("MapLoader cannot find class " + className);
+            Log.Instance.Error("MapLoader cannot find class " + className);
             return null;
         }
 

@@ -330,7 +330,10 @@ namespace World.GameActors.GameObjects
 
         private GameActorPosition GetInteractableTileInFrontOf(IAtlas atlas)
         {
-            GameActorPosition target = atlas.ActorsInFrontOf(this, LayerType.Interactable).FirstOrDefault();
+            List<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Interactables).ToList();
+            GameActorPosition target =
+                actorsInFrontOf.FirstOrDefault(x => (x.Layer.HasFlag(LayerType.ObstacleInteractable)));
+            if (target == null) target = actorsInFrontOf.FirstOrDefault();
             return target;
         }
 

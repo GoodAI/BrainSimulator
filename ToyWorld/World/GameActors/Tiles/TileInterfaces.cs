@@ -53,4 +53,10 @@ namespace World.GameActors.Tiles
 
         ISwitchable Switchable { get; set; }
     }
+
+    public interface ICombustible
+    {
+        void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+    }
+
 }
