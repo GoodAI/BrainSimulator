@@ -1,10 +1,13 @@
-﻿using VRageMath;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using VRageMath;
 using World.GameActors.Tiles.ObstacleInteractable;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.Obstacle
 {
-    public class Tree<T> : DynamicTile, IAutoupdateable where T : Fruit
+    public class Tree<T> : DynamicTile, IAutoupdateable where T : Fruit, new()
     {
         public int NextUpdateAfter { get; private set; }
 
@@ -13,7 +16,13 @@ namespace World.GameActors.Tiles.Obstacle
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            throw new System.NotImplementedException();
+            List<Vector2I> free = atlas.FreePositionsAround(Position, LayerType.Obstacle).ToList();
+            if (free.Count == 0) return;
+
+            Random rng = new Random();
+            Vector2I targetPosition = free[rng.Next(free.Count)];
+            GameActorPosition fruitPosition = new GameActorPosition(new T(), new Vector2(targetPosition), LayerType.Obstacle);
+            atlas.Add(fruitPosition);
         }
     }
 

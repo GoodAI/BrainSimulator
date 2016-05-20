@@ -332,9 +332,22 @@ namespace World.ToyWorldCore
             return target;
         }
 
+        private static IEnumerable<Vector2I> GetCoordinatesAround(Vector2I position, int range = 1)
+        {
+            for (int i = -range; i <= range; ++i)
+                for (int j = -range; j <= range; ++j)
+                    if (!(i == 0 && j == 0))    // omit center position
+                        yield return new Vector2I(position.X + i, position.Y + j);
+        }
+
+        private bool IsCoordinateFree(Vector2I position, LayerType type = LayerType.All)
+        {
+            return !ActorsAt(new Vector2(position), type).Any();
+        }
+
         public IEnumerable<Vector2I> FreePositionsAround(Vector2I position, LayerType type = LayerType.All)
         {
-            throw new NotImplementedException();
+            return GetCoordinatesAround(position).Where(x => IsCoordinateFree(x, type));
         }
 
         public void Remove(GameActorPosition target)
