@@ -9,52 +9,50 @@ namespace GoodAI.ToyWorld
 {
     public class ToyWorldGUI : MyWorkingNode
     {
-        public TWGUITask GUITask { get; private set; }
+        [MyTaskGroup("TWGUITask")]
+        public TWGUIDisplayTask DisplayTask { get; private set; }
+        [MyTaskGroup("TWGUITask")]
+        public TWGUIInterceptTask InterceptTask { get; private set; }
 
-        public event MessageEventHandler MessageObtained = delegate { };
-        public event MessageEventHandler StringObtained = delegate { };
+        public event MessageEventHandler TextObtained = delegate { };
 
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> MessageOut
+        public MyMemoryBlock<float> TextOut
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1)]
-        public MyMemoryBlock<float> StringOut
-        {
-            get { return GetOutput(1); }
-            set { SetOutput(1, value); }
-        }
-
         [MyInputBlock(0)]
-        public MyMemoryBlock<float> MessageIn
+        public MyMemoryBlock<float> TextIn
         {
             get { return GetInput(0); }
         }
 
-        [MyInputBlock(1)]
-        public MyMemoryBlock<float> StringIn
-        {
-            get { return GetInput(1); }
-        }
-
         private int m_messageSize;
-        private string m_message;
+        private string m_text;
 
-        public string Message
+        public string Text
         {
-            get { return m_message; }
-            set { m_message = Truncate(value, m_messageSize); }
+            get { return m_text; }
+            set { m_text = Truncate(value, m_messageSize); }
         }
 
-        public string String { get; set; }
+        // I don't want to create new enum just for two values
+        public bool IsDisplay
+        {
+            get { return DisplayTask.Enabled; }
+        }
+
+        public bool IsIntercept
+        {
+            get { return InterceptTask.Enabled; }
+        }
 
         public override void UpdateMemoryBlocks()
         {
-            m_messageSize = MessageOut.Count = MessageIn.Count;
-            StringOut.Count = StringIn.Count;
+            if (TextIn != null)
+                m_messageSize = TextOut.Count = TextIn.Count;
         }
 
         private string Truncate(string value, int length)
@@ -64,40 +62,41 @@ namespace GoodAI.ToyWorld
         }
 
         [MyTaskInfo(OneShot = false)]
-        public class TWGUITask : MyTask<ToyWorldGUI>
+        public class TWGUIDisplayTask : MyTask<ToyWorldGUI>
         {
             public override void Init(int nGPU) { }
 
             public override void Execute()
             {
-                ProcessMessage();
-                ProcessString();
+                Owner.TextIn.SafeCopyToHost();
+                Owner.TextIn.CopyToMemoryBlock(Owner.TextOut, 0, 0, Owner.TextIn.Count);
+                Owner.Text = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
+                Owner.TextObtained(Owner, new MessageEventArgs(Owner.Text, "Display"));
             }
+        }
 
-            private void ProcessString()
-            {
-                Owner.StringIn.CopyToMemoryBlock(Owner.StringOut, 0, 0, Owner.StringIn.Count);
-                Owner.String = string.Join("", Owner.StringIn.Host.Select(x => (char)x));
-                Owner.StringObtained(Owner, new MessageEventArgs(Owner.String));
-            }
+        [MyTaskInfo(OneShot = false)]
+        public class TWGUIInterceptTask : MyTask<ToyWorldGUI>
+        {
+            public override void Init(int nGPU) { }
 
-            private void ProcessMessage()
+            public override void Execute()
             {
-                if (Owner.Message == null)
+                if (Owner.Text == null)
                 {
-                    Owner.MessageIn.SafeCopyToHost();
-                    string text = string.Join("", Owner.MessageIn.Host.Select(x => (char)x));
-                    Owner.MessageObtained(Owner, new MessageEventArgs(text));
+                    Owner.TextIn.SafeCopyToHost();
+                    string text = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
+                    Owner.TextObtained(Owner, new MessageEventArgs(text, "Intercept"));
 
-                    Owner.MessageIn.CopyToMemoryBlock(Owner.MessageOut, 0, 0, Owner.m_messageSize);
+                    Owner.TextIn.CopyToMemoryBlock(Owner.TextOut, 0, 0, Owner.m_messageSize);
                 }
                 else
                 {
-                    for (int i = 0; i < Owner.Message.Length; ++i)
-                        Owner.MessageOut.Host[i] = Owner.Message[i];
-                    Owner.MessageOut.SafeCopyToDevice();
+                    for (int i = 0; i < Owner.Text.Length; ++i)
+                        Owner.TextOut.Host[i] = Owner.Text[i];
+                    Owner.TextOut.SafeCopyToDevice();
 
-                    Owner.Message = null;
+                    Owner.Text = null;
                 }
             }
         }

@@ -1,4 +1,7 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using GoodAI.BrainSimulator.Forms;
 using GoodAI.Core.Execution;
@@ -15,16 +18,17 @@ namespace ToyWorldConversation
         private readonly MainForm m_mainForm;
         private readonly Font m_boldFont;
         private readonly Font m_normalFont;
-        private ToyWorldGUI m_guiNode;
+        private readonly List<ToyWorldGUI> m_displayNodes;
+        private readonly List<ToyWorldGUI> m_interceptNodes;
 
-        private bool m_showStrings
+        private bool m_showDisplay
         {
-            get { return checkBox_show_string.Checked; }
+            get { return checkBox_show_display.Checked; }
         }
 
-        private bool m_showMessages
+        private bool m_showIntercept
         {
-            get { return checkBox_show_message.Checked; }
+            get { return checkBox_show_intercept.Checked; }
         }
 
         public ToyWorldConversation(MainForm mainForm)
@@ -36,27 +40,40 @@ namespace ToyWorldConversation
 
             m_boldFont = new Font(richTextBox_messages.Font, FontStyle.Bold);
             m_normalFont = richTextBox_messages.Font;
-            FindGUINode();
+
+            m_displayNodes = new List<ToyWorldGUI>();
+            m_interceptNodes = new List<ToyWorldGUI>();
+            FindGuiNodes();
         }
 
-        private void FindGUINode()
+        private void FindGuiNodes()
         {
-            if (m_guiNode != null) return;
+            m_displayNodes.ForEach(x => x.TextObtained -= NewMessageDisplay);
+            m_interceptNodes.ForEach(x => x.TextObtained -= NewMessageIntercept);
+
+            m_displayNodes.Clear();
+            m_interceptNodes.Clear();
+
             foreach (MyNode node in m_mainForm.Project.Network.Children)
                 if (node.GetType() == typeof(ToyWorldGUI))
                 {
-                    m_guiNode = node as ToyWorldGUI;
-                    m_guiNode.MessageObtained += NewMessage;
-                    m_guiNode.StringObtained += NewString;
-                    return;
+                    ToyWorldGUI guiNode = node as ToyWorldGUI;
+                    Debug.Assert(guiNode != null, "guiNode != null");
+                    if (guiNode.IsDisplay)
+                        m_displayNodes.Add(guiNode);
+                    if (guiNode.IsIntercept)
+                        m_interceptNodes.Add(guiNode);
                 }
+
+            m_displayNodes.ForEach(x => x.TextObtained += NewMessageDisplay);
+            m_interceptNodes.ForEach(x => x.TextObtained += NewMessageIntercept);
         }
 
         private void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
         {
             if (e.OldState != MySimulationHandler.SimulationState.STOPPED) return;
             richTextBox_messages.Clear();
-            FindGUINode();
+            FindGuiNodes();
         }
 
         private void PrintMessageFrom(string message, string sender)
@@ -67,21 +84,21 @@ namespace ToyWorldConversation
             richTextBox_messages.AppendText(message + "\n");
         }
 
-        private void NewMessage(object sender, MessageEventArgs e)
+        private void NewMessageDisplay(object sender, MessageEventArgs e)
         {
-            if (m_showMessages)
+            if (m_showDisplay)
                 Invoke((MethodInvoker)(() =>
                 {
-                    PrintMessageFrom(e.Message, "Message");
+                    PrintMessageFrom(e.Message, e.Sender);
                 }));
         }
 
-        private void NewString(object sender, MessageEventArgs e)
+        private void NewMessageIntercept(object sender, MessageEventArgs e)
         {
-            if (m_showStrings)
+            if (m_showIntercept)
                 Invoke((MethodInvoker)(() =>
                 {
-                    PrintMessageFrom(e.Message, "String");
+                    PrintMessageFrom(e.Message, e.Sender);
                 }));
         }
 
@@ -91,7 +108,7 @@ namespace ToyWorldConversation
 
             e.SuppressKeyPress = true;  // for disabling the "ding" sound
 
-            m_guiNode.Message = textBox_send.Text;
+            m_interceptNodes.ForEach(x => x.Text = textBox_send.Text);
 
             Invoke((MethodInvoker)(() =>
             {

@@ -13,10 +13,12 @@ namespace GoodAI.ToyWorldAPI
     public class MessageEventArgs : EventArgs
     {
         public string Message { get; set; }
+        public string Sender { get; set; }
 
-        public MessageEventArgs(string message)
+        public MessageEventArgs(string message, string sender = "Unknown")
         {
             Message = message;
+            Sender = sender;
         }
     }
 
