@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using VRageMath;
-using World.GameActions;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -64,7 +63,7 @@ namespace World.ToyWorldCore
         bool ContainsCollidingTile(Vector2I coordinates);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tilePosition"></param>
         /// <param name="type"></param>
@@ -73,7 +72,7 @@ namespace World.ToyWorldCore
         IEnumerable<GameActorPosition> ActorsAt(Vector2 tilePosition, LayerType type = LayerType.All, float width = 1);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T">IDirectable and IGameObject</typeparam>
         /// <param name="sender"></param>
@@ -85,7 +84,7 @@ namespace World.ToyWorldCore
             float width = 1) where T : class, IRotatable, IGameObject;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sender"></param>
@@ -115,7 +114,7 @@ namespace World.ToyWorldCore
         void ReplaceWith(GameActorPosition original, GameActor replacement);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="tilePosition"></param>
         /// <returns>All objects from Object layer standing on given position.</returns>
@@ -194,7 +193,7 @@ namespace World.ToyWorldCore
 
         public Atlas()
         {
-            Time = new DateTime(2000,1,1,0,0,0);
+            Time = new DateTime(2000, 1, 1, 0, 0, 0);
             NewAutoupdateables = new List<IAutoupdateable>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
@@ -210,7 +209,7 @@ namespace World.ToyWorldCore
             {
                 return ObjectLayers.FirstOrDefault(x => x.LayerType == layerType);
             }
-            return TileLayers.First(x => x.LayerType == layerType);
+            return TileLayers.FirstOrDefault(x => x.LayerType == layerType);
         }
 
         private IEnumerable<ILayer<GameActor>> GetObstaceLayers()
@@ -250,11 +249,11 @@ namespace World.ToyWorldCore
 
         public bool ContainsCollidingTile(Vector2I coordinates)
         {
-            if (((ITileLayer) GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
-            if (((ITileLayer) GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
             {
                 return true;
             }
@@ -280,7 +279,7 @@ namespace World.ToyWorldCore
             IEnumerable<ILayer<GameActor>> selectedObjectLayers = selectedLayers.Where(t => LayerType.ObjectLayers.HasFlag(t.LayerType));
             foreach (ILayer<GameActor> layer in selectedObjectLayers)
             {
-                foreach (IGameObject gameObject in ((IObjectLayer) layer).GetGameObjects())
+                foreach (IGameObject gameObject in ((IObjectLayer)layer).GetGameObjects())
                 {
                     GameActorPosition actorPosition = GameObjectAt(gameObject, circle, position, layer);
                     if (actorPosition != null)
@@ -295,14 +294,14 @@ namespace World.ToyWorldCore
         {
             IShape gameObjectShape = gameObject.PhysicalEntity.Shape;
             if (!gameObjectShape.CollidesWith(shape)) return null;
-            GameActor actor = (GameActor) gameObject;
+            GameActor actor = (GameActor)gameObject;
             GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
             return actorPosition;
         }
 
         private static GameActorPosition TileAt(ILayer<GameActor> layer, Vector2 position)
         {
-            GameActor actor = layer.GetActorAt((int) Math.Floor(position.X), (int) Math.Floor(position.Y));
+            GameActor actor = layer.GetActorAt((int)Math.Floor(position.X), (int)Math.Floor(position.Y));
             if (actor == null) return null;
             GameActorPosition actorPosition = new GameActorPosition(actor, position, layer.LayerType);
             return actorPosition;
@@ -318,7 +317,7 @@ namespace World.ToyWorldCore
 
         public Vector2 PositionInFrontOf<T>(T sender, float distance) where T : class, IRotatable, IGameObject
         {
-            Vector2 direction = Vector2.UnitY*distance;
+            Vector2 direction = Vector2.UnitY * distance;
             direction.Rotate(sender.Rotation);
             Vector2 target = sender.Position + direction;
             return target;
@@ -382,7 +381,7 @@ namespace World.ToyWorldCore
 
         public List<IGameObject> StayingOnTile(Vector2I tilePosition)
         {
-            return ((IObjectLayer) GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
+            return ((IObjectLayer)GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
         }
 
         public static bool InsideTile(Vector2I tilePosition, Vector2 position)
@@ -407,7 +406,7 @@ namespace World.ToyWorldCore
             return Atmosphere.Temperature(position);
         }
 
-        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0,int seconds = 10, int millis = 0)
+        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0)
         {
             Time = Time.Add(new TimeSpan(days, hours, minutes, seconds, millis));
         }
