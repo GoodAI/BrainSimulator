@@ -71,7 +71,7 @@ namespace GoodAI.ToyWorld
                 Owner.TextIn.SafeCopyToHost();
                 Owner.TextIn.CopyToMemoryBlock(Owner.TextOut, 0, 0, Owner.TextIn.Count);
                 Owner.Text = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
-                Owner.TextObtained(Owner, new MessageEventArgs(Owner.Text, "Display"));
+                Owner.TextObtained(Owner, new MessageEventArgs(Owner.Text, Owner.Name));
             }
         }
 
@@ -86,7 +86,7 @@ namespace GoodAI.ToyWorld
                 {
                     Owner.TextIn.SafeCopyToHost();
                     string text = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
-                    Owner.TextObtained(Owner, new MessageEventArgs(text, "Intercept"));
+                    Owner.TextObtained(Owner, new MessageEventArgs(text, Owner.Name));
 
                     Owner.TextIn.CopyToMemoryBlock(Owner.TextOut, 0, 0, Owner.m_messageSize);
                 }
