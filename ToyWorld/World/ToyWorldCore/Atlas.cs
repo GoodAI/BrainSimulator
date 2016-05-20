@@ -102,8 +102,9 @@ namespace World.ToyWorldCore
         /// Adds given GameActor to certain position. If position is not free, returns false.
         /// </summary>
         /// <param name="gameActorPosition"></param>
+        /// <param name="collidesWithObstacles"></param>
         /// <returns>True if operation were successful.</returns>
-        bool Add(GameActorPosition gameActorPosition);
+        bool Add(GameActorPosition gameActorPosition, bool collidesWithObstacles = false);
 
         /// <summary>
         /// Replace GameActor with replacement. When Tile and GameObject is given, ArgumentException is thrown.
@@ -328,9 +329,9 @@ namespace World.ToyWorldCore
             ReplaceWith(target, null);
         }
 
-        public bool Add(GameActorPosition gameActorPosition)
+        public bool Add(GameActorPosition gameActorPosition, bool collidesWithObstacles = false)
         {
-            if ((LayerType.Obstacles | LayerType.Object).HasFlag(gameActorPosition.Layer))
+            if (collidesWithObstacles)
             {
                 IObjectLayer gameObjectLayer = GetLayer(LayerType.Object) as IObjectLayer;
                 Debug.Assert(gameObjectLayer != null, "gameObjectLayer != null");

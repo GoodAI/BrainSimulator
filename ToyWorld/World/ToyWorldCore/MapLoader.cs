@@ -91,26 +91,36 @@ namespace World.ToyWorldCore
             ObjectGroup foregroundObjects = map.ObjectGroups.FirstOrDefault(x => x.Name == "ForegroundObject");
             Debug.Assert(foregroundObjects != null, "foregroundObjects != null");
             List<TmxObject> tmxMapObjects = foregroundObjects.TmxMapObjects;
-            IEnumerable<TmxObject> leverRDoors = tmxMapObjects.Where(x => x.Type == "LeverRDoor");
-            foreach (TmxObject leverRDoor in leverRDoors)
+            IEnumerable<TmxObject> switcherToSwitchablePolylines = tmxMapObjects.Where(x => x.Type == "SwitcherToSwitchable");
+            foreach (TmxObject switcherToSwitchablePolyline in switcherToSwitchablePolylines)
             {
-                Polyline polyline = leverRDoor.Polyline;
+                Polyline polyline = switcherToSwitchablePolyline.Polyline;
                 if (polyline == null)
                 {
-                    throw new ArgumentException("Foreground object leverRDoor is wrong type. Should be Polyline.");
+                    throw new ArgumentException("Foreground object SwitcherToSwitchable is wrong type. Should be Polyline.");
                 }
-                List<Vector2> polylinePoints = PolylineTransform(map, leverRDoor).ToList();
+                List<Vector2> polylinePoints = PolylineTransform(map, switcherToSwitchablePolyline).ToList();
                 Vector2 source = polylinePoints.First();
                 Vector2 target = polylinePoints.Last();
                 IEnumerable<GameActorPosition> sourceGameActors = atlas.ActorsAt(source);
-                ISwitcher switcher = sourceGameActors.First(x => x.Actor is ISwitcher).Actor as ISwitcher;
+                GameActorPosition switcherPosition = sourceGameActors.FirstOrDefault(x => x.Actor is ISwitcher);
+                if (switcherPosition == null)
+                {
+                    Log.Instance.Error("SwitcherToSwitchable polyline expects Switcher type at [" + source.X + ";" + source.Y + "].");
+                    return;
+                }
+                ISwitcher switcher = switcherPosition.Actor as ISwitcher;
 
                 IEnumerable<GameActorPosition> targetGameActors = atlas.ActorsAt(target);
-                ISwitchable switchable = targetGameActors.First(x => x.Actor is ISwitchable).Actor as ISwitchable;
+                GameActorPosition switchablePosition = targetGameActors.FirstOrDefault(x => x.Actor is ISwitchable);
+                if (switchablePosition == null)
+                {
+                    Log.Instance.Error("SwitcherToSwitchable polyline expects Switchable type at [" + target.X + ";" + target.Y + "].");
+                    return;
+                }
+                ISwitchable switchable = switchablePosition.Actor as ISwitchable;
 
-                Debug.Assert(switcher != null, "switcher != null");
-                Debug.Assert(switchable != null, "switchable != null");
-                switcher.Switchable = switchable;
+                if (switcher != null) switcher.Switchable = switchable;
             }
         }
 

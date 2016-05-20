@@ -15,11 +15,10 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         {
         }
 
-
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
         {
             var doorClosed = new SimpleDoorClosed(tilesetTable);
-            bool added = atlas.Add(new GameActorPosition(doorClosed, position, LayerType.ObstacleInteractable));
+            bool added = atlas.Add(new GameActorPosition(doorClosed, position, LayerType.ObstacleInteractable), true);
             if (added)
             {
                 atlas.Remove(new GameActorPosition(this, position, LayerType.OnGroundInteractable));

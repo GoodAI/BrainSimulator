@@ -134,8 +134,6 @@ namespace World.GameActors.GameObjects
             var temperatureAround = atlas.Temperature(Position);
 
             LogAvatarStatus(atlas, temperatureAround);
-            string areaName = atlas.AreasCarrier.AreaName(Position);
-            string roomName = atlas.AreasCarrier.RoomName(Position);
 
             float oldEnergy = Energy;
             LoseEnergy();
@@ -144,21 +142,7 @@ namespace World.GameActors.GameObjects
 
             if (Interact)
             {
-                GameActorPosition tileInFrontOf = GetInteractableTileInFrontOf(atlas);
-                if (tileInFrontOf != null)
-                {
-                    var interactable = tileInFrontOf.Actor as IInteractable;
-
-
-                    if (interactable != null)
-                    {
-                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position, table);
-                    }
-                    if (tileInFrontOf.Actor is Fruit)
-                    {
-                        EatFruit(tileInFrontOf);
-                    }
-                }
+                InteractWithAllInteractablesInFrontOf(atlas, table);
 
                 Interact = false;
                 return;
@@ -180,7 +164,34 @@ namespace World.GameActors.GameObjects
 
             if (UseTool)
             {
+                var usable = Tool as IUsable;
 
+                if (usable != null)
+                {
+                    usable.Use(new GameActorPosition(this, Position, LayerType.Object),  atlas, table);
+                }
+            }
+        }
+
+        private void InteractWithAllInteractablesInFrontOf(IAtlas atlas, ITilesetTable table)
+        {
+            List<GameActorPosition> tilesInFrontOf = GetInteractableTilesInFrontOf(atlas);
+            foreach (GameActorPosition tileInFrontOf in tilesInFrontOf)
+            {
+                if (tileInFrontOf != null)
+                {
+                    var interactable = tileInFrontOf.Actor as IInteractable;
+
+
+                    if (interactable != null)
+                    {
+                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position, table);
+                    }
+                    if (tileInFrontOf.Actor is Fruit)
+                    {
+                        EatFruit(tileInFrontOf);
+                    }
+                }
             }
         }
 
@@ -290,22 +301,25 @@ namespace World.GameActors.GameObjects
         private bool PerformPickup(IAtlas atlas, ITilesetTable tilesetTable)
         {
             // check tile in front of
-            GameActorPosition target = GetInteractableTileInFrontOf(atlas);
+            List<GameActorPosition> targets = GetInteractableTilesInFrontOf(atlas);
             // if no tile, check objects
-            if (target == null)
+            if (targets.Count == 0)
             {
-                target = GetInteractableObjectInFrontOf(atlas);
+                targets = GetInteractableObjectsInFrontOf(atlas);
             }
-            if (target == null) return false;
+            if (targets.Count == 0) return false;
 
-            IInteractable interactableTarget = target.Actor as IInteractable;
-            if (interactableTarget == null) return false;
+            foreach (GameActorPosition target in targets)
+            {
+                IPickable interactableTarget = target.Actor as IPickable;
+                if (interactableTarget == null) continue;
+                GameAction pickUpAction = new PickUp(this);
+                interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position, tilesetTable);
 
-            GameAction pickUpAction = new PickUp(this);
-            interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position, tilesetTable);
-
-            RemoveSpeed(target);
-            return true;
+                RemoveSpeed(target);
+                return true;
+            }
+            return false;
         }
 
         private void RemoveSpeed(GameActorPosition target)
@@ -318,23 +332,19 @@ namespace World.GameActors.GameObjects
             actor.ForwardSpeed = 0;
         }
 
-        private GameActorPosition GetInteractableObjectInFrontOf(IAtlas atlas)
+        private List<GameActorPosition> GetInteractableObjectsInFrontOf(IAtlas atlas)
         {
             // check circle in front of avatar
             float radius = ((CircleShape)PhysicalEntity.Shape).Radius;
-            IEnumerable<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object,
-                0.2f + radius, radius);
-            GameActorPosition target = actorsInFrontOf.FirstOrDefault(x => x.Actor is IInteractable);
-            return target;
+            List<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Object,
+                0.2f + radius, radius).ToList();
+            return actorsInFrontOf;
         }
 
-        private GameActorPosition GetInteractableTileInFrontOf(IAtlas atlas)
+        private List<GameActorPosition> GetInteractableTilesInFrontOf(IAtlas atlas)
         {
             List<GameActorPosition> actorsInFrontOf = atlas.ActorsInFrontOf(this, LayerType.Interactables).ToList();
-            GameActorPosition target =
-                actorsInFrontOf.FirstOrDefault(x => (x.Layer.HasFlag(LayerType.ObstacleInteractable)));
-            if (target == null) target = actorsInFrontOf.FirstOrDefault();
-            return target;
+            return actorsInFrontOf;
         }
 
         private void BoundValue(ref float value, float min, float max)

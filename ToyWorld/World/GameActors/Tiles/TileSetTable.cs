@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
 
@@ -69,8 +71,15 @@ namespace World.GameActors.Tiles
             IEnumerable<DataRow> enumerable = dataTable.Rows.Cast<DataRow>();
             var dataRows = enumerable.ToArray();
 
-            m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")
-                .ToDictionary(x => x["NameOfTile"].ToString(), x => int.Parse(x["PositionInTileset"].ToString()));
+            try
+            {
+                m_namesValuesDictionary = dataRows.Where(x => x["IsDefault"].ToString() == "1")
+                    .ToDictionary(x => x["NameOfTile"].ToString(), x => int.Parse(x["PositionInTileset"].ToString()));
+            }
+            catch (ArgumentException)
+            {
+                Log.Instance.Error("Duplicate NameOfTiles in tileset table. Try set IsDefault to 0.");
+            }
             m_valuesNamesDictionary = dataRows.ToDictionary(x => int.Parse(x["PositionInTileset"].ToString()), x => x["NameOfTile"].ToString());
         }
 

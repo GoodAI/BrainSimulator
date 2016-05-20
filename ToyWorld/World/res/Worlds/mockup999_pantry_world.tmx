@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="145">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="16" tileheight="16" nextobjectid="147">
  <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
   <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
@@ -220,7 +220,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,203,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,201,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
@@ -275,7 +275,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,316,316,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,325,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,316,316,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,316,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,325,0,0,0,320,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,320,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,320,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,321,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
@@ -487,25 +487,22 @@
 </data>
  </layer>
  <objectgroup name="ForegroundObject">
-  <object id="98" type="LeverRDoor" x="504.292" y="345.25">
+  <object id="98" type="SwitcherToSwitchable" x="504.292" y="345.25">
    <polyline points="0,0 30,30.6667"/>
   </object>
-  <object id="100" type="LeverRDoor" x="707.958" y="233.583">
+  <object id="100" type="SwitcherToSwitchable" x="707.958" y="233.583">
    <polyline points="0,0 -58.6667,92.6667"/>
   </object>
-  <object id="102" type="LeverRDoor" x="707.958" y="266.583">
+  <object id="102" type="SwitcherToSwitchable" x="707.958" y="266.583">
    <polyline points="0,0 -62,125.333"/>
   </object>
-  <object id="107" type="LeverRDoor" x="713.958" y="219.25">
+  <object id="107" type="SwitcherToSwitchable" x="713.958" y="219.25">
    <polyline points="0,0 -3,79.3333"/>
   </object>
-  <object id="109" type="LeverRDoor" x="717.292" y="249.583">
+  <object id="109" type="SwitcherToSwitchable" x="717.292" y="249.583">
    <polyline points="0,0 15.3333,37.3333 15.3333,101.667 -1,110"/>
   </object>
-  <object id="113" type="LeverRDoor" x="294.958" y="778.917">
-   <polyline points="0,0 14.6667,12.6667 304,12.3333 320,-1.66667"/>
-  </object>
-  <object id="115" type="LeverRDoor" x="599.292" y="728.917">
+  <object id="115" type="SwitcherToSwitchable" x="599.292" y="728.917">
    <polyline points="0,0 -239.667,48"/>
   </object>
   <object id="131" name="Crook Forest" type="AreaLabel" x="770" y="28.6667">
@@ -528,6 +525,9 @@
   </object>
   <object id="142" name="Trap Room" type="AreaLabel" x="349" y="387.333">
    <ellipse/>
+  </object>
+  <object id="145" type="SwitcherToSwitchable" x="294.667" y="761">
+   <polyline points="0,0 33.6667,31 305.667,31 322,16"/>
   </object>
  </objectgroup>
 </map>

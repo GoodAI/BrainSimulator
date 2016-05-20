@@ -44,9 +44,10 @@ namespace World.GameActors
     }
 
     /// <summary>
-    /// Usable tools (in inventory).
+    /// For GameActors which are held in hand.
     /// </summary>
     public interface IUsable
     {
+        void Use(GameActorPosition senderPosition, IAtlas atlas, ITilesetTable tilesetTable);
     }
 }

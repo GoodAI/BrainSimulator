@@ -19,6 +19,7 @@ OnGroundInteractable;Water;196;1;
 ;TrapDischarged;200;1;
 ;PoisonuosTile;201;1;
 ;Recharger;202;1;
+;KeyToDoor;203;1;
 Obstacle;Obstacle;256;1;Non destroyable Wall
 ;AppleTree;257;1;
 ;PearTree;258;1;
@@ -29,7 +30,9 @@ ObstacleInteractable;Apple;316;1;
 ;Pinecone;318;1;
 ;SimpleDoorClosed;319;1;
 ;RcDoorClosed;320;1;
+;KeyDoorClosed;321;1;
 ;LeverSwitchOff;324;1;
 ;LeverSwitchOn;325;1;
 ;SimpleDoorOpened;334;1;
 ;RcDoorOpened;335;1;
+;KeyDoorOpened;336;1;

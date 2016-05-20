@@ -162,7 +162,10 @@
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOff.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\KeyDoorClosed.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs" />
@@ -182,7 +185,6 @@
     <Compile Include="Physics\ForwardMovablePhysicalEntity.cs" />
     <Compile Include="Physics\IAvatarMover.cs" />
     <Compile Include="Physics\IMovable.cs" />
-    <Compile Include="GameActors\GameObjects\IUsable.cs" />
     <Compile Include="GameActors\Tiles\OnBackground\OnBackground.cs" />
     <Compile Include="GameActors\Tiles\Background\Background.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Obstacle.cs" />

@@ -44,7 +44,7 @@ namespace World.GameActors.Tiles
 
     public interface ISwitchable
     {
-        GameActor Switch(IAtlas atlas, ITilesetTable table);
+        ISwitchable Switch(IAtlas atlas, ITilesetTable table);
     }
 
     public interface ISwitcher
