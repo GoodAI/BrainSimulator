@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
+using Logger;
 using ToyWorldFactory;
 using YAXLib;
 
@@ -241,6 +242,32 @@ namespace GoodAI.ToyWorld
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
+
+            TryToyWorld();
+
+            foreach (TWLogMessage message in TWLog.GetAllLogMessages())
+                switch (message.Severity)
+                {
+                    case TWSeverity.Error:
+                        {
+                            validator.AssertError(false, this, message.ToString());
+                            break;
+                        }
+                    case TWSeverity.Warn:
+                        {
+                            validator.AssertWarning(false, this, message.ToString());
+                            break;
+                        }
+                }
+        }
+
+        private void TryToyWorld()
+        {
+            GameSetup setup = new GameSetup(
+                    new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read),
+                    new StreamReader(TilesetTable));
+            IGameController gameCtrl = GameFactory.GetThreadSafeGameController(setup);
+            gameCtrl.Init();
         }
 
         private static string GetDllDirectory()
