@@ -30,8 +30,7 @@ namespace World.GameActors.Tiles.Obstacle
             List<Vector2I> free = atlas.FreePositionsAround(Position, LayerType.Obstacle).ToList();
             if (free.Count == 0) return;
 
-            Random rng = new Random();
-            Vector2I targetPosition = free[rng.Next(free.Count)];
+            Vector2I targetPosition = free[m_rng.Next(free.Count)];
             object[] args = { table, targetPosition };
             Fruit fruit = (Fruit)Activator.CreateInstance(typeof(T), args);
             GameActorPosition fruitPosition = new GameActorPosition(fruit, new Vector2(targetPosition), LayerType.ObstacleInteractable);
