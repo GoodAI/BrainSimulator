@@ -58,5 +58,40 @@ namespace ToyWorldTests.Language
             Assert.True(vector.SequenceEqual(returnVector.Vector));
             Assert.Equal(returnVector.Label, word);
         }
+
+
+        // Find nearest neighbors
+        [Fact]
+        public void FindNNeighbors()
+        {
+            const int numberOfNeighbors = 5;
+
+            const string word = "beautiful";
+            float[] queryVector = Vocabulary.Instance.VectorFromLabel(word);
+
+            // Make increasingly remote neighbors
+            float[][] nearbyVectors = new float[numberOfNeighbors][];
+            int iVector = 0;
+            for (iVector = 0; iVector < numberOfNeighbors; iVector++)
+            {
+                nearbyVectors[iVector] = new float[NumberOfWordVectorDimensions];
+                for (int i = 0; i < queryVector.Length; i++)
+                {
+                    nearbyVectors[iVector][i] = queryVector[i] + Single.Epsilon * iVector;
+                }
+                Vocabulary.Instance.Add(iVector.ToString(), nearbyVectors[iVector]);
+            }
+            
+            // Get nearest neighbors
+            var retrievedNeighbors = Vocabulary.Instance.FindNearestNeighbors(queryVector, numberOfNeighbors);
+
+            // Compare to expected neighbors
+            iVector = 0;
+            foreach (var tuple in retrievedNeighbors)
+            {
+                Assert.True(tuple.Item2.Vector.SequenceEqual(nearbyVectors[iVector++]));
+            }
+        }
+
     }
 }
