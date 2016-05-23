@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using GoodAI.Logging;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
 using Render.Renderer;
