@@ -21,9 +21,17 @@ namespace GoodAI.ToyWorld.Language
         public int NumberOfDimensions { get; set; }
 
         /// <summary>
+        /// The vocabulary size
+        /// </summary>
+        public int Size
+        {
+            get { return _labeledVectorDictionary.Count; }
+        }
+
+        /// <summary>
         /// Dictionary for label-to-vector lookup
         /// </summary>
-        private Dictionary<string, float[]> labeledVectorDictionary = null;
+        private Dictionary<string, float[]> _labeledVectorDictionary = null;
 
         /// <summary>
         /// Random number generator for making random vectors
@@ -33,12 +41,12 @@ namespace GoodAI.ToyWorld.Language
         /// <summary>
         /// Lazy singleton instantiation
         /// </summary>
-        private static readonly Lazy<Vocabulary> lazy = new Lazy<Vocabulary>(() => new Vocabulary());
+        private static readonly Lazy<Vocabulary> Lazy = new Lazy<Vocabulary>(() => new Vocabulary());
  
         /// <summary>
         /// Singleton instance
         /// </summary>
-        public static Vocabulary Instance { get { return lazy.Value; } }
+        public static Vocabulary Instance { get { return Lazy.Value; } }
 
         /// <summary>
         /// Private constructor for the singleton
@@ -54,7 +62,7 @@ namespace GoodAI.ToyWorld.Language
         public void Initialize(int vectorDimensions)
         {
             NumberOfDimensions = vectorDimensions;
-            labeledVectorDictionary = new Dictionary<string, float[]>();
+            _labeledVectorDictionary = new Dictionary<string, float[]>();
         }
 
         /// <summary>
@@ -64,7 +72,7 @@ namespace GoodAI.ToyWorld.Language
         /// <param name="vector">The vector</param>
         public void Add(string label, float[] vector)
         {
-            labeledVectorDictionary.Add(label, vector);
+            _labeledVectorDictionary.Add(label, vector);
         }
 
         /// <summary>
@@ -86,7 +94,7 @@ namespace GoodAI.ToyWorld.Language
         {
             string normalizedLabel = label.ToLowerInvariant();
             float[] vector = null;
-            bool hasLabel = labeledVectorDictionary.TryGetValue(normalizedLabel, out vector);
+            bool hasLabel = _labeledVectorDictionary.TryGetValue(normalizedLabel, out vector);
             return hasLabel ? vector : GetOOVVector(normalizedLabel);
         }
 
@@ -158,7 +166,7 @@ namespace GoodAI.ToyWorld.Language
             var nBestList = new NBestList<LabeledVector>(neighborhoodSize);
             if (!IsZero(vector))
             {
-                foreach (var wordVectorPair in labeledVectorDictionary)
+                foreach (var wordVectorPair in _labeledVectorDictionary)
                 {
                     float cosine = LabeledVector.Cosine(wordVectorPair.Value, vector);
                     if (nBestList.IsBetter(cosine))
@@ -176,14 +184,22 @@ namespace GoodAI.ToyWorld.Language
         /// <param name="path">The path to the vocabulary text file</param>
         public void ReadTextFile(string path)
         {
-            MyLog.INFO.WriteLine("Loading vector space...");
             StreamReader vocabularyReader = File.OpenText(path);
+            Read(vocabularyReader);
+        }
 
+        /// <summary>
+        /// Loads the vocabulary from text using a StreamReader
+        /// </summary>
+        /// <param name="vocabularyReader">The reader</param>
+        public void Read(StreamReader vocabularyReader)
+        {
+            MyLog.INFO.WriteLine("Loading vector space...");
             ReadFileHeader(vocabularyReader);
             ReadLabeledVectors(vocabularyReader);
 
             vocabularyReader.Close();
-            MyLog.INFO.WriteLine("Done loading vector space.");
+            MyLog.INFO.WriteLine("Done loading vector space.");  
         }
 
         /// <summary>
