@@ -7,12 +7,23 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.Obstacle
 {
-    public class Tree<T> : DynamicTile, IAutoupdateable where T : Fruit, new()
+    public abstract class Tree<T> : DynamicTile, IAutoupdateable where T : Fruit
     {
         public int NextUpdateAfter { get; private set; }
 
-        protected Tree(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
-        protected Tree(int tileType, Vector2I position) : base(tileType, position) { }
+        private int m_firstUpdate;
+        private int m_updatePeriod;
+        private static readonly Random m_rng = new Random();
+
+        protected Tree(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { Init(); }
+        protected Tree(int tileType, Vector2I position) : base(tileType, position) { Init(); }
+
+        private void Init()
+        {
+            m_firstUpdate = 500 + m_rng.Next(-200, 200);
+            m_updatePeriod = 5000 + m_rng.Next(-1000, 1000);
+            NextUpdateAfter = m_firstUpdate;
+        }
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
@@ -21,8 +32,12 @@ namespace World.GameActors.Tiles.Obstacle
 
             Random rng = new Random();
             Vector2I targetPosition = free[rng.Next(free.Count)];
-            GameActorPosition fruitPosition = new GameActorPosition(new T(), new Vector2(targetPosition), LayerType.Obstacle);
+            object[] args = { table, targetPosition };
+            Fruit fruit = (Fruit)Activator.CreateInstance(typeof(T), args);
+            GameActorPosition fruitPosition = new GameActorPosition(fruit, new Vector2(targetPosition), LayerType.ObstacleInteractable);
             atlas.Add(fruitPosition);
+
+            NextUpdateAfter = m_updatePeriod;
         }
     }
 
