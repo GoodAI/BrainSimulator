@@ -5,9 +5,9 @@
  </tileset>
  <layer name="Background" width="3" height="3">
   <data encoding="csv">
-16,17,16,
-16,16,16,
-16,16,16
+31,31,31,
+31,31,31,
+31,31,31
 </data>
  </layer>
  <layer name="OnBackground" width="3" height="3">
@@ -17,7 +17,7 @@
 0,0,0
 </data>
  </layer>
- <layer name="Path" width="3" height="3">
+ <layer name="Area" width="3" height="3">
   <data encoding="csv">
 0,0,0,
 0,136,0,
