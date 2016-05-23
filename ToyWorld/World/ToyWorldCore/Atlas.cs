@@ -84,6 +84,14 @@ namespace World.ToyWorldCore
             float width = 1) where T : class, IRotatable, IGameObject;
 
         /// <summary>
+        /// Returns list of free cells around given position, in given layer
+        /// </summary>
+        /// <param name="position"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IEnumerable<Vector2I> FreePositionsAround(Vector2I position, LayerType type = LayerType.All);
+
+        /// <summary>
         ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -322,6 +330,16 @@ namespace World.ToyWorldCore
             direction.Rotate(sender.Rotation);
             Vector2 target = sender.Position + direction;
             return target;
+        }
+
+        private bool IsCoordinateFree(Vector2I position, LayerType type)
+        {
+            return !ActorsAt(new Vector2(position), type).Any();
+        }
+
+        public IEnumerable<Vector2I> FreePositionsAround(Vector2I position, LayerType type = LayerType.All)
+        {
+            return Neighborhoods.ChebyshevNeighborhood(position).Where(x => IsCoordinateFree(x, type));
         }
 
         public void Remove(GameActorPosition target)
