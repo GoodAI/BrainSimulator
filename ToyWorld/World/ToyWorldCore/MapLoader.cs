@@ -22,9 +22,9 @@ namespace World.ToyWorldCore
         /// <param name="tilesetTable">Table of numbers of game object and theirs classes</param>
         /// <param name="initializer"></param>
         /// <returns>Atlas with initial state of ToyWorld</returns>
-        public static Atlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
+        public static IAtlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
-            Atlas atlas = new Atlas();
+            IAtlas atlas = new Atlas();
 
             map.Tilesets = map.Tilesets.OrderBy(x => x.Firstgid).ToList();
 
@@ -152,7 +152,7 @@ namespace World.ToyWorldCore
         }
         
         private static IObjectLayer FillObjectLayer(
-            Atlas atlas,
+            IAtlas atlas,
             ObjectGroup objectLayer,
             LayerType layerType,
             Action<GameActor> initializer,

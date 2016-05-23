@@ -16,7 +16,7 @@ namespace ToyWorldTests.World
         /// <summary>
         /// Loads map from testing files
         /// </summary>
-        private readonly Atlas m_atlas;
+        private readonly IAtlas m_atlas;
         public MapLoaderTests()
         {
             // initiate streamReaders

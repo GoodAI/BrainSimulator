@@ -16,7 +16,7 @@ namespace ToyWorldTests.World
 {
     public class AtlasTests
     {
-        private readonly Atlas m_atlas;
+        private readonly IAtlas m_atlas;
 
         public AtlasTests()
         {
@@ -62,6 +62,40 @@ namespace ToyWorldTests.World
 
             Assert.IsType<Background>(results[0].Actor);
             Assert.IsType<Apple>(results[1].Actor);
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(2, 0.4)]
+        [InlineData(5, 1)]
+        [InlineData(7, 0.6)]
+        [InlineData(10, 0)]
+        [InlineData(2, 0.4)]
+        public void TestDayCycle(int seconds, float result)
+        {
+            m_atlas.DayLength = new TimeSpan(0,0,0,10);
+
+            m_atlas.IncrementTime(seconds: seconds);
+
+            float light = m_atlas.Light;
+            Assert.Equal(light, result, 1);
+        }
+
+        [Theory]
+        [InlineData(0, 0)]
+        [InlineData(2, 0.4)]
+        [InlineData(5, 1)]
+        [InlineData(7, 0.6)]
+        [InlineData(10, 0)]
+        [InlineData(2, 0.4)]
+        public void TestYearCycle(int seconds, float result)
+        {
+            m_atlas.YearLength = new TimeSpan(0, 0, 0, 10);
+
+            m_atlas.IncrementTime(seconds: seconds);
+
+            float summer = m_atlas.Summer;
+            Assert.Equal(summer, result, 1);
         }
     }
 }

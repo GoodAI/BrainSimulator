@@ -53,7 +53,7 @@ namespace World.ToyWorldCore
             m_oldTemperature = 1f;
             
 
-            DateTime time = atlas.Time;
+            DateTime time = atlas.RealTime;
             bool getCold = time.Hour < 6 || time.Hour >= 18;
             if (getCold)
             {
@@ -71,7 +71,7 @@ namespace World.ToyWorldCore
 
         public float Temperature(Vector2 position)
         {
-            TimeSpan timeSpan = m_atlas.Time - m_prevCycleStart;
+            TimeSpan timeSpan = m_atlas.RealTime - m_prevCycleStart;
             int seconds = (int) timeSpan.TotalSeconds;
 
             float cyclePhase = MathHelper.Pi*seconds/SECONDS_IN_12_HOURS + MathHelper.Pi;
@@ -106,7 +106,7 @@ namespace World.ToyWorldCore
 
         public void Update()
         {
-            DateTime actualTime = m_atlas.Time;
+            DateTime actualTime = m_atlas.RealTime;
             TimeSpan span = actualTime - m_prevCycleStart;
             if (span.TotalSeconds < SECONDS_IN_12_HOURS) return;
 

@@ -23,7 +23,7 @@ namespace World.ToyWorldCore
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
         public TileDetectorRegister TileDetectorRegister { get; protected set; }
-        public Atlas Atlas { get; protected set; }
+        public IAtlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
 
@@ -174,7 +174,7 @@ namespace World.ToyWorldCore
         private void UpdateTime()
         {
             Atlas.IncrementTime();
-            Log.Instance.Debug("ToyWorld time is: " + Atlas.Time);
+            Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
         }
 
         public List<int> GetAvatarsIds()

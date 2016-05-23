@@ -202,6 +202,7 @@
     <Compile Include="GameActors\Tiles\DynamicTile.cs" />
     <Compile Include="GameActors\GameActor.cs" />
     <Compile Include="ToyWorldCore\Atmosphere.cs" />
+    <Compile Include="ToyWorldCore\IAtlas.cs" />
     <Compile Include="ToyWorldCore\ILayer.cs" />
     <Compile Include="ToyWorldCore\IObjectLayer.cs" />
     <Compile Include="ToyWorldCore\LayerType.cs" />
