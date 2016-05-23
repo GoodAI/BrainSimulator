@@ -8,6 +8,10 @@ using Xunit;
 
 namespace ToyWorldTests.Language
 {
+    /// <summary>
+    /// Contains tests relevant to language output, i.e., conversion from 
+    /// vectors to words.
+    /// </summary>
     public class LanguageOutputTests
     {
         // Size of word vectors

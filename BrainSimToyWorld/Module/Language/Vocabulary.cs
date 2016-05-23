@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Utils;
 
 namespace GoodAI.ToyWorld.Language
 {
@@ -167,6 +169,82 @@ namespace GoodAI.ToyWorld.Language
             }
             return nBestList.GetSortedList();
         }
+
+        /// <summary>
+        /// Loads the vocabulary from a file in text format (e.g., word2vec)
+        /// </summary>
+        /// <param name="path">The path to the vocabulary text file</param>
+        public void ReadTextFile(string path)
+        {
+            MyLog.INFO.WriteLine("Loading vector space...");
+            StreamReader vocabularyReader = File.OpenText(path);
+
+            ReadFileHeader(vocabularyReader);
+            ReadLabeledVectors(vocabularyReader);
+
+            vocabularyReader.Close();
+            MyLog.INFO.WriteLine("Done loading vector space.");
+        }
+
+        /// <summary>
+        /// Reads the first part of a text file. The header consists of a 
+        /// single line with one or two fields: 
+        /// [number_of_vectors] number_of_dimensions
+        /// The word2vec text format uses both fields.
+        /// </summary>
+        /// <param name="vocabularyReader">A reader to an open text file</param>
+        private void ReadFileHeader(StreamReader vocabularyReader)
+        {
+            string[] headerFields = ReadLineFields(vocabularyReader);
+            int numberOfFields = headerFields.Length;
+            switch (numberOfFields)
+            {
+                case 1:
+                    NumberOfDimensions = Int32.Parse(headerFields[0]);
+                    break;
+                case 2:
+                    NumberOfDimensions = Int32.Parse(headerFields[1]);
+                    break;
+                default:
+                    throw new IOException("Vocabulary file format error");
+            }
+        }
+
+        /// <summary>
+        /// Reads labeled vectors from a text file.
+        /// </summary>
+        /// <param name="vocabularyReader">A reader to an open text file</param>
+        private void ReadLabeledVectors(StreamReader vocabularyReader)
+        {
+            while (!vocabularyReader.EndOfStream)
+            {
+                string[] entryFields = ReadLineFields(vocabularyReader);
+                if (entryFields.Length != NumberOfDimensions + 1)
+                {
+                    throw new IOException("Vocabulary file format error");
+                }
+
+                string label = entryFields[0];
+                float[] vector = new float[NumberOfDimensions];
+                for (int elementIndex = 0; elementIndex < NumberOfDimensions; elementIndex++)
+                {
+                    vector[elementIndex] = Single.Parse(entryFields[elementIndex + 1]);
+                }
+                Add(label, vector);
+            }
+        }
+
+        /// <summary>
+        /// Reads a line and splits it on whitespace into fields.
+        /// </summary>
+        /// <param name="vocabularyReader">The file stream reader</param>
+        /// <returns>The fields of the input line</returns>
+        private string[] ReadLineFields(StreamReader vocabularyReader)
+        {
+            string entry = vocabularyReader.ReadLine();
+            return entry.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+        }
+
 
     }
 }
