@@ -3,44 +3,45 @@
   <Class Name="World.GameActors.Tiles.Tile">
     <Position X="10" Y="7.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAIAAA=</HashCode>
       <FileName>GameActors\Tiles\Tile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.GameActors.GameActor">
     <Position X="10" Y="12" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameActor.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.GameActors.GameObjects.GameObject">
     <Position X="10" Y="17.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAABAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAgAAgAEBAAAQAACAAAAAAAAADAAAAAIA=</HashCode>
       <FileName>GameActors\GameObjects\GameObject.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.AutoupdateRegister">
-    <Position X="22.5" Y="10" Width="1.75" />
+    <Position X="22.75" Y="10" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAABAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAIgAAAgAAIAAAAAAABQAAAAAAAAAAAQAA=</HashCode>
       <FileName>ToyWorldCore\AutoupdateRegister.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.MapLoader">
     <Position X="15.5" Y="14.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAABAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAACBA=</HashCode>
+      <HashCode>AAAABEIAAAAAQAQAAAAAAAEAAAABABAAAgAAQAAASBE=</HashCode>
       <FileName>ToyWorldCore\MapLoader.cs</FileName>
       <NewMemberFileName>MapLoader.cs</NewMemberFileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.ToyWorldCore.ToyWorld">
-    <Position X="17.75" Y="11.5" Width="1.75" />
+    <Position X="18.25" Y="11.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAIAAYIkAgAAACAAIAAACAAgAAAAAAAAAAAAACAA=</HashCode>
+      <HashCode>AAQACIAAaKkAgQAAIQIgAAAAAIgAQIAAQAAAAAAACAE=</HashCode>
       <FileName>ToyWorldCore\ToyWorld.cs</FileName>
       <NewMemberFileName>ToyWorld.cs</NewMemberFileName>
     </TypeIdentifier>
@@ -51,136 +52,87 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.SimpleTileLayer">
-    <Position X="13" Y="7.75" Width="1.5" />
+    <Position X="12.5" Y="6.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AQAAAAAAIAAAAAAAAAAAAAAgAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAACAAJAAAAAAAAAAAAEAgAAAAAAIIARAAAAAgABA=</HashCode>
       <FileName>ToyWorldCore\SimpleTileLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.SimpleObjectLayer">
-    <Position X="13" Y="16" Width="1.75" />
+    <Position X="12.5" Y="18" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AABAAAAEAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AAJAAAAEAACAAAAAAAAAAAAgAAAAAAAAARAAAAAkAAA=</HashCode>
       <FileName>ToyWorldCore\SimpleObjectLayer.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.GameActors.Tiles.TilesetTable">
-    <Position X="20.25" Y="8.5" Width="1.75" />
+    <Position X="18.25" Y="8.25" Width="2.5" />
     <Members>
       <Field Name="m_namesValuesDictionary" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAABAAAAAAAAAAAAAABA=</HashCode>
+      <HashCode>AAAAEAAAAAAAAAEAAAgAAAAAAABAgAAGAAAAAAAAABA=</HashCode>
       <FileName>GameActors\Tiles\TilesetTable.cs</FileName>
       <NewMemberFileName>GameActors\Tiles\TileSetTable.cs</NewMemberFileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.Physics.Character">
-    <Position X="10" Y="19" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\GameObjects\Character.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="World.GameActors.GameObjects.Avatar">
-    <Position X="10" Y="20.75" Width="1.5" />
+    <Position X="8.25" Y="23.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>IAACACCAAAAAAAAACAJAAAAAIAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>I4QCASTCAKIAAAQCGA6EBCIAYIRQAYAQAAAAAABEEAg=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.ToyWorldCore.Atlas">
-    <Position X="15.5" Y="11.75" Width="1.5" />
+    <Position X="15.5" Y="11.75" Width="2" />
     <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AABAAIAAoAAAAAAAAAAAAAAAAAACAAAwAQAAAAAAgAA=</HashCode>
+      <HashCode>EAZAAIABoCAAAAAAAAgABAAAAAACAAA0AQDQhCBGiwA=</HashCode>
       <FileName>ToyWorldCore\Atlas.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.GameActors.Tiles.Wall" BaseTypeListCollapsed="true">
-    <Position X="0.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Wall.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="World.GameActors.Tiles.DamagedWall" BaseTypeListCollapsed="true">
-    <Position X="18" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Wall.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="World.GameActors.Tiles.DestroyedWall">
-    <Position X="1.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Wall.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="World.GameActors.Tiles.StaticTile" Collapsed="true">
-    <Position X="0.5" Y="3.75" Width="1.5" />
+    <Position X="3.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\Tiles\StaticTile.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="World.GameActors.Tiles.DynamicTile" Collapsed="true">
-    <Position X="18" Y="3.75" Width="1.5" />
+    <Position X="31.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
       <FileName>GameActors\Tiles\DynamicTile.cs</FileName>
     </TypeIdentifier>
-  </Class>
-  <Class Name="World.GameActors.Tiles.Path">
-    <Position X="2.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Path.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.GameActors.Tiles.Background">
-    <Position X="3.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Background.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.GameActors.Tiles.Obstacle">
-    <Position X="4.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\Obstacle.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.GameActors.Tiles.OnBackground">
-    <Position X="5.5" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\OnBackground.cs</FileName>
-      <NewMemberFileName>GameActors\Tiles\Background.cs</NewMemberFileName>
-    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.PhysicalEntity">
-    <Position X="25.75" Y="25" Width="2.5" />
+    <Position X="28.75" Y="21.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAgAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <HashCode>AAAEAAAAAAgAAAAhAAAABQAAACAIAAAgAAAAMAAAAAA=</HashCode>
       <FileName>Physics\PhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.MovementPhysics">
-    <Position X="29" Y="12" Width="1.75" />
+    <Position X="31.25" Y="8" Width="2" />
     <Members>
       <Method Name="Rotate" Hidden="true" />
       <Method Name="Shift" Hidden="true" />
@@ -189,204 +141,464 @@
       <Compartment Name="Private" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAgAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAgAAAAAIAAAAgAAAAAAAAAEAAAAAAAAIAAAAAAAAA=</HashCode>
       <FileName>Physics\MovementPhysics.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.ForwardMovablePhysicalEntity">
-    <Position X="25.75" Y="20" Width="2.5" />
+    <Position X="28.75" Y="17.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAACAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="World.Physics.BasicAvatarMover" BaseTypeListCollapsed="true">
-    <Position X="31" Y="12" Width="1.5" />
+    <Position X="34" Y="8" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>ABAAQAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAABAAAABA=</HashCode>
+      <HashCode>ABgAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAABAAAABA=</HashCode>
       <FileName>Physics\BasicAvatarMover.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="World.Physics.Physics" BaseTypeListCollapsed="true">
-    <Position X="26" Y="12" Width="1.5" />
+    <Position X="29" Y="8" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgAAAAAAAAAAACAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <HashCode>AAAAgAAAAAAAAAAACAAAAAAAAAAAAIAAAAAQAAAAAAA=</HashCode>
       <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="World.Physics.CollisionChecker">
-    <Position X="26" Y="17" Width="1.5" />
+    <Position X="28.75" Y="13.25" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAwAABAAAAQAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AACgAAICACgAAAABAAAAQgAQAAAQAAAAAEAAAAAAgAA=</HashCode>
       <FileName>Physics\CollisionChecker.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="World.Physics.CollisionResolver">
-    <Position X="27.75" Y="17" Width="1.5" />
+  <Class Name="World.Physics.Shape">
+    <Position X="35" Y="24.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAABAAAAAAAIAAAAAAACAAAAAEABAAAAIAAAAA=</HashCode>
-      <FileName>Physics\CollisionResolver.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="World.Physics.Shape" Collapsed="true">
-    <Position X="29.25" Y="30" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEIAAA=</HashCode>
+      <HashCode>ABAAAAAAAAAAgAAgAAAABAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
       <FileName>Physics\Shapes.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="World.Physics.Rectangle" Collapsed="true">
-    <Position X="29.25" Y="31.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAIAEIAAA=</HashCode>
-      <FileName>Physics\Shapes.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.Physics.Circle" Collapsed="true">
-    <Position X="31.5" Y="31.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAIAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAIAEIAAA=</HashCode>
-      <FileName>Physics\Shapes.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="World.Physics.Ellipse" Collapsed="true">
-    <Position X="27" Y="31.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEIAAA=</HashCode>
-      <FileName>Physics\Shapes.cs</FileName>
-    </TypeIdentifier>
   </Class>
   <Class Name="World.Physics.Utils">
-    <Position X="29.5" Y="17" Width="1.5" />
+    <Position X="31.75" Y="13.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAIAAAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\Utils.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="World.ToyWorldCore.ITileLayer">
-    <Position X="13" Y="9.75" Width="1.5" />
-    <AssociationLine Name="LayerType" Type="World.ToyWorldCore.LayerType">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.11" Y="0.06" />
-      </MemberNameLabel>
-    </AssociationLine>
+  <Class Name="World.GameActors.Tiles.Path.AreaBorder" Collapsed="true">
+    <Position X="3.25" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Area\AreaBorder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Path.RoomTile" Collapsed="true">
+    <Position X="7.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Background\RoomTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Background.Background" Collapsed="true">
+    <Position X="12.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Background\Background.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Background.PathTile" Collapsed="true">
+    <Position X="19.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Background\PathTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.Obstacle" Collapsed="true">
+    <Position X="21.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Obstacle.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.Tree&lt;T&gt;" Collapsed="true">
+    <Position X="26" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.AppleTree" Collapsed="true">
+    <Position X="28.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.PearTree" Collapsed="true">
+    <Position X="23.75" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.Pine" Collapsed="true">
+    <Position X="26" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Tree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.Wall" Collapsed="true">
+    <Position X="14.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Wall.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.DamagedWall" Collapsed="true">
+    <Position X="38.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Wall.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.Obstacle.DestroyedWall" Collapsed="true">
+    <Position X="23.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\Obstacle\Wall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.Fruit" Collapsed="true">
+    <Position X="56.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\Fruit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.Apple" Collapsed="true">
+    <Position X="54.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\Fruit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.Pear" Collapsed="true">
+    <Position X="56.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\Fruit.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.Pinecone" Collapsed="true">
+    <Position X="58.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\Fruit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.KeyDoorClosed" Collapsed="true">
+    <Position X="40.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\KeyDoorClosed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.LeverSwitchOff" Collapsed="true">
+    <Position X="47.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAASAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\LeverSwitchOff.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.LeverSwitchOn" Collapsed="true">
+    <Position X="59" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAASAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.RcDoorClosed" Collapsed="true">
+    <Position X="61.5" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.ObstacleInteractable.SimpleDoorClosed" Collapsed="true">
+    <Position X="5.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\SimpleDoorClosed.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnBackground.OnBackground" Collapsed="true">
+    <Position X="10" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnBackground\OnBackground.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.Fireplace" Collapsed="true">
+    <Position X="36.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAACAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\Fireplace.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.FireplaceBurning" Collapsed="true">
+    <Position X="43" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAACAAAQAAAAAAAAAAAQAAAAAAAACAAAAAAE=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\FireplaceBurning.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.KeyDoorOpened" Collapsed="true">
+    <Position X="49.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.KeyToDoor" Collapsed="true">
+    <Position X="54.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAASAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.PoisonuosTile" Collapsed="true">
+    <Position X="63.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAABAAIAAJAAAAAAAQAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\PoisonuosTile.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.RcDoorOpened" Collapsed="true">
+    <Position X="31.75" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.Recharger" Collapsed="true">
+    <Position X="34" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAACAAAAAAIAAJAAAAAAAQAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\Recharger.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.SimpleDoorOpened" Collapsed="true">
+    <Position X="17" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.TrapCharged" Collapsed="true">
+    <Position X="45.25" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAICAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\Trap.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.Tiles.OnGroundInteractable.TrapDischarged" Collapsed="true">
+    <Position X="52" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\OnGroundInteractable\Trap.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.Physics.MomentumCollisionResolver" BaseTypeListCollapsed="true">
+    <Position X="37.5" Y="8" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAYgIAABDACAABCKQAAAQIgCAAAAgAABEAAEIAAgCA=</HashCode>
+      <FileName>Physics\MomentumCollisionResolver.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="World.Physics.NaiveCollisionResolver" BaseTypeListCollapsed="true">
+    <Position X="37.5" Y="6" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAgAAARCACAAFCIQAAAAIgCAAAAgAABEAAAIAAgGA=</HashCode>
+      <FileName>Physics\NaiveCollisionResolver.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="World.Physics.StaticPhysicalEntity" BaseTypeListCollapsed="true">
+    <Position X="26.25" Y="21.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAACgAAAAgAAAABQAAACAAAAAAAAAAMAAAAAA=</HashCode>
+      <FileName>Physics\StaticPhysicalEntity.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="World.Physics.RectangleShape" Collapsed="true">
+    <Position X="35.5" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAIAGAAAA=</HashCode>
+      <FileName>Physics\Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.Physics.CircleShape" Collapsed="true">
+    <Position X="37.75" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAIAAgAAgAAgAAAAAAABAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
+      <FileName>Physics\Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.Physics.EllipseShape" Collapsed="true">
+    <Position X="40" Y="23.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
+      <FileName>Physics\Shapes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.GameActorPosition">
+    <Position X="25" Y="10" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAgAAAAAAAAAAAAAAAEAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="World.GameActors.GameObjects.Ball" Collapsed="true">
+    <Position X="6.25" Y="23.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\Ball.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="World.GameActors.GameObjects.Character" Collapsed="true">
+    <Position X="7" Y="22.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAACBAAUAAAAAAAAAAAAAAEAAAQAA=</HashCode>
+      <FileName>GameActors\GameObjects\Character.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="World.ToyWorldCore.ITileLayer">
+    <Position X="13" Y="9.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAJAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ToyWorldCore\ITileLayer.cs</FileName>
       <NewMemberFileName>ITileLayer.cs</NewMemberFileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="LayerType" />
-    </ShowAsAssociation>
   </Interface>
   <Interface Name="World.ToyWorldCore.IObjectLayer">
-    <Position X="13" Y="14.5" Width="1.5" />
+    <Position X="13" Y="15.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AABAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAEAAA=</HashCode>
+      <HashCode>AABAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAkAAA=</HashCode>
       <FileName>ToyWorldCore\IObjectLayer.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="LayerType" />
-    </ShowAsAssociation>
   </Interface>
   <Interface Name="World.WorldInterfaces.IWorld">
-    <Position X="17.75" Y="15" Width="1.75" />
+    <Position X="18.25" Y="17.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAA=</HashCode>
       <FileName>WorldInterfaces\IWorld.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="World.GameActors.Tiles.IInteractable">
-    <Position X="8" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="World.GameActors.Tiles.IAutoupdateable">
-    <Position X="6.25" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA=</HashCode>
-      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="World.GameActors.GameObjects.IAvatar">
-    <Position X="10" Y="24" Width="1.5" />
+    <Position X="11.5" Y="23.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAACAACAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAACAACAAAAAAAAAAAAEAAAAAAAAAAAQAAAAAABEAAA=</HashCode>
       <FileName>GameActors\GameObjects\Avatar.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Tool" />
-    </ShowAsAssociation>
   </Interface>
-  <Interface Name="GoodAI.ToyWorld.Control.IAvatarControllable">
-    <Position X="9.75" Y="26" Width="2" />
+  <Interface Name="World.GameActors.GameObjects.IAvatarControllable">
+    <Position X="11.5" Y="28" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAAACAAAAAAAAAACAIAAAAAIAAEAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>IAAAACAAAAAAAAAACAIAACAAIAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>GameActors\GameObjects\GameObjectInterfaces.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="World.GameActors.GameObjects.IUsable">
-    <Position X="8.25" Y="17.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>GameActors\GameObjects\IUsable.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="World.Physics.IForwardMovable">
-    <Position X="31" Y="21.75" Width="1.5" />
+    <Position X="32.25" Y="30.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAQAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IGridMovable">
-    <Position X="33" Y="23.25" Width="1.5" />
+    <Position X="34.5" Y="30.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAIAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IDirectable">
-    <Position X="31" Y="23.75" Width="1.5" />
+    <Position X="32.25" Y="28.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\IMovable.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IPhysics">
-    <Position X="26" Y="14.25" Width="1.5" />
+    <Position X="29" Y="10.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAQAAAAAAA=</HashCode>
       <FileName>Physics\Physics.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IAvatarMover">
-    <Position X="31" Y="14" Width="1.5" />
+    <Position X="34" Y="10.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAABA=</HashCode>
       <FileName>Physics\IAvatarMover.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IMovementPhysics">
-    <Position X="29" Y="13.25" Width="1.75" />
+    <Position X="31.25" Y="10.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\MovementPhysics.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IPhysicalEntity">
-    <Position X="28.75" Y="25" Width="2.5" />
+    <Position X="28.75" Y="27.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAgAAAAgAAAAAAAAAAAAAAAAAAAAIAAAAAA=</HashCode>
+      <HashCode>AAAEAAAAAAgAAAAgAAAABQAAACAAAAAAAAAAMAAAAAA=</HashCode>
       <FileName>Physics\PhysicalEntity.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -394,23 +606,164 @@
     </ShowAsAssociation>
   </Interface>
   <Interface Name="World.Physics.IForwardMovablePhysicalEntity">
-    <Position X="28.75" Y="20" Width="2.5" />
+    <Position X="28.75" Y="31" Width="2.5" />
+    <InheritanceLine Type="World.Physics.IForwardMovable" FixedFromPoint="true">
+      <Path>
+        <Point X="33" Y="31.675" />
+        <Point X="33" Y="32.502" />
+        <Point X="30" Y="32.502" />
+        <Point X="30" Y="32.127" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Physics\ForwardMovablePhysicalEntity.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="World.Physics.IShape">
-    <Position X="29.25" Y="28" Width="1.5" />
+    <Position X="31.75" Y="24.75" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>ABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAEIAAA=</HashCode>
+      <HashCode>ABAAAAAAAAAAgAAgAAAABAAAAAAAAAAAAAAAIAEAAAA=</HashCode>
       <FileName>Physics\Shapes.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="World.ToyWorldCore.LayerType">
-    <Position X="12" Y="11.5" Width="1.75" />
+  <Interface Name="World.GameActors.Tiles.IDynamicTile" Collapsed="true">
+    <Position X="1" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AgABACAAAAAAAAIgAAAAAAAgAAIAAAAAAAAgAAgAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\DynamicTile.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ITileDetector" Collapsed="true">
+    <Position X="7" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIAAIAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.IHeatSource" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ISwitchable" Collapsed="true">
+    <Position X="8.75" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ISwitcher" Collapsed="true">
+    <Position X="5.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAACAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ICombustible" Collapsed="true">
+    <Position X="5.25" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\TileInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ITilesetTable" Collapsed="true">
+    <Position X="8.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>GameActors\Tiles\TilesetTable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.Tiles.ObstacleInteractable.IEatable" Collapsed="true">
+    <Position X="7" Y="5.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\Tiles\ObstacleInteractable\Fruit.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.ICollisionChecker">
+    <Position X="26.25" Y="13.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACAAAICAAAAAAABAAAAQAAAAAAQAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Physics\CollisionChecker.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.ICollisionResolver">
+    <Position X="37.5" Y="10.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Physics\ICollisionResolver.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.Physics.IRotatable">
+    <Position X="30" Y="33" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Physics\IMovable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.IGameActor">
+    <Position X="8" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActor.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.IAutoupdateable">
+    <Position X="22.75" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActorInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.IInteractable">
+    <Position X="3.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActorInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.IPickable">
+    <Position X="3.5" Y="15" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActorInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.IUsable">
+    <Position X="3.5" Y="12" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameActorInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.GameObjects.IGameObject">
+    <Position X="18.5" Y="37.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAgAAgAEBAAAQAACAAAAAAAAADAAAAAIA=</HashCode>
+      <FileName>GameActors\GameObjects\GameObject.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.GameObjects.ICanPick">
+    <Position X="16" Y="28" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\GameObjectInterfaces.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="World.GameActors.GameObjects.ICharacter">
+    <Position X="18.5" Y="34.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>GameActors\GameObjects\Character.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="World.ToyWorldCore.LayerType">
+    <Position X="12.75" Y="11.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgABAKAAgAAAAAAgAAAAAAAgAAIAAAAAAYAgAQgAAAA=</HashCode>
       <FileName>ToyWorldCore\LayerType.cs</FileName>
     </TypeIdentifier>
   </Enum>
