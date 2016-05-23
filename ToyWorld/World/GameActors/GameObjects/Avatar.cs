@@ -294,7 +294,7 @@ namespace World.GameActors.GameObjects
         {
             Vector2 positionInFrontOf = atlas.PositionInFrontOf(this, 1);
             GameAction layDownAction = new LayDown(this);
-            Tool.ApplyGameAction(atlas, layDownAction, positionInFrontOf, tilesetTable);
+            Tool.PickUp(atlas, layDownAction, positionInFrontOf, tilesetTable);
             return true;
         }
 
@@ -314,7 +314,7 @@ namespace World.GameActors.GameObjects
                 IPickable interactableTarget = target.Actor as IPickable;
                 if (interactableTarget == null) continue;
                 GameAction pickUpAction = new PickUp(this);
-                interactableTarget.ApplyGameAction(atlas, pickUpAction, target.Position, tilesetTable);
+                interactableTarget.PickUp(atlas, pickUpAction, target.Position, tilesetTable);
 
                 RemoveSpeed(target);
                 return true;

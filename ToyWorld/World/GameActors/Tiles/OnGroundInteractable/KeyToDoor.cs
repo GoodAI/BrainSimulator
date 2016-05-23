@@ -18,7 +18,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
         {
             gameAction.Resolve(new GameActorPosition(this, position, LayerType.OnGroundInteractable), atlas, tilesetTable);
         }

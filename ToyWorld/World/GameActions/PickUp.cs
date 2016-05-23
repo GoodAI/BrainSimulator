@@ -23,7 +23,6 @@ namespace World.GameActions
         }
     }
 
-
     public class LayDown : GameAction
     {
         public LayDown(GameActor sender) : base(sender) { }

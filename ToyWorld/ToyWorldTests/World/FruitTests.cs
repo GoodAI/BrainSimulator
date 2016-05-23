@@ -23,7 +23,7 @@ namespace ToyWorldTests.World
             Mock<Fruit> fruit = new Mock<Fruit>(mockTilesetTable.Object, Vector2I.Zero);
 
             // Act
-            fruit.Object.ApplyGameAction(atlas.Object, pickUp.Object, Vector2.Zero, It.IsAny<ITilesetTable>());
+            fruit.Object.PickUp(atlas.Object, pickUp.Object, Vector2.Zero, It.IsAny<ITilesetTable>());
 
             // Assert
             pickUp.Verify(x => x.Resolve(It.IsAny<GameActorPosition>(), atlas.Object, It.IsAny<ITilesetTable>()));

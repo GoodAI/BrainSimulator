@@ -39,8 +39,9 @@ namespace World.GameActors
     /// <summary>
     /// Can be picked.
     /// </summary>
-    public interface IPickable : IInteractable
+    public interface IPickable : IGameActor
     {
+        void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable);
     }
 
     /// <summary>

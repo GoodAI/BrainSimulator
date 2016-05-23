@@ -25,7 +25,7 @@ namespace World.GameActors.GameObjects
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
+        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
         {
             if (gameAction is PickUp || gameAction is LayDown)
             {
