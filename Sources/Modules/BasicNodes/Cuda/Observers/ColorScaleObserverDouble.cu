@@ -33,6 +33,7 @@ extern "C"
 		}
 	}
 
+
 	__global__ void DrawVectorsKernel(float* values, int elements, float maxValue, unsigned int* pixels, int numOfPixels) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	

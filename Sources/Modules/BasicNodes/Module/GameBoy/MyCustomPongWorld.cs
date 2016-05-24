@@ -363,6 +363,11 @@ namespace GoodAI.Modules.GameBoy
             [YAXSerializableField(DefaultValue = 0)]
             public int FreezeAfterFail { get; set; }
 
+            [MyBrowsable, Category("Params"), Description("Set paddle to the random postion every n steps.")]
+            [YAXSerializableField(DefaultValue = 0)]
+            public int RndPaddleShuffle { get; set; }
+
+
             private int stepsFrozen = 0;
 
             [MyBrowsable, Category("Events")]
@@ -411,6 +416,16 @@ namespace GoodAI.Modules.GameBoy
                 Owner.Controls.SafeCopyToHost();
             }
 
+            private void EcecuteRandomPaddleShuffle()
+            {
+                if (RndPaddleShuffle>0 && SimulationStep % RndPaddleShuffle == 0)
+                {
+                    MyGameObject paddle = Owner.m_gameObjects[1];
+                    float rnd = (float)m_random.NextDouble();
+                    paddle.position.x =  rnd * (Owner.Scene.Width - paddle.pixelSize.x) - paddle.pixelSize.x * .5f;
+                }
+            }
+
             protected virtual void ExecuteResolveEvents()
             {
                 MyGameObject ball = Owner.m_gameObjects[0];
@@ -454,6 +469,8 @@ namespace GoodAI.Modules.GameBoy
                 ExecutePrepareHost();
 
                 ExecuteResolveEvents();
+
+                EcecuteRandomPaddleShuffle();
 
                 ExecuteCopyToDevice();
             }
