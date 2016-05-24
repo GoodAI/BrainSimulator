@@ -21,8 +21,8 @@ namespace World.GameActors.Tiles.Obstacle
 
         private void Init()
         {
-            m_firstUpdate = 500 + m_rng.Next(-200, 200);
-            m_updatePeriod = 5000 + m_rng.Next(-1000, 1000);
+            m_firstUpdate = TWConfig.Instance.FruitFirstSpawn + m_rng.Next(-TWConfig.Instance.FruitFirstSpawnRange, TWConfig.Instance.FruitFirstSpawnRange);
+            m_updatePeriod = TWConfig.Instance.FruitSpawnPeriod + m_rng.Next(-TWConfig.Instance.FruitSpawnRange, TWConfig.Instance.FruitSpawnRange);
             NextUpdateAfter = m_firstUpdate;
         }
 

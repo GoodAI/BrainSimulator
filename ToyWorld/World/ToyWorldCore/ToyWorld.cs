@@ -18,7 +18,6 @@ namespace World.ToyWorldCore
     public class ToyWorld : IWorld
     {
         private ICollisionResolver m_collisionResolver;
-        public static int SignalCount = 4;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -86,7 +85,7 @@ namespace World.ToyWorldCore
             SignalDispatchers.Add("Puppet", puppetControl);
             // if you add a new signal, change the SignalCount variable accordingly
 
-            Debug.Assert(SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
+            Debug.Assert(TWConfig.Instance.SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
         }
 
         private void InitAtlas(Map tmxDeserializedMap)

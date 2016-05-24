@@ -1,5 +1,6 @@
 ﻿using Game;
 using Render.Renderer;
+using World.ToyWorldCore;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -17,7 +18,7 @@ namespace GoodAI.ToyWorld.Control
 
         public static int GetSignalCount()
         {
-            return World.ToyWorldCore.ToyWorld.SignalCount;
+            return TWConfig.Instance.SignalCount;
         }
     }
 }
