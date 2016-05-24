@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VRageMath;
+using World.GameActors.Tiles.Background;
 using World.GameActors.Tiles.ObstacleInteractable;
 using World.ToyWorldCore;
 
@@ -27,7 +28,11 @@ namespace World.GameActors.Tiles.Obstacle
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            List<Vector2I> free = atlas.FreePositionsAround(Position, LayerType.Obstacle).ToList();
+            List<Vector2I> free = atlas.FreePositionsAround(Position, LayerType.Obstacle | LayerType.Object).ToList();
+            if (free.Count == 0) return;
+
+            // filter out position with PathTiles
+            free = free.Where(x => atlas.ActorsAt((Vector2)x, LayerType.Background).First().Actor.GetType() != typeof(PathTile)).ToList();
             if (free.Count == 0) return;
 
             Vector2I targetPosition = free[m_rng.Next(free.Count)];
