@@ -15,10 +15,10 @@ namespace ToyWorldTests.Language
     public class LanguageInputTests
     {
         // Vocabulary with random vectors
-        private readonly Vocabulary _randomVectorVocabulary = new Vocabulary();
+        private readonly Vocabulary _randomVectorVocabulary; 
 
         // Vocabulary with one-of-N vectors
-        private readonly Vocabulary _oneOfNVectorVocabulary = new Vocabulary();
+        private readonly Vocabulary _oneOfNVectorVocabulary;
 
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 50;
@@ -26,8 +26,8 @@ namespace ToyWorldTests.Language
         // Initialization
         public LanguageInputTests()
         {
-            _randomVectorVocabulary.Initialize(NumberOfWordVectorDimensions);
-            _oneOfNVectorVocabulary.Initialize(NumberOfWordVectorDimensions, Vocabulary.WordVectorType.OneOfN);
+            _randomVectorVocabulary = new Vocabulary(NumberOfWordVectorDimensions);
+            _oneOfNVectorVocabulary = new Vocabulary(NumberOfWordVectorDimensions, Vocabulary.WordVectorType.OneOfN);
         }
 
         // Creates a word vector

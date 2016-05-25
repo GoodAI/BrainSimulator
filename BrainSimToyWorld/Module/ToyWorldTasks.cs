@@ -75,8 +75,6 @@ namespace GoodAI.ToyWorld
                         // no noise or smoke, this view is for the researcher
                     });
 
-                Owner.Vocabulary.Initialize(Owner.WordVectorDimensions);
-
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
 

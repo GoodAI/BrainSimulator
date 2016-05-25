@@ -237,7 +237,7 @@ namespace GoodAI.ToyWorld
             SignalCount = GameFactory.GetSignalCount();
             AddOutputs(SignalCount, "Signal_");
 
-            Vocabulary = new Vocabulary();
+            Vocabulary = new Vocabulary(WordVectorDimensions);
         }
 
         public override void Validate(MyValidator validator)

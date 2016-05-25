@@ -74,24 +74,17 @@ namespace GoodAI.ToyWorld.Language
         private Random rnd = new Random();
 
         /// <summary>
-        /// Initializes (or resets) the vocabulary.
-        /// </summary>
-        /// <param name="vectorDimensions">The number of word vector dimensions</param>
-        public void Initialize(int vectorDimensions)
-        {
-            Initialize(vectorDimensions, WordVectorType.Random);
-        }
-
-        /// <summary>
-        /// Initializes (or resets) the vocabulary.
+        /// Constructs the Vocabulary.
         /// </summary>
         /// <param name="vectorDimensions">The number of word vector dimensions</param>
         /// <param name="vectorType">The vector type used</param>
-        public void Initialize(int vectorDimensions, WordVectorType vectorType)
+        public Vocabulary(
+            int vectorDimensions,
+            WordVectorType vectorType = WordVectorType.Random)
         {
             NumberOfDimensions = vectorDimensions;
             VectorType = vectorType;
-            _labeledVectorDictionary = new Dictionary<string, float[]>();
+            _labeledVectorDictionary = new Dictionary<string, float[]>();            
         }
 
         /// <summary>

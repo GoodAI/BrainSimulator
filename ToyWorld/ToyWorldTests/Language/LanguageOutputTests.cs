@@ -15,7 +15,7 @@ namespace ToyWorldTests.Language
     public class LanguageOutputTests
     {
         // Vocabulary
-        private readonly Vocabulary _vocabulary = new Vocabulary();
+        private readonly Vocabulary _vocabulary;
 
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 50;
@@ -23,7 +23,7 @@ namespace ToyWorldTests.Language
         // Initialization
         public LanguageOutputTests()
         {
-            _vocabulary.Initialize(NumberOfWordVectorDimensions);
+            _vocabulary = new Vocabulary(NumberOfWordVectorDimensions);
             
             // Ensure there are some words in the vocabulary
             _vocabulary.Add("hello");

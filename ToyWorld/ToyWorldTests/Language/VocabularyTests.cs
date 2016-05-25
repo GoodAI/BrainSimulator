@@ -16,7 +16,7 @@ namespace ToyWorldTests.Language
     public class VocabularyTests
     {
         // Vocabulary
-        private readonly Vocabulary _vocabulary = new Vocabulary();
+        private readonly Vocabulary _vocabulary;
 
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 200;
@@ -24,7 +24,7 @@ namespace ToyWorldTests.Language
         // Initialization
         public VocabularyTests()
         {
-            _vocabulary.Initialize(NumberOfWordVectorDimensions, Vocabulary.WordVectorType.Learned);
+            _vocabulary = new Vocabulary(NumberOfWordVectorDimensions, Vocabulary.WordVectorType.Learned);
         }
 
         // Loads a word2vec vocabulary
