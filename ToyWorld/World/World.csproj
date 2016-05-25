@@ -165,6 +165,7 @@
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\KeyDoorClosed.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Bed.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs" />
