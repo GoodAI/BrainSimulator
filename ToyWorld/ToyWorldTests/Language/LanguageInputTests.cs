@@ -66,6 +66,23 @@ namespace ToyWorldTests.Language
             Assert.Equal(_oneOfNVectorVocabulary.NumberOfDimensions, vector.Length);
         }
 
+        // Creates different vectors for different words
+        [Fact]
+        public void CreateDifferentOneOfNVector()
+        {
+            float[] vectorHello = _oneOfNVectorVocabulary.VectorFromLabel("hello");
+            float[] vectorWorld = _oneOfNVectorVocabulary.VectorFromLabel("world");
+            Assert.False(vectorWorld.SequenceEqual(vectorHello));
+        }
+
+        // Creates identical vectors for identical words
+        [Fact]
+        public void CreateIdenticalOneOfNVector()
+        {
+            float[] vector1 = _oneOfNVectorVocabulary.VectorFromLabel("hello");
+            float[] vector2 = _oneOfNVectorVocabulary.VectorFromLabel("hello");
+            Assert.True(vector1.SequenceEqual(vector2));
+        }
 
     }
 }
