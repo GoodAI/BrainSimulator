@@ -14,30 +14,33 @@ namespace ToyWorldTests.Language
     /// </summary>
     public class LanguageInputTests
     {
+        // Vocabulary
+        private readonly Vocabulary _vocabulary = new Vocabulary();
+
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 50;
 
         // Initialization
         public LanguageInputTests()
         {
-            Vocabulary.Instance.Initialize(NumberOfWordVectorDimensions);   
+            _vocabulary.Initialize(NumberOfWordVectorDimensions);
         }
 
         // Creates a word vector
         [Fact]
         public void CreateVector()
         {
-            float[] vector = Vocabulary.Instance.VectorFromLabel("hello");
+            float[] vector = _vocabulary.VectorFromLabel("hello");
             Assert.False(Vocabulary.IsZero(vector));
-            Assert.Equal(vector.Length, Vocabulary.Instance.NumberOfDimensions);
+            Assert.Equal(vector.Length, _vocabulary.NumberOfDimensions);
         }
 
         // Creates different vectors for different words
         [Fact]
         public void CreateDifferentVector()
         {
-            float[] vectorHello = Vocabulary.Instance.VectorFromLabel("hello");
-            float[] vectorWorld = Vocabulary.Instance.VectorFromLabel("world");
+            float[] vectorHello = _vocabulary.VectorFromLabel("hello");
+            float[] vectorWorld = _vocabulary.VectorFromLabel("world");
             Assert.False(vectorWorld.SequenceEqual(vectorHello));
         }
 
@@ -45,9 +48,10 @@ namespace ToyWorldTests.Language
         [Fact]
         public void CreateIdenticalVector()
         {
-            float[] vector1 = Vocabulary.Instance.VectorFromLabel("hello");
-            float[] vector2 = Vocabulary.Instance.VectorFromLabel("hello");
+            float[] vector1 = _vocabulary.VectorFromLabel("hello");
+            float[] vector2 = _vocabulary.VectorFromLabel("hello");
             Assert.True(vector1.SequenceEqual(vector2));
         }
+
     }
 }

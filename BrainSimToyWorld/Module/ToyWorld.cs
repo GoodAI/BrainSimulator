@@ -9,6 +9,7 @@ using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
 using Logger;
+using GoodAI.ToyWorld.Language;
 using ToyWorldFactory;
 using YAXLib;
 
@@ -23,7 +24,6 @@ namespace GoodAI.ToyWorld
         public TWUpdateTask UpdateTask { get; private set; }
 
         public event EventHandler WorldInitialized = delegate { };
-
 
         #region Memblocks
 
@@ -214,6 +214,7 @@ namespace GoodAI.ToyWorld
 
         #endregion
 
+        public Vocabulary Vocabulary { get; private set; }
 
         public IGameController GameCtrl { get; set; }
         public IAvatarController AvatarCtrl { get; set; }
@@ -235,6 +236,8 @@ namespace GoodAI.ToyWorld
 
             SignalCount = GameFactory.GetSignalCount();
             AddOutputs(SignalCount, "Signal_");
+
+            Vocabulary = new Vocabulary();
         }
 
         public override void Validate(MyValidator validator)

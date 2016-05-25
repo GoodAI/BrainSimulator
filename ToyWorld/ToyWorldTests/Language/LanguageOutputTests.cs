@@ -14,18 +14,21 @@ namespace ToyWorldTests.Language
     /// </summary>
     public class LanguageOutputTests
     {
+        // Vocabulary
+        private readonly Vocabulary _vocabulary = new Vocabulary();
+
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 50;
 
         // Initialization
         public LanguageOutputTests()
         {
-            Vocabulary.Instance.Initialize(NumberOfWordVectorDimensions);
+            _vocabulary.Initialize(NumberOfWordVectorDimensions);
             
             // Ensure there are some words in the vocabulary
-            Vocabulary.Instance.Add("hello");
-            Vocabulary.Instance.Add("beautiful");
-            Vocabulary.Instance.Add("world"); 
+            _vocabulary.Add("hello");
+            _vocabulary.Add("beautiful");
+            _vocabulary.Add("world"); 
         }
 
         // Find a vocabulary word given its exact vector
@@ -33,11 +36,11 @@ namespace ToyWorldTests.Language
         public void FindWordFromExactVector()
         {
             const string word = "hello";
-            float[] vector = Vocabulary.Instance.VectorFromLabel(word);
+            float[] vector = _vocabulary.VectorFromLabel(word);
 
             // Recover the vector and its word
             LabeledVector returnVector
-                = Vocabulary.Instance.FindNearestNeighbors(vector, 1)[0].Item2;
+                = _vocabulary.FindNearestNeighbors(vector, 1)[0].Item2;
             Assert.True(vector.SequenceEqual(returnVector.Vector));
             Assert.Equal(returnVector.Label, word);
         }
@@ -47,7 +50,7 @@ namespace ToyWorldTests.Language
         public void FindWordFromApproximateVector()
         {
             const string word = "beautiful";
-            float[] vector = Vocabulary.Instance.VectorFromLabel(word);
+            float[] vector = _vocabulary.VectorFromLabel(word);
 
             // Add a small vector
             float[] nearbyVector = new float[vector.Length];
@@ -58,7 +61,7 @@ namespace ToyWorldTests.Language
 
             // Find the vector and its word from the nearby vector
             LabeledVector returnVector
-                = Vocabulary.Instance.FindNearestNeighbors(nearbyVector, 1)[0].Item2;
+                = _vocabulary.FindNearestNeighbors(nearbyVector, 1)[0].Item2;
             Assert.True(vector.SequenceEqual(returnVector.Vector));
             Assert.Equal(returnVector.Label, word);
         }
@@ -71,7 +74,7 @@ namespace ToyWorldTests.Language
             const int numberOfNeighbors = 5;
 
             const string word = "beautiful";
-            float[] queryVector = Vocabulary.Instance.VectorFromLabel(word);
+            float[] queryVector = _vocabulary.VectorFromLabel(word);
 
             // Make increasingly remote neighbors
             float[][] nearbyVectors = new float[numberOfNeighbors][];
@@ -83,11 +86,11 @@ namespace ToyWorldTests.Language
                 {
                     nearbyVectors[iVector][i] = queryVector[i] + Single.Epsilon * iVector;
                 }
-                Vocabulary.Instance.Add(iVector.ToString(), nearbyVectors[iVector]);
+                _vocabulary.Add(iVector.ToString(), nearbyVectors[iVector]);
             }
             
             // Get nearest neighbors
-            var retrievedNeighbors = Vocabulary.Instance.FindNearestNeighbors(queryVector, numberOfNeighbors);
+            var retrievedNeighbors = _vocabulary.FindNearestNeighbors(queryVector, numberOfNeighbors);
 
             // Compare to expected neighbors
             iVector = 0;

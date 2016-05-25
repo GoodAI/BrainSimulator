@@ -75,7 +75,7 @@ namespace GoodAI.ToyWorld
                         // no noise or smoke, this view is for the researcher
                     });
 
-                Vocabulary.Instance.Initialize(Owner.WordVectorDimensions);
+                Owner.Vocabulary.Initialize(Owner.WordVectorDimensions);
 
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
@@ -321,7 +321,7 @@ namespace GoodAI.ToyWorld
                     int index = 0;
                     foreach (string token in tokens)
                     {
-                        float[] vector = Vocabulary.Instance.VectorFromLabel(token);
+                        float[] vector = Owner.Vocabulary.VectorFromLabel(token);
                         foreach (float value in vector)
                         {
                             Owner.WordVectors.Host[index++] = value;

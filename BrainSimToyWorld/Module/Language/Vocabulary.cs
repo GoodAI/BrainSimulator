@@ -10,11 +10,41 @@ namespace GoodAI.ToyWorld.Language
 {
     /// <summary>
     /// Words and word vectors.
-    /// The Vocabulary is a singleton, implemented using the recipe at
-    /// http://csharpindepth.com/Articles/General/Singleton.aspx#lazy
     /// </summary>
     public sealed class Vocabulary
     {
+        /// <summary>
+        /// The vector type describes the vectors and decides how out-of-vocabulary
+        /// words are handled.
+        /// </summary>
+        public enum WordVectorType
+        {
+            /// <summary>
+            /// Random points in hypercube
+            /// </summary>
+            Random, 
+
+            /// <summary>
+            /// Random points on hypersphere
+            /// </summary>
+            RandomNormalized, 
+
+            /// <summary>
+            /// One-of-N encoding
+            /// </summary>
+            OneOfN, 
+
+            /// <summary>
+            /// Embeddings learned by training on a corpus
+            /// </summary>
+            Learned 
+        }
+
+        /// <summary>
+        /// The vector type used (see WordVectorType)
+        /// </summary>
+        public WordVectorType VectorType = WordVectorType.Random;
+
         /// <summary>
         /// The number of dimension of the vector space
         /// </summary>
@@ -39,29 +69,23 @@ namespace GoodAI.ToyWorld.Language
         private Random rnd = new Random();
 
         /// <summary>
-        /// Lazy singleton instantiation
+        /// Initializes (or resets) the vocabulary.
         /// </summary>
-        private static readonly Lazy<Vocabulary> Lazy = new Lazy<Vocabulary>(() => new Vocabulary());
- 
-        /// <summary>
-        /// Singleton instance
-        /// </summary>
-        public static Vocabulary Instance { get { return Lazy.Value; } }
-
-        /// <summary>
-        /// Private constructor for the singleton
-        /// </summary>
-        private Vocabulary()
+        /// <param name="vectorDimensions">The number of word vector dimensions</param>
+        public void Initialize(int vectorDimensions)
         {
+            Initialize(vectorDimensions, WordVectorType.Random);
         }
 
         /// <summary>
         /// Initializes (or resets) the vocabulary.
         /// </summary>
         /// <param name="vectorDimensions">The number of word vector dimensions</param>
-        public void Initialize(int vectorDimensions)
+        /// <param name="vectorType">The vector type used</param>
+        public void Initialize(int vectorDimensions, WordVectorType vectorType)
         {
             NumberOfDimensions = vectorDimensions;
+            VectorType = vectorType;
             _labeledVectorDictionary = new Dictionary<string, float[]>();
         }
 

@@ -15,13 +15,16 @@ namespace ToyWorldTests.Language
     /// </summary>
     public class VocabularyTests
     {
+        // Vocabulary
+        private readonly Vocabulary _vocabulary = new Vocabulary();
+
         // Size of word vectors
         private const int NumberOfWordVectorDimensions = 200;
 
         // Initialization
         public VocabularyTests()
         {
-            Vocabulary.Instance.Initialize(NumberOfWordVectorDimensions);   
+            _vocabulary.Initialize(NumberOfWordVectorDimensions, Vocabulary.WordVectorType.Learned);
         }
 
         // Loads a word2vec vocabulary
@@ -36,11 +39,11 @@ namespace ToyWorldTests.Language
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
-                Vocabulary.Instance.Read(reader);
+                _vocabulary.Read(reader);
             }
 
             // Verify vocabulary size
-            Assert.Equal(Vocabulary.Instance.Size, sizeOfVocabulary);
+            Assert.Equal(sizeOfVocabulary, _vocabulary.Size);
         }
     }
 }
