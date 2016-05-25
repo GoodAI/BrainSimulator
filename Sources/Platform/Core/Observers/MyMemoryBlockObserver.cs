@@ -292,12 +292,12 @@ namespace GoodAI.Core.Observers
                 if (Method == RenderingMethod.RGB)
                 {
                     m_tiledRGBKernel.SetupExecution(TextureSize);
-                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureWidth, TextureHeight, TextureSize, TileWidth, TileHeight, TilesInRow, TilesInColumn, MaxValue);
+                    m_tiledRGBKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), VBODevicePointer, TextureWidth, TextureHeight, TextureSize, TileWidth, TileHeight, TilesInRow, TilesInColumn, MaxValue, m_noBlocks);
                 }
                 else
                 {
                     m_tiledKernel.SetupExecution(TextureSize);
-                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, TextureWidth, TextureHeight, TileWidth, TileHeight, TilesInRow);
+                    m_tiledKernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize, TextureWidth, TextureHeight, TileWidth, TileHeight, TilesInRow, m_noBlocks);
                 }
             }
             else

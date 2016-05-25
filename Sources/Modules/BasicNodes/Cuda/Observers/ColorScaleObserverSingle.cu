@@ -47,7 +47,7 @@ extern "C"
     *            21 22 23
     *            24 25 26
     */
-    __device__ int TileObserverGetIdInPixels (int method, int tw, int th, int pw, int pixels_id, int tilesInRow)
+    __device__ int TileObserverGetIdInPixels (int method, int tw, int th, int pw, int pixels_id, int tilesInRow, int noBlocksEffective)
     {
         int ta, values_row, values_col, id_tile, tile_row, tile_col, pixels_row, pixels_col;
         ta           = tw*th;                                       // tile area
@@ -62,6 +62,10 @@ extern "C"
         id_tile      = tile_col + tile_row*tilesInRow;              // which tile it is
         values_row   = pixels_row % (th+1);
         values_col   = pixels_col % (tw+1);
+        if (id_tile >= noBlocksEffective) // there can be some empty tiles
+        {
+            return -1;
+        }
         if (method==6) /// RGB
         {
             ta *= 3;  // needs to move three tiles for each tile for RGB :)
@@ -69,7 +73,7 @@ extern "C"
         return id_tile*ta + values_col + values_row*tw;   // final oid in the values for red Color:)
     }
 
-    __global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int pw, int ph, int tw, int th, int tilesInRow)
+    __global__ void ColorScaleObserverTiledSingle(float* values, int method, int scale, float minValue, float maxValue, unsigned int* pixels, int numOfPixels, int pw, int ph, int tw, int th, int tilesInRow, int noBlocksEffective)
 	{
 		int pixels_id = blockDim.x*blockIdx.y*gridDim.x
 			+ blockDim.x*blockIdx.x
@@ -78,7 +82,7 @@ extern "C"
         int id;
 		if (pixels_id < numOfPixels)
 		{
-            id = TileObserverGetIdInPixels (method, tw, th, pw, pixels_id, tilesInRow);
+            id = TileObserverGetIdInPixels (method, tw, th, pw, pixels_id, tilesInRow, noBlocksEffective);
             if (id<0) // in the space between tiles
             {
                 return;
@@ -87,7 +91,7 @@ extern "C"
         }
 	}
 
-	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int pw, int ph, int numOfPixels, int tw, int th, int tilesInRow, int tilesInCol, float maxValue) 
+	__global__ void DrawRGBTiledKernel(float* values, unsigned int* pixels, int pw, int ph, int numOfPixels, int tw, int th, int tilesInRow, int tilesInCol, float maxValue, int noBlocksEffective) 
 	{
 		int id = blockDim.x*blockIdx.y*gridDim.x	
 				+ blockDim.x*blockIdx.x				
@@ -97,7 +101,7 @@ extern "C"
         int id_R_value, ta;
 		if(id < numOfPixels) //id of the thread is valid
 		{
-            id_R_value = TileObserverGetIdInPixels (6, tw, th, pw, id, tilesInRow); // nethod == 6 is RGB :)
+            id_R_value = TileObserverGetIdInPixels (6, tw, th, pw, id, tilesInRow, noBlocksEffective); // nethod == 6 is RGB :)
             ta = tw*th;      
             if (id_R_value<0) // it is point between tiles
             {
