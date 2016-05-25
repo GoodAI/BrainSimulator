@@ -36,7 +36,7 @@ namespace ToyWorldTests.Language
         {
             float[] vector = _randomVectorVocabulary.VectorFromLabel("hello");
             Assert.False(Vocabulary.IsZero(vector));
-            Assert.Equal(vector.Length, _randomVectorVocabulary.NumberOfDimensions);
+            Assert.Equal(_randomVectorVocabulary.NumberOfDimensions, vector.Length);
         }
 
         // Creates different vectors for different words
