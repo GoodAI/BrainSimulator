@@ -9,6 +9,8 @@
         int FruitFirstSpawn { get; }
         int FruitFirstSpawnRange { get; }
         int FruitRotAfter { get; }
+
+        float BedRechargeRate { get; }
     }
 
     public class CommonConfig : IConfig
@@ -20,6 +22,8 @@
         public int FruitFirstSpawn { get { return 500; } }
         public int FruitFirstSpawnRange { get { return 200; } }
         public int FruitRotAfter { get { return 5000; } }
+
+        public float BedRechargeRate { get { return 0.1f; } }
     }
 
     public static class TWConfig
