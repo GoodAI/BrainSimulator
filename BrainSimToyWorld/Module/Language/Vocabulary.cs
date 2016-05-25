@@ -51,6 +51,11 @@ namespace GoodAI.ToyWorld.Language
         public int NumberOfDimensions { get; set; }
 
         /// <summary>
+        /// Only allow one thread at a time to create a new vector
+        /// </summary>
+        private Object _newVectorLock = new Object();
+
+        /// <summary>
         /// The vocabulary size
         /// </summary>
         public int Size
@@ -106,7 +111,7 @@ namespace GoodAI.ToyWorld.Language
         /// <param name="label">The label</param>
         public void Add(string label)
         {
-            Add(label, MakeRandomVector());
+            Add(label, MakeNewVector());
         }
 
         /// <summary>
@@ -123,19 +128,40 @@ namespace GoodAI.ToyWorld.Language
         }
 
         /// <summary>
-        /// Returns a vector for an out-of-vocabulary word.
-        /// This is currently done by drawing a new random vector and assigning it to the word.
+        /// Returns a new vector for an out-of-vocabulary word.
         /// </summary>
         /// <returns>Word vector</returns>
         private float[] GetOOVVector(string label)
         {
-            float[] newVector = MakeRandomVector();
+            float[] newVector = MakeNewVector();
             Add(label, newVector);
             return newVector;
         }
 
         /// <summary>
-        /// Create a random vector uniformly distributed over the vector space.
+        /// Creates a new vector.
+        /// </summary>
+        /// <returns>The new vector</returns>
+        private float[] MakeNewVector()
+        {
+            float[] newVector = null;
+            lock (_newVectorLock)
+            { 
+                switch (VectorType)
+                {
+                    case WordVectorType.Random:
+                        newVector = MakeRandomVector();
+                        break;
+                    case WordVectorType.OneOfN:
+                        newVector = MakeOneOfNVector();
+                        break;
+                }
+            }
+            return newVector;           
+        }
+
+        /// <summary>
+        /// Creates a random vector uniformly distributed over the vector space.
         /// Components are in [0, 1[.
         /// </summary>
         /// <returns>Random vector</returns>
@@ -146,6 +172,23 @@ namespace GoodAI.ToyWorld.Language
             {
                 vector[elementIndex] = (float)rnd.NextDouble();
             }
+
+            return vector;
+        }
+
+        /// <summary>
+        /// Creates a new one-of-N vector.
+        /// </summary>
+        /// <returns>One-of-N vector</returns>
+        private float[] MakeOneOfNVector()
+        {
+            int newWordIndex = Size;
+            float[] vector = new float[NumberOfDimensions];
+            for (int elementIndex = 0; elementIndex < NumberOfDimensions; elementIndex++)
+            {
+                vector[elementIndex] = elementIndex == newWordIndex ? 1 : 0;
+            }
+
             return vector;
         }
 
