@@ -263,11 +263,14 @@ namespace GoodAI.ToyWorld
 
         private void TryToyWorld()
         {
+            if (GameCtrl != null)
+                GameCtrl.Dispose(); // Should dispose RRs and controllers too
+
             GameSetup setup = new GameSetup(
                     new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read),
                     new StreamReader(TilesetTable));
-            IGameController gameCtrl = GameFactory.GetThreadSafeGameController(setup);
-            gameCtrl.Init();
+            GameCtrl = GameFactory.GetThreadSafeGameController(setup);
+            GameCtrl.Init();
         }
 
         private static string GetDllDirectory()

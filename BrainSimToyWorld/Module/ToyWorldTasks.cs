@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using GoodAI.Core;
 using GoodAI.Core.Memory;
@@ -12,7 +11,6 @@ using GoodAI.ToyWorld.Control;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using ToyWorldFactory;
 
 namespace GoodAI.ToyWorld
 {
@@ -23,16 +21,6 @@ namespace GoodAI.ToyWorld
         {
             public override void Init(int nGPU)
             {
-                if (Owner.GameCtrl != null)
-                    Owner.GameCtrl.Dispose(); // Should dispose RRs and controllers too
-
-
-                GameSetup setup = new GameSetup(
-                    new FileStream(Owner.SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read),
-                    new StreamReader(Owner.TilesetTable));
-                Owner.GameCtrl = GameFactory.GetThreadSafeGameController(setup);
-                Owner.GameCtrl.Init();
-
                 int[] avatarIds = Owner.GameCtrl.GetAvatarIds();
                 if (avatarIds.Length == 0)
                 {
