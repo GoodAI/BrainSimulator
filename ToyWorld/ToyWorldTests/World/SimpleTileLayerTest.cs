@@ -6,6 +6,7 @@ using World.GameActors.Tiles;
 using World.ToyWorldCore;
 using Xunit;
 using VRageMath;
+using World.Atlas.Layers;
 
 namespace ToyWorldTests.World
 {

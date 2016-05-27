@@ -9,6 +9,7 @@ using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
 using Render.RenderObjects.Textures;
 using VRageMath;
+using World.Atlas.Layers;
 using World.Physics;
 using World.ToyWorldCore;
 using Rectangle = VRageMath.Rectangle;

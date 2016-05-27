@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using VRageMath;
+using World.Atlas;
+using World.Atlas.Layers;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -36,7 +38,7 @@ namespace World.ToyWorldCore
                         var tileDetector = result.Actor as IDetectorTile;
 
                         if (tileDetector == null) continue;
-                        if (tileDetector.RequiresCenterOfObject && !Atlas.InsideTile(coverTile, gameObject.Position))
+                        if (tileDetector.RequiresCenterOfObject && !Atlas.Layers.Atlas.InsideTile(coverTile, gameObject.Position))
                             continue;
 
                         tileDetector.ObjectDetected(gameObject, m_atlas, m_tilesetTable);

@@ -1,4 +1,5 @@
-﻿using World.GameActors;
+﻿using World.Atlas;
+using World.GameActors;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;
 

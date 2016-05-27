@@ -7,7 +7,7 @@ using World.GameActors.Tiles;
 using World.GameActors.Tiles.Obstacle;
 using World.Physics;
 
-namespace World.ToyWorldCore
+namespace World.Atlas.Layers
 {
     public class SimpleTileLayer : ITileLayer
     {

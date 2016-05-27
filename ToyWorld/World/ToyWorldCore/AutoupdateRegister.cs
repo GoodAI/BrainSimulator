@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
+using World.Atlas;
 using World.GameActors;
 using World.GameActors.Tiles;
 

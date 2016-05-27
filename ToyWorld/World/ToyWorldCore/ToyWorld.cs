@@ -7,6 +7,7 @@ using System.Linq;
 using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
+using World.Atlas;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;

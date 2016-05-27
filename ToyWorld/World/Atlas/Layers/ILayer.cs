@@ -1,7 +1,7 @@
 ﻿using VRageMath;
 using World.GameActors;
 
-namespace World.ToyWorldCore
+namespace World.Atlas.Layers
 {
     public interface ILayer<out T> where T : GameActor
     {

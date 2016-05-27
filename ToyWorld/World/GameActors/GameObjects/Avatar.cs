@@ -6,6 +6,8 @@ using System;
 ﻿﻿using System.Diagnostics;
 ﻿﻿using GoodAI.Logging;
 using VRageMath;
+using World.Atlas;
+using World.Atlas.Layers;
 using World.GameActions;
 using World.GameActors.Tiles;
 ﻿using World.GameActors.Tiles.ObstacleInteractable;

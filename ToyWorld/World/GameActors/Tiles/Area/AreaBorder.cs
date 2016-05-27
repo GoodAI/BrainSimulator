@@ -1,4 +1,4 @@
-﻿namespace World.GameActors.Tiles.Path
+﻿namespace World.GameActors.Tiles.Area
 {
     public class AreaBorder : StaticTile
     {

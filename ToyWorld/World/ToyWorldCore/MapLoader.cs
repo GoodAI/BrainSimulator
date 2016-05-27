@@ -7,6 +7,8 @@ using System.Reflection;
 using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
+using World.Atlas;
+using World.Atlas.Layers;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
@@ -24,7 +26,7 @@ namespace World.ToyWorldCore
         /// <returns>Atlas with initial state of ToyWorld</returns>
         public static IAtlas LoadMap(Map map, TilesetTable tilesetTable, Action<GameActor> initializer)
         {
-            IAtlas atlas = new Atlas();
+            IAtlas atlas = new Atlas.Layers.Atlas();
 
             map.Tilesets = map.Tilesets.OrderBy(x => x.Firstgid).ToList();
 

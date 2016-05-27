@@ -5,7 +5,7 @@ using World.GameActors;
 using World.GameActors.Tiles;
 using World.Physics;
 
-namespace World.ToyWorldCore
+namespace World.Atlas.Layers
 {
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>

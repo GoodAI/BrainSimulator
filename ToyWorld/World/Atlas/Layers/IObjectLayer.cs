@@ -4,7 +4,7 @@ using World.GameActors.GameObjects;
 using World.Physics;
 using Circle = VRageMath.Circle;
 
-namespace World.ToyWorldCore
+namespace World.Atlas.Layers
 {
     public interface IObjectLayer : ILayer<GameObject>
     {

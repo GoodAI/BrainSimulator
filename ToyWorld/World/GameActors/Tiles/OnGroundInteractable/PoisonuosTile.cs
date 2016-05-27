@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using VRageMath;
+using World.Atlas;
 using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 

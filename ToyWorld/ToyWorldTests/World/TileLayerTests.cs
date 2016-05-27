@@ -1,5 +1,6 @@
 ﻿using System;
 using VRageMath;
+using World.Atlas.Layers;
 using World.GameActors.Tiles.Background;
 using World.GameActors.Tiles.Obstacle;
 using World.ToyWorldCore;

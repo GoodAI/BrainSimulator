@@ -3,6 +3,7 @@ using Moq;
 using System.IO;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using World.Atlas.Layers;
 using World.GameActors;
 using World.GameActors.Tiles;
 using World.ToyWorldCore;

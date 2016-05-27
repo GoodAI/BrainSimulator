@@ -5,6 +5,7 @@ using World.GameActors.Tiles;
 using Xunit;
 using Moq;
 using VRageMath;
+using World.Atlas;
 using World.ToyWorldCore;
 using World.GameActors;
 using World.GameActors.Tiles.Obstacle;

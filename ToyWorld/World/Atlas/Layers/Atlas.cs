@@ -9,7 +9,7 @@ using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
 
-namespace World.ToyWorldCore
+namespace World.Atlas.Layers
 {
     public class Atlas : IAtlas
     {

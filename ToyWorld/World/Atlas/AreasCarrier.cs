@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using GoodAI.Logging;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
+using World.Atlas.Layers;
 using World.GameActors.Tiles;
-using World.GameActors.Tiles.Path;
+using World.GameActors.Tiles.Area;
+using World.GameActors.Tiles.Background;
+using World.ToyWorldCore;
 
-namespace World.ToyWorldCore
+namespace World.Atlas
 {
     public interface IAreasCarrier
     {

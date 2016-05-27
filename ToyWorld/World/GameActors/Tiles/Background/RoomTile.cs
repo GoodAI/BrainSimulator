@@ -1,4 +1,4 @@
-﻿namespace World.GameActors.Tiles.Path
+﻿namespace World.GameActors.Tiles.Background
 {
     public class RoomTile : StaticTile
     {

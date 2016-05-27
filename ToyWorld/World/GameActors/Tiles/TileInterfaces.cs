@@ -1,4 +1,5 @@
-﻿using World.GameActors.GameObjects;
+﻿using World.Atlas;
+using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using VRageMath;
+using World.Atlas;
+using World.Atlas.Layers;
 using World.GameActors.GameObjects;
 using World.Physics;
 using World.ToyWorldCore;

@@ -1,5 +1,6 @@
 ﻿using Moq;
 using VRageMath;
+using World.Atlas;
 using World.GameActions;
 using World.GameActors;
 using World.GameActors.Tiles;

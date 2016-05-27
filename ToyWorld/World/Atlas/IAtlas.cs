@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using VRageMath;
+using World.Atlas.Layers;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
 
-namespace World.ToyWorldCore
+namespace World.Atlas
 {
     public interface IAtlas
     {

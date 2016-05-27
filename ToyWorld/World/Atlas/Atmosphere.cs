@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using VRageMath;
 using Troschuetz.Random.Distributions.Continuous;
+using VRageMath;
 using World.GameActors.Tiles;
 
-namespace World.ToyWorldCore
+namespace World.Atlas
 {
     public interface IAtmosphere
     {
