@@ -146,6 +146,11 @@ namespace World.Atlas
         void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0);
 
         /// <summary>
+        /// Increment time of simulation.
+        /// </summary>
+        void IncrementTime(TimeSpan timeSpan);
+
+        /// <summary>
         /// [0,1] Winter/Summer
         /// </summary>
         float Summer { get; }
@@ -155,7 +160,7 @@ namespace World.Atlas
         /// <summary>
         /// [0,1] Night/Day
         /// </summary>
-        float Light { get; }
+        float Day { get; }
 
         TimeSpan DayLength { get; set; }
 

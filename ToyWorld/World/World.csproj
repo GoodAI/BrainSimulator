@@ -152,6 +152,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Atlas\IAtmosphere.cs" />
+    <Compile Include="Atlas\SimpleAtmosphere.cs" />
     <Compile Include="GameActions\Interact.cs" />
     <Compile Include="GameActions\PickUp.cs" />
     <Compile Include="GameActions\UsePickaxe.cs" />
@@ -202,7 +204,7 @@
     <Compile Include="GameActors\GameObjects\Character.cs" />
     <Compile Include="GameActors\Tiles\DynamicTile.cs" />
     <Compile Include="GameActors\GameActor.cs" />
-    <Compile Include="Atlas\Atmosphere.cs" />
+    <Compile Include="Atlas\UnpredictableAtmosphere.cs" />
     <Compile Include="ToyWorldCore\Config.cs" />
     <Compile Include="Atlas\IAtlas.cs" />
     <Compile Include="Atlas\Layers\ILayer.cs" />

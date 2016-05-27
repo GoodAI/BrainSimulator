@@ -99,7 +99,10 @@ namespace World.ToyWorldCore
             };
             Atlas = MapLoader.LoadMap(tmxDeserializedMap, TilesetTable, initializer);
 
-            IAtmosphere atmosphere = new Atmosphere(Atlas);
+            Atlas.DayLength = TWConfig.Instance.DayLengh;
+            Atlas.YearLength = TWConfig.Instance.YearLength;
+
+            IAtmosphere atmosphere = new SimpleAtmosphere(Atlas);
             Atlas.Atmosphere = atmosphere;
         }
 
@@ -173,7 +176,7 @@ namespace World.ToyWorldCore
 
         private void UpdateTime()
         {
-            Atlas.IncrementTime();
+            Atlas.IncrementTime(TWConfig.Instance.StepLength);
             Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
         }
 

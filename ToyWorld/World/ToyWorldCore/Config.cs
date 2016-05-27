@@ -1,7 +1,13 @@
-﻿namespace World.ToyWorldCore
+﻿using System;
+
+namespace World.ToyWorldCore
 {
     public interface IConfig
     {
+        TimeSpan StepLength { get; }
+        TimeSpan YearLength { get; }
+        TimeSpan DayLengh { get; }
+
         int SignalCount { get; }
 
         int FruitSpawnPeriod { get; }
@@ -15,6 +21,10 @@
 
     public class CommonConfig : IConfig
     {
+        public TimeSpan StepLength { get{ return new TimeSpan(0,0,1,0); } }
+        public TimeSpan YearLength{ get { return new TimeSpan(15,0,0,0); } }
+        public TimeSpan DayLengh { get { return new TimeSpan(1,0,0,0); } }
+
         public int SignalCount { get { return 4; } }
 
         public int FruitSpawnPeriod { get { return 5000; } }

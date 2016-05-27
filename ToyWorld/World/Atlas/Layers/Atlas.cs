@@ -272,6 +272,11 @@ namespace World.Atlas.Layers
             m_timeTicks += new TimeSpan(days, hours, minutes, seconds, millis).Ticks;
         }
 
+        public void IncrementTime(TimeSpan timeSpan)
+        {
+            m_timeTicks += timeSpan.Ticks;
+        }
+
         public float Summer
         {
             get
@@ -286,7 +291,7 @@ namespace World.Atlas.Layers
 
         public TimeSpan YearLength { get; set; }
 
-        public float Light
+        public float Day
         {
             get
             {

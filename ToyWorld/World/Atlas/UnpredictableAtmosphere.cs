@@ -7,26 +7,7 @@ using World.GameActors.Tiles;
 
 namespace World.Atlas
 {
-    public interface IAtmosphere
-    {
-        /// <summary>
-        /// Temperature at given position.
-        /// </summary>
-        /// <param name="position"></param>
-        /// <returns></returns>
-        float Temperature(Vector2 position);
-
-        /// <summary>
-        /// Call before Temperature() call or every step.
-        /// </summary>
-        void Update();
-
-        void RegisterHeatSource(IHeatSource heatSource);
-
-        void UnregisterHeatSource(IHeatSource heatSource);
-    }
-
-    public class Atmosphere : IAtmosphere
+    public class UnpredictableAtmosphere : IAtmosphere
     {
         private readonly IAtlas m_atlas;
 
@@ -46,7 +27,7 @@ namespace World.Atlas
 
         private readonly List<IHeatSource> m_heatSources;
 
-        public Atmosphere(IAtlas atlas)
+        public UnpredictableAtmosphere(IAtlas atlas)
         {
             m_atlas = atlas;
             m_heatSources = new List<IHeatSource>();
@@ -78,15 +59,22 @@ namespace World.Atlas
             float increase = (1f + (float) Math.Cos(cyclePhase))/2;
             float weatherTemperature = m_oldTemperature + increase*m_newDiff;
 
+            var innerTemperature = InnerTemperature(position);
+
+            return weatherTemperature + innerTemperature;
+        }
+
+        private float InnerTemperature(Vector2 position)
+        {
             float innerTemperature = 0;
             string actualRoomName = m_atlas.AreasCarrier.RoomName(position);
             IEnumerable<IHeatSource> heatSources = m_heatSources.Where(
                 x => Vector2.Distance(position, (Vector2) x.Position) < x.MaxDistance);
             foreach (IHeatSource source in heatSources)
             {
-                string sourceRoomName = m_atlas.AreasCarrier.RoomName((Vector2)source.Position);
+                string sourceRoomName = m_atlas.AreasCarrier.RoomName((Vector2) source.Position);
                 bool inSameRoom = sourceRoomName == actualRoomName;
-                if(!inSameRoom) continue;
+                if (!inSameRoom) continue;
                 float distance = Vector2.Distance(Tile.Center(source.Position), position);
                 float heat = source.Heat;
                 // WolframAlpha.com: Plot(a-(11 a x)/60+(a x^2)/120, {x,0,10},{a,0,10})
@@ -98,10 +86,8 @@ namespace World.Atlas
                     - (heat*distance)/maxDist
                     - (heat*distance)/(1 + maxDist)
                     + (heat*distance*distance)/(maxDist*(1 + maxDist));
-
             }
-
-            return weatherTemperature + innerTemperature;
+            return innerTemperature;
         }
 
         public void Update()

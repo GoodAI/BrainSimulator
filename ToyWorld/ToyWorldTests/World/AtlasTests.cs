@@ -79,7 +79,7 @@ namespace ToyWorldTests.World
 
             m_atlas.IncrementTime(seconds: seconds);
 
-            float light = m_atlas.Light;
+            float light = m_atlas.Day;
             Assert.Equal(light, result, 1);
         }
 
