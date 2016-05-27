@@ -52,8 +52,8 @@ namespace ToyWorldTests.World
             TestingToyWorld toyWorld = new TestingToyWorld(map, tilesetTableStreamReader);
             toyWorld.SetRegister(new AutoupdateRegister());
 
-            Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
-            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock1 = new Mock<IAutoupdateableGameActor>();
+            Mock<IAutoupdateableGameActor> mock2 = new Mock<IAutoupdateableGameActor>();
             toyWorld.AutoupdateRegister.Register(mock1.Object, 1);
             toyWorld.AutoupdateRegister.Register(mock2.Object, 2);
 

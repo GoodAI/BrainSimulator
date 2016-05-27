@@ -16,7 +16,7 @@ namespace ToyWorldTests.World
         {
             Mock<IAtlas> atlas = new Mock<IAtlas>();
             Mock<GameActor> actor = new Mock<GameActor>();
-            Mock<ICanPick> picker = actor.As<ICanPick>();
+            Mock<ICanPickGameObject> picker = actor.As<ICanPickGameObject>();
             picker.Setup(x => x.AddToInventory(It.IsAny<IPickable>()));
 
             Mock<GameActor> targetActor = new Mock<GameActor>();

@@ -13,7 +13,7 @@ namespace World.GameActions
 
         public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
         {
-            ICanPick picker = Sender as ICanPick;
+            ICanPickGameObject picker = Sender as ICanPickGameObject;
             IPickable pickItem = target.Actor as IPickable;
 
             if (picker == null || pickItem == null) return;
@@ -29,7 +29,7 @@ namespace World.GameActions
 
         public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
         {
-            ICanPick picker = Sender as ICanPick;
+            ICanPickGameObject picker = Sender as ICanPickGameObject;
             ICharacter character = Sender as ICharacter;
             if (picker == null || character == null) return;
             Vector2 positionInFrontOf = target.Position;

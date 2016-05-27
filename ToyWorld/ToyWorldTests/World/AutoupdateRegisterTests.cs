@@ -54,7 +54,7 @@ namespace ToyWorldTests.World
         public void TestRegisterForThisStepThrows()
         {
             AutoupdateRegister register = new AutoupdateRegister();
-            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock = new Mock<IAutoupdateableGameActor>();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => register.Register(mock.Object, 0));
         }
@@ -64,13 +64,13 @@ namespace ToyWorldTests.World
         {
             TestingAutoupdateRegister register = new TestingAutoupdateRegister();
 
-            Assert.IsType<List<IAutoupdateable>>(register.PublicCurrentUpdateRequests);
+            Assert.IsType<List<IAutoupdateableGameActor>>(register.PublicCurrentUpdateRequests);
         }
 
         private TestingAutoupdateRegister CreateSmallRegisterWithOneObject()
         {
             TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
-            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock = new Mock<IAutoupdateableGameActor>();
             register.Register(mock.Object, 1);
             return register;
         }
@@ -79,7 +79,7 @@ namespace ToyWorldTests.World
         public void TestRegisterAndGet()
         {
             TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
-            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock = new Mock<IAutoupdateableGameActor>();
             register.Register(mock.Object, 1);
             register.Tick();
 
@@ -90,7 +90,7 @@ namespace ToyWorldTests.World
         public void TestTick()
         {
             TestingAutoupdateRegister register = CreateSmallRegisterWithOneObject();
-            List<IAutoupdateable> list = register.PublicCurrentUpdateRequests;
+            List<IAutoupdateableGameActor> list = register.PublicCurrentUpdateRequests;
             register.Tick();
 
             Assert.NotEqual(list, register.PublicCurrentUpdateRequests);
@@ -101,7 +101,7 @@ namespace ToyWorldTests.World
         {
             TestingAutoupdateRegister register = CreateSmallRegisterWithOneObject();
             register.Tick();
-            List<IAutoupdateable> list = register.PublicCurrentUpdateRequests;
+            List<IAutoupdateableGameActor> list = register.PublicCurrentUpdateRequests;
             register.Tick();
             register.Tick();
 
@@ -112,7 +112,7 @@ namespace ToyWorldTests.World
         public void TestSchedulAfterEnd()
         {
             TestingAutoupdateRegister register = new TestingAutoupdateRegister(2);
-            Mock<IAutoupdateable> mock = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock = new Mock<IAutoupdateableGameActor>();
             register.Register(mock.Object, 2);
             register.Tick();
             register.Tick();
@@ -126,9 +126,9 @@ namespace ToyWorldTests.World
             Mock<IAtlas> mockAtlas = new Mock<IAtlas>();
 
             AutoupdateRegister register = new AutoupdateRegister();
-            Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock1 = new Mock<IAutoupdateableGameActor>();
             mock1.Setup(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
-            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateableGameActor> mock2 = new Mock<IAutoupdateableGameActor>();
             mock2.Setup(x => x.Update(It.IsAny<IAtlas>(), It.IsAny<TilesetTable>()));
             register.Register(mock1.Object, 1);
             register.Register(mock2.Object, 2);
@@ -151,7 +151,7 @@ namespace ToyWorldTests.World
 
         private class TestingAutoupdateRegister : AutoupdateRegister
         {
-            public List<IAutoupdateable> PublicCurrentUpdateRequests
+            public List<IAutoupdateableGameActor> PublicCurrentUpdateRequests
             {
                 get { return CurrentUpdateRequests; }
             }

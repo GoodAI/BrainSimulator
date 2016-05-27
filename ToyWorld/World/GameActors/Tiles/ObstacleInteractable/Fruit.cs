@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
-    public class Fruit : DynamicTile, IPickable, ICombustible, IInteractable
+    public class Fruit : DynamicTile, IPickable, ICombustibleGameActor, IInteractable
     {
         public Fruit(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
 
@@ -26,7 +26,7 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         }
     }
 
-    public interface IEatable : IAutoupdateable { }
+    public interface IEatable : IAutoupdateableGameActor { }
 
     public class Apple : Fruit, IEatable
     {

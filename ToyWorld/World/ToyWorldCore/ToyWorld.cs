@@ -92,7 +92,7 @@ namespace World.ToyWorldCore
         {
             Action<GameActor> initializer = delegate(GameActor actor)
             {
-                IAutoupdateable updateable = actor as IAutoupdateable;
+                IAutoupdateableGameActor updateable = actor as IAutoupdateableGameActor;
                 if (updateable != null && updateable.NextUpdateAfter > 0)
                     AutoupdateRegister.Register(updateable, updateable.NextUpdateAfter);
             };

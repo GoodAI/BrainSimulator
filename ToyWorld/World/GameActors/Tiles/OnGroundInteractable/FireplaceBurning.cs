@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using VRageMath;
-using World.GameActions;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateable
+    class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateableGameActor
     {
         private int m_counter;
         private const float MAX_HEAT = 4;
@@ -61,7 +60,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 IEnumerable<GameActorPosition> gameActorPositions = atlas.ActorsAt((Vector2) Position, LayerType.All);
                 foreach (GameActorPosition gameActorPosition in gameActorPositions)
                 {
-                    ICombustible combustible = gameActorPosition.Actor as ICombustible;
+                    ICombustibleGameActor combustible = gameActorPosition.Actor as ICombustibleGameActor;
                     if (combustible != null)
                     {
                         combustible.Burn(gameActorPosition, atlas, table);

@@ -103,24 +103,24 @@ namespace World.ToyWorldCore
                 Vector2 source = polylinePoints.First();
                 Vector2 target = polylinePoints.Last();
                 IEnumerable<GameActorPosition> sourceGameActors = atlas.ActorsAt(source);
-                GameActorPosition switcherPosition = sourceGameActors.FirstOrDefault(x => x.Actor is ISwitcher);
+                GameActorPosition switcherPosition = sourceGameActors.FirstOrDefault(x => x.Actor is ISwitcherGameActor);
                 if (switcherPosition == null)
                 {
                     Log.Instance.Error("SwitcherToSwitchable polyline expects Switcher type at [" + source.X + ";" + source.Y + "].");
                     return;
                 }
-                ISwitcher switcher = switcherPosition.Actor as ISwitcher;
+                ISwitcherGameActor switcherGameActor = switcherPosition.Actor as ISwitcherGameActor;
 
                 IEnumerable<GameActorPosition> targetGameActors = atlas.ActorsAt(target);
-                GameActorPosition switchablePosition = targetGameActors.FirstOrDefault(x => x.Actor is ISwitchable);
+                GameActorPosition switchablePosition = targetGameActors.FirstOrDefault(x => x.Actor is ISwitchableGameActor);
                 if (switchablePosition == null)
                 {
                     Log.Instance.Error("SwitcherToSwitchable polyline expects Switchable type at [" + target.X + ";" + target.Y + "].");
                     return;
                 }
-                ISwitchable switchable = switchablePosition.Actor as ISwitchable;
+                ISwitchableGameActor switchable = switchablePosition.Actor as ISwitchableGameActor;
 
-                if (switcher != null) switcher.Switchable = switchable;
+                if (switcherGameActor != null) switcherGameActor.Switchable = switchable;
             }
         }
 

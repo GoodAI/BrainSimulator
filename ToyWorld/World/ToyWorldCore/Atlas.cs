@@ -14,7 +14,7 @@ namespace World.ToyWorldCore
     public class Atlas : IAtlas
     {
         public IAtmosphere Atmosphere { get; set; }
-        public List<IAutoupdateable> NewAutoupdateables { get; private set; }
+        public List<IAutoupdateableGameActor> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
         public IAreasCarrier AreasCarrier { get; set; }
@@ -45,7 +45,7 @@ namespace World.ToyWorldCore
         public Atlas()
         {
             m_timeTicks = new DateTime(2000, 1, 1, 0,0,0).Ticks;
-            NewAutoupdateables = new List<IAutoupdateable>();
+            NewAutoupdateables = new List<IAutoupdateableGameActor>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
             TileLayers = new List<ITileLayer>();
@@ -257,7 +257,7 @@ namespace World.ToyWorldCore
             return new Vector2I(Vector2.Floor(position));
         }
 
-        public void RegisterToAutoupdate(IAutoupdateable actor)
+        public void RegisterToAutoupdate(IAutoupdateableGameActor actor)
         {
             NewAutoupdateables.Add(actor);
         }

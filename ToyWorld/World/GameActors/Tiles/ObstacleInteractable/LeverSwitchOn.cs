@@ -4,9 +4,9 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
-    public class LeverSwitchOn : DynamicTile, ISwitcher, IInteractable
+    public class LeverSwitchOn : DynamicTile, ISwitcherGameActor, IInteractable
     {
-        public ISwitchable Switchable { get; set; }
+        public ISwitchableGameActor Switchable { get; set; }
 
         public LeverSwitchOn(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
@@ -16,12 +16,12 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         {
         }
 
-        public void Switch(IAtlas atlas, ITilesetTable table)
+        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
         {
             var leverOff = new LeverSwitchOff(table, Position);
             atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable), leverOff);
             if (Switchable == null) return;
-            leverOff.Switchable = Switchable.Switch(atlas, table) as ISwitchable;
+            leverOff.Switchable = Switchable.Switch(null, atlas, table) as ISwitchableGameActor;
         }
 
         public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)

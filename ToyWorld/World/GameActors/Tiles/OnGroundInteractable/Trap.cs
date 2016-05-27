@@ -6,7 +6,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class TrapCharged : DynamicTile, ITileDetector
+    public class TrapCharged : DynamicTile, IDetectorTile
     {
         public bool RequiresCenterOfObject { get; set; }
         private const float ENERGY_FOR_STEP_ON_TRAP = 0.1f;
@@ -44,7 +44,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         }
     }
 
-    public class TrapDischarged : DynamicTile, IAutoupdateable
+    public class TrapDischarged : DynamicTile, IAutoupdateableGameActor
     {
         public int NextUpdateAfter { get; private set; }
 

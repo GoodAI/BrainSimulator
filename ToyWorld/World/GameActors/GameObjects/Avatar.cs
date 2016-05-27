@@ -14,7 +14,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPick, IMessageSender
+    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateableGameActor, ICanPickGameObject, IMessageSender
     {
         /// <summary>
         /// Avatar unique Id for connecting from outside. Specified in .tmx file.
@@ -164,7 +164,7 @@ namespace World.GameActors.GameObjects
 
             if (UseTool)
             {
-                var usable = Tool as IUsable;
+                var usable = Tool as IUsableGameActor;
 
                 if (usable != null)
                 {

@@ -18,11 +18,11 @@ namespace World.GameActions
                 atlas.Remove(target);
             }
 
-            var switcher = target.Actor as ISwitcher;
+            var switcher = target.Actor as ISwitcherGameActor;
 
             if (switcher != null)
             {
-                switcher.Switch(atlas, table);
+                switcher.Switch(target, atlas, table);
             }
         }
     }

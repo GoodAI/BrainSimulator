@@ -129,13 +129,13 @@ namespace World.ToyWorldCore
         /// <summary>
         /// List of newly added IAutoupdatables.
         /// </summary>
-        List<IAutoupdateable> NewAutoupdateables { get; }
+        List<IAutoupdateableGameActor> NewAutoupdateables { get; }
 
         /// <summary>
         /// This method adds actor to automatically updated queue.
         /// </summary>
         /// <param name="actor"></param>
-        void RegisterToAutoupdate(IAutoupdateable actor);
+        void RegisterToAutoupdate(IAutoupdateableGameActor actor);
 
         IAreasCarrier AreasCarrier { get; set; }
 

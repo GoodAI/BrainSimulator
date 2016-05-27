@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class KeyDoorOpened : DynamicTile, ISwitchable
+    public class KeyDoorOpened : DynamicTile, ISwitchableGameActor
     {
         public KeyDoorOpened(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
@@ -14,7 +14,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         {
         }
 
-        public ISwitchable Switch(IAtlas atlas, ITilesetTable table)
+        public ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
         {
             KeyDoorClosed closedDoor = new KeyDoorClosed(table, Position);
             bool added = atlas.Add(new GameActorPosition(closedDoor, (Vector2)Position, LayerType.ObstacleInteractable), true);

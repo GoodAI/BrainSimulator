@@ -9,7 +9,7 @@ namespace World.GameActors
     /// <summary>
     /// GameActor will be updated in given interval.
     /// </summary>
-    public interface IAutoupdateable
+    public interface IAutoupdateableGameActor
     {
         /// <summary>
         /// 
@@ -47,8 +47,26 @@ namespace World.GameActors
     /// <summary>
     /// For GameActors which are held in hand.
     /// </summary>
-    public interface IUsable
+    public interface IUsableGameActor
     {
         void Use(GameActorPosition senderPosition, IAtlas atlas, ITilesetTable tilesetTable);
+    }
+
+
+    public interface ISwitchableGameActor
+    {
+        ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+    }
+
+    public interface ISwitcherGameActor
+    {
+        void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+
+        ISwitchableGameActor Switchable { get; set; }
+    }
+
+    public interface ICombustibleGameActor
+    {
+        void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
     }
 }

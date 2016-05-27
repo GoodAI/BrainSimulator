@@ -1,6 +1,4 @@
-﻿using VRageMath;
-using World.GameActions;
-using World.GameActors.GameObjects;
+﻿using World.GameActors.GameObjects;
 using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
@@ -8,7 +6,7 @@ namespace World.GameActors.Tiles
     /// <summary>
     /// Tile which want to detect object colliding or standing on him.
     /// </summary>
-    public interface ITileDetector
+    public interface IDetectorTile
     {
         /// <summary>
         /// If this is true, object is not detected until center of object is within tile.
@@ -41,22 +39,4 @@ namespace World.GameActors.Tiles
         /// </summary>
         float MaxDistance { get; }
     }
-
-    public interface ISwitchable
-    {
-        ISwitchable Switch(IAtlas atlas, ITilesetTable table);
-    }
-
-    public interface ISwitcher
-    {
-        void Switch(IAtlas atlas, ITilesetTable table);
-
-        ISwitchable Switchable { get; set; }
-    }
-
-    public interface ICombustible
-    {
-        void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
-    }
-
 }

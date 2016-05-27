@@ -8,7 +8,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.Obstacle
 {
-    public abstract class Tree<T> : DynamicTile, IAutoupdateable where T : Fruit
+    public abstract class Tree<T> : DynamicTile, IAutoupdateableGameActor where T : Fruit
     {
         public int NextUpdateAfter { get; private set; }
 

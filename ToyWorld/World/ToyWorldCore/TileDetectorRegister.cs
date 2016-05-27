@@ -33,7 +33,7 @@ namespace World.ToyWorldCore
                         LayerType.TileLayers);
                     foreach (GameActorPosition result in actorsAt)
                     {
-                        var tileDetector = result.Actor as ITileDetector;
+                        var tileDetector = result.Actor as IDetectorTile;
 
                         if (tileDetector == null) continue;
                         if (tileDetector.RequiresCenterOfObject && !Atlas.InsideTile(coverTile, gameObject.Position))

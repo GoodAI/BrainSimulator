@@ -9,15 +9,15 @@ namespace World.ToyWorldCore
 {
     public class AutoupdateRegister
     {
-        private readonly CircularList<List<IAutoupdateable>> m_register;
+        private readonly CircularList<List<IAutoupdateableGameActor>> m_register;
 
         public int Size { get { return m_register.Size; } }
 
-        protected List<IAutoupdateable> CurrentUpdateRequests
+        protected List<IAutoupdateableGameActor> CurrentUpdateRequests
         {
             get
             {
-                Contract.Ensures(Contract.Result<List<IAutoupdateable>>() != null);
+                Contract.Ensures(Contract.Result<List<IAutoupdateableGameActor>>() != null);
                 return m_register[0];
             }
         }
@@ -28,11 +28,11 @@ namespace World.ToyWorldCore
                 throw new ArgumentOutOfRangeException("registerSize");
             Contract.EndContractBlock();
 
-            m_register = new CircularList<List<IAutoupdateable>>(registerSize);
+            m_register = new CircularList<List<IAutoupdateableGameActor>>(registerSize);
             m_register.MoveNext();
         }
 
-        public void Register(IAutoupdateable actor, int timePeriod = 1)
+        public void Register(IAutoupdateableGameActor actor, int timePeriod = 1)
         {
             if (actor == null)
                 throw new ArgumentNullException("actor");
@@ -55,7 +55,7 @@ namespace World.ToyWorldCore
                 CurrentUpdateRequests.AddRange(atlas.NewAutoupdateables);
                 atlas.NewAutoupdateables.Clear();
             }
-            foreach (IAutoupdateable actor in CurrentUpdateRequests)
+            foreach (IAutoupdateableGameActor actor in CurrentUpdateRequests)
             {
                 actor.Update(atlas, table);
                 if (actor.NextUpdateAfter > 0)

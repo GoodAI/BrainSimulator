@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class Fireplace : DynamicTile, IInteractable, ICombustible
+    public class Fireplace : DynamicTile, IInteractable, ICombustibleGameActor
     {
         public Fireplace(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
