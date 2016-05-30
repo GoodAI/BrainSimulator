@@ -255,6 +255,7 @@ namespace GoodAI.Core.Observers
 
         void MyMemoryBlockObserver_TargetChanged(object sender, PropertyChangedEventArgs e)
         {
+            // TODO fix this: should be handled somewhere above (during deserialization)!
             if (Target == null)
             {
                 MyLog.ERROR.WriteLine("Observer: could find the target MemoryBlock, so not opening this one.");
