@@ -34,7 +34,7 @@ namespace ToyWorldTests.World
         [Fact]
         public void CanAddToInventory()
         {
-            Mock<IPickable> item = new Mock<IPickable>();
+            Mock<IPickableGameActor> item = new Mock<IPickableGameActor>();
 
             m_avatar.AddToInventory(item.Object);
 
@@ -44,8 +44,8 @@ namespace ToyWorldTests.World
         [Fact]
         public void CanHoldOnlyOneItem()
         {
-            Mock<IPickable> item1 = new Mock<IPickable>();
-            Mock<IPickable> item2 = new Mock<IPickable>();
+            Mock<IPickableGameActor> item1 = new Mock<IPickableGameActor>();
+            Mock<IPickableGameActor> item2 = new Mock<IPickableGameActor>();
             m_avatar.AddToInventory(item1.Object);
 
             // Act

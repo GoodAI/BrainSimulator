@@ -46,7 +46,7 @@ namespace World.GameActors.GameObjects
         /// <summary>
         /// Tool in hand. Can be picked up and laid down.
         /// </summary>
-        IPickable Tool { get; set; }
+        IPickableGameActor Tool { get; set; }
     }
 
     public class Avatar : Character, IAvatar
@@ -100,7 +100,7 @@ namespace World.GameActors.GameObjects
 
         public bool PuppetControlled { get; set; }
 
-        public IPickable Tool { get; set; }
+        public IPickableGameActor Tool { get; set; }
 
         public int NextUpdateAfter { get; private set; }
 
@@ -170,7 +170,7 @@ namespace World.GameActors.GameObjects
 
                 if (usable != null)
                 {
-                    usable.Use(new GameActorPosition(this, Position, LayerType.Object),  atlas, table);
+                    usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas, table);
                 }
             }
         }
@@ -182,7 +182,7 @@ namespace World.GameActors.GameObjects
             {
                 if (tileInFrontOf != null)
                 {
-                    var interactable = tileInFrontOf.Actor as IInteractable;
+                    var interactable = tileInFrontOf.Actor as IInteractableGameActor;
 
 
                     if (interactable != null)
@@ -229,7 +229,7 @@ namespace World.GameActors.GameObjects
         private void BalanceTemperature(float temperatureAround, float energyDiff)
         {
             Temperature += energyDiff * ENERGY_TO_HEAT_RATIO;
-            Temperature += (temperatureAround - Temperature)*TEMPERATURE_BALANCE_RATIO;
+            Temperature += (temperatureAround - Temperature) * TEMPERATURE_BALANCE_RATIO;
         }
 
         private void LoseRest()
@@ -247,7 +247,7 @@ namespace World.GameActors.GameObjects
             Fof = default(PointF);
         }
 
-        public bool AddToInventory(IPickable item)
+        public bool AddToInventory(IPickableGameActor item)
         {
             if (Tool != null)
                 return false;
@@ -256,9 +256,9 @@ namespace World.GameActors.GameObjects
             return true;
         }
 
-        public IPickable RemoveFromInventory()
+        public IPickableGameActor RemoveFromInventory()
         {
-            IPickable tool = Tool;
+            IPickableGameActor tool = Tool;
             Tool = null;
             return tool;
         }
@@ -313,7 +313,7 @@ namespace World.GameActors.GameObjects
 
             foreach (GameActorPosition target in targets)
             {
-                IPickable interactableTarget = target.Actor as IPickable;
+                IPickableGameActor interactableTarget = target.Actor as IPickableGameActor;
                 if (interactableTarget == null) continue;
                 GameAction pickUpAction = new PickUp(this);
                 interactableTarget.PickUp(atlas, pickUpAction, target.Position, tilesetTable);

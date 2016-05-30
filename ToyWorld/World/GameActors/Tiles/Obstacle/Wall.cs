@@ -10,7 +10,7 @@ namespace World.GameActors.Tiles.Obstacle
     /// <summary>
     ///     Wall can be transformed to DamagedWall if pickaxe is used
     /// </summary>
-    public class Wall : StaticTile, IInteractable
+    public class Wall : StaticTile, IInteractableGameActor
     {
         public Wall(ITilesetTable tilesetTable)
             : base(tilesetTable)
@@ -44,7 +44,7 @@ namespace World.GameActors.Tiles.Obstacle
     ///     DamagedWall has health from (0,1) excl. If health leq 0, it is replaced by DestroyedWall.
     ///     Only way how to make damage is to use pickaxe.
     /// </summary>
-    public class DamagedWall : DynamicTile, IInteractable
+    public class DamagedWall : DynamicTile, IInteractableGameActor
     {
         public float Health { get; private set; }
 

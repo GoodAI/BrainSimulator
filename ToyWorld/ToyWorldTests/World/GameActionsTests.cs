@@ -19,10 +19,10 @@ namespace ToyWorldTests.World
             Mock<IAtlas> atlas = new Mock<IAtlas>();
             Mock<GameActor> actor = new Mock<GameActor>();
             Mock<ICanPickGameObject> picker = actor.As<ICanPickGameObject>();
-            picker.Setup(x => x.AddToInventory(It.IsAny<IPickable>()));
+            picker.Setup(x => x.AddToInventory(It.IsAny<IPickableGameActor>()));
 
             Mock<GameActor> targetActor = new Mock<GameActor>();
-            targetActor.As<IPickable>();
+            targetActor.As<IPickableGameActor>();
 
             PickUp pickUp = new PickUp(actor.Object);
 
@@ -30,7 +30,7 @@ namespace ToyWorldTests.World
             pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2(), LayerType.ObstacleInteractable), atlas.Object, It.IsAny<ITilesetTable>());
 
             // Assert
-            picker.Verify(x => x.AddToInventory(It.IsAny<IPickable>()));
+            picker.Verify(x => x.AddToInventory(It.IsAny<IPickableGameActor>()));
         }
     }
 }

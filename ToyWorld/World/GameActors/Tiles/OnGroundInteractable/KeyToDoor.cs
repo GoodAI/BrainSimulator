@@ -9,13 +9,15 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class KeyToDoor : DynamicTile, IPickable, IUsableGameActor, ISwitcherGameActor
+    public class KeyToDoor : DynamicTile, IPickableGameActor, IUsableGameActor, ISwitcherGameActor
     {
-        public KeyToDoor(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public KeyToDoor(ITilesetTable tilesetTable, Vector2I position)
+            : base(tilesetTable, position)
         {
         }
 
-        public KeyToDoor(int tileType, Vector2I position) : base(tileType, position)
+        public KeyToDoor(int tileType, Vector2I position)
+            : base(tileType, position)
         {
         }
 

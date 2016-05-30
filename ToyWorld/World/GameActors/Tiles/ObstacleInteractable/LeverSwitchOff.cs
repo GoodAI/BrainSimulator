@@ -6,15 +6,17 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
-    public class LeverSwitchOff : DynamicTile, ISwitcherGameActor, IInteractable
+    public class LeverSwitchOff : DynamicTile, ISwitcherGameActor, IInteractableGameActor
     {
         public ISwitchableGameActor Switchable { get; set; }
 
-        public LeverSwitchOff(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public LeverSwitchOff(ITilesetTable tilesetTable, Vector2I position)
+            : base(tilesetTable, position)
         {
         }
 
-        public LeverSwitchOff(int tileType, Vector2I position) : base(tileType, position)
+        public LeverSwitchOff(int tileType, Vector2I position)
+            : base(tileType, position)
         {
         }
 

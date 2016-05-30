@@ -7,13 +7,15 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class SimpleDoorOpened : StaticTile, IInteractable
+    public class SimpleDoorOpened : StaticTile, IInteractableGameActor
     {
-        public SimpleDoorOpened(ITilesetTable tilesetTable) : base(tilesetTable)
+        public SimpleDoorOpened(ITilesetTable tilesetTable)
+            : base(tilesetTable)
         {
         }
 
-        public SimpleDoorOpened(int tileType) : base(tileType)
+        public SimpleDoorOpened(int tileType)
+            : base(tileType)
         {
         }
 

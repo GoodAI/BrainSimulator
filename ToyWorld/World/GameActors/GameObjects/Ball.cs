@@ -8,14 +8,14 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
-    class Ball : Character, IPickable
+    class Ball : Character, IPickableGameActor
     {
         public Ball(
             string tilesetName,
             int tileId, string name,
             Vector2 position,
             Vector2 size,
-            float direction) 
+            float direction)
             : base(
             tilesetName,
             tileId,

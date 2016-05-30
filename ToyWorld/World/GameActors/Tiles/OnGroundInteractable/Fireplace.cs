@@ -6,13 +6,15 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class Fireplace : DynamicTile, IInteractable, ICombustibleGameActor
+    public class Fireplace : DynamicTile, IInteractableGameActor, ICombustibleGameActor
     {
-        public Fireplace(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public Fireplace(ITilesetTable tilesetTable, Vector2I position)
+            : base(tilesetTable, position)
         {
         }
 
-        public Fireplace(int tileType, Vector2I position) : base(tileType, position)
+        public Fireplace(int tileType, Vector2I position)
+            : base(tileType, position)
         {
         }
 

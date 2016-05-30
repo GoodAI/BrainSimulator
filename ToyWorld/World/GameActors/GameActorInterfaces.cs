@@ -2,18 +2,16 @@
 using World.Atlas;
 using World.GameActions;
 using World.GameActors.Tiles;
-using World.ToyWorldCore;
-
 
 namespace World.GameActors
 {
     /// <summary>
     /// GameActor will be updated in given interval.
     /// </summary>
-    public interface IAutoupdateableGameActor
+    public interface IAutoupdateableGameActor : IGameActor
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="atlas"></param>
         /// <param name="table"></param>
@@ -29,7 +27,7 @@ namespace World.GameActors
     /// <summary>
     /// Object which perform some interaction to given GameAction.
     /// </summary>
-    public interface IInteractable : IGameActor
+    public interface IInteractableGameActor : IGameActor
     {
         /// <summary>
         /// Method is called when something apply GameAction on this object.
@@ -40,7 +38,7 @@ namespace World.GameActors
     /// <summary>
     /// Can be picked.
     /// </summary>
-    public interface IPickable : IGameActor
+    public interface IPickableGameActor : IGameActor
     {
         void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable);
     }
@@ -48,25 +46,25 @@ namespace World.GameActors
     /// <summary>
     /// For GameActors which are held in hand.
     /// </summary>
-    public interface IUsableGameActor
+    public interface IUsableGameActor : IGameActor
     {
         void Use(GameActorPosition senderPosition, IAtlas atlas, ITilesetTable tilesetTable);
     }
 
 
-    public interface ISwitchableGameActor
+    public interface ISwitchableGameActor : IGameActor
     {
         ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
     }
 
-    public interface ISwitcherGameActor
+    public interface ISwitcherGameActor : IGameActor
     {
         void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
 
         ISwitchableGameActor Switchable { get; set; }
     }
 
-    public interface ICombustibleGameActor
+    public interface ICombustibleGameActor : IGameActor
     {
         void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
     }

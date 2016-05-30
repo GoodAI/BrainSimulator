@@ -15,7 +15,7 @@ namespace World.GameActions
         public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
         {
             ICanPickGameObject picker = Sender as ICanPickGameObject;
-            IPickable pickItem = target.Actor as IPickable;
+            IPickableGameActor pickItem = target.Actor as IPickableGameActor;
 
             if (picker == null || pickItem == null) return;
 

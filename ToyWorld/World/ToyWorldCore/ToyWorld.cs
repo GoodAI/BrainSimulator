@@ -56,7 +56,7 @@ namespace World.ToyWorldCore
         {
             Func<IAtlas, float> inventoryItem = x =>
             {
-                IPickable tool = x.GetAvatars().First().Tool;
+                IPickableGameActor tool = x.GetAvatars().First().Tool;
                 return tool != null ? tool.TilesetId : 0;
             };
 
