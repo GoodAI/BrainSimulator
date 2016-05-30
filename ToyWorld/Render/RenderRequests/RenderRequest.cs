@@ -35,7 +35,7 @@ namespace Render.RenderRequests
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
-        private BasicFbo m_fbo;
+        private BasicFbo m_frontFbo, m_backFbo;
         private BasicFboMultisample m_fboMs;
 
         private NoEffectOffset m_effect;
@@ -55,6 +55,8 @@ namespace Render.RenderRequests
 
         private DirtyParams m_dirtyParams;
 
+        protected bool PostProcessingActive { get { return DrawNoise; } }
+
         #endregion
 
         #region Genesis
@@ -70,8 +72,10 @@ namespace Render.RenderRequests
 
         public virtual void Dispose()
         {
-            if (m_fbo != null)
-                m_fbo.Dispose();
+            if (m_frontFbo != null)
+                m_frontFbo.Dispose();
+            if (m_backFbo != null)
+                m_backFbo.Dispose();
             if (m_fboMs != null)
                 m_fboMs.Dispose();
 
@@ -301,6 +305,7 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
+
             // Set up tileset textures
             string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
             TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
@@ -308,8 +313,9 @@ namespace Render.RenderRequests
             for (int i = 0; i < tilesetImages.Length; i++)
                 tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
                                                     world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
-            
+
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
+
 
             // Set up tile grid shaders
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -324,13 +330,16 @@ namespace Render.RenderRequests
             m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
+
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
+
             // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
             if (!CopyImageThroughCpu)
                 m_pbo = new Pbo();
+
 
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
@@ -352,17 +361,25 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
             {
-                bool newRes = m_fbo == null || Resolution.Width != m_fbo.Size.X || Resolution.Height != m_fbo.Size.Y;
+                bool newRes = m_frontFbo == null || Resolution.Width != m_frontFbo.Size.X || Resolution.Height != m_frontFbo.Size.Y;
 
                 if (newRes)
                 {
-                    if (m_fbo != null)
-                        m_fbo.Dispose();
+                    if (m_frontFbo != null)
+                        m_frontFbo.Dispose();
 
-                    m_fbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    m_frontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
                     if (DrawNoise)
                         m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
+
+                    if (PostProcessingActive) // If any post-processing effect is active, we need to update the back fbo
+                    {
+                        if (m_backFbo != null)
+                            m_backFbo.Dispose();
+
+                        m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    }
                 }
 
                 if (MultisampleLevel > 0)
@@ -451,7 +468,7 @@ namespace Render.RenderRequests
             if (MultisampleLevel > 0)
                 m_fboMs.Bind();
             else
-                m_fbo.Bind();
+                m_frontFbo.Bind();
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Enable(EnableCap.Blend);
@@ -475,17 +492,20 @@ namespace Render.RenderRequests
             {
                 // We have to blit to another fbo to resolve multisampling before readPixels and postprocessing, unfortunatelly
                 m_fboMs.Bind(FramebufferTarget.ReadFramebuffer);
-                m_fbo.Bind(FramebufferTarget.DrawFramebuffer);
+                m_frontFbo.Bind(FramebufferTarget.DrawFramebuffer);
                 GL.BlitFramebuffer(
                     0, 0, m_fboMs.Size.X, m_fboMs.Size.Y,
-                    0, 0, m_fbo.Size.X, m_fbo.Size.Y,
+                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
                     BlitFramebufferFilter.Linear);
             }
 
             // Apply post-processing
-            GL.Disable(EnableCap.Blend);
-            ApplyPostProcessingEffects(renderer);
+            if (PostProcessingActive) // If any postprocessing effect is active
+            {
+                GL.Disable(EnableCap.Blend);
+                ApplyPostProcessingEffects(renderer);
+            }
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
@@ -585,10 +605,13 @@ namespace Render.RenderRequests
 
         private void ApplyPostProcessingEffects(RendererBase renderer)
         {
+            // Draw from the front to the back buffer
+            m_backFbo.Bind();
+
             if (DrawNoise)
             {
                 renderer.EffectManager.Use(m_noiseEffect);
-                renderer.TextureManager.Bind(m_fbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition);
+                renderer.TextureManager.Bind(m_frontFbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition); // Use data from front Fbo
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 double step = 0.005d;
@@ -604,19 +627,10 @@ namespace Render.RenderRequests
 
         private void GatherAndDistributeData(RendererBase renderer)
         {
-            // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-            m_fbo.Bind(FramebufferTarget.ReadFramebuffer);
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            GL.BlitFramebuffer(
-                0, 0, m_fbo.Size.X, m_fbo.Size.Y,
-                0, 0, renderer.Width, renderer.Height,
-                ClearBufferMask.ColorBufferBit,
-                BlitFramebufferFilter.Linear);
-
             // Gather data to host mem
             if (GatherImage)
             {
-                m_fbo.Bind();
+                // The final image was rendered to the currently bound fbo
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
                 if (CopyImageThroughCpu)
@@ -630,6 +644,14 @@ namespace Render.RenderRequests
                     GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                 }
             }
+
+            // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+            GL.BlitFramebuffer(
+                0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                0, 0, renderer.Width, renderer.Height,
+                ClearBufferMask.ColorBufferBit,
+                BlitFramebufferFilter.Linear);
         }
 
         #endregion
