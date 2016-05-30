@@ -237,7 +237,7 @@ namespace GoodAI.ToyWorld
             validator.AssertError(FoVMultisampleLevel >= 0 && FoVMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
             validator.AssertError(FreeViewMultisampleLevel >= 0 && FreeViewMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
             validator.AssertWarning(
-                FoFMultisampleLevel == 1 || FoVMultisampleLevel == 1 || FreeViewMultisampleLevel == 1,
+                FoFMultisampleLevel != 1 && FoVMultisampleLevel != 1 && FreeViewMultisampleLevel != 1,
                 this, "Multisample level of 1 is the same as level 2 (4x MSAA). Don't ask why.");
 
             if (Controls != null)
