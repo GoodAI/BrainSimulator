@@ -52,7 +52,7 @@
     <Compile Include="RenderObjects\Buffers\Base\Fbo.cs" />
     <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
     <Compile Include="RenderObjects\Buffers\Base\StaticVBOFactory.cs" />
-    <Compile Include="RenderObjects\Buffers\Base\VAO.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vbos.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFboMultisample.cs" />
