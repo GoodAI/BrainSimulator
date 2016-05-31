@@ -24,10 +24,11 @@ namespace Render.RenderRequests
         {
             None = 0,
             Size = 1,
-            Resolution = 1 << 1,
-            Image = 1 << 2,
-            Smoke = 1 << 3,
-            Noise = 1 << 4,
+            Postprocessing = 1 << 1,
+            Resolution = 1 << 2,
+            Image = 1 << 3,
+            Smoke = 1 << 4,
+            Noise = 1 << 5,
         }
 
 
@@ -54,8 +55,6 @@ namespace Render.RenderRequests
         private Matrix m_viewProjectionMatrix;
 
         private DirtyParams m_dirtyParams;
-
-        protected bool PostProcessingActive { get { return DrawNoise; } }
 
         #endregion
 
@@ -141,6 +140,8 @@ namespace Render.RenderRequests
 
         #region IRenderRequestBase overrides
 
+        #region View controls
+
         public System.Drawing.PointF PositionCenter
         {
             get { return new System.Drawing.PointF(PositionCenterV.X, PositionCenterV.Y); }
@@ -169,6 +170,9 @@ namespace Render.RenderRequests
             }
         }
 
+        #endregion
+
+        #region Resolution
 
         private System.Drawing.Size m_resolution;
         public System.Drawing.Size Resolution
@@ -206,6 +210,9 @@ namespace Render.RenderRequests
             }
         }
 
+        #endregion
+
+        #region Image
 
         private bool m_gatherImage;
         public bool GatherImage
@@ -234,30 +241,15 @@ namespace Render.RenderRequests
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
+        #endregion
 
-        private bool m_drawNoise;
-        private float m_noiseIntensityCoefficient = 1.0f;
+        #region Effects - overlay
 
         private bool m_drawSmoke;
         private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
         private float m_smokeTransformationSpeedCoefficient = 1f;
         private float m_smokeIntensityCoefficient = 1f;
         private float m_smokeScaleCoefficient = 1f;
-
-        public bool DrawNoise
-        {
-            get { return m_drawNoise; }
-            set
-            {
-                m_drawNoise = value;
-                m_dirtyParams |= DirtyParams.Noise;
-            }
-        }
-        public float NoiseIntensityCoefficient
-        {
-            get { return m_noiseIntensityCoefficient; }
-            set { m_noiseIntensityCoefficient = value; }
-        }
 
         public bool DrawSmoke
         {
@@ -292,6 +284,32 @@ namespace Render.RenderRequests
             get { return m_smokeScaleCoefficient; }
             set { m_smokeScaleCoefficient = value; }
         }
+
+        #endregion
+
+        #region Effects - post
+
+        protected bool PostProcessingActive { get { return DrawNoise; } }
+
+        private bool m_drawNoise;
+        private float m_noiseIntensityCoefficient = 1.0f;
+
+        public bool DrawNoise
+        {
+            get { return m_drawNoise; }
+            set
+            {
+                m_drawNoise = value;
+                m_dirtyParams |= DirtyParams.Postprocessing | DirtyParams.Noise;
+            }
+        }
+        public float NoiseIntensityCoefficient
+        {
+            get { return m_noiseIntensityCoefficient; }
+            set { m_noiseIntensityCoefficient = value; }
+        }
+
+        #endregion
 
         #endregion
 
@@ -359,29 +377,40 @@ namespace Render.RenderRequests
 
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
             }
+            if (m_dirtyParams.HasFlag(DirtyParams.Postprocessing))
+            {
+                // Postprocessing bounces between the front and back buffers
+                if (m_backFbo != null)
+                    m_backFbo.Dispose();
+
+                m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+            }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
             {
                 bool newRes = m_frontFbo == null || Resolution.Width != m_frontFbo.Size.X || Resolution.Height != m_frontFbo.Size.Y;
 
                 if (newRes)
                 {
+                    // Reallocate front fbo
                     if (m_frontFbo != null)
                         m_frontFbo.Dispose();
 
                     m_frontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
-                    if (DrawNoise)
-                        m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
-
-                    if (PostProcessingActive) // If any post-processing effect is active, we need to update the back fbo
+                    // Reallocate back fbo
+                    if (PostProcessingActive)
                     {
                         if (m_backFbo != null)
                             m_backFbo.Dispose();
 
                         m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
                     }
+
+                    if (DrawNoise)
+                        m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
                 }
 
+                // Reallocate MS fbo
                 if (MultisampleLevel > 0)
                 {
                     int multisampleCount = 1 << MultisampleLevel; // 4x to 32x (4 levels)
@@ -500,15 +529,17 @@ namespace Render.RenderRequests
                     BlitFramebufferFilter.Linear);
             }
 
+            Fbo scene = m_frontFbo;
+
             // Apply post-processing
             if (PostProcessingActive) // If any postprocessing effect is active
             {
                 GL.Disable(EnableCap.Blend);
-                ApplyPostProcessingEffects(renderer);
+                scene = ApplyPostProcessingEffects(renderer);
             }
 
             // Copy the rendered scene
-            GatherAndDistributeData(renderer);
+            GatherAndDistributeData(renderer, scene);
         }
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -603,7 +634,7 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private void ApplyPostProcessingEffects(RendererBase renderer)
+        private Fbo ApplyPostProcessingEffects(RendererBase renderer)
         {
             // Draw from the front to the back buffer
             m_backFbo.Bind();
@@ -623,14 +654,18 @@ namespace Render.RenderRequests
             }
 
             // more stuffs
+
+            // Return the fbo that contains the final scene
+            return m_backFbo;
         }
 
-        private void GatherAndDistributeData(RendererBase renderer)
+        private void GatherAndDistributeData(RendererBase renderer, Fbo scene)
         {
+            scene.Bind();
+
             // Gather data to host mem
             if (GatherImage)
             {
-                // The final image was rendered to the currently bound fbo
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
                 if (CopyImageThroughCpu)
@@ -645,13 +680,13 @@ namespace Render.RenderRequests
                 }
             }
 
-            // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            GL.BlitFramebuffer(
-                0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
-                0, 0, renderer.Width, renderer.Height,
-                ClearBufferMask.ColorBufferBit,
-                BlitFramebufferFilter.Linear);
+                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                GL.BlitFramebuffer(
+                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                    0, 0, renderer.Width, renderer.Height,
+                    ClearBufferMask.ColorBufferBit,
+                    BlitFramebufferFilter.Linear);
         }
 
         #endregion
