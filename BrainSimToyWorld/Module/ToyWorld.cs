@@ -102,7 +102,7 @@ namespace GoodAI.ToyWorld
 
         #region Effects
 
-        [MyBrowsable, Category("Effects - General"), DisplayName("Draw noise")]
+        [MyBrowsable, Category("Effects - General"), DisplayName("Rotate Map")]
         [YAXSerializableField(DefaultValue = false)]
         public bool RotateMap { get; set; }
 

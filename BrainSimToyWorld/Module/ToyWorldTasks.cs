@@ -40,6 +40,7 @@ namespace GoodAI.ToyWorld
                         rr.Size = new SizeF(Owner.FoVSize, Owner.FoVSize);
                         rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
                         rr.MultisampleLevel = Owner.FoVMultisampleLevel;
+                        rr.RotateMap = Owner.RotateMap;
                         rr.DrawNoise = Owner.DrawNoise;
                         rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
                         rr.DrawSmoke = Owner.DrawSmoke;
@@ -55,6 +56,7 @@ namespace GoodAI.ToyWorld
                         rr.Size = new SizeF(Owner.FoFSize, Owner.FoFSize);
                         rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
                         rr.MultisampleLevel = Owner.FoFMultisampleLevel;
+                        rr.RotateMap = Owner.RotateMap;
                         rr.DrawNoise = Owner.DrawNoise;
                         rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
                         rr.DrawSmoke = Owner.DrawSmoke;
