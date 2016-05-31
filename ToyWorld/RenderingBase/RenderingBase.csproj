@@ -1,0 +1,138 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{272A6B2F-921A-4AC2-ACED-A3E0F487954C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>RenderingBase</RootNamespace>
+    <AssemblyName>RenderingBase</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Renderer\GLRenderer.cs" />
+    <Compile Include="Renderer\RendererBase.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Fbo.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\StaticVBOFactory.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\VAO.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\Vbos.cs" />
+    <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
+    <Compile Include="RenderObjects\Buffers\BasicFboMultisample.cs" />
+    <Compile Include="RenderObjects\Buffers\Pbo.cs" />
+    <Compile Include="RenderObjects\Effects\Base\EffectBase.cs" />
+    <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoEffectOffset.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoEffectTex.cs" />
+    <Compile Include="RenderObjects\Effects\Common\NoiseEffect.cs" />
+    <Compile Include="RenderObjects\Effects\Common\SmokeEffect.cs" />
+    <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
+    <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
+    <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
+    <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
+    <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />
+    <Compile Include="RenderObjects\Textures\BasicTexture.cs" />
+    <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
+    <Compile Include="RenderObjects\Textures\RenderTargetTexturesMultisample.cs" />
+    <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
+    <Compile Include="RenderRequests\RenderRequestFactory.cs" />
+    <Compile Include="RenderRequests\IRenderRequestBaseInternal.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\random.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
+      <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
+      <Name>ToyWorldAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

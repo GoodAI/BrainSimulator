@@ -122,6 +122,7 @@
     <Compile Include="Render\GLRendererTests.cs" />
     <Compile Include="Render\RenderRequestTests.cs" />
     <Compile Include="Render\GeometryTests.cs" />
+    <Compile Include="Render\RRs\INotImplementedRRs.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="TestContainerConfiguration.cs" />
     <Compile Include="TestUtils.cs" />
@@ -153,6 +154,10 @@
     <ProjectReference Include="..\Game\Game.csproj">
       <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
       <Name>Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RenderingBase\RenderingBase.csproj">
+      <Project>{272A6B2F-921A-4AC2-ACED-A3E0F487954C}</Project>
+      <Name>RenderingBase</Name>
     </ProjectReference>
     <ProjectReference Include="..\Render\Render.csproj">
       <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
-using Render.Renderer;
-using Render.RenderObjects.Buffers;
-using Render.RenderObjects.Effects;
-using Render.RenderObjects.Geometries;
-using Render.RenderObjects.Textures;
+using RenderingBase.Renderer;
+using RenderingBase.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Effects;
+using RenderingBase.RenderObjects.Geometries;
+using RenderingBase.RenderObjects.Textures;
+using RenderingBase.RenderRequests;
 using VRageMath;
 using World.Atlas.Layers;
 using World.Physics;
@@ -17,7 +18,8 @@ using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
-    public abstract class RenderRequest : IRenderRequestBase, IDisposable
+    public abstract class RenderRequest
+        : IRenderRequestBaseInternal<ToyWorld>
     {
         [Flags]
         protected enum DirtyParams
@@ -36,7 +38,7 @@ namespace Render.RenderRequests
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
-        public bool CopyToWindow;
+        public bool CopyToWindow { get; set; }
 
         private BasicFbo m_frontFbo, m_backFbo;
         private BasicFboMultisample m_fboMs;
@@ -318,7 +320,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public virtual void Init(RendererBase renderer, ToyWorld world)
+        public virtual void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Setup color and blending
             const int baseIntensity = 50;
@@ -365,7 +367,7 @@ namespace Render.RenderRequests
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
-        private void CheckDirtyParams(RendererBase renderer)
+        private void CheckDirtyParams(RendererBase<ToyWorld> renderer)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
@@ -491,7 +493,7 @@ namespace Render.RenderRequests
         #endregion
 
 
-        public virtual void Draw(RendererBase renderer, ToyWorld world)
+        public virtual void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             CheckDirtyParams(renderer);
 
@@ -608,7 +610,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private void DrawEffects(RendererBase renderer)
+        private void DrawEffects(RendererBase<ToyWorld> renderer)
         {
             if (DrawSmoke)
             {
@@ -637,7 +639,7 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private Fbo ApplyPostProcessingEffects(RendererBase renderer)
+        private Fbo ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
         {
             // Draw from the front to the back buffer
             m_backFbo.Bind();
@@ -662,7 +664,7 @@ namespace Render.RenderRequests
             return m_backFbo;
         }
 
-        private void GatherAndDistributeData(RendererBase renderer, Fbo scene)
+        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer, Fbo scene)
         {
             scene.Bind();
 

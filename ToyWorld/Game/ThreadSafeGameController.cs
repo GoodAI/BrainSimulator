@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
-using Render.Renderer;
+using RenderingBase.Renderer;
 using VRage.Library.Collections;
-
+using World.ToyWorldCore;
 using TupleType = System.Tuple<System.Func<object>, System.Threading.Tasks.TaskCompletionSource<object>>;
 
 namespace Game
@@ -20,7 +17,7 @@ namespace Game
         private Task m_requestCollectionTask;
 
 
-        public ThreadSafeGameController(RendererBase renderer, GameSetup gameSetup)
+        public ThreadSafeGameController(RendererBase<ToyWorld> renderer, GameSetup gameSetup)
             : base(renderer, gameSetup)
         {
             m_requestCollectionTask = Task.Factory.StartNew(RunRequestCollectionAsync, TaskCreationOptions.LongRunning);

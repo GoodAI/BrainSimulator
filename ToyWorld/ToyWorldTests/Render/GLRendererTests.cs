@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderRequests;
+using RenderingBase.Renderer;
+using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
@@ -23,7 +23,7 @@ namespace ToyWorldTests.Render
         private readonly GameControllerBase m_gameController;
 
         protected ToyWorld World { get { return m_gameController.World; } }
-        protected GLRenderer Renderer { get { return (GLRenderer)m_gameController.Renderer; } }
+        protected GLRenderer<ToyWorld> Renderer { get { return (GLRenderer<ToyWorld>)m_gameController.Renderer; } }
 
 
         public GLRendererTestBase()
@@ -56,7 +56,7 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
-            ((RenderRequest)rr).CopyToWindow = true;
+            ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
 
 
             var ac = m_gameController.GetAvatarController(aID);

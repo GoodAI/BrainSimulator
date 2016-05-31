@@ -1,6 +1,7 @@
 ﻿using System;
 using GoodAI.ToyWorld.Control;
-using Render.Renderer;
+using RenderingBase.Renderer;
+using RenderingBase.RenderRequests;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -12,6 +13,16 @@ namespace Render.RenderRequests
 
         protected Vector2 RelativePositionV { get; set; }
 
+
+        static AvatarRRBase()
+        {
+            //////////////////////
+            // NOTE: All renderRequests must inherit from RenderRequest
+            //////////////////////
+
+            RenderRequestFactory.CaseInternal<IFullMapRR, FullMapRR>();
+            RenderRequestFactory.CaseInternal<IFreeMapRR, FreeMapRR>();
+        }
 
         protected AvatarRRBase(int avatarID)
         {
@@ -67,12 +78,12 @@ namespace Render.RenderRequests
         }
 
 
-        public override void Init(RendererBase renderer, ToyWorld world)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             base.Init(renderer, world);
         }
 
-        public override void Draw(RendererBase renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             PositionCenterV2 += RelativePositionV;
 

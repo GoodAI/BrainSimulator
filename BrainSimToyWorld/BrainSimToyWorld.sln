@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.40629.0
@@ -87,6 +86,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BrainSimCore", "BrainSimCore", "{615C5A8C-1D58-4505-8340-C21617AF6DDF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldConversation", "ToyWorldConversation\ToyWorldConversation.csproj", "{99EEE01B-4697-415C-969B-3767139473D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderingBase", "..\ToyWorld\RenderingBase\RenderingBase.csproj", "{272A6B2F-921A-4AC2-ACED-A3E0F487954C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -266,6 +267,14 @@ Global
 		{99EEE01B-4697-415C-969B-3767139473D3}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -297,5 +306,6 @@ Global
 		{DAC98A0F-E4EA-47B1-9D41-396426370819} = {E6928D98-DB52-4D72-ACAC-197CCFF87D85}
 		{615C5A8C-1D58-4505-8340-C21617AF6DDF} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
 		{99EEE01B-4697-415C-969B-3767139473D3} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
+		{272A6B2F-921A-4AC2-ACED-A3E0F487954C} = {BB04C4E6-F1E6-4714-A0F6-34C673D71BE1}
 	EndGlobalSection
 EndGlobal

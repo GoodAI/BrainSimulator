@@ -1,5 +1,5 @@
 ﻿using GoodAI.ToyWorld.Control;
-using Render.Renderer;
+using RenderingBase.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -20,14 +20,14 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer, ToyWorld world)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             SizeV = new Vector2(20, 20);
 
             base.Init(renderer, world);
         }
 
-        public override void Draw(RendererBase renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             var avatar = world.GetAvatar(AvatarID);
             PositionCenterV2 = avatar.Position;

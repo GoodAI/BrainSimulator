@@ -1,18 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Game;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
-using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderRequests;
-using Render.Tests.RRs;
+using RenderingBase.RenderRequests;
 using ToyWorldTests.Game;
+using World.ToyWorldCore;
 using Xunit;
 
 namespace ToyWorldTests.Render
@@ -28,7 +19,7 @@ namespace ToyWorldTests.Render
 
             foreach (var rr in RenderRequestFactory.RRs)
             {
-                var r = rr as RenderRequest;
+                var r = rr as IRenderRequestBaseInternal<ToyWorld>;
                 Assert.NotNull(r);
                 r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();
@@ -36,7 +27,7 @@ namespace ToyWorldTests.Render
 
             foreach (var rr in RenderRequestFactory.AvatarRRs)
             {
-                var r = rr as RenderRequest;
+                var r = rr as IRenderRequestBaseInternal<ToyWorld>;
                 Assert.NotNull(r);
                 r.Init(GameController.Renderer, GameController.World);
                 GameController.Renderer.CheckError();

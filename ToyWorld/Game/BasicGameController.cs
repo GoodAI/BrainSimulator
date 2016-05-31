@@ -1,11 +1,12 @@
 ﻿using GoodAI.ToyWorld.Control;
-using Render.Renderer;
+using RenderingBase.Renderer;
+using World.ToyWorldCore;
 
 namespace Game
 {
     public class BasicGameController : GameControllerBase
     {
-        public BasicGameController(RendererBase renderer, GameSetup gameSetup)
+        public BasicGameController(RendererBase<ToyWorld> renderer, GameSetup gameSetup)
             : base(renderer, gameSetup)
         { }
     }
