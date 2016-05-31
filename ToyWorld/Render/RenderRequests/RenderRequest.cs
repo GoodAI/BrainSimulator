@@ -20,7 +20,7 @@ namespace Render.RenderRequests
     public abstract class RenderRequest : IRenderRequestBase, IDisposable
     {
         [Flags]
-        private enum DirtyParams
+        protected enum DirtyParams
         {
             None = 0,
             Size = 1,
@@ -56,7 +56,7 @@ namespace Render.RenderRequests
         private Matrix m_projMatrix;
         private Matrix m_viewProjectionMatrix;
 
-        private DirtyParams m_dirtyParams;
+        protected DirtyParams m_dirtyParams;
 
         #endregion
 
@@ -122,14 +122,15 @@ namespace Render.RenderRequests
             }
         }
 
-        protected RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
+        protected virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
         private Rectangle GridView
         {
             get
             {
-                var positionOffset = new Vector2(ViewV.Width % 2, View.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
-                var rect = new RectangleF(Vector2.Zero, ViewV.Size + 2 + positionOffset) { Center = ViewV.Center - positionOffset };
+                var view = ViewV;
+                var positionOffset = new Vector2(view.Width % 2, view.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
+                var rect = new RectangleF(Vector2.Zero, view.Size + 2 + positionOffset) { Center = view.Center - positionOffset };
                 return new Rectangle(
                     new Vector2I(
                         (int)Math.Ceiling(rect.Position.X),

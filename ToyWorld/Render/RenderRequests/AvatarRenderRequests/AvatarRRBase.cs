@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Graphics.OpenGL;
 using Render.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
@@ -31,14 +29,41 @@ namespace Render.RenderRequests
             set { RelativePositionV = (Vector2)value; }
         }
 
-        public bool RotateMap { get; set; }
+        private bool m_rotateMap;
+        public bool RotateMap
+        {
+            get { return m_rotateMap; }
+            set
+            {
+                m_rotateMap = value;
+                m_dirtyParams |= DirtyParams.Size;
+            }
+        }
+
+        protected override RectangleF ViewV
+        {
+            get
+            {
+                RectangleF tmp = base.ViewV;
+
+                if (RotateMap)
+                {
+                    // Use an extended grid for displaying
+                    double diag = tmp.Size.Length();
+                    float gridSize = (float)Math.Ceiling(diag);
+                    tmp = new RectangleF(Vector2.Zero, new Vector2(gridSize)) { Center = new Vector2(PositionCenterV) };
+                }
+
+                return tmp;
+            }
+        }
 
         #endregion
 
 
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            return base.GetViewMatrix(cameraPos, cameraDirection, m_avatarDirection);
+            return base.GetViewMatrix(cameraPos, cameraDirection, RotateMap ? m_avatarDirection : null);
         }
 
 
