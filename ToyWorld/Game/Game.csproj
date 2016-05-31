@@ -75,6 +75,10 @@
       <Project>{272a6b2f-921a-4ac2-aced-a3e0f487954c}</Project>
       <Name>RenderingBase</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Render\Render.csproj">
+      <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
+      <Name>Render</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
       <Project>{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}</Project>
       <Name>TmxMapSerializer</Name>

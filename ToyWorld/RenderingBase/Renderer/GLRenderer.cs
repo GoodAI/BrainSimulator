@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace RenderingBase.Renderer
 {
-    public class GLRenderer<TWorld>
+    public abstract class GLRenderer<TWorld>
         : RendererBase<TWorld>
         where TWorld : class
     {

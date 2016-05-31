@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using GoodAI.Logging;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
-using RenderingBase.Renderer;
+using Render.Renderer;
 using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
@@ -17,8 +16,8 @@ namespace Game
         private bool m_initialized;
         private readonly GameSetup m_gameSetup;
 
-        private RendererBase<ToyWorld> m_renderer;
-        public RendererBase<ToyWorld> Renderer { get { return m_renderer; } private set { m_renderer = value; } }
+        private ToyWorldRenderer m_renderer;
+        public ToyWorldRenderer Renderer { get { return m_renderer; } private set { m_renderer = value; } }
 
         public ToyWorld World { get; private set; }
 
@@ -27,7 +26,7 @@ namespace Game
 
         public event MessageEventHandler NewMessage = delegate { };
 
-        protected GameControllerBase(RendererBase<ToyWorld> renderer, GameSetup setup)
+        protected GameControllerBase(ToyWorldRenderer renderer, GameSetup setup)
         {
             Renderer = renderer;
             m_gameSetup = setup;

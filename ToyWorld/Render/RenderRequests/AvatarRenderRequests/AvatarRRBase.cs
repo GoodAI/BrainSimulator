@@ -14,16 +14,6 @@ namespace Render.RenderRequests
         protected Vector2 RelativePositionV { get; set; }
 
 
-        static AvatarRRBase()
-        {
-            //////////////////////
-            // NOTE: All renderRequests must inherit from RenderRequest
-            //////////////////////
-
-            RenderRequestFactory.CaseInternal<IFullMapRR, FullMapRR>();
-            RenderRequestFactory.CaseInternal<IFreeMapRR, FreeMapRR>();
-        }
-
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;

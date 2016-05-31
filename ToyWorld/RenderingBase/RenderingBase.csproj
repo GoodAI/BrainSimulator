@@ -75,6 +75,7 @@
     <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTexturesMultisample.cs" />
     <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
+    <Compile Include="RenderRequests\RenderRequestAttribute.cs" />
     <Compile Include="RenderRequests\RenderRequestFactory.cs" />
     <Compile Include="RenderRequests\IRenderRequestBaseInternal.cs" />
   </ItemGroup>
