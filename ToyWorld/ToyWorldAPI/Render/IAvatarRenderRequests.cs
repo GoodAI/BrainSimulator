@@ -16,6 +16,11 @@ namespace GoodAI.ToyWorld.Control
         /// Relative position of PositionCenter to avatar's position
         /// </summary>
         PointF RelativePosition { get; set; }
+
+        /// <summary>
+        /// If true, rotates the map around the agent (which stays fixed looking upwards).
+        /// </summary>
+        bool RotateMap { get; set; }
     }
 
     /// <summary>

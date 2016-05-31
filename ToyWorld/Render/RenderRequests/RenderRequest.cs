@@ -511,12 +511,12 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null)
+        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             if (!cameraDirection.HasValue)
                 cameraDirection = Vector3.Forward;
 
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, Vector3.Up);
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
 
             return viewMatrix;
         }
