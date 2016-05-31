@@ -45,6 +45,10 @@ namespace ToyWorldTests.Render
 
         protected void RunRRLongRunning()
         {
+#if !RENDER_DEBUG
+            return;
+#endif
+
             Renderer.MakeContextCurrent();
 
             int aID = m_gameController.GetAvatarIds().First();
@@ -52,7 +56,8 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
-            rr.GatherImage = true;
+            ((RenderRequest)rr).CopyToWindow = true;
+
 
             var ac = m_gameController.GetAvatarController(aID);
             var controls = new AvatarControls(5) { DesiredForwardSpeed = .3f };
@@ -159,7 +164,7 @@ namespace ToyWorldTests.Render
     public class GLRendererTests : GLRendererTestBase
     {
         //[RunnableInDebugOnly]
-        /*
+        //*
         [Fact]
         /*/
         [Fact(Skip = "Skipped -- requires manual input to end.")]

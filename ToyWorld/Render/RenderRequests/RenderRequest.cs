@@ -36,6 +36,8 @@ namespace Render.RenderRequests
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
+        public bool CopyToWindow;
+
         private BasicFbo m_frontFbo, m_backFbo;
         private BasicFboMultisample m_fboMs;
 
@@ -680,6 +682,8 @@ namespace Render.RenderRequests
                 }
             }
 
+            if (CopyToWindow)
+            {
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
                 GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
                 GL.BlitFramebuffer(
@@ -687,6 +691,7 @@ namespace Render.RenderRequests
                     0, 0, renderer.Width, renderer.Height,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
+            }
         }
 
         #endregion
