@@ -122,6 +122,12 @@ namespace ToyWorldTests.Render
                     case Key.Number2:
                     case Key.Number3:
                     case Key.Number4:
+                    case Key.Number5:
+                    case Key.Number6:
+                    case Key.Number7:
+                    case Key.Number8:
+                    case Key.Number9:
+                    case Key.Number0:
                         onToggle(args.Key);
                         break;
                 }

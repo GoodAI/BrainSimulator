@@ -28,7 +28,6 @@ namespace Render.RenderRequests
         {
             None = 0,
             Size = 1,
-            Postprocessing = 1 << 1,
             Resolution = 1 << 2,
             Image = 1 << 3,
             Smoke = 1 << 4,
@@ -307,7 +306,7 @@ namespace Render.RenderRequests
             set
             {
                 m_drawNoise = value;
-                m_dirtyParams |= DirtyParams.Postprocessing | DirtyParams.Noise;
+                m_dirtyParams |= DirtyParams.Noise;
             }
         }
         public float NoiseIntensityCoefficient
@@ -317,6 +316,18 @@ namespace Render.RenderRequests
         }
 
         #endregion
+
+        #endregion
+
+        #region Helpers
+
+        Fbo SwapBuffers()
+        {
+            BasicFbo tmp = m_backFbo;
+            m_backFbo = m_frontFbo;
+            m_frontFbo = tmp;
+            return m_frontFbo;
+        }
 
         #endregion
 
@@ -383,14 +394,6 @@ namespace Render.RenderRequests
                     m_projMatrix *= Matrix.CreateScale(1, -1, 1);
 
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
-            }
-            if (m_dirtyParams.HasFlag(DirtyParams.Postprocessing))
-            {
-                // Postprocessing bounces between the front and back buffers
-                if (m_backFbo != null)
-                    m_backFbo.Dispose();
-
-                m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
             {
@@ -468,6 +471,11 @@ namespace Render.RenderRequests
             }
 
             m_dirtyParams = DirtyParams.None;
+
+
+            // The first time post-processing becomes active, we will allocate the back buffer
+            if (PostProcessingActive && m_backFbo == null)
+                m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
         }
 
         #endregion
@@ -536,17 +544,15 @@ namespace Render.RenderRequests
                     BlitFramebufferFilter.Linear);
             }
 
-            Fbo scene = m_frontFbo;
-
             // Apply post-processing
             if (PostProcessingActive) // If any postprocessing effect is active
             {
                 GL.Disable(EnableCap.Blend);
-                scene = ApplyPostProcessingEffects(renderer);
+                ApplyPostProcessingEffects(renderer);
             }
 
             // Copy the rendered scene
-            GatherAndDistributeData(renderer, scene);
+            GatherAndDistributeData(renderer);
         }
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -641,9 +647,9 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private Fbo ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
+        private void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
         {
-            // Draw from the front to the back buffer
+            // Always draw post-processing from the front to the back buffer
             m_backFbo.Bind();
 
             if (DrawNoise)
@@ -660,19 +666,31 @@ namespace Render.RenderRequests
                 m_quad.Draw();
             }
 
+            SwapBuffers();
+
             // more stuffs
 
-            // Return the fbo that contains the final scene
-            return m_backFbo;
+            // The final scene should be left in the front buffer
         }
 
-        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer, Fbo scene)
+        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
         {
-            scene.Bind();
+            if (CopyToWindow)
+            {
+                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+                m_frontFbo.Bind(FramebufferTarget.ReadFramebuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                GL.BlitFramebuffer(
+                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                    0, 0, renderer.Width, renderer.Height,
+                    ClearBufferMask.ColorBufferBit,
+                    BlitFramebufferFilter.Nearest);
+            }
 
             // Gather data to host mem
             if (GatherImage)
             {
+                m_frontFbo.Bind();
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
                 if (CopyImageThroughCpu)
@@ -685,17 +703,6 @@ namespace Render.RenderRequests
                     m_pbo.Bind();
                     GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                 }
-            }
-
-            if (CopyToWindow)
-            {
-                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-                GL.BlitFramebuffer(
-                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
-                    0, 0, renderer.Width, renderer.Height,
-                    ClearBufferMask.ColorBufferBit,
-                    BlitFramebufferFilter.Linear);
             }
         }
 
