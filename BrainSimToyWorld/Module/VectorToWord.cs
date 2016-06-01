@@ -35,12 +35,14 @@ namespace GoodAI.ToyWorld
         }
 
         /// <summary>
-        /// The output words
+        /// The output words. 
+        /// While the data are chars, they are currenly stored as floats for 
+        /// compatibility with nodes that use floats.
         /// </summary>
         [MyOutputBlock(0)]
-        public MyMemoryBlock<char> OutputWords
+        public MyMemoryBlock<float> OutputWords
         {
-            get { return GetOutput<char>(0); }
+            get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 

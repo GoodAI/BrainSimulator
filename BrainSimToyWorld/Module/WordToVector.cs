@@ -26,12 +26,14 @@ namespace GoodAI.ToyWorld
 
         #region Memory Blocks
         /// <summary>
-        /// The input text
+        /// The input text.
+        /// While the data are chars, they are currenly stored as floats for 
+        /// compatibility with nodes that use floats.
         /// </summary>
         [MyInputBlock(0)]
-        public MyMemoryBlock<char> TextInput
+        public MyMemoryBlock<float> TextInput
         {
-            get { return GetInput<char>(0); }
+            get { return GetInput(0); }
         }
 
         /// <summary>
