@@ -9,15 +9,7 @@ namespace RenderingBase.RenderObjects.Effects
         private EffectBase m_currentEffect;
 
 
-        public EffectManager()
-        {
-            CaseInternal<NoEffectTex>();
-            CaseInternal<NoEffectOffset>();
-            CaseInternal<SmokeEffect>();
-            CaseInternal<NoiseEffect>();
-        }
-
-        private void CaseInternal<T>()
+        public void Case<T>()
             where T : EffectBase, new()
         {
             m_effects.Case<T>(() => new T());

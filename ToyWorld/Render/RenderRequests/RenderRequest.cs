@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
+using Render.RenderObjects.Effects;
+using Render.RenderObjects.Geometries;
 using RenderingBase.Renderer;
 using RenderingBase.RenderObjects.Buffers;
-using RenderingBase.RenderObjects.Effects;
 using RenderingBase.RenderObjects.Geometries;
 using RenderingBase.RenderObjects.Textures;
 using RenderingBase.RenderRequests;
@@ -13,6 +14,7 @@ using VRageMath;
 using World.Atlas.Layers;
 using World.Physics;
 using World.ToyWorldCore;
+using FullScreenQuadOffset = Render.RenderObjects.Geometries.FullScreenQuadOffset;
 using Rectangle = VRageMath.Rectangle;
 using RectangleF = VRageMath.RectangleF;
 
@@ -49,7 +51,7 @@ namespace Render.RenderRequests
 
         private TilesetTexture m_tex;
 
-        private FullScreenGrid m_grid;
+        private FullScreenGridTex m_grid;
         private FullScreenQuadOffset m_quadOffset;
         private FullScreenQuad m_quad;
 
@@ -373,7 +375,7 @@ namespace Render.RenderRequests
 
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
-                m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
+                m_grid = renderer.GeometryManager.Get<FullScreenGridTex>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
                 // Flip the image to have its origin in the top-left corner
 

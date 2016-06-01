@@ -10,26 +10,14 @@ namespace RenderingBase.RenderObjects.Geometries
         private readonly TypeSwitchParam<GeometryBase, Vector2I> m_vecGeometries = new TypeSwitchParam<GeometryBase, Vector2I>();
 
 
-        public GeometryManager()
-        {
-            // TODO: gather and distribute types to TypeSwitches based on available constructor through reflection (add attributes?)
-            // Plain geometries
-            CaseInternal<FullScreenQuad>();
-            CaseInternal<FullScreenQuadTex>();
-            CaseInternal<FullScreenQuadOffset>();
-
-            // Parameterized geometries
-            CaseParamInternal<FullScreenGrid>();
-        }
-
-        private GeometryManager CaseInternal<T>()
+        public GeometryManager Case<T>()
             where T : GeometryBase, new()
         {
             m_geometries.Case<T>(() => new T());
             return this;
         }
 
-        private GeometryManager CaseParamInternal<T>()
+        public GeometryManager CaseParam<T>()
             where T : GeometryBase
         {
             // Activator is about 11 times slower, than new T() -- should be ok for this usage

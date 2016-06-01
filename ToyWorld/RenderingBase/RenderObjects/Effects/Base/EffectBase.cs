@@ -10,8 +10,6 @@ namespace RenderingBase.RenderObjects.Effects
 {
     public class EffectBase : IDisposable
     {
-        protected const string ShaderPathBase = "RenderingBase.RenderObjects.Effects.Src.";
-
         private readonly int m_prog;
 
         private readonly Dictionary<int, int> m_uniformLocations = new Dictionary<int, int>();
@@ -21,18 +19,18 @@ namespace RenderingBase.RenderObjects.Effects
 
         // TODO: genericity
         // Addenda serve as switchable extensions to base shaders -- can be used as a different implementation of functions defined in base shaders.
-        protected EffectBase(Type uniformNamesEnumType, string vertPath, string fragPath, Stream vertAddendum = null, Stream fragAddendum = null)
+        protected EffectBase(Type uniformNamesEnumType, Stream vert, Stream frag, Stream vertAddendum = null, Stream fragAddendum = null)
         {
             // Load shaders
             m_prog = GL.CreateProgram();
 
             // Vertex shader
-            LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertPath));
+            LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vert));
             if (vertAddendum != null)
                 LoadAndAttachShader(ShaderType.VertexShader, GetShaderSource(vertAddendum));
 
             // Fragment shader
-            LoadAndAttachShader(ShaderType.FragmentShader, GetShaderSource(fragPath));
+            LoadAndAttachShader(ShaderType.FragmentShader, GetShaderSource(frag));
             if (fragAddendum != null)
                 LoadAndAttachShader(ShaderType.FragmentShader, GetShaderSource(fragAddendum));
 
@@ -51,12 +49,6 @@ namespace RenderingBase.RenderObjects.Effects
             }
         }
 
-        private string GetShaderSource(string name)
-        {
-            Stream sourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + name);
-            Debug.Assert(sourceStream != null);
-            return GetShaderSource(sourceStream);
-        }
 
         private string GetShaderSource(Stream sourceStream)
         {

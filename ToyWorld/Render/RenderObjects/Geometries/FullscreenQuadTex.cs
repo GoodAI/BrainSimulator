@@ -1,7 +1,8 @@
 ﻿using RenderingBase.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Geometries;
 using VRageMath;
 
-namespace RenderingBase.RenderObjects.Geometries
+namespace Render.RenderObjects.Geometries
 {
     internal class FullScreenQuadTex : FullScreenQuad
     {

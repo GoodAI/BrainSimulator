@@ -1,16 +1,15 @@
 ﻿using System.IO;
 using System.Reflection;
+using RenderingBase.RenderObjects.Effects;
 using VRageMath;
 
-namespace RenderingBase.RenderObjects.Effects
+namespace Render.RenderObjects.Effects
 {
-    public class NoiseEffect : EffectBase
+    public class NoiseEffect : NoEffect
     {
         private enum Uniforms
         {
             // Names must correspond to names as defined in the shaders
-            mw,
-            mvp,
 
             sceneTexture,
             viewportSize,
@@ -20,13 +19,8 @@ namespace RenderingBase.RenderObjects.Effects
 
 
         public NoiseEffect()
-            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: GetAddendumSrcStream("Noise.random.glsl"))
+            : base(typeof(Uniforms), "Post.Noise.vert", "Post.Noise.frag", fragAddendum: "Noise.random.glsl")
         { }
-
-        private static Stream GetAddendumSrcStream(string path)
-        {
-            return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
-        }
 
 
         public void SceneTextureUniform(int val)

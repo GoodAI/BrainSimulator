@@ -1,8 +1,8 @@
-﻿using VRageMath;
+﻿using RenderingBase.RenderObjects.Effects;
 
-namespace RenderingBase.RenderObjects.Effects
+namespace Render.RenderObjects.Effects
 {
-    internal class NoEffectTex : EffectBase
+    internal class NoEffectTex : NoEffect
     {
         private enum Uniforms
         {

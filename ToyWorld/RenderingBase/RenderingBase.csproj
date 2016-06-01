@@ -59,64 +59,20 @@
     <Compile Include="RenderObjects\Buffers\Pbo.cs" />
     <Compile Include="RenderObjects\Effects\Base\EffectBase.cs" />
     <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
-    <Compile Include="RenderObjects\Effects\Common\NoEffectOffset.cs" />
-    <Compile Include="RenderObjects\Effects\Common\NoEffectTex.cs" />
-    <Compile Include="RenderObjects\Effects\Common\NoiseEffect.cs" />
-    <Compile Include="RenderObjects\Effects\Common\SmokeEffect.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />
     <Compile Include="RenderObjects\Textures\BasicTexture.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTexturesMultisample.cs" />
+    <Compile Include="RenderObjects\Textures\TilesetImage.cs" />
     <Compile Include="RenderObjects\Textures\TilesetTexture.cs" />
-    <Compile Include="RenderRequests\RenderRequestAttribute.cs" />
-    <Compile Include="RenderRequests\RenderRequestFactory.cs" />
-    <Compile Include="RenderRequests\IRenderRequestBaseInternal.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicOffset.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\BasicTex.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise2D.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\perlinNoise3D.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\random.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise2D.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Noise\simplexNoise3D.glsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Noise.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.frag" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.vert" />
+    <Compile Include="RenderRequests\Base\RenderRequestAttribute.cs" />
+    <Compile Include="RenderRequests\Base\RenderRequestFactory.cs" />
+    <Compile Include="RenderRequests\Base\IRenderRequestBaseInternal.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">

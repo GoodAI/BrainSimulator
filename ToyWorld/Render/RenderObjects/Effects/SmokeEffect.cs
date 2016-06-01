@@ -1,10 +1,11 @@
 ﻿using System.IO;
 using System.Reflection;
+using RenderingBase.RenderObjects.Effects;
 using VRageMath;
 
-namespace RenderingBase.RenderObjects.Effects
+namespace Render.RenderObjects.Effects
 {
-    public class SmokeEffect : EffectBase
+    public class SmokeEffect : NoEffect
     {
         private enum Uniforms
         {
@@ -19,13 +20,8 @@ namespace RenderingBase.RenderObjects.Effects
 
 
         public SmokeEffect()
-            : base(typeof(Uniforms), "Post.Smoke.vert", "Post.Smoke.frag", fragAddendum: GetAddendumSrcStream("Noise.simplexNoise3D.glsl"))
+            : base(typeof(Uniforms), "Post.Smoke.vert", "Post.Smoke.frag", fragAddendum: "Noise.simplexNoise3D.glsl")
         { }
-
-        private static Stream GetAddendumSrcStream(string path)
-        {
-            return Assembly.GetExecutingAssembly().GetManifestResourceStream(ShaderPathBase + path);
-        }
 
 
         public void ModelWorldUniform(ref Matrix val)

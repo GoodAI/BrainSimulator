@@ -1,9 +1,9 @@
-﻿using System;
+﻿using RenderingBase.RenderObjects.Effects;
 using VRageMath;
 
-namespace RenderingBase.RenderObjects.Effects
+namespace Render.RenderObjects.Effects
 {
-    public class NoEffectOffset : EffectBase
+    public class NoEffectOffset : NoEffect
     {
         private enum Uniforms
         {
