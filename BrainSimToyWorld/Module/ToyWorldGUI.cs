@@ -94,6 +94,8 @@ namespace GoodAI.ToyWorld
                 {
                     for (int i = 0; i < Owner.Text.Length; ++i)
                         Owner.TextOut.Host[i] = Owner.Text[i];
+                    for (int i = Owner.Text.Length; i < Owner.TextOut.Count; ++i)
+                        Owner.TextOut.Host[i] = 0f;
                     Owner.TextOut.SafeCopyToDevice();
 
                     Owner.Text = null;
