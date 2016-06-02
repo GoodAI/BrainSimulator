@@ -14,7 +14,6 @@ namespace RenderingBase.RenderObjects.Textures
         public TextureManager()
         {
             CaseInternal<TilesetTexture>();
-
         }
 
         private void CaseInternal<T>()

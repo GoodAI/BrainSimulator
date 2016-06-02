@@ -407,14 +407,11 @@ namespace Render.RenderRequests
 
                     m_frontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
-                    // Reallocate back fbo
-                    if (PostProcessingActive)
-                    {
-                        if (m_backFbo != null)
-                            m_backFbo.Dispose();
+                    // Reallocate back fbo; only if it was already allocated
+                    if (m_backFbo != null)
+                        m_backFbo.Dispose();
 
-                        m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
-                    }
+                    m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
                     if (DrawNoise)
                         m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
@@ -471,11 +468,6 @@ namespace Render.RenderRequests
             }
 
             m_dirtyParams = DirtyParams.None;
-
-
-            // The first time post-processing becomes active, we will allocate the back buffer
-            if (PostProcessingActive && m_backFbo == null)
-                m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
         }
 
         #endregion
