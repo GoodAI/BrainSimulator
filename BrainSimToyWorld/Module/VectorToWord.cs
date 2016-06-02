@@ -162,14 +162,18 @@ namespace GoodAI.ToyWorld
                 Owner.InputVectors.SafeCopyToHost();
                 StringBuilder outputTextBuilder = new StringBuilder();
                 int maxNumberOfWords = Math.Min(Owner.MaxNumberOfWords, Owner.InputWordCount);
-                for (int wordIndex = 0; wordIndex < maxNumberOfWords; wordIndex++)
+                bool atEnd = false;
+                for (int wordIndex = 0; wordIndex < maxNumberOfWords && !atEnd; wordIndex++)
                 {
                     float[] vector = Owner.GetInputVector(wordIndex);
-                    var neighbors = Owner.FindNearestNeighbors(vector);
+                    atEnd = Vocabulary.IsZero(vector);
                     //CopyToNeighborsBlocks(wordIndex, neighbors);
-
-                    string nearestNeighborWord = neighbors[0].Item2.Label;
-                    AppendWord(outputTextBuilder, nearestNeighborWord);
+                    if (!atEnd)
+                    { 
+                        var neighbors = Owner.FindNearestNeighbors(vector);
+                        string nearestNeighborWord = neighbors[0].Item2.Label;
+                        AppendWord(outputTextBuilder, nearestNeighborWord);
+                    }
                 }
                 outputText = outputTextBuilder.ToString();
             }

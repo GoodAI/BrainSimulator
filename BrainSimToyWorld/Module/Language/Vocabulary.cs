@@ -223,16 +223,18 @@ namespace GoodAI.ToyWorld.Language
         /// <returns>A list of neighboring vectors sorted by descending cosine similarity</returns>
         public List<Tuple<float, LabeledVector>> FindNearestNeighbors(float[] vector, int neighborhoodSize)
         {
-            var nBestList = new NBestList<LabeledVector>(neighborhoodSize);
-            if (!IsZero(vector))
+            if (IsZero(vector))
             {
-                foreach (var wordVectorPair in _labeledVectorDictionary)
+                return null;
+            }
+
+            var nBestList = new NBestList<LabeledVector>(neighborhoodSize);
+            foreach (var wordVectorPair in _labeledVectorDictionary)
+            {
+                float cosine = LabeledVector.Cosine(wordVectorPair.Value, vector);
+                if (nBestList.IsBetter(cosine))
                 {
-                    float cosine = LabeledVector.Cosine(wordVectorPair.Value, vector);
-                    if (nBestList.IsBetter(cosine))
-                    {
-                        nBestList.Insert(cosine, new LabeledVector(wordVectorPair.Key, wordVectorPair.Value));
-                    }
+                    nBestList.Insert(cosine, new LabeledVector(wordVectorPair.Key, wordVectorPair.Value));
                 }
             }
             return nBestList.GetSortedList();
