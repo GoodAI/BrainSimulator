@@ -71,6 +71,7 @@
     <Compile Include="RenderObjects\Effects\NoEffectOffset.cs" />
     <Compile Include="RenderObjects\Effects\NoEffectTex.cs" />
     <Compile Include="RenderObjects\Effects\NoiseEffect.cs" />
+    <Compile Include="RenderObjects\Effects\PointLightEffect.cs" />
     <Compile Include="RenderObjects\Effects\SmokeEffect.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGridTex.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
@@ -118,7 +119,9 @@
     <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.frag" />
     <EmbeddedResource Include="RenderObjects\Effects\Src\Post\Smoke.vert" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="RenderObjects\Effects\Src\Light\PointLight.frag" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
