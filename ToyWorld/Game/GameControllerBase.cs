@@ -1,10 +1,9 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using GoodAI.Logging;
 using GoodAI.ToyWorld.Control;
 using GoodAI.ToyWorldAPI;
 using Render.Renderer;
-using Render.RenderRequests;
+using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using World.GameActors.GameObjects;
@@ -12,14 +11,13 @@ using World.ToyWorldCore;
 
 namespace Game
 {
-    // TODO: why there is abstract class instead of BasicGameController?
     public abstract class GameControllerBase : IGameController
     {
         private bool m_initialized;
         private readonly GameSetup m_gameSetup;
 
-        private RendererBase m_renderer;
-        public RendererBase Renderer { get { return m_renderer; } private set { m_renderer = value; } }
+        private ToyWorldRenderer m_renderer;
+        public ToyWorldRenderer Renderer { get { return m_renderer; } private set { m_renderer = value; } }
 
         public ToyWorld World { get; private set; }
 
@@ -28,7 +26,7 @@ namespace Game
 
         public event MessageEventHandler NewMessage = delegate { };
 
-        protected GameControllerBase(RendererBase renderer, GameSetup setup)
+        protected GameControllerBase(ToyWorldRenderer renderer, GameSetup setup)
         {
             Renderer = renderer;
             m_gameSetup = setup;
@@ -122,7 +120,7 @@ namespace Game
         void InitRR<T>(T rr)
             where T : class
         {
-            RenderRequest rrBase = rr as RenderRequest; // Assume that all renderRequests created by factory inherit from RenderRequest
+            IRenderRequestBaseInternal<ToyWorld> rrBase = rr as IRenderRequestBaseInternal<ToyWorld>; // Assume that all renderRequests created by factory inherit from IRenderRequestBaseInternal
 
             if (rrBase == null)
                 throw new RenderRequestNotImplementedException(

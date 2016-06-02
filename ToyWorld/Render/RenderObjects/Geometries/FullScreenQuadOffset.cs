@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics;
 using OpenTK.Graphics.OpenGL;
-using Render.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Geometries;
 using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    internal class FullScreenQuadOffset : FullScreenQuad
+    public class FullScreenQuadOffset : FullScreenQuad
     {
         const int QuadCount = 1;
 

@@ -8,12 +8,12 @@ namespace GoodAI.ToyWorld.Control
     {
         public static GameControllerBase GetController(GameSetup gameSetup)
         {
-            return new BasicGameController(new GLRenderer(), gameSetup);
+            return new BasicGameController(new ToyWorldRenderer(), gameSetup);
         }
 
         public static GameControllerBase GetThreadSafeController(GameSetup gameSetup)
         {
-            return new ThreadSafeGameController(new GLRenderer(), gameSetup);
+            return new ThreadSafeGameController(new ToyWorldRenderer(), gameSetup);
         }
 
         public static int GetSignalCount()

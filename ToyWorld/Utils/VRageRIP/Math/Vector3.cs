@@ -1788,6 +1788,17 @@ namespace VRageMath
         {
             return new Vector3(Math.Round(v.X, numDecimals), Math.Round(v.Y, numDecimals), Math.Round(v.Z, numDecimals));
         }
+
+        /// <summary>
+        /// Rotates vector by given angle
+        /// </summary>
+        /// <param name="angle">Angle in radians</param>
+        public void RotateZ(double angle)
+        {
+            float tmpX = X;
+            X = X * (float)Math.Cos(angle) - Y * (float)Math.Sin(angle);
+            Y = tmpX * (float)Math.Sin(angle) + Y * (float)Math.Cos(angle);
+        }
     }
 
     public static class NullableVector3Extensions

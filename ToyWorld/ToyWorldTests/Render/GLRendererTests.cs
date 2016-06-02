@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderRequests;
+using RenderingBase.Renderer;
+using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
 using VRageMath;
@@ -23,7 +23,7 @@ namespace ToyWorldTests.Render
         private readonly GameControllerBase m_gameController;
 
         protected ToyWorld World { get { return m_gameController.World; } }
-        protected GLRenderer Renderer { get { return (GLRenderer)m_gameController.Renderer; } }
+        protected GLRenderer<ToyWorld> Renderer { get { return (GLRenderer<ToyWorld>)m_gameController.Renderer; } }
 
 
         public GLRendererTestBase()
@@ -45,6 +45,10 @@ namespace ToyWorldTests.Render
 
         protected void RunRRLongRunning()
         {
+#if !RENDER_DEBUG
+            return;
+#endif
+
             Renderer.MakeContextCurrent();
 
             int aID = m_gameController.GetAvatarIds().First();
@@ -52,7 +56,8 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
-            rr.GatherImage = true;
+            ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
+
 
             var ac = m_gameController.GetAvatarController(aID);
             var controls = new AvatarControls(5) { DesiredForwardSpeed = .3f };
@@ -75,6 +80,8 @@ namespace ToyWorldTests.Render
                     if (key == Key.Number2)
                         rr.DrawNoise = !rr.DrawNoise;
                     if (key == Key.Number3)
+                        rr.RotateMap = !rr.RotateMap;
+                    if (key == Key.Number5)
                         rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
                 });
 
@@ -115,6 +122,12 @@ namespace ToyWorldTests.Render
                     case Key.Number2:
                     case Key.Number3:
                     case Key.Number4:
+                    case Key.Number5:
+                    case Key.Number6:
+                    case Key.Number7:
+                    case Key.Number8:
+                    case Key.Number9:
+                    case Key.Number0:
                         onToggle(args.Key);
                         break;
                 }
@@ -157,7 +170,7 @@ namespace ToyWorldTests.Render
     public class GLRendererTests : GLRendererTestBase
     {
         //[RunnableInDebugOnly]
-        /*
+        //*
         [Fact]
         /*/
         [Fact(Skip = "Skipped -- requires manual input to end.")]

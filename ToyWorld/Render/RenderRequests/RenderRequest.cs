@@ -3,24 +3,28 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
-using Render.Renderer;
-using Render.RenderObjects.Buffers;
 using Render.RenderObjects.Effects;
 using Render.RenderObjects.Geometries;
-using Render.RenderObjects.Textures;
+using RenderingBase.Renderer;
+using RenderingBase.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Geometries;
+using RenderingBase.RenderObjects.Textures;
+using RenderingBase.RenderRequests;
 using VRageMath;
 using World.Atlas.Layers;
 using World.Physics;
 using World.ToyWorldCore;
+using FullScreenQuadOffset = Render.RenderObjects.Geometries.FullScreenQuadOffset;
 using Rectangle = VRageMath.Rectangle;
 using RectangleF = VRageMath.RectangleF;
 
 namespace Render.RenderRequests
 {
-    public abstract class RenderRequest : IRenderRequestBase, IDisposable
+    public abstract class RenderRequest
+        : IRenderRequestBaseInternal<ToyWorld>
     {
         [Flags]
-        private enum DirtyParams
+        protected enum DirtyParams
         {
             None = 0,
             Size = 1,
@@ -35,6 +39,8 @@ namespace Render.RenderRequests
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
+        public bool CopyToWindow { get; set; }
+
         private BasicFbo m_frontFbo, m_backFbo;
         private BasicFboMultisample m_fboMs;
 
@@ -44,7 +50,7 @@ namespace Render.RenderRequests
 
         private TilesetTexture m_tex;
 
-        private FullScreenGrid m_grid;
+        private FullScreenGridTex m_grid;
         private FullScreenQuadOffset m_quadOffset;
         private FullScreenQuad m_quad;
 
@@ -53,9 +59,7 @@ namespace Render.RenderRequests
         private Matrix m_projMatrix;
         private Matrix m_viewProjectionMatrix;
 
-        private DirtyParams m_dirtyParams;
-
-        protected bool PostProcessingActive { get { return DrawNoise; } }
+        protected DirtyParams m_dirtyParams;
 
         #endregion
 
@@ -121,14 +125,15 @@ namespace Render.RenderRequests
             }
         }
 
-        protected RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
+        protected virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
         private Rectangle GridView
         {
             get
             {
-                var positionOffset = new Vector2(ViewV.Width % 2, View.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
-                var rect = new RectangleF(Vector2.Zero, ViewV.Size + 2 + positionOffset) { Center = ViewV.Center - positionOffset };
+                var view = ViewV;
+                var positionOffset = new Vector2(view.Width % 2, view.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
+                var rect = new RectangleF(Vector2.Zero, view.Size + 2 + positionOffset) { Center = view.Center - positionOffset };
                 return new Rectangle(
                     new Vector2I(
                         (int)Math.Ceiling(rect.Position.X),
@@ -140,6 +145,8 @@ namespace Render.RenderRequests
         #endregion
 
         #region IRenderRequestBase overrides
+
+        #region View controls
 
         public System.Drawing.PointF PositionCenter
         {
@@ -169,6 +176,9 @@ namespace Render.RenderRequests
             }
         }
 
+        #endregion
+
+        #region Resolution
 
         private System.Drawing.Size m_resolution;
         public System.Drawing.Size Resolution
@@ -206,6 +216,9 @@ namespace Render.RenderRequests
             }
         }
 
+        #endregion
+
+        #region Image
 
         private bool m_gatherImage;
         public bool GatherImage
@@ -234,30 +247,15 @@ namespace Render.RenderRequests
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
+        #endregion
 
-        private bool m_drawNoise;
-        private float m_noiseIntensityCoefficient = 1.0f;
+        #region Effects - overlay
 
         private bool m_drawSmoke;
         private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
         private float m_smokeTransformationSpeedCoefficient = 1f;
         private float m_smokeIntensityCoefficient = 1f;
         private float m_smokeScaleCoefficient = 1f;
-
-        public bool DrawNoise
-        {
-            get { return m_drawNoise; }
-            set
-            {
-                m_drawNoise = value;
-                m_dirtyParams |= DirtyParams.Noise;
-            }
-        }
-        public float NoiseIntensityCoefficient
-        {
-            get { return m_noiseIntensityCoefficient; }
-            set { m_noiseIntensityCoefficient = value; }
-        }
 
         public bool DrawSmoke
         {
@@ -295,9 +293,47 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region Effects - post
+
+        protected bool PostProcessingActive { get { return DrawNoise; } }
+
+        private bool m_drawNoise;
+        private float m_noiseIntensityCoefficient = 1.0f;
+
+        public bool DrawNoise
+        {
+            get { return m_drawNoise; }
+            set
+            {
+                m_drawNoise = value;
+                m_dirtyParams |= DirtyParams.Noise;
+            }
+        }
+        public float NoiseIntensityCoefficient
+        {
+            get { return m_noiseIntensityCoefficient; }
+            set { m_noiseIntensityCoefficient = value; }
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Helpers
+
+        Fbo SwapBuffers()
+        {
+            BasicFbo tmp = m_backFbo;
+            m_backFbo = m_frontFbo;
+            m_frontFbo = tmp;
+            return m_frontFbo;
+        }
+
+        #endregion
+
         #region Init
 
-        public virtual void Init(RendererBase renderer, ToyWorld world)
+        public virtual void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Setup color and blending
             const int baseIntensity = 50;
@@ -344,13 +380,13 @@ namespace Render.RenderRequests
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
-        private void CheckDirtyParams(RendererBase renderer)
+        private void CheckDirtyParams(RendererBase<ToyWorld> renderer)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
-                m_grid = renderer.GeometryManager.Get<FullScreenGrid>(GridView.Size);
+                m_grid = renderer.GeometryManager.Get<FullScreenGridTex>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
                 // Flip the image to have its origin in the top-left corner
 
@@ -365,23 +401,23 @@ namespace Render.RenderRequests
 
                 if (newRes)
                 {
+                    // Reallocate front fbo
                     if (m_frontFbo != null)
                         m_frontFbo.Dispose();
 
                     m_frontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
+                    // Reallocate back fbo; only if it was already allocated
+                    if (m_backFbo != null)
+                        m_backFbo.Dispose();
+
+                    m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+
                     if (DrawNoise)
                         m_dirtyParams |= DirtyParams.Noise; // Force Noise re-checking (we need to set viewportSize uniform)
-
-                    if (PostProcessingActive) // If any post-processing effect is active, we need to update the back fbo
-                    {
-                        if (m_backFbo != null)
-                            m_backFbo.Dispose();
-
-                        m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
-                    }
                 }
 
+                // Reallocate MS fbo
                 if (MultisampleLevel > 0)
                 {
                     int multisampleCount = 1 << MultisampleLevel; // 4x to 32x (4 levels)
@@ -459,7 +495,7 @@ namespace Render.RenderRequests
         #endregion
 
 
-        public virtual void Draw(RendererBase renderer, ToyWorld world)
+        public virtual void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             CheckDirtyParams(renderer);
 
@@ -511,12 +547,12 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        protected Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null)
+        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             if (!cameraDirection.HasValue)
                 cameraDirection = Vector3.Forward;
 
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, Vector3.Up);
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
 
             return viewMatrix;
         }
@@ -574,7 +610,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private void DrawEffects(RendererBase renderer)
+        private void DrawEffects(RendererBase<ToyWorld> renderer)
         {
             if (DrawSmoke)
             {
@@ -603,9 +639,9 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private void ApplyPostProcessingEffects(RendererBase renderer)
+        private void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
         {
-            // Draw from the front to the back buffer
+            // Always draw post-processing from the front to the back buffer
             m_backFbo.Bind();
 
             if (DrawNoise)
@@ -622,15 +658,31 @@ namespace Render.RenderRequests
                 m_quad.Draw();
             }
 
+            SwapBuffers();
+
             // more stuffs
+
+            // The final scene should be left in the front buffer
         }
 
-        private void GatherAndDistributeData(RendererBase renderer)
+        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
         {
+            if (CopyToWindow)
+            {
+                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+                m_frontFbo.Bind(FramebufferTarget.ReadFramebuffer);
+                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                GL.BlitFramebuffer(
+                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                    0, 0, renderer.Width, renderer.Height,
+                    ClearBufferMask.ColorBufferBit,
+                    BlitFramebufferFilter.Nearest);
+            }
+
             // Gather data to host mem
             if (GatherImage)
             {
-                // The final image was rendered to the currently bound fbo
+                m_frontFbo.Bind();
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
                 if (CopyImageThroughCpu)
@@ -644,14 +696,6 @@ namespace Render.RenderRequests
                     GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                 }
             }
-
-            // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-            GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-            GL.BlitFramebuffer(
-                0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
-                0, 0, renderer.Width, renderer.Height,
-                ClearBufferMask.ColorBufferBit,
-                BlitFramebufferFilter.Linear);
         }
 
         #endregion

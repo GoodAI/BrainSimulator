@@ -5,7 +5,7 @@ namespace Game
 {
     public class BasicGameController : GameControllerBase
     {
-        public BasicGameController(RendererBase renderer, GameSetup gameSetup)
+        public BasicGameController(ToyWorldRenderer renderer, GameSetup gameSetup)
             : base(renderer, gameSetup)
         { }
     }

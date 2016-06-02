@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
-using Render.Renderer;
+using RenderingBase.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -50,14 +50,14 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase renderer, ToyWorld world)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             SizeV = new Vector2(3, 3);
 
             base.Init(renderer, world);
         }
 
-        public override void Draw(RendererBase renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             if (FovAvatarRenderRequest == null)
                 throw new MissingFieldException("Missing the IFovAvatarRR. Please specify one before using this render request.");

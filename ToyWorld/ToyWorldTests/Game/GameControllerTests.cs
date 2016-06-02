@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
-using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderRequests;
-using Render.Tests.RRs;
-using ToyWorldTests.Attributes;
+using ToyWorldTests.Render.RRs;
 using Xunit;
 
 namespace ToyWorldTests.Game

@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Game;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Input;
-using Render.Renderer;
-using Render.RenderRequests;
+using RenderingBase.Renderer;
+using RenderingBase.RenderRequests;
 using Xunit;
 
 namespace ToyWorldTests.Render

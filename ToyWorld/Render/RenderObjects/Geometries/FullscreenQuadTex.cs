@@ -1,4 +1,5 @@
-﻿using Render.RenderObjects.Buffers;
+﻿using RenderingBase.RenderObjects.Buffers;
+using RenderingBase.RenderObjects.Geometries;
 using VRageMath;
 
 namespace Render.RenderObjects.Geometries
