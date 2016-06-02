@@ -630,6 +630,7 @@ namespace Render.RenderRequests
             // Gather data to host mem
             if (GatherImage)
             {
+                m_frontFbo.Bind();
                 // The final image was rendered to the currently bound fbo
                 GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
@@ -646,6 +647,7 @@ namespace Render.RenderRequests
             }
 
             // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
+            m_frontFbo.Bind(FramebufferTarget.ReadFramebuffer);
             GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
             GL.BlitFramebuffer(
                 0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
@@ -653,7 +655,6 @@ namespace Render.RenderRequests
                 ClearBufferMask.ColorBufferBit,
                 BlitFramebufferFilter.Linear);
         }
-
         #endregion
     }
 }
