@@ -2,10 +2,10 @@
 
 
 // Lighting coefficients
-// Light color and intensity
-uniform vec4 colorIntensity = vec4(vec3(220), 0.5f);
-// The decay rate of the light
-uniform float decay = 50;
+// Light's color
+uniform vec4 color = vec4(0.85f);
+// The intensity and decay rate of the light
+uniform vec2 intensityDecay = vec2(0.3f, 200);
 // The light's world position
 uniform vec3 lightPos = vec3(0);
 
@@ -19,9 +19,8 @@ void main()
 {
 	vec3 dist = lightPos - f_worldPos;
 
-	float intensity = 1 / (1 + decay * dot(dist, dist));
+	float intensity = 1 / (1 + intensityDecay.y* dot(dist, dist));
 
-	out_color = vec4(colorIntensity.xyz, 220);
-	out_color *= intensity * colorIntensity.w;
+	out_color = color * 255 * intensity * intensityDecay.x;
 	out_color.xyz *= out_color.w; // Pre-multiply by alpha
 }

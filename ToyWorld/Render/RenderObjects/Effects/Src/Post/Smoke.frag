@@ -15,6 +15,9 @@ smooth in vec3 f_worldPos;
 layout(location = 0) out vec4 out_color;
 
 
+// TODO: ambient and diffuse smoke (same as with NoEffect)
+
+
 float snoise(vec3 P);
 
 void main()
@@ -28,9 +31,9 @@ void main()
 	else
 		// offset (1,2) to (0,1), scale to (1-mean), offset to (mean,1)
 		noise = (noise - 1f) * (1 - mean) + mean;
-		
-	if(meanScale.x < 0.3) 
-		noise *= (meanScale.x/0.3); // allow the noise to fade out when the intensity is low
+
+	if (meanScale.x < 0.3)
+		noise *= (meanScale.x / 0.3); // allow the noise to fade out when the intensity is low
 
 	out_color.w = smokeColor.w * noise;
 	out_color.xyz = smokeColor.xyz * out_color.w; // we are using pre-multiplied alpha blending

@@ -13,8 +13,8 @@ namespace Render.RenderObjects.Effects
             mw,
             mvp,
 
-            colorIntensity,
-            decay,
+            color,
+            intensityDecay,
             lightPos,
         }
 
@@ -37,12 +37,12 @@ namespace Render.RenderObjects.Effects
 
         public void ColorIntensityUniform(Vector4 val)
         {
-            SetUniform4(base[Uniforms.colorIntensity], val);
+            SetUniform4(base[Uniforms.color], val);
         }
 
-        public void DecayUniform(float val)
+        public void IntensityDecayUniform(Vector2 val)
         {
-            SetUniform1(base[Uniforms.decay], val);
+            SetUniform2(base[Uniforms.intensityDecay], val);
         }
 
         public void LightPosUniform(Vector3 val)

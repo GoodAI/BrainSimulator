@@ -372,7 +372,7 @@ namespace Render.RenderRequests
             m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
-            m_effect.AmbientUniform(new Vector4(255, 255, 255, AmbientTerm));
+            m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
 
 
             // Set up light shader
@@ -529,10 +529,7 @@ namespace Render.RenderRequests
             // Bind stuff to GL
             renderer.TextureManager.Bind(m_tex);
             renderer.EffectManager.Use(m_effect);
-            m_effect.DiffuseUniform(
-                EnableDayAndNightCycle
-                ? new Vector4(255, 255, 255, (1 - AmbientTerm) * world.Atlas.Day)
-                : new Vector4(255, 255, 255, 1 - AmbientTerm));
+            m_effect.DiffuseUniform(new Vector4(1, 1, 1, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
 
             // Draw the scene
             DrawTileLayers(world);
@@ -665,8 +662,8 @@ namespace Render.RenderRequests
 
                 foreach (var character in world.Atlas.Characters)
                 {
-                    m_pointLightEffect.ColorIntensityUniform(new Vector4(220, 220, 220, 0.3f));
-                    m_pointLightEffect.DecayUniform(1 / character.ForwardSpeed * 30);
+                    m_pointLightEffect.ColorIntensityUniform(new Vector4(0.85f));
+                    m_pointLightEffect.IntensityDecayUniform(new Vector2(0.3f, 1 / character.ForwardSpeed * 30));
                     m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
 
                     m_quad.Draw();
