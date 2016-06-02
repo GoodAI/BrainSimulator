@@ -18,7 +18,5 @@ layout(location = 0) out vec4 out_color;
 void main()
 {
 	out_color = texture(tilesetTexture, f_texCoods);
-	vec3 ambientNorm = ambient.xyz;
-	vec3 diffuseNorm = diffuse.xyz;
-	out_color.xyz = (ambient.w * ambientNorm + diffuse.w * diffuseNorm) * out_color.xyz;
+	out_color.xyz = (ambient.w * ambient.xyz + diffuse.w * diffuse.xyz) * out_color.xyz;
 }

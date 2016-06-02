@@ -379,6 +379,7 @@ namespace Render.RenderRequests
             m_pointLightEffect = new PointLightEffect();
             renderer.EffectManager.Use(m_pointLightEffect);
 
+
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
@@ -635,21 +636,6 @@ namespace Render.RenderRequests
             // View and projection transforms
             Matrix mvp = mw * m_viewProjectionMatrix;
 
-            if (DrawSmoke)
-            {
-                renderer.EffectManager.Use(m_smokeEffect);
-                m_smokeEffect.ModelWorldUniform(ref mw);
-                m_smokeEffect.ModelViewProjectionUniform(ref mvp);
-
-                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
-                double step = 0.005d * SmokeTransformationSpeedCoefficient;
-                double seed = renderer.SimTime * step % 3e6d;
-                m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
-                m_smokeEffect.MeanScaleUniform(new Vector2(SmokeIntensityCoefficient, SmokeScaleCoefficient));
-
-                m_quad.Draw();
-            }
-
             if (DrawLights)
             {
                 //GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.SrcAlpha); // Fades non-lit stuff to black
@@ -670,6 +656,23 @@ namespace Render.RenderRequests
                 }
 
                 GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
+            }
+
+            if (DrawSmoke)
+            {
+                renderer.EffectManager.Use(m_smokeEffect);
+                m_smokeEffect.ModelWorldUniform(ref mw);
+                m_smokeEffect.ModelViewProjectionUniform(ref mvp);
+
+                m_smokeEffect.AmbientDiffuseTermsUniform(new Vector2(AmbientTerm, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
+
+                // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
+                double step = 0.005d * SmokeTransformationSpeedCoefficient;
+                double seed = renderer.SimTime * step % 3e6d;
+                m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
+                m_smokeEffect.MeanScaleUniform(new Vector2(SmokeIntensityCoefficient, SmokeScaleCoefficient));
+
+                m_quad.Draw();
             }
 
             // more stufffs

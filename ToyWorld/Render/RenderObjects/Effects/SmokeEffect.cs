@@ -14,6 +14,7 @@ namespace Render.RenderObjects.Effects
             mvp,
 
             smokeColor,
+            ambientDiffuseTerms,
             timeStep,
             meanScale,
         }
@@ -38,6 +39,11 @@ namespace Render.RenderObjects.Effects
         public void SmokeColorUniform(Vector4 val)
         {
             SetUniform4(base[Uniforms.smokeColor], val);
+        }
+
+        public void AmbientDiffuseTermsUniform(Vector2 val)
+        {
+            SetUniform2(base[Uniforms.ambientDiffuseTerms], val);
         }
 
         public void TimeStepUniform(Vector2 val)
