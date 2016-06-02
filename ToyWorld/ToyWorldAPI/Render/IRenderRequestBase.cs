@@ -75,14 +75,14 @@ namespace GoodAI.ToyWorld.Control
 
 
         /// <summary>
-        /// 
+        /// Specifies, if the day progression should dim the scene.
         /// </summary>
-        bool DrawNoise { get; set; }
+        bool EnableDayAndNightCycle { get; set; }
 
         /// <summary>
-        /// 
+        /// Specifies whether light sources should emanate light
         /// </summary>
-        float NoiseIntensityCoefficient { get; set; }
+        bool DrawLights { get; set; }
 
 
         /// <summary>
@@ -109,5 +109,16 @@ namespace GoodAI.ToyWorld.Control
         /// 
         /// </summary>
         float SmokeScaleCoefficient { get; set; }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        bool DrawNoise { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        float NoiseIntensityCoefficient { get; set; }
     }
 }

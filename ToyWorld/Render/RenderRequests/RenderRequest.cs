@@ -252,6 +252,11 @@ namespace Render.RenderRequests
 
         #region Effects - overlay
 
+        public bool EnableDayAndNightCycle { get; set; }
+
+        public bool DrawLights { get; set; }
+
+
         private bool m_drawSmoke;
         private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
         private float m_smokeTransformationSpeedCoefficient = 1f;
