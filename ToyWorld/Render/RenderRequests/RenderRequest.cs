@@ -38,6 +38,7 @@ namespace Render.RenderRequests
         #region Fields
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
+        const float AmbientTerm = 0.25f;
 
         public bool CopyToWindow { get; set; }
 
@@ -353,7 +354,7 @@ namespace Render.RenderRequests
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
 
-            // Set up tile grid shaders
+            // Set up tile grid shader
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
             renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
             m_effect.TextureUniform(0);
@@ -365,6 +366,8 @@ namespace Render.RenderRequests
             m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+
+            m_effect.AmbientUniform(new Vector4(255, 255, 255, AmbientTerm));
 
 
             // Set up geometry
@@ -514,8 +517,9 @@ namespace Render.RenderRequests
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
+            renderer.EffectManager.Use(m_effect);
+            m_effect.DiffuseUniform(new Vector4(255, 255, 255, (1 - AmbientTerm) * world.Atlas.Day));
 
             // Draw the scene
             DrawTileLayers(world);
