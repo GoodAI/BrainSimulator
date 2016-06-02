@@ -28,10 +28,10 @@ namespace Render.RenderRequests
         {
             None = 0,
             Size = 1,
-            Resolution = 1 << 2,
-            Image = 1 << 3,
-            Smoke = 1 << 4,
-            Noise = 1 << 5,
+            Resolution = 1 << 1,
+            Image = 1 << 2,
+            Smoke = 1 << 3,
+            Noise = 1 << 4,
         }
 
 

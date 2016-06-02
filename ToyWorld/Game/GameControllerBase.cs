@@ -120,7 +120,7 @@ namespace Game
         void InitRR<T>(T rr)
             where T : class
         {
-            IRenderRequestBaseInternal<ToyWorld> rrBase = rr as IRenderRequestBaseInternal<ToyWorld>; // Assume that all renderRequests created by factory inherit from RenderRequest
+            IRenderRequestBaseInternal<ToyWorld> rrBase = rr as IRenderRequestBaseInternal<ToyWorld>; // Assume that all renderRequests created by factory inherit from IRenderRequestBaseInternal
 
             if (rrBase == null)
                 throw new RenderRequestNotImplementedException(
