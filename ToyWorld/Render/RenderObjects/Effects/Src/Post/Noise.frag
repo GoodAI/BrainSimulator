@@ -12,8 +12,6 @@ uniform vec2 timeStep = vec2(0, 0.01f);
 uniform float variance = 1;
 
 
-smooth in vec2 f_worldPos;
-
 layout(location = 0) out vec4 out_color;
 
 
