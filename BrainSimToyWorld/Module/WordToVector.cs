@@ -100,12 +100,14 @@ namespace GoodAI.ToyWorld
         /// <returns>Input text as a string</returns>
         private string GetStringFromInput()
         {
+            TextInput.SafeCopyToHost();
+
             StringBuilder builder = new StringBuilder();
             for (int charIndex = 0;
                 charIndex < TextInput.Count && TextInput.Host[charIndex] != 0;
                 charIndex++)
             {
-                builder.Append(TextInput.Host[charIndex]);
+                builder.Append((char)TextInput.Host[charIndex]);
             }
             return builder.ToString();
         }
