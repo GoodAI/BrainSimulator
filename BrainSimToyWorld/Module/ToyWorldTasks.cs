@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
+using GoodAI.ToyWorld.Language;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
@@ -305,6 +307,12 @@ namespace GoodAI.ToyWorld
             private void SendMessageToBrain()
             {
                 string message = Owner.AvatarCtrl.MessageIn;
+
+                SetMessageTextBlock(message);
+            }
+
+            private void SetMessageTextBlock(string message)
+            {
                 if (message == null)
                 {
                     Owner.Text.Fill(0);

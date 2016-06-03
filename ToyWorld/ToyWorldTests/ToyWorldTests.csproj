@@ -113,6 +113,9 @@
     <Compile Include="BrainSimIntegrationTests.cs" />
     <Compile Include="Game\AvatarControllerTests.cs" />
     <Compile Include="Game\GameControllerTests.cs" />
+    <Compile Include="Language\LanguageInputTests.cs" />
+    <Compile Include="Language\LanguageOutputTests.cs" />
+    <Compile Include="Language\VocabularyTests.cs" />
     <Compile Include="Physics\BasicAvatarMoverTest.cs" />
     <Compile Include="Physics\MomentumCollisionResolverTest.cs" />
     <Compile Include="Physics\MovementPhysicsTest.cs" />
@@ -193,6 +196,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="TestFiles\wumpus.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TestFiles\word-vectors.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>

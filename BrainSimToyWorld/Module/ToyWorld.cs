@@ -9,6 +9,7 @@ using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms.Design;
 using Logger;
+using GoodAI.ToyWorld.Language;
 using ToyWorldFactory;
 using YAXLib;
 
@@ -23,7 +24,6 @@ namespace GoodAI.ToyWorld
         public TWUpdateTask UpdateTask { get; private set; }
 
         public event EventHandler WorldInitialized = delegate { };
-
 
         #region Memblocks
 
@@ -201,12 +201,21 @@ namespace GoodAI.ToyWorld
         #endregion
 
 
-        [MyBrowsable, DisplayName("Maximum message length")]
+        [MyBrowsable, Category("Language interface"), DisplayName("Maximum message length")]
         [YAXSerializableField(DefaultValue = 128)]
         public int MaxMessageLength { get; set; }
 
+        [MyBrowsable, Category("Language interface"), DisplayName("Word vector dimensions")]
+        [YAXSerializableField(DefaultValue = 50)]
+        public int WordVectorDimensions { get; set; }
+
+        [MyBrowsable, Category("Language interface"), DisplayName("Maximum input words")]
+        [YAXSerializableField(DefaultValue = 4)]
+        public int MaxInputWordCount { get; set; }
+
         #endregion
 
+        public Vocabulary Vocabulary { get; private set; }
 
         public IGameController GameCtrl { get; set; }
         public IAvatarController AvatarCtrl { get; set; }
@@ -228,6 +237,8 @@ namespace GoodAI.ToyWorld
 
             SignalCount = GameFactory.GetSignalCount();
             AddOutputs(SignalCount, "Signal_");
+
+            Vocabulary = new Vocabulary(WordVectorDimensions);
         }
 
         public override void Validate(MyValidator validator)
