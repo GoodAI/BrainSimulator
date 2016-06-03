@@ -132,6 +132,14 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = 1.0f)]
         public float SmokeTransformationSpeed { get; set; }
 
+        [MyBrowsable, Category("Effects - Lighting"), DisplayName("Day/Night cycle")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool EnableDayAndNightCycle { get; set; }
+
+        [MyBrowsable, Category("Effects - Lighting"), DisplayName("Draw lights")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool DrawLights { get; set; }
+
         #endregion
 
         #region RenderRequests
