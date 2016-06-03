@@ -62,13 +62,6 @@ namespace GoodAI.ToyWorld
             set { SetOutput(4, value); }
         }
 
-        [MyOutputBlock(5)]
-        public MyMemoryBlock<float> WordVectors
-        {
-            get { return GetOutput(5); }
-            set { SetOutput(5, value); }
-        }
-
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Controls
         {
@@ -79,12 +72,6 @@ namespace GoodAI.ToyWorld
         public MyMemoryBlock<float> TextIn
         {
             get { return GetInput(1); }
-        }
-
-        [MyInputBlock(2)]
-        public MyMemoryBlock<float> WordVectorsReply
-        {
-            get { return GetInput(2); }
         }
 
         #endregion
@@ -362,9 +349,6 @@ namespace GoodAI.ToyWorld
                 m_controlIndexes["use"] = 78; // N
                 m_controlIndexes["pickup"] = 77; // M
             }
-
-            // K x N matrix, where K = number of words, N = vector dimension
-            WordVectors.Dims = new TensorDimensions(WordVectorDimensions, MaxInputWordCount);
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)

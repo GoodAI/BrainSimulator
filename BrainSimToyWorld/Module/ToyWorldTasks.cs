@@ -307,26 +307,6 @@ namespace GoodAI.ToyWorld
                 string message = Owner.AvatarCtrl.MessageIn;
 
                 SetMessageTextBlock(message);
-                SetTextInputLayer(message);
-            }
-
-            private void SetTextInputLayer(string message)
-            {   
-                Owner.WordVectors.Fill(0);
-                if (!TextProcessing.IsEmpty(message))
-                { 
-                    List<string> tokens = TextProcessing.Tokenize(message, Owner.MaxInputWordCount);
-                    int index = 0;
-                    foreach (string token in tokens)
-                    {
-                        float[] vector = Owner.Vocabulary.VectorFromLabel(token);
-                        foreach (float value in vector)
-                        {
-                            Owner.WordVectors.Host[index++] = value;
-                        }
-                    }
-                    Owner.WordVectors.SafeCopyToDevice(0, index);
-                }
             }
 
             private void SetMessageTextBlock(string message)
@@ -346,12 +326,6 @@ namespace GoodAI.ToyWorld
             {
                 if (Owner.TextIn == null)
                     return;
-                /*  TODO Get words from vectors  */
-                /* Get words from vectors */
-                StringBuilder outputText;
-                /* maintain n-best list somewhere? Memblock? */
-
-
                 Owner.TextIn.SafeCopyToHost();
                 Owner.AvatarCtrl.MessageOut = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
             }
