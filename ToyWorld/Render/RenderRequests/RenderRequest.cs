@@ -521,7 +521,7 @@ namespace Render.RenderRequests
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Enable(EnableCap.Blend);
-            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
+            SetDefaultBlending();
 
             // View and proj transforms
             m_viewProjectionMatrix = GetViewMatrix(PositionCenterV);
@@ -560,6 +560,11 @@ namespace Render.RenderRequests
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
+        }
+
+        private void SetDefaultBlending()
+        {
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
         }
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -655,7 +660,7 @@ namespace Render.RenderRequests
                     m_quad.Draw();
                 }
 
-                GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
+                SetDefaultBlending();
             }
 
             if (DrawSmoke)
