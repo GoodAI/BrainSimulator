@@ -49,6 +49,8 @@ namespace GoodAI.ToyWorld
                         rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
                         rr.SmokeScaleCoefficient = Owner.SmokeScale;
                         rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
+                        rr.DrawLights = Owner.DrawLights;
+                        rr.EnableDayAndNightCycle = Owner.EnableDayAndNightCycle;
                     });
 
                 Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
@@ -65,6 +67,8 @@ namespace GoodAI.ToyWorld
                         rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
                         rr.SmokeScaleCoefficient = Owner.SmokeScale;
                         rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
+                        rr.DrawLights = Owner.DrawLights;
+                        rr.EnableDayAndNightCycle = Owner.EnableDayAndNightCycle;
                     });
 
                 Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,

@@ -80,8 +80,12 @@ namespace ToyWorldTests.Render
                     if (key == Key.Number2)
                         rr.DrawNoise = !rr.DrawNoise;
                     if (key == Key.Number3)
+                        rr.EnableDayAndNightCycle = !rr.EnableDayAndNightCycle;
+                    if (key == Key.Number4)
+                        rr.DrawLights = !rr.DrawLights;
+                    if (key == Key.Number7)
                         rr.RotateMap = !rr.RotateMap;
-                    if (key == Key.Number5)
+                    if (key == Key.Number0)
                         rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
                 });
 

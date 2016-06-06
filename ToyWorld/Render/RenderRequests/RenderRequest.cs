@@ -38,6 +38,7 @@ namespace Render.RenderRequests
         #region Fields
 
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
+        const float AmbientTerm = 0.25f;
 
         public bool CopyToWindow { get; set; }
 
@@ -47,6 +48,7 @@ namespace Render.RenderRequests
         private NoEffectOffset m_effect;
         private SmokeEffect m_smokeEffect;
         private NoiseEffect m_noiseEffect;
+        private PointLightEffect m_pointLightEffect;
 
         private TilesetTexture m_tex;
 
@@ -251,6 +253,11 @@ namespace Render.RenderRequests
 
         #region Effects - overlay
 
+        public bool EnableDayAndNightCycle { get; set; }
+
+        public bool DrawLights { get; set; }
+
+
         private bool m_drawSmoke;
         private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
         private float m_smokeTransformationSpeedCoefficient = 1f;
@@ -339,7 +346,6 @@ namespace Render.RenderRequests
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
 
 
             // Set up tileset textures
@@ -353,7 +359,7 @@ namespace Render.RenderRequests
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
 
-            // Set up tile grid shaders
+            // Set up tile grid shader
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
             renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
             m_effect.TextureUniform(0);
@@ -365,6 +371,12 @@ namespace Render.RenderRequests
             m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
             m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
             m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+
+            m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+
+
+            // Set up light shader
+            m_pointLightEffect = new PointLightEffect();
 
 
             // Set up geometry
@@ -508,21 +520,23 @@ namespace Render.RenderRequests
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Enable(EnableCap.Blend);
+            SetDefaultBlending();
 
             // View and proj transforms
             m_viewProjectionMatrix = GetViewMatrix(PositionCenterV);
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            renderer.EffectManager.Use(m_effect);
             renderer.TextureManager.Bind(m_tex);
+            renderer.EffectManager.Use(m_effect);
+            m_effect.DiffuseUniform(new Vector4(1, 1, 1, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
 
             // Draw the scene
             DrawTileLayers(world);
             DrawObjectLayers(world);
 
             // Draw effects
-            DrawEffects(renderer);
+            DrawEffects(renderer, world);
 
             if (MultisampleLevel > 0)
             {
@@ -545,6 +559,11 @@ namespace Render.RenderRequests
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
+        }
+
+        private void SetDefaultBlending()
+        {
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
         }
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -610,22 +629,46 @@ namespace Render.RenderRequests
             }
         }
 
-        private void DrawEffects(RendererBase<ToyWorld> renderer)
+        private void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            // Set up transformation to world and screen space for noise effect
+            Matrix mw = Matrix.Identity;
+            // Model transform -- scale from (-1,1) to viewSize/2, center on origin
+            mw *= Matrix.CreateScale(ViewV.Size / 2);
+            // World transform -- move center to view center
+            mw *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
+            // View and projection transforms
+            Matrix mvp = mw * m_viewProjectionMatrix;
+
+            if (DrawLights)
+            {
+                //GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.SrcAlpha); // Fades non-lit stuff to black
+                GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.DstAlpha);
+
+                // TODO: draw a smaller quad around the light source to minimize the number of framgent shader calls
+                renderer.EffectManager.Use(m_pointLightEffect);
+                m_pointLightEffect.ModelWorldUniform(ref mw);
+                m_pointLightEffect.ModelViewProjectionUniform(ref mvp);
+
+                foreach (var character in world.Atlas.Characters)
+                {
+                    m_pointLightEffect.ColorIntensityUniform(new Vector4(0.85f));
+                    m_pointLightEffect.IntensityDecayUniform(new Vector2(1, character.ForwardSpeed));
+                    m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
+
+                    m_quad.Draw();
+                }
+
+                SetDefaultBlending();
+            }
+
             if (DrawSmoke)
             {
                 renderer.EffectManager.Use(m_smokeEffect);
+                m_smokeEffect.ModelWorldUniform(ref mw);
+                m_smokeEffect.ModelViewProjectionUniform(ref mvp);
 
-                // Set up transformation to world and screen space for noise effect
-                Matrix transform = Matrix.Identity;
-                // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-                transform *= Matrix.CreateScale(ViewV.Size / 2);
-                // World transform -- move center to view center
-                transform *= Matrix.CreateTranslation(new Vector3(ViewV.Center, 1f));
-                m_smokeEffect.ModelWorldUniform(ref transform);
-                // View and projection transforms
-                transform *= m_viewProjectionMatrix;
-                m_smokeEffect.ModelViewProjectionUniform(ref transform);
+                m_smokeEffect.AmbientDiffuseTermsUniform(new Vector2(AmbientTerm, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 double step = 0.005d * SmokeTransformationSpeedCoefficient;
