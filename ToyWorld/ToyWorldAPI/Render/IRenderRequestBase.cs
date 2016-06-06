@@ -75,6 +75,11 @@ namespace GoodAI.ToyWorld.Control
 
 
         /// <summary>
+        /// Enables the drawing of UI elements.
+        /// </summary>
+        bool DrawOverlay { get; set; }
+
+        /// <summary>
         /// Specifies, if the day progression should dim the scene.
         /// </summary>
         bool EnableDayAndNightCycle { get; set; }

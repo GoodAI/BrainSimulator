@@ -87,5 +87,11 @@ namespace Render.RenderRequests
 
             base.Draw(renderer, world);
         }
+
+        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        {
+            base.DrawOverlays(renderer, world);
+            DrawAvatarInventoryTool(renderer, world.GetAvatar(AvatarID));
+        }
     }
 }

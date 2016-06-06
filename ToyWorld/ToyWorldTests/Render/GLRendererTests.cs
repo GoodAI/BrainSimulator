@@ -57,6 +57,7 @@ namespace ToyWorldTests.Render
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
             ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
+            ((IRenderRequestBaseInternal<ToyWorld>)rr).DrawOverlay = true;
 
 
             var ac = m_gameController.GetAvatarController(aID);

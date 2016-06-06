@@ -12,6 +12,7 @@ using RenderingBase.RenderObjects.Textures;
 using RenderingBase.RenderRequests;
 using VRageMath;
 using World.Atlas.Layers;
+using World.GameActors.GameObjects;
 using World.Physics;
 using World.ToyWorldCore;
 using FullScreenQuadOffset = Render.RenderObjects.Geometries.FullScreenQuadOffset;
@@ -32,6 +33,7 @@ namespace Render.RenderRequests
             Image = 1 << 2,
             Smoke = 1 << 3,
             Noise = 1 << 4,
+            Overlay = 1 << 5,
         }
 
 
@@ -152,6 +154,8 @@ namespace Render.RenderRequests
         #endregion
 
         #region IRenderRequestBase overrides
+
+        public bool CopyToWindow { get; set; }
 
         #region View controls
 
@@ -329,6 +333,21 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region UI overlay
+
+        private bool m_drawOverlay;
+        public bool DrawOverlay
+        {
+            get { return m_drawOverlay; }
+            set
+            {
+                m_drawOverlay = value;
+                m_dirtyParams |= DirtyParams.Overlay;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Helpers
@@ -339,6 +358,21 @@ namespace Render.RenderRequests
             m_backFbo = m_frontFbo;
             m_frontFbo = tmp;
             return m_frontFbo;
+        }
+
+        private void SetDefaultBlending()
+        {
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
+        }
+
+        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            if (!cameraDirection.HasValue)
+                cameraDirection = Vector3.Forward;
+
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
+
+            return viewMatrix;
         }
 
         #endregion
@@ -488,6 +522,31 @@ namespace Render.RenderRequests
                 m_noiseEffect.ViewportSizeUniform((Vector2I)Resolution);
                 m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
             }
+            if (m_dirtyParams.HasFlag(DirtyParams.Overlay))
+            {
+                Vector2I tileSize = new Vector2I(100);
+                Vector2I tileMargins = new Vector2I(5);
+                Vector2I tileBorder = new Vector2I(16);
+
+                // Set up overlay textures
+                m_overlayTexture =
+                    renderer.TextureManager.Get<TilesetTexture>(new TilesetImage("ui_spritesheet.png", tileSize, tileMargins, tileBorder));
+                renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+                m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
+
+                // Set up overlay shader
+                m_overlayEffect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(m_overlayEffect); // Need to use the effect to set uniforms
+
+                // Set up static uniforms
+                Vector2I fullTileSize = tileSize + tileMargins + tileBorder * 2; // twice the border, on each side once
+                Vector2 tileCount = (Vector2)m_overlayTexture.Size / (Vector2)fullTileSize;
+                m_overlayEffect.TexSizeCountUniform(new Vector3I(m_overlayTexture.Size.X, m_overlayTexture.Size.Y, (int)tileCount.X));
+                m_overlayEffect.TileSizeMarginUniform(new Vector4I(tileSize, tileMargins));
+                m_overlayEffect.TileBorderUniform(tileBorder);
+
+                m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
+            }
 
             m_dirtyParams = DirtyParams.None;
         }
@@ -568,25 +627,12 @@ namespace Render.RenderRequests
                 ApplyPostProcessingEffects(renderer);
             }
 
-            DrawOverlays(renderer, world);
+            // Draw UI and overlays
+            if (DrawOverlay)
+                DrawOverlays(renderer, world);
 
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
-        }
-
-        private void SetDefaultBlending()
-        {
-            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
-        }
-
-        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
-        {
-            if (!cameraDirection.HasValue)
-                cameraDirection = Vector3.Forward;
-
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
-
-            return viewMatrix;
         }
 
         private void DrawTileLayers(ToyWorld world)
@@ -636,7 +682,6 @@ namespace Render.RenderRequests
 
                     // Setup dynamic data
                     m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
-
                     m_quadOffset.Draw();
                 }
             }
@@ -721,10 +766,36 @@ namespace Render.RenderRequests
             // The final scene should be left in the front buffer
         }
 
-        private void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        protected virtual void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        { }
+
+        protected void DrawAvatarInventoryTool(RendererBase<ToyWorld> renderer, IAvatar avatar)
         {
+            // Compute transform of the center of the inventory
+            const float inventorySize = 0.15f; // The amount of screen space (0 to 1)
+            const float margin = 0.05f;
+            Vector2 halfSize = new Vector2(inventorySize * 0.5f);
+            Matrix transform = Matrix.CreateScale(halfSize); // Quad is from (-1,1) -- divide by two
+            transform *= Matrix.CreateTranslation(new Vector3(new Vector2(margin) + halfSize, 0.01f));
 
 
+            // Draw the inventory background
+            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+            renderer.EffectManager.Use(m_overlayEffect);
+            m_overlayEffect.ModelViewProjectionUniform(ref transform);
+
+            m_quadOffset.SetTextureOffsets(1);
+            m_quadOffset.Draw();
+
+
+            // Draw the inventory Tool
+            renderer.TextureManager.Bind(m_tilesetTexture);
+            renderer.EffectManager.Use(m_effect);
+            m_effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+            m_effect.ModelViewProjectionUniform(ref transform);
+
+            m_quadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
+            m_quadOffset.Draw();
         }
 
         private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
