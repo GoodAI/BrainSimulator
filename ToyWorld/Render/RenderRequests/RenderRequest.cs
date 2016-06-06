@@ -377,7 +377,6 @@ namespace Render.RenderRequests
 
             // Set up light shader
             m_pointLightEffect = new PointLightEffect();
-            renderer.EffectManager.Use(m_pointLightEffect);
 
 
             // Set up geometry
@@ -654,7 +653,7 @@ namespace Render.RenderRequests
                 foreach (var character in world.Atlas.Characters)
                 {
                     m_pointLightEffect.ColorIntensityUniform(new Vector4(0.85f));
-                    m_pointLightEffect.IntensityDecayUniform(new Vector2(0.3f, 1 / character.ForwardSpeed * 30));
+                    m_pointLightEffect.IntensityDecayUniform(new Vector2(1, character.ForwardSpeed));
                     m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
 
                     m_quad.Draw();

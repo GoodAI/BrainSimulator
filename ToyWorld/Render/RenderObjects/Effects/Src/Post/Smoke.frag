@@ -36,7 +36,7 @@ void main()
 	if (meanScale.x < 0.3)
 		noise *= (meanScale.x / 0.3); // allow the noise to fade out when the intensity is low
 
-	out_color.w = smokeColor.w * noise; // we are using pre-multiplied alpha blending
+	out_color.w = smokeColor.w * noise;
 	out_color.xyz = (ambientDiffuseTerms.x + ambientDiffuseTerms.y) * smokeColor.xyz;
-	out_color.xyz *= out_color.w; 
+	out_color.xyz *= out_color.w; // we are using pre-multiplied alpha blending
 }
