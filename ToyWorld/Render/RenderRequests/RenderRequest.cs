@@ -37,31 +37,30 @@ namespace Render.RenderRequests
 
         #region Fields
 
-        const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
-        const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
-        const float AmbientTerm = 0.25f;
+        protected const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
+        protected const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
+        protected const float AmbientTerm = 0.25f;
 
-        public bool CopyToWindow { get; set; }
+        protected BasicFbo m_frontFbo, m_backFbo;
+        protected BasicFboMultisample m_fboMs;
 
-        private BasicFbo m_frontFbo, m_backFbo;
-        private BasicFboMultisample m_fboMs;
+        protected NoEffectOffset m_effect;
+        protected NoEffectOffset m_overlayEffect;
+        protected SmokeEffect m_smokeEffect;
+        protected NoiseEffect m_noiseEffect;
+        protected PointLightEffect m_pointLightEffect;
 
-        private NoEffectOffset m_effect;
-        private SmokeEffect m_smokeEffect;
-        private NoiseEffect m_noiseEffect;
-        private PointLightEffect m_pointLightEffect;
+        protected TilesetTexture m_tilesetTexture;
+        protected TilesetTexture m_overlayTexture;
 
-        private TilesetTexture m_tex;
-        private TilesetTexture m_overlayTex;
+        protected FullScreenGridOffset m_gridOffset;
+        protected FullScreenQuadOffset m_quadOffset;
+        protected FullScreenQuad m_quad;
 
-        private FullScreenGridTex m_grid;
-        private FullScreenQuadOffset m_quadOffset;
-        private FullScreenQuad m_quad;
+        protected Pbo m_pbo;
 
-        private Pbo m_pbo;
-
-        private Matrix m_projMatrix;
-        private Matrix m_viewProjectionMatrix;
+        protected Matrix m_projMatrix;
+        protected Matrix m_viewProjectionMatrix;
 
         protected DirtyParams m_dirtyParams;
 
@@ -88,15 +87,19 @@ namespace Render.RenderRequests
                 m_fboMs.Dispose();
 
             m_effect.Dispose();
+            if (m_overlayEffect != null)
+                m_overlayEffect.Dispose();
             if (m_smokeEffect != null)
                 m_smokeEffect.Dispose();
             if (m_noiseEffect != null)
                 m_noiseEffect.Dispose();
 
-            m_tex.Dispose();
+            m_tilesetTexture.Dispose();
+            if (m_overlayTexture != null)
+                m_overlayTexture.Dispose();
 
-            if (m_grid != null) // It is initialized during Draw
-                m_grid.Dispose();
+            if (m_gridOffset != null) // It is initialized during Draw
+                m_gridOffset.Dispose();
             m_quadOffset.Dispose();
             m_quad.Dispose();
 
@@ -350,34 +353,36 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
 
 
-            // Set up tileset textures
-            string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
-            TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
+            // Tileset textures and effect
+            {
+                // Set up tileset textures
+                string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
+                TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
 
-            for (int i = 0; i < tilesetImages.Length; i++)
-                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
-                                                    world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
+                for (int i = 0; i < tilesetImages.Length; i++)
+                    tilesetImages[i] = new TilesetImage(
+                        tilesetImagePaths[i],
+                        world.TilesetTable.TileSize,
+                        world.TilesetTable.TileMargins,
+                        world.TilesetTable.TileBorder);
 
-            m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-
-            // Set up overlay textures
-            m_overlayTex = renderer.TextureManager.Get<TilesetTexture>(new TilesetImage("ui_spritesheet.png", new Vector2I(100), new Vector2I(5), new Vector2I(16)));
+                m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
 
-            // Set up tile grid shader
-            m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-            renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-            m_effect.TextureUniform(0);
+                // Set up tile grid shader
+                m_effect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
 
-            // Set up static uniforms
-            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
-                world.TilesetTable.TileBorder * 2; // twice the border, on each side once
-            Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
-            m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+                // Set up static uniforms
+                Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
+                                        world.TilesetTable.TileBorder * 2; // twice the border, on each side once
+                Vector2 tileCount = (Vector2)m_tilesetTexture.Size / (Vector2)fullTileSize;
+                m_effect.TexSizeCountUniform(new Vector3I(m_tilesetTexture.Size.X, m_tilesetTexture.Size.Y, (int)tileCount.X));
+                m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+                m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
-            m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+                m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+            }
 
 
             // Set up light shader
@@ -403,7 +408,7 @@ namespace Render.RenderRequests
 
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
-                m_grid = renderer.GeometryManager.Get<FullScreenGridTex>(GridView.Size);
+                m_gridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
                 // Flip the image to have its origin in the top-left corner
 
@@ -532,8 +537,9 @@ namespace Render.RenderRequests
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            renderer.TextureManager.Bind(m_tex);
+            renderer.TextureManager.Bind(m_tilesetTexture);
             renderer.EffectManager.Use(m_effect);
+            m_effect.TextureUniform(0);
             m_effect.DiffuseUniform(new Vector4(1, 1, 1, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
 
             // Draw the scene
@@ -601,8 +607,8 @@ namespace Render.RenderRequests
             IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
             foreach (ITileLayer tileLayer in toRender)
             {
-                m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
-                m_grid.Draw();
+                m_gridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));
+                m_gridOffset.Draw();
             }
         }
 

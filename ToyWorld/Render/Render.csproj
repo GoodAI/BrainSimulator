@@ -73,7 +73,7 @@
     <Compile Include="RenderObjects\Effects\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Effects\PointLightEffect.cs" />
     <Compile Include="RenderObjects\Effects\SmokeEffect.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGridTex.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenGridOffset.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="Renderer\ToyWorldRenderer.cs" />

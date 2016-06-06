@@ -38,7 +38,7 @@ namespace Render.Renderer
 
             // Parameterized geometries
             GeometryManager.CaseParam<FullScreenGrid>();
-            GeometryManager.CaseParam<FullScreenGridTex>();
+            GeometryManager.CaseParam<FullScreenGridOffset>();
 
 
             EffectManager.Case<NoEffectTex>();
