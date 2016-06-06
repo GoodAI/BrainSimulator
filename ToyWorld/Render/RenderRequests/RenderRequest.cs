@@ -37,6 +37,7 @@ namespace Render.RenderRequests
 
         #region Fields
 
+        const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
         const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
         const float AmbientTerm = 0.25f;
 
@@ -51,6 +52,7 @@ namespace Render.RenderRequests
         private PointLightEffect m_pointLightEffect;
 
         private TilesetTexture m_tex;
+        private TilesetTexture m_overlayTex;
 
         private FullScreenGridTex m_grid;
         private FullScreenQuadOffset m_quadOffset;
@@ -358,6 +360,9 @@ namespace Render.RenderRequests
 
             m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
+            // Set up overlay textures
+            m_overlayTex = renderer.TextureManager.Get<TilesetTexture>(new TilesetImage("ui_spritesheet.png", new Vector2I(100), new Vector2I(5), new Vector2I(16)));
+
 
             // Set up tile grid shader
             m_effect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -557,6 +562,8 @@ namespace Render.RenderRequests
                 ApplyPostProcessingEffects(renderer);
             }
 
+            DrawOverlays(renderer, world);
+
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
         }
@@ -706,6 +713,12 @@ namespace Render.RenderRequests
             // more stuffs
 
             // The final scene should be left in the front buffer
+        }
+
+        private void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        {
+
+
         }
 
         private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
