@@ -20,7 +20,7 @@ namespace ToyWorldTests.Physics
         [Fact]
         public void CanSetPhysicalProperies()
         {
-            m_avatar.DesiredRotation = 1;
+            m_avatar.DesiredLeftRotation = 1;
             m_avatar.DesiredSpeed = 1;
             m_basicAvatarMover.SetAvatarMotion(m_avatar);
             Assert.True(m_avatar.PhysicalEntity.ForwardSpeed > 0f);

@@ -105,7 +105,7 @@ namespace World.GameActors.GameObjects
         public int NextUpdateAfter { get; private set; }
 
         public float DesiredSpeed { get; set; }
-        public float DesiredRotation { get; set; }
+        public float DesiredLeftRotation { get; set; }
         public bool Interact { get; set; }
         public bool UseTool { get; set; }
         public bool PickUp { get; set; }
@@ -240,7 +240,7 @@ namespace World.GameActors.GameObjects
         public void ResetControls()
         {
             DesiredSpeed = 0f;
-            DesiredRotation = 0f;
+            DesiredLeftRotation = 0f;
             Interact = false;
             UseTool = false;
             PickUp = false;
@@ -282,7 +282,7 @@ namespace World.GameActors.GameObjects
 
             Energy -= Math.Abs(DesiredSpeed) * ENERGY_FOR_MOVE;
 
-            Energy -= Math.Abs(DesiredRotation) * ENERGY_FOR_ROTATION;
+            Energy -= Math.Abs(DesiredLeftRotation) * ENERGY_FOR_ROTATION;
 
             Energy -= ENERGY_FOR_LIVING;
 

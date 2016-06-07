@@ -33,9 +33,9 @@ namespace World.GameActors.GameObjects
         float DesiredSpeed { get; set; }
 
         /// <summary>
-        /// Value is clamped to (-1,1). Negative values mean rotate left, positive are for rotation to the right.
+        /// Value is clamped to (-1,1). Negative values mean rotate right, positive are for rotation to the left.
         /// </summary>
-        float DesiredRotation { get; set; }
+        float DesiredLeftRotation { get; set; }
 
         /// <summary>
         /// The offset of field of focus within the avatar's field of view.
