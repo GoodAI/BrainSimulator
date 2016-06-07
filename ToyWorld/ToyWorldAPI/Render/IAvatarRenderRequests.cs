@@ -2,7 +2,7 @@
 
 namespace GoodAI.ToyWorld.Control
 {
-    public enum InventoryBackgroundType
+    public enum ToolBackgroundType
     {
         None,
         BrownBorder = 5,
@@ -34,7 +34,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// 
         /// </summary>
-        InventoryBackgroundType InventoryBackgroundType { get; set; }
+        ToolBackgroundType ToolBackgroundType { get; set; }
     }
 
     /// <summary>
@@ -57,7 +57,7 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public interface IInventoryToolAvatarRR : IAvatarRenderRequest
+    public interface IToolAvatarRR : IAvatarRenderRequest
     {
         /// <summary>
         /// This property is not used and its value is undefined.

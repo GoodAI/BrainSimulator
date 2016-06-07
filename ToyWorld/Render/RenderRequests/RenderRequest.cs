@@ -776,7 +776,7 @@ namespace Render.RenderRequests
         protected virtual void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
         { }
 
-        protected void DrawAvatarInventoryTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, InventoryBackgroundType type = InventoryBackgroundType.BrownBorder)
+        protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
             Matrix transform = Matrix.CreateScale(size); // Quad is from (-1,1) -- divide by two
             transform *= Matrix.CreateTranslation(position.X, position.Y, 0.01f);

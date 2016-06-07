@@ -6,17 +6,17 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    internal class InventoryToolAvatarRR : AvatarRRBase, IInventoryToolAvatarRR
+    internal class ToolAvatarRR : AvatarRRBase, IToolAvatarRR
     {
         #region Genesis
 
-        public InventoryToolAvatarRR(int avatarID)
+        public ToolAvatarRR(int avatarID)
             : base(avatarID)
         { }
 
         #endregion
 
-        #region IInventoryToolAvatarRR overrides
+        #region IToolAvatarRR overrides
         #endregion
 
         #region RenderRequestBase overrides
@@ -34,7 +34,7 @@ namespace Render.RenderRequests
             const float margin = 0.05f;
             Vector2 position = Vector2.One - (new Vector2(margin) + SizeV * 0.5f);
 
-            DrawAvatarInventoryTool(renderer, avatar, SizeV, position, InventoryBackgroundType);
+            DrawAvatarTool(renderer, avatar, SizeV, position, ToolBackgroundType);
         }
 
         #endregion

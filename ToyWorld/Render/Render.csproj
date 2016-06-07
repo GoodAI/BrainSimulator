@@ -77,7 +77,7 @@
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="Renderer\ToyWorldRenderer.cs" />
-    <Compile Include="RenderRequests\AvatarRenderRequests\InventoryToolAvatarRR.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\ToolAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
