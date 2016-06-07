@@ -412,10 +412,6 @@ namespace Render.RenderRequests
             }
 
 
-            // Set up light shader
-            m_pointLightEffect = new PointLightEffect();
-
-
             // Set up geometry
             m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
             m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
@@ -429,7 +425,7 @@ namespace Render.RenderRequests
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
-        private void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
+        protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
@@ -544,6 +540,10 @@ namespace Render.RenderRequests
 
                 m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
             }
+            // Set up light shader
+            if (DrawLights && m_pointLightEffect == null)
+                m_pointLightEffect = new PointLightEffect();
+
 
             m_dirtyParams = DirtyParams.None;
         }
@@ -632,7 +632,7 @@ namespace Render.RenderRequests
             GatherAndDistributeData(renderer);
         }
 
-        private void DrawTileLayers(ToyWorld world)
+        protected virtual void DrawTileLayers(ToyWorld world)
         {
             // Set up transformation to screen space for tiles
             Matrix transform = Matrix.Identity;
@@ -655,7 +655,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private void DrawObjectLayers(ToyWorld world)
+        protected virtual void DrawObjectLayers(ToyWorld world)
         {
             // Draw objects
             foreach (var objectLayer in world.Atlas.ObjectLayers)
@@ -684,7 +684,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
+        protected virtual void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
@@ -737,7 +737,7 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
+        protected virtual void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
         {
             // Always draw post-processing from the front to the back buffer
             m_backFbo.Bind();
@@ -768,7 +768,13 @@ namespace Render.RenderRequests
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
-            Matrix transform = Matrix.CreateScale(size); // Quad is from (-1,1) -- divide by two
+            if (FlipYAxis)
+            {
+                size.Y = -size.Y;
+                position.Y = -position.Y;
+            }
+
+            Matrix transform = Matrix.CreateScale(size);
             transform *= Matrix.CreateTranslation(position.X, position.Y, 0.01f);
 
 
@@ -797,7 +803,7 @@ namespace Render.RenderRequests
             }
         }
 
-        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
+        protected virtual void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
         {
             if (CopyToWindow)
             {

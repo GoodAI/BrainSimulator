@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using RenderingBase.Renderer;
 using VRageMath;
@@ -24,17 +24,44 @@ namespace Render.RenderRequests
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             SizeV = new Vector2(0.9f);
+
+            MultisampleLevel = RenderRequestMultisampleLevel.None;
+            DrawOverlay = true;
+            EnableDayAndNightCycle = false;
+
+            base.Init(renderer, world);
         }
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            m_dirtyParams &= DirtyParams.Size | DirtyParams.Resolution | DirtyParams.Image | DirtyParams.Overlay;
+
+            base.Draw(renderer, world);
+        }
+
+        protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            return Matrix.Identity;
+        }
+
+        protected override void DrawTileLayers(ToyWorld world)
+        { }
+
+        protected override void DrawObjectLayers(ToyWorld world)
+        { }
+
+        protected override void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
+        { }
+
+        protected override void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
+        { }
+
+        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        {
             var avatar = world.GetAvatar(AvatarID);
 
-            // Compute transform of the center of the inventory
-            const float margin = 0.05f;
-            Vector2 position = Vector2.One - (new Vector2(margin) + SizeV * 0.5f);
 
-            DrawAvatarTool(renderer, avatar, SizeV, position, ToolBackgroundType);
+            DrawAvatarTool(renderer, avatar, SizeV, Vector2.Zero, ToolBackgroundType);
         }
 
         #endregion
