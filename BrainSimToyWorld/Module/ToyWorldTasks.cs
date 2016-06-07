@@ -81,6 +81,16 @@ namespace GoodAI.ToyWorld
                         // no noise or smoke, this view is for the researcher
                     });
 
+                Owner.ToolRR = ObtainRR<IToolAvatarRR>(Owner.VisualFree, myAvatarId,
+                    rr =>
+                    {
+                        rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
+                        rr.Resolution = new Size(Owner.ToolResWidth, Owner.ToolResHeight);
+                        rr.MultisampleLevel = Owner.ToolMultisampleLevel;
+                        rr.ToolBackgroundType = Owner.ToolBackgroundType;
+                        // None of the other settings have any effect
+                    });
+
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
 

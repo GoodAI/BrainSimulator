@@ -230,6 +230,10 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.None)]
         public RenderRequestMultisampleLevel ToolMultisampleLevel { get; set; }
 
+        [MyBrowsable, Category("Tool display"), DisplayName("Background type")]
+        [YAXSerializableField(DefaultValue = ToolBackgroundType.BrownBorder)]
+        public ToolBackgroundType ToolBackgroundType { get; set; }
+
         #endregion
 
 
@@ -255,6 +259,7 @@ namespace GoodAI.ToyWorld
         private IFovAvatarRR FovRR { get; set; }
         private IFofAvatarRR FofRR { get; set; }
         private IFreeMapRR FreeRR { get; set; }
+        private IToolAvatarRR ToolRR { get; set; }
 
         private int SignalCount { get; set; }
 
@@ -290,6 +295,9 @@ namespace GoodAI.ToyWorld
             validator.AssertError(Height > 0, this, "Free view height has to be positive.");
             validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
+            validator.AssertError(ToolSize > 0, this, "Tool size has to be positive.");
+            validator.AssertError(ToolResWidth > 0, this, "Tool resolution width has to be positive.");
+            validator.AssertError(ToolResHeight > 0, this, "Tool resolution height has to be positive.");
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");

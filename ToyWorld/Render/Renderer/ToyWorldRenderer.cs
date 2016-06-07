@@ -24,6 +24,7 @@ namespace Render.Renderer
 
             RenderRequestFactory.CaseParamInternal<IFovAvatarRR, FovAvatarRR>();
             RenderRequestFactory.CaseParamInternal<IFofAvatarRR, FofAvatarRR>();
+            RenderRequestFactory.CaseParamInternal<IToolAvatarRR, ToolAvatarRR>();
         }
 
         public ToyWorldRenderer()
