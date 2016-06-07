@@ -776,33 +776,35 @@ namespace Render.RenderRequests
         protected virtual void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
         { }
 
-        protected void DrawAvatarInventoryTool(RendererBase<ToyWorld> renderer, IAvatar avatar)
+        protected void DrawAvatarInventoryTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, InventoryBackgroundType type = InventoryBackgroundType.BrownBorder)
         {
-            // Compute transform of the center of the inventory
-            const float inventorySize = 0.15f; // The amount of screen space (0 to 1)
-            const float margin = 0.05f;
-            Vector2 halfSize = new Vector2(inventorySize * 0.5f);
-            Matrix transform = Matrix.CreateScale(halfSize); // Quad is from (-1,1) -- divide by two
-            transform *= Matrix.CreateTranslation(new Vector3(new Vector2(margin) + halfSize, 0.01f));
+            Matrix transform = Matrix.CreateScale(size); // Quad is from (-1,1) -- divide by two
+            transform *= Matrix.CreateTranslation(position.X, position.Y, 0.01f);
 
 
             // Draw the inventory background
             renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
             renderer.EffectManager.Use(m_overlayEffect);
+            m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            m_quadOffset.SetTextureOffsets(1);
+            m_quadOffset.SetTextureOffsets((int)type);
             m_quadOffset.Draw();
 
 
             // Draw the inventory Tool
-            renderer.TextureManager.Bind(m_tilesetTexture);
-            renderer.EffectManager.Use(m_effect);
-            m_effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
-            m_effect.ModelViewProjectionUniform(ref transform);
+            if (avatar.Tool != null)
+            {
+                renderer.TextureManager.Bind(m_tilesetTexture);
+                renderer.EffectManager.Use(m_effect);
+                m_effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
 
-            m_quadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
-            m_quadOffset.Draw();
+                Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
+                m_effect.ModelViewProjectionUniform(ref toolTransform);
+
+                m_quadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
+                m_quadOffset.Draw();
+            }
         }
 
         private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)

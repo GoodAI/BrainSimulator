@@ -59,6 +59,8 @@ namespace Render.RenderRequests
             }
         }
 
+        public InventoryBackgroundType InventoryBackgroundType { get; set; }
+
         #endregion
 
 
@@ -70,6 +72,8 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            InventoryBackgroundType = InventoryBackgroundType.BrownBorder;
+            
             base.Init(renderer, world);
         }
 
@@ -91,7 +95,13 @@ namespace Render.RenderRequests
         protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             base.DrawOverlays(renderer, world);
-            DrawAvatarInventoryTool(renderer, world.GetAvatar(AvatarID));
+
+            // Compute transform of the center of the inventory
+            const float margin = 0.05f;
+            Vector2 size = new Vector2(0.08f);
+            Vector2 position = Vector2.One - (new Vector2(margin) + size * 0.5f);
+
+            DrawAvatarInventoryTool(renderer, world.GetAvatar(AvatarID), size, position, InventoryBackgroundType);
         }
     }
 }

@@ -2,6 +2,15 @@
 
 namespace GoodAI.ToyWorld.Control
 {
+    public enum InventoryBackgroundType
+    {
+        None,
+        BrownBorder = 5,
+        Brown = 6,
+        GrayBorder = 9,
+        Gray = 10,
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -21,6 +30,11 @@ namespace GoodAI.ToyWorld.Control
         /// If true, rotates the map around the agent (which stays fixed looking upwards).
         /// </summary>
         bool RotateMap { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        InventoryBackgroundType InventoryBackgroundType { get; set; }
     }
 
     /// <summary>
