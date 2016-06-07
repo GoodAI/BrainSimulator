@@ -10,6 +10,7 @@ using RenderingBase.RenderObjects.Buffers;
 using RenderingBase.RenderObjects.Geometries;
 using RenderingBase.RenderObjects.Textures;
 using RenderingBase.RenderRequests;
+using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas.Layers;
 using World.GameActors.GameObjects;
@@ -390,15 +391,14 @@ namespace Render.RenderRequests
             // Tileset textures and effect
             {
                 // Set up tileset textures
-                string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
-                TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
-
-                for (int i = 0; i < tilesetImages.Length; i++)
-                    tilesetImages[i] = new TilesetImage(
-                        tilesetImagePaths[i],
-                        world.TilesetTable.TileSize,
-                        world.TilesetTable.TileMargins,
-                        world.TilesetTable.TileBorder);
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetTilesetImages();
+                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                    new TilesetImage(
+                        t.Image.Source,
+                        new Vector2I(t.Tilewidth, t.Tileheight),
+                        new Vector2I(t.Spacing),
+                        world.TilesetTable.TileBorder))
+                    .ToArray();
 
                 m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
@@ -436,7 +436,7 @@ namespace Render.RenderRequests
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
-        private void CheckDirtyParams(RendererBase<ToyWorld> renderer)
+        private void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
@@ -524,21 +524,28 @@ namespace Render.RenderRequests
             }
             if (m_dirtyParams.HasFlag(DirtyParams.Overlay))
             {
-                Vector2I tileSize = new Vector2I(100);
-                Vector2I tileMargins = new Vector2I(5);
-                Vector2I tileBorder = new Vector2I(16);
-
                 // Set up overlay textures
-                m_overlayTexture =
-                    renderer.TextureManager.Get<TilesetTexture>(new TilesetImage("ui_spritesheet.png", tileSize, tileMargins, tileBorder));
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlaytImages();
+                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                    new TilesetImage(
+                        t.Image.Source,
+                        new Vector2I(t.Tilewidth, t.Tileheight),
+                        new Vector2I(t.Spacing),
+                        world.TilesetTable.TileBorder))
+                    .ToArray();
+
+                m_overlayTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
                 renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
-                m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
 
                 // Set up overlay shader
                 m_overlayEffect = renderer.EffectManager.Get<NoEffectOffset>();
                 renderer.EffectManager.Use(m_overlayEffect); // Need to use the effect to set uniforms
 
                 // Set up static uniforms
+                Vector2I tileSize = tilesetImages[0].TileSize;
+                Vector2I tileMargins = tilesetImages[0].TileMargin;
+                Vector2I tileBorder = tilesetImages[0].TileBorder;
+
                 Vector2I fullTileSize = tileSize + tileMargins + tileBorder * 2; // twice the border, on each side once
                 Vector2 tileCount = (Vector2)m_overlayTexture.Size / (Vector2)fullTileSize;
                 m_overlayEffect.TexSizeCountUniform(new Vector3I(m_overlayTexture.Size.X, m_overlayTexture.Size.Y, (int)tileCount.X));
@@ -578,7 +585,7 @@ namespace Render.RenderRequests
 
         public virtual void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            CheckDirtyParams(renderer);
+            CheckDirtyParams(renderer, world);
 
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 

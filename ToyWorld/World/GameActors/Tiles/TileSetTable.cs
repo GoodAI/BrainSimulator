@@ -27,7 +27,7 @@ namespace World.GameActors.Tiles
         public Vector2I TileSize { get; protected set; }
         public Vector2I TileMargins { get; protected set; }
         public Vector2I TileBorder { get; protected set; } // how much the size of the tile is increased because of 
-                                                           // correct texture filtering
+        // correct texture filtering
 
 
         public TilesetTable(Map tmxMap, StreamReader tilesetFile)
@@ -92,9 +92,22 @@ namespace World.GameActors.Tiles
         }
 
 
-        public string[] GetTilesetImages()
+        public IEnumerable<Tileset> GetTilesetImages()
         {
-            return Tilesets.Select(t => t.Image.Source).ToArray();
+            return Tilesets.Where(t =>
+            {
+                var fileName = Path.GetFileName(t.Image.Source);
+                return fileName != null && fileName.StartsWith("roguelike_");
+            });
+        }
+
+        public IEnumerable<Tileset> GetOverlaytImages()
+        {
+            return Tilesets.Where(t =>
+            {
+                var fileName = Path.GetFileName(t.Image.Source);
+                return fileName != null && fileName.StartsWith("ui_");
+            });
         }
 
         public virtual int TileNumber(string tileName)
