@@ -101,7 +101,7 @@ namespace World.GameActors.Tiles
             });
         }
 
-        public IEnumerable<Tileset> GetOverlaytImages()
+        public IEnumerable<Tileset> GetOverlayImages()
         {
             return Tilesets.Where(t =>
             {

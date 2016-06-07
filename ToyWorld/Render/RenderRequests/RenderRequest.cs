@@ -515,7 +515,7 @@ namespace Render.RenderRequests
             if (m_dirtyParams.HasFlag(DirtyParams.Overlay))
             {
                 // Set up overlay textures
-                IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlaytImages();
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlayImages();
                 TilesetImage[] tilesetImages = tilesets.Select(t =>
                     new TilesetImage(
                         t.Image.Source,
