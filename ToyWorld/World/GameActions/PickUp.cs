@@ -4,7 +4,6 @@ using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 using World.Physics;
-using World.ToyWorldCore;
 
 namespace World.GameActions
 {
@@ -59,7 +58,7 @@ namespace World.GameActions
 
             GameActorPosition toLayDown = new GameActorPosition(target.Actor, positionInFrontOf, target.Layer);
 
-            bool added = atlas.Add(toLayDown);
+            bool added = atlas.Add(toLayDown, true);
             if (added)
             {
                 picker.RemoveFromInventory();

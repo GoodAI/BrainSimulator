@@ -67,7 +67,7 @@ namespace World.Atlas.Layers
         {
             foreach (ILayer<GameActor> layer in Layers)
             {
-                if ((layer.LayerType & LayerType.Obstacles) > 0)
+                if (LayerType.Obstacles.HasFlag(layer.LayerType))
                 {
                     yield return layer;
                 }
