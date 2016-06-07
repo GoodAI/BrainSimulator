@@ -48,14 +48,21 @@ namespace GoodAI.ToyWorld
             set { SetOutput(2, value); }
         }
 
-        [MyOutputBlock(3)]
+        [MyOutputBlock(3), MyUnmanaged]
+        public MyMemoryBlock<float> VisualTool
+        {
+            get { return GetOutput(2); }
+            set { SetOutput(2, value); }
+        }
+
+        [MyOutputBlock(4)]
         public MyMemoryBlock<float> Text
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
-        [MyOutputBlock(4)]
+        [MyOutputBlock(5)]
         public MyMemoryBlock<float> ChosenActions
         {
             get { return GetOutput(4); }
@@ -144,38 +151,38 @@ namespace GoodAI.ToyWorld
 
         #region RenderRequests
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
+        [MyBrowsable, Category("FoF view"), DisplayName("Size")]
         [YAXSerializableField(DefaultValue = 3)]
         public int FoFSize { get; set; }
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution width")]
+        [MyBrowsable, Category("FoF view"), DisplayName("Resolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoFResWidth { get; set; }
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution height")]
+        [MyBrowsable, Category("FoF view"), DisplayName("Resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoFResHeight { get; set; }
 
         [MyBrowsable, Category("FoF view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FoFMultisampleLevel { get; set; }
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FoFMultisampleLevel { get; set; }
 
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
+        [MyBrowsable, Category("FoV view"), DisplayName("Size")]
         [YAXSerializableField(DefaultValue = 21)]
         public int FoVSize { get; set; }
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution width")]
+        [MyBrowsable, Category("FoV view"), DisplayName("Resolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoVResWidth { get; set; }
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution height")]
+        [MyBrowsable, Category("FoV view"), DisplayName("Resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoVResHeight { get; set; }
 
         [MyBrowsable, Category("FoV view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FoVMultisampleLevel { get; set; }
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FoVMultisampleLevel { get; set; }
 
 
         [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
@@ -203,8 +210,25 @@ namespace GoodAI.ToyWorld
         public int ResolutionHeight { get; set; }
 
         [MyBrowsable, Category("Free view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FreeViewMultisampleLevel { get; set; }
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FreeViewMultisampleLevel { get; set; }
+
+
+        [MyBrowsable, Category("Tool display"), DisplayName("Size")]
+        [YAXSerializableField(DefaultValue = 0.9f)]
+        public float ToolSize { get; set; }
+
+        [MyBrowsable, Category("Tool display"), DisplayName("Resolution width")]
+        [YAXSerializableField(DefaultValue = 128)]
+        public int ToolResWidth { get; set; }
+
+        [MyBrowsable, Category("Tool display"), DisplayName("Resolution height")]
+        [YAXSerializableField(DefaultValue = 128)]
+        public int ToolResHeight { get; set; }
+
+        [MyBrowsable, Category("Tool display"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.None)]
+        public RenderRequestMultisampleLevel ToolMultisampleLevel { get; set; }
 
         #endregion
 
