@@ -210,19 +210,12 @@ namespace Render.RenderRequests
             }
         }
 
-        private int m_multisampleLevel = 2;
-        public int MultisampleLevel
+        private RenderRequestMultisampleLevel m_multisampleLevel = RenderRequestMultisampleLevel.x4;
+        public RenderRequestMultisampleLevel MultisampleLevel
         {
             get { return m_multisampleLevel; }
             set
             {
-                const int minSamples = 0;
-                const int maxSamples = 4;
-                if (value < minSamples)
-                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be positive.");
-                if (value > maxSamples)
-                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be at most " + maxSamples + ".");
-
                 m_multisampleLevel = value;
                 m_dirtyParams |= DirtyParams.Resolution;
             }
@@ -476,10 +469,7 @@ namespace Render.RenderRequests
                 // Reallocate MS fbo
                 if (MultisampleLevel > 0)
                 {
-                    int multisampleCount = 1 << MultisampleLevel; // 4x to 32x (4 levels)
-
-                    if (MultisampleLevel == 1)
-                        multisampleCount = 4; // 2x does not seem to be working, force it to be at least 4x
+                    int multisampleCount = 1 << (int)MultisampleLevel; // 4x to 32x (4 levels)
 
                     if (newRes || m_fboMs == null || multisampleCount != m_fboMs.MultisampleCount)
                     {

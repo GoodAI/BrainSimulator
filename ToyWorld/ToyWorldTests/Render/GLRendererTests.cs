@@ -103,7 +103,7 @@ namespace ToyWorldTests.Render
                             break;
                         case Key.Number9:
                         case Key.Number0:
-                            rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
+                            rr.MultisampleLevel = (RenderRequestMultisampleLevel)(((int)rr.MultisampleLevel + 1) % 5);
                             break;
                     }
                 },
