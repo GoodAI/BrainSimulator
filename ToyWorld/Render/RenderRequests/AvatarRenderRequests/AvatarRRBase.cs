@@ -9,6 +9,28 @@ namespace Render.RenderRequests
 {
     public abstract class AvatarRRBase : RenderRequest, IAvatarRenderRequest
     {
+        class ARROverlayRenderer
+            : OverlayRenderer
+        {
+            private new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
+            private new AvatarRROverlaySettings Settings { get { return (AvatarRROverlaySettings)base.Settings; } }
+
+
+            public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+            {
+                base.Draw(renderer, world);
+
+                // Compute transform of the center of the inventory
+                const float margin = 0.05f;
+                Vector2 size = new Vector2(0.08f);
+                Vector2 position = Vector2.One - (new Vector2(margin) + size * 0.5f);
+
+                DrawAvatarTool(renderer, world.GetAvatar(Owner.AvatarID), size, position, Settings.ToolBackground);
+            }
+        }
+
+
+
         private Vector3? m_avatarDirection;
 
         protected Vector2 RelativePositionV { get; set; }
@@ -59,7 +81,8 @@ namespace Render.RenderRequests
             }
         }
 
-        public ToolBackgroundType ToolBackgroundType { get; set; }
+
+        public new AvatarRROverlaySettings Overlay { get; set; }
 
         #endregion
 
@@ -72,9 +95,9 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            ToolBackgroundType = ToolBackgroundType.BrownBorder;
-            
             base.Init(renderer, world);
+
+            OverlayRenderer = new ARROverlayRenderer();
         }
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
@@ -90,18 +113,6 @@ namespace Render.RenderRequests
             }
 
             base.Draw(renderer, world);
-        }
-
-        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
-        {
-            base.DrawOverlays(renderer, world);
-
-            // Compute transform of the center of the inventory
-            const float margin = 0.05f;
-            Vector2 size = new Vector2(0.08f);
-            Vector2 position = Vector2.One - (new Vector2(margin) + size * 0.5f);
-
-            DrawAvatarTool(renderer, world.GetAvatar(AvatarID), size, position, ToolBackgroundType);
         }
     }
 }

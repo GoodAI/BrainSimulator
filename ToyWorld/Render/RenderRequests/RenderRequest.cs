@@ -50,10 +50,10 @@ namespace Render.RenderRequests
         protected internal DirtyParam DirtyParams;
 
 
-        internal readonly EffectRenderer EffectRenderer = new EffectRenderer();
-        internal readonly PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
-        internal readonly OverlayRenderer OverlayRenderer = new OverlayRenderer();
-        internal readonly ImageRenderer ImageRenderer = new ImageRenderer();
+        internal EffectRenderer EffectRenderer = new EffectRenderer();
+        internal PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
+        internal OverlayRenderer OverlayRenderer = new OverlayRenderer();
+        internal ImageRenderer ImageRenderer = new ImageRenderer();
 
         #endregion
 
@@ -195,7 +195,6 @@ namespace Render.RenderRequests
 
         #endregion
 
-        // TODO: rename
 
         public EffectSettings Effects { get; set; }
         public PostprocessingSettings Postprocessing { get; set; }
@@ -313,10 +312,10 @@ namespace Render.RenderRequests
             QuadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Initialize renderers
-            EffectRenderer.Init(this, renderer, world, Effects);
-            PostprocessRenderer.Init(this, renderer, world, Postprocessing);
-            OverlayRenderer.Init(this, renderer, world, Overlay);
-            ImageRenderer.Init(this, renderer, world, Image);
+            EffectRenderer.Init(renderer, world, this, Effects);
+            PostprocessRenderer.Init(renderer, world, this, Postprocessing);
+            OverlayRenderer.Init(renderer, world, this, Overlay);
+            ImageRenderer.Init(renderer, world, this, Image);
         }
 
         protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
@@ -408,7 +407,7 @@ namespace Render.RenderRequests
             OverlayRenderer.Draw(renderer, world);
 
             // Copy the rendered scene
-            ImageRenderer.Draw(this, renderer, world);
+            ImageRenderer.Draw(renderer, world);
         }
 
         protected virtual void DrawTileLayers(ToyWorld world)
