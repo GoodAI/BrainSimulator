@@ -57,7 +57,7 @@ namespace ToyWorldTests.Render
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
             ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
-            ((IRenderRequestBaseInternal<ToyWorld>)rr).DrawOverlay = true;
+            ((IRenderRequestBaseInternal<ToyWorld>)rr).Overlay = new OverlaySettings { DrawOverlay = true, };
             rr.RotateMap = true;
 
 

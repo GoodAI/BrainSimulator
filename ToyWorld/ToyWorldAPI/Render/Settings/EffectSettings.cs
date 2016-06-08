@@ -3,26 +3,37 @@ using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
+    [Flags]
+    public enum RenderRequestEffect
+    {
+        None,
+
+        /// <summary>
+        /// Specifies, if the day progression should dim the scene.
+        /// </summary>
+        DayNight,
+        /// <summary>
+        /// Specifies whether light sources should emanate light
+        /// </summary>
+        Lights,
+        /// <summary>
+        /// Draws cloud-like smoke above the world.
+        /// </summary>
+        Smoke,
+    }
+
     /// <summary>
     /// 
     /// </summary>
     public class EffectSettings
     {
         /// <summary>
-        /// Specifies, if the day progression should dim the scene.
+        /// Specifies which effects should be used.
         /// </summary>
-        public bool EnableDayAndNightCycle { get; set; }
-
-        /// <summary>
-        /// Specifies whether light sources should emanate light
-        /// </summary>
-        public bool DrawLights { get; set; }
+        public RenderRequestEffect EnabledEffects { get; set; }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public bool DrawSmoke { get; set; }
+        #region Smoke settings
 
         /// <summary>
         /// 
@@ -44,8 +55,6 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public float SmokeScaleCoefficient { get; set; }
 
-
-        public EffectSettings()
-        { }
+        #endregion
     }
 }

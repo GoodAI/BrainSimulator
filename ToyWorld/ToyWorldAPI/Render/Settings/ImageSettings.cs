@@ -3,25 +3,38 @@ using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
+    public enum RenderRequestImageCopyingMode
+    {
+        /// <summary>
+        /// Copies data to the <see cref="ImageSettings.RenderedScene"/> array. Set to true if the cuda/opengl interop is failing.
+        /// </summary>
+        Cpu,
+        /// <summary>
+        /// Copies data to an OpenGL pixel buffer object and calls the supplied events with the buffer's handle.
+        /// </summary>
+        OpenglPbo,
+    }
+
     /// <summary>
     /// 
     /// </summary>
     public class ImageSettings
     {
         /// <summary>
-        /// 
+        /// Specifies what means should be used to gather the rendered scene.
         /// </summary>
-        public bool GatherImage { get; set; }
+        public RenderRequestImageCopyingMode CopyMode { get; set; }
 
-        /// <summary>
-        /// set to true if the cuda/opengl interop is failing
-        /// </summary>
-        public bool CopyImageThroughCpu { get; set; }
 
+        #region Cpu
         /// <summary>
         /// location where data is copied if it should be transfered through CPU
         /// </summary>
         public uint[] RenderedScene { get; private set; }
+
+        #endregion
+
+        #region Pbo
 
         /// <summary>
         /// Called before the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
@@ -40,8 +53,6 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
-
-        public ImageSettings()
-        { }
+        #endregion
     }
 }

@@ -39,28 +39,38 @@ namespace GoodAI.ToyWorld
 
                 EffectSettings effects = null;
                 PostprocessingSettings post = null;
-                OverlaySettings overlays = null;
+                // Overlays are not used for now (no BrainSim property to switch them on) because there is a separate renderrequest for inventory Tool
 
-                if (Owner.DrawSmoke || Owner.DrawLights)
+                RenderRequestEffect enabledEffects = RenderRequestEffect.None;
+
+                if (Owner.EnableDayAndNightCycle)
+                    enabledEffects |= RenderRequestEffect.DayNight;
+                if (Owner.DrawLights)
+                    enabledEffects |= RenderRequestEffect.Lights;
+                if (Owner.DrawSmoke)
+                    enabledEffects |= RenderRequestEffect.Smoke;
+
+                if (enabledEffects != RenderRequestEffect.None)
                     effects = new EffectSettings
                     {
-                        EnableDayAndNightCycle = Owner.EnableDayAndNightCycle,
-                        DrawLights = Owner.DrawLights,
-
-                        DrawSmoke = Owner.DrawSmoke,
+                        EnabledEffects = enabledEffects,
                         SmokeIntensityCoefficient = Owner.SmokeIntensity,
                         SmokeScaleCoefficient = Owner.SmokeScale,
                         SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed,
                     };
 
+                RenderRequestPostprocessing enabledPostprocessing = RenderRequestPostprocessing.None;
+
                 if (Owner.DrawNoise)
+                    enabledPostprocessing |= RenderRequestPostprocessing.Noise;
+
+                if (enabledPostprocessing != RenderRequestPostprocessing.None)
                     post = new PostprocessingSettings
                     {
-                        DrawNoise = Owner.DrawNoise,
+                        EnabledPostprocessing = enabledPostprocessing,
                         NoiseIntensityCoefficient = Owner.NoiseIntensity,
                     };
 
-                // Overlays are not used for now (no BrainSim property to switch them on) because there is a separate renderrequest for inventory Tool
 
                 Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, myAvatarId,
                     rr =>
@@ -71,7 +81,7 @@ namespace GoodAI.ToyWorld
                         rr.RotateMap = Owner.RotateMap;
                         rr.Effects = effects;
                         rr.Postprocessing = post;
-                        rr.Overlay = overlays;
+                        rr.Overlay = null;
                     });
 
                 Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
@@ -84,7 +94,7 @@ namespace GoodAI.ToyWorld
                         rr.RotateMap = Owner.RotateMap;
                         rr.Effects = effects;
                         rr.Postprocessing = post;
-                        rr.Overlay = overlays;
+                        rr.Overlay = null;
                     });
 
                 Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
@@ -102,7 +112,11 @@ namespace GoodAI.ToyWorld
                     {
                         rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
                         rr.Resolution = new Size(Owner.ToolResWidth, Owner.ToolResHeight);
-                        rr.ToolBackgroundType = Owner.ToolBackgroundType;
+                        rr.Overlay = new AvatarRROverlaySettings
+                        {
+                            EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool,
+                            ToolBackground = Owner.ToolBackgroundType,
+                        };
                         // None of the other settings have any effect
                     });
 
@@ -120,8 +134,7 @@ namespace GoodAI.ToyWorld
                 // Setup image copying from RR
                 rr.Image = new ImageSettings
                 {
-                    GatherImage = true,
-                    CopyImageThroughCpu = Owner.CopyDataThroughCPU,
+                    CopyMode = Owner.CopyDataThroughCPU ? RenderRequestImageCopyingMode.Cpu : RenderRequestImageCopyingMode.OpenglPbo,
                 };
 
                 targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer

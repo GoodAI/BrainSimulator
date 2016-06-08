@@ -2,15 +2,6 @@
 
 namespace GoodAI.ToyWorld.Control
 {
-    public enum ToolBackgroundType
-    {
-        None,
-        BrownBorder = 5,
-        Brown = 6,
-        GrayBorder = 9,
-        Gray = 10,
-    }
-
     /// <summary>
     /// 
     /// </summary>
@@ -31,10 +22,11 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         bool RotateMap { get; set; }
 
+
         /// <summary>
-        /// 
+        /// Contains the desired settings for scene overlays.
         /// </summary>
-        ToolBackgroundType ToolBackgroundType { get; set; }
+        new AvatarRROverlaySettings Overlay { get; set; }
     }
 
     /// <summary>
