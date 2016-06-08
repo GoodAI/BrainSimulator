@@ -53,18 +53,14 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            var preCopyCallback = OnPreRenderingEvent;
-
-            if (preCopyCallback != null && m_pbo != null)
-                preCopyCallback(this, m_pbo.Handle);
+            if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
+                Settings.InvokePreRenderingEvent(Owner, m_pbo.Handle);
         }
 
         public virtual void OnPostDraw()
         {
-            var postCopyCallback = OnPostRenderingEvent;
-
-            if (postCopyCallback != null && m_pbo != null)
-                postCopyCallback(this, m_pbo.Handle);
+            if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
+                Settings.InvokePostRenderingEvent(Owner, m_pbo.Handle);
         }
 
         #endregion

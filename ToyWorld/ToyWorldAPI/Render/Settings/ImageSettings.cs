@@ -28,9 +28,9 @@ namespace GoodAI.ToyWorld.Control
         #region Cpu
 
         /// <summary>
-        /// location where data is copied if it should be transfered through CPU
+        /// Location where data is copied if it should be transfered through CPU.
         /// </summary>
-        public uint[] RenderedScene { get; private set; }
+        public uint[] RenderedScene { get; set; }
 
         #endregion
 
@@ -45,6 +45,17 @@ namespace GoodAI.ToyWorld.Control
         public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
 
         /// <summary>
+        /// You should not use this method. Stay away!
+        /// </summary>
+        public virtual void InvokePreRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        {
+            var preCopyCallback = OnPreRenderingEvent;
+
+            if (preCopyCallback != null)
+                preCopyCallback(renderRequest, pboHandle);
+        }
+
+        /// <summary>
         /// Called after the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
         /// The argument is an OpenGL handle to the underlying buffer object.
         /// Because an internal OpenGL context is now active, you can use this callback to do any copying
@@ -52,6 +63,17 @@ namespace GoodAI.ToyWorld.Control
         /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
         /// </summary>
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
+
+        /// <summary>
+        /// You should not use this method. Stay away!
+        /// </summary>
+        public virtual void InvokePostRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        {
+            var postCopyCallback = OnPostRenderingEvent;
+
+            if (postCopyCallback != null)
+                postCopyCallback(renderRequest, pboHandle);
+        }
 
         #endregion
 
