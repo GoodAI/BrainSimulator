@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class ImageRenderer
-        : RRRendererBase<ImageSettings>, IDisposable
+        : RRRendererBase<ImageSettings, RenderRequest>, IDisposable
     {
         #region Fields
 
@@ -29,7 +29,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, ImageSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, ImageSettings settings)
         {
             if (settings == null)
                 return;
@@ -39,10 +39,10 @@ namespace Render.RenderRequests
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
                     m_pbo = new Pbo();
-                    m_pbo.Init(Resolution.Width * Resolution.Height, null, BufferUsageHint.StreamDraw);
+                    m_pbo.Init(Owner.Resolution.Width * Owner.Resolution.Height, null, BufferUsageHint.StreamDraw);
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
-                    settings.RenderedScene = new uint[Resolution.Width * Resolution.Height];
+                    settings.RenderedScene = new uint[Owner.Resolution.Width * Owner.Resolution.Height];
                     break;
             }
         }
@@ -71,33 +71,33 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        public virtual void Draw(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            if (renderRequest.CopyToWindow)
+            if (Owner.CopyToWindow)
             {
                 // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-                m_frontFbo.Bind(FramebufferTarget.ReadFramebuffer);
+                Owner.FrontFbo.Bind(FramebufferTarget.ReadFramebuffer);
                 GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
                 GL.BlitFramebuffer(
-                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                    0, 0, Owner.FrontFbo.Size.X, Owner.FrontFbo.Size.Y,
                     0, 0, renderer.Width, renderer.Height,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Nearest);
             }
 
             // Gather data to host mem
-            m_frontFbo.Bind();
+            Owner.FrontFbo.Bind();
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
-            switch (m_settings.CopyMode)
+            switch (Settings.CopyMode)
             {
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     m_pbo.Bind();
-                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
+                    GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
                     GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-                    GL.ReadPixels(0, 0, Resolution.Width, Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, m_settings.RenderedScene);
+                    GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Settings.RenderedScene);
                     break;
             }
         }

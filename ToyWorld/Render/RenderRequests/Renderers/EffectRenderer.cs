@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class EffectRenderer
-        : RRRendererBase<EffectSettings>, IDisposable
+        : RRRendererBase<EffectSettings, RenderRequest>, IDisposable
     {
         #region Fields
 
@@ -44,7 +44,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public override void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, EffectSettings settings)
         {
             Settings = settings;
 
@@ -67,16 +67,16 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        public override void Draw(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-            mw *= Matrix.CreateScale(renderRequest.ViewV.Size / 2);
+            mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
             // World transform -- move center to view center
-            mw *= Matrix.CreateTranslation(new Vector3(renderRequest.ViewV.Center, 1f));
+            mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1f));
             // View and projection transforms
-            Matrix mvp = mw * renderRequest.ViewProjectionMatrix;
+            Matrix mvp = mw * Owner.ViewProjectionMatrix;
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
             {
@@ -94,10 +94,10 @@ namespace Render.RenderRequests
                     m_pointLightEffect.IntensityDecayUniform(new Vector2(1, character.ForwardSpeed));
                     m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
 
-                    renderRequest.Quad.Draw();
+                    Owner.Quad.Draw();
                 }
 
-                renderRequest.SetDefaultBlending();
+                Owner.SetDefaultBlending();
             }
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
@@ -114,7 +114,7 @@ namespace Render.RenderRequests
                 m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
                 m_smokeEffect.MeanScaleUniform(new Vector2(Settings.SmokeIntensityCoefficient, Settings.SmokeScaleCoefficient));
 
-                renderRequest.Quad.Draw();
+                Owner.Quad.Draw();
             }
 
             // more stufffs

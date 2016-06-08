@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
@@ -55,5 +54,12 @@ namespace GoodAI.ToyWorld.Control
         public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
         #endregion
+
+
+        public ImageSettings()
+        {
+            CopyMode = RenderRequestImageCopyingMode.OpenglPbo;
+            RenderedScene = new uint[0];
+        }
     }
 }

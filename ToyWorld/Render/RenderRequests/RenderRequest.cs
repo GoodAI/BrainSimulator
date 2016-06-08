@@ -207,7 +207,7 @@ namespace Render.RenderRequests
 
         #region Helpers
 
-        Fbo SwapBuffers()
+        internal Fbo SwapBuffers()
         {
             BasicFbo tmp = BackFbo;
             BackFbo = FrontFbo;
@@ -389,7 +389,7 @@ namespace Render.RenderRequests
             DrawObjectLayers(world);
 
             // Draw effects
-            EffectRenderer.Draw(this, renderer, world);
+            EffectRenderer.Draw(renderer, world);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -404,8 +404,8 @@ namespace Render.RenderRequests
                     BlitFramebufferFilter.Linear);
             }
 
-            PostprocessRenderer.Draw(this, renderer, world);
-            OverlayRenderer.Draw(this, renderer, world);
+            PostprocessRenderer.Draw(renderer, world);
+            OverlayRenderer.Draw(renderer, world);
 
             // Copy the rendered scene
             ImageRenderer.Draw(this, renderer, world);

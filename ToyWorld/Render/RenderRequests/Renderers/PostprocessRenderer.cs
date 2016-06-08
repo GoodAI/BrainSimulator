@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class PostprocessRenderer
-        : RRRendererBase<PostprocessingSettings>, IDisposable
+        : RRRendererBase<PostprocessingSettings, RenderRequest>, IDisposable
     {
         #region Fields
 
@@ -31,12 +31,12 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, PostprocessingSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, PostprocessingSettings settings)
         {
             if (m_noiseEffect == null)
                 m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
             renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-            m_noiseEffect.ViewportSizeUniform((Vector2I)Resolution);
+            m_noiseEffect.ViewportSizeUniform((Vector2I)renderRequest.Resolution);
             m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
         }
 
@@ -44,26 +44,26 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        public virtual void Draw(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Always draw post-processing from the front to the back buffer
-            m_backFbo.Bind();
+            Owner.BackFbo.Bind();
 
-            if (DrawNoise)
+            if (Settings.EnabledPostprocessing.HasFlag(RenderRequestPostprocessing.Noise))
             {
                 renderer.EffectManager.Use(m_noiseEffect);
-                renderer.TextureManager.Bind(m_frontFbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition); // Use data from front Fbo
+                renderer.TextureManager.Bind(Owner.FrontFbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition); // Use data from front Fbo
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 double step = 0.005d;
                 double seed = renderer.SimTime * step % 3e6d;
                 m_noiseEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
-                m_noiseEffect.VarianceUniform(NoiseIntensityCoefficient);
+                m_noiseEffect.VarianceUniform(Settings.NoiseIntensityCoefficient);
 
-                m_quad.Draw();
+                Owner.Quad.Draw();
             }
 
-            SwapBuffers();
+            Owner.SwapBuffers();
 
             // more stuffs
 
