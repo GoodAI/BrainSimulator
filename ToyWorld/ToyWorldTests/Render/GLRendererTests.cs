@@ -120,10 +120,10 @@ namespace ToyWorldTests.Render
                             controls.DesiredForwardSpeed = -movementChange;
                             break;
                         case Key.A:
-                            controls.DesiredRightSpeed = movementChange;
+                            controls.DesiredRightSpeed = -movementChange;
                             break;
                         case Key.D:
-                            controls.DesiredRightSpeed = -movementChange;
+                            controls.DesiredRightSpeed = movementChange;
                             break;
                     }
                 });
