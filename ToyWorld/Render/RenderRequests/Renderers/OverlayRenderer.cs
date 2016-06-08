@@ -13,8 +13,8 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public class OverlayRenderer
-        : IDisposable
+    internal class OverlayRenderer
+        : RRRendererBase<OverlaySettings>, IDisposable
     {
         #region Fields
 
@@ -22,9 +22,6 @@ namespace Render.RenderRequests
 
         protected NoEffectOffset m_overlayEffect;
         protected TilesetTexture m_overlayTexture;
-
-
-        private OverlaySettings m_settings;
 
         #endregion
 

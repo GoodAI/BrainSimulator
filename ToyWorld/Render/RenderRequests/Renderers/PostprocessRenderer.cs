@@ -8,17 +8,14 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public class PostprocessRenderer
-        : IDisposable
+    internal class PostprocessRenderer
+        : RRRendererBase<PostprocessingSettings>, IDisposable
     {
         #region Fields
 
         protected const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
         protected NoiseEffect m_noiseEffect;
-
-
-        private PostprocessingSettings m_settings;
 
         #endregion
 

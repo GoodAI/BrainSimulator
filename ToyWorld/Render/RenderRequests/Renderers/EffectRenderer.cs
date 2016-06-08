@@ -8,8 +8,8 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public class EffectRenderer
-        : IDisposable
+    internal class EffectRenderer
+        : RRRendererBase<EffectSettings>, IDisposable
     {
         #region Fields
 
@@ -17,9 +17,6 @@ namespace Render.RenderRequests
 
         protected SmokeEffect m_smokeEffect;
         protected PointLightEffect m_pointLightEffect;
-
-
-        private EffectSettings m_settings;
 
         #endregion
 
@@ -38,7 +35,7 @@ namespace Render.RenderRequests
 
         public float GetGlobalDiffuseComponent(ToyWorld world)
         {
-            if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
                 return (1 - AmbientTerm) * world.Atlas.Day;
 
             return 1 - AmbientTerm;
@@ -47,21 +44,21 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
+        public override void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
         {
-            m_settings = settings;
+            Settings = settings;
 
-            if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
                 if (m_smokeEffect == null)
                     m_smokeEffect = renderer.EffectManager.Get<SmokeEffect>();
                 renderer.EffectManager.Use(m_smokeEffect); // Need to use the effect to set uniforms
-                m_smokeEffect.SmokeColorUniform(new Vector4(m_settings.SmokeColor.R, m_settings.SmokeColor.G, m_settings.SmokeColor.B, m_settings.SmokeColor.A) / 255f);
+                m_smokeEffect.SmokeColorUniform(new Vector4(Settings.SmokeColor.R, Settings.SmokeColor.G, Settings.SmokeColor.B, Settings.SmokeColor.A) / 255f);
             }
 
-            if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
             {
-                if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights) && m_pointLightEffect == null)
+                if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights) && m_pointLightEffect == null)
                     m_pointLightEffect = new PointLightEffect();
             }
         }
@@ -70,7 +67,7 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        public virtual void Draw(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
@@ -81,7 +78,7 @@ namespace Render.RenderRequests
             // View and projection transforms
             Matrix mvp = mw * renderRequest.ViewProjectionMatrix;
 
-            if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
             {
                 //GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.SrcAlpha); // Fades non-lit stuff to black
                 GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.DstAlpha);
@@ -103,7 +100,7 @@ namespace Render.RenderRequests
                 renderRequest.SetDefaultBlending();
             }
 
-            if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
                 renderer.EffectManager.Use(m_smokeEffect);
                 m_smokeEffect.ModelWorldUniform(ref mw);
@@ -112,10 +109,10 @@ namespace Render.RenderRequests
                 m_smokeEffect.AmbientDiffuseTermsUniform(new Vector2(AmbientTerm, GetGlobalDiffuseComponent(world)));
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
-                double step = 0.005d * m_settings.SmokeTransformationSpeedCoefficient;
+                double step = 0.005d * Settings.SmokeTransformationSpeedCoefficient;
                 double seed = renderer.SimTime * step % 3e6d;
                 m_smokeEffect.TimeStepUniform(new Vector2((float)seed, (float)step));
-                m_smokeEffect.MeanScaleUniform(new Vector2(m_settings.SmokeIntensityCoefficient, m_settings.SmokeScaleCoefficient));
+                m_smokeEffect.MeanScaleUniform(new Vector2(Settings.SmokeIntensityCoefficient, Settings.SmokeScaleCoefficient));
 
                 renderRequest.Quad.Draw();
             }

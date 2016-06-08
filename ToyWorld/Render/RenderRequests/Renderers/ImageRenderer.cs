@@ -8,15 +8,12 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public class ImageRenderer
-        : IDisposable
+    internal class ImageRenderer
+        : RRRendererBase<ImageSettings>, IDisposable
     {
         #region Fields
 
         protected Pbo m_pbo;
-
-
-        private ImageSettings m_settings;
 
         #endregion
 

@@ -50,10 +50,10 @@ namespace Render.RenderRequests
         protected internal DirtyParam DirtyParams;
 
 
-        protected internal readonly EffectRenderer EffectRenderer = new EffectRenderer();
-        protected internal readonly PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
-        protected internal readonly OverlayRenderer OverlayRenderer = new OverlayRenderer();
-        protected internal readonly ImageRenderer ImageRenderer = new ImageRenderer();
+        internal readonly EffectRenderer EffectRenderer = new EffectRenderer();
+        internal readonly PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
+        internal readonly OverlayRenderer OverlayRenderer = new OverlayRenderer();
+        internal readonly ImageRenderer ImageRenderer = new ImageRenderer();
 
         #endregion
 
