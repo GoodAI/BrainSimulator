@@ -34,7 +34,7 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            m_dirtyParams &= DirtyParams.Size | DirtyParams.Resolution | DirtyParams.Image | DirtyParams.Overlay;
+            DirtyParams &= DirtyParam.Size | DirtyParam.Resolution | DirtyParam.Image | DirtyParam.Overlay;
 
             base.Draw(renderer, world);
         }

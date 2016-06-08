@@ -24,7 +24,7 @@ namespace Render.RenderRequests
         : IRenderRequestBaseInternal<ToyWorld>
     {
         [Flags]
-        protected enum DirtyParams
+        protected internal enum DirtyParam
         {
             None = 0,
             Size = 1,
@@ -33,29 +33,27 @@ namespace Render.RenderRequests
 
         #region Fields
 
-        protected const float AmbientTerm = 0.25f;
+        protected internal BasicFbo FrontFbo, BackFbo;
+        protected internal BasicFboMultisample FboMs;
 
-        protected BasicFbo m_frontFbo, m_backFbo;
-        protected BasicFboMultisample m_fboMs;
+        protected internal NoEffectOffset Effect;
 
-        protected NoEffectOffset m_effect;
+        protected internal TilesetTexture TilesetTexture;
 
-        protected TilesetTexture m_tilesetTexture;
+        protected internal FullScreenGridOffset GridOffset;
+        protected internal FullScreenQuadOffset QuadOffset;
+        protected internal FullScreenQuad Quad;
 
-        protected FullScreenGridOffset m_gridOffset;
-        protected FullScreenQuadOffset m_quadOffset;
-        protected FullScreenQuad m_quad;
+        protected internal Matrix ProjMatrix;
+        protected internal Matrix ViewProjectionMatrix;
 
-        protected Matrix m_projMatrix;
-        protected Matrix m_viewProjectionMatrix;
-
-        protected DirtyParams m_dirtyParams;
+        protected internal DirtyParam DirtyParams;
 
 
-        protected EffectRenderer m_effectRenderer = new EffectRenderer();
-        protected PostprocessRenderer m_postprocessRenderer = new PostprocessRenderer();
-        protected OverlayRenderer m_overlayRenderer = new OverlayRenderer();
-        protected ImageRenderer m_imageRenderer = new ImageRenderer();
+        protected internal readonly EffectRenderer EffectRenderer = new EffectRenderer();
+        protected internal readonly PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
+        protected internal readonly OverlayRenderer OverlayRenderer = new OverlayRenderer();
+        protected internal readonly ImageRenderer ImageRenderer = new ImageRenderer();
 
         #endregion
 
@@ -71,26 +69,26 @@ namespace Render.RenderRequests
 
         public virtual void Dispose()
         {
-            if (m_frontFbo != null)
-                m_frontFbo.Dispose();
-            if (m_backFbo != null)
-                m_backFbo.Dispose();
-            if (m_fboMs != null)
-                m_fboMs.Dispose();
+            if (FrontFbo != null)
+                FrontFbo.Dispose();
+            if (BackFbo != null)
+                BackFbo.Dispose();
+            if (FboMs != null)
+                FboMs.Dispose();
 
-            m_effect.Dispose();
+            Effect.Dispose();
 
-            m_tilesetTexture.Dispose();
+            TilesetTexture.Dispose();
 
-            if (m_gridOffset != null) // It is initialized during Draw
-                m_gridOffset.Dispose();
-            m_quadOffset.Dispose();
-            m_quad.Dispose();
+            if (GridOffset != null) // It is initialized during Draw
+                GridOffset.Dispose();
+            QuadOffset.Dispose();
+            Quad.Dispose();
 
-            m_effectRenderer.Dispose();
-            m_postprocessRenderer.Dispose();
-            m_overlayRenderer.Dispose();
-            m_imageRenderer.Dispose();
+            EffectRenderer.Dispose();
+            PostprocessRenderer.Dispose();
+            OverlayRenderer.Dispose();
+            ImageRenderer.Dispose();
         }
 
         #endregion
@@ -114,11 +112,11 @@ namespace Render.RenderRequests
             {
                 const float minSize = 0.01f;
                 m_sizeV = new Vector2(Math.Max(minSize, value.X), Math.Max(minSize, value.Y));
-                m_dirtyParams |= DirtyParams.Size;
+                DirtyParams |= DirtyParam.Size;
             }
         }
 
-        protected virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
+        protected internal virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
         private Rectangle GridView
         {
@@ -168,7 +166,7 @@ namespace Render.RenderRequests
             set
             {
                 m_flipYAxis = value;
-                m_dirtyParams |= DirtyParams.Size;
+                DirtyParams |= DirtyParam.Size;
             }
         }
 
@@ -197,6 +195,8 @@ namespace Render.RenderRequests
 
         #endregion
 
+        // TODO: rename
+
         public EffectSettings Effects { get; set; }
         public PostprocessingSettings Postprocessing { get; set; }
         public OverlaySettings Overlay { get; set; }
@@ -209,13 +209,13 @@ namespace Render.RenderRequests
 
         Fbo SwapBuffers()
         {
-            BasicFbo tmp = m_backFbo;
-            m_backFbo = m_frontFbo;
-            m_frontFbo = tmp;
-            return m_frontFbo;
+            BasicFbo tmp = BackFbo;
+            BackFbo = FrontFbo;
+            FrontFbo = tmp;
+            return FrontFbo;
         }
 
-        private void SetDefaultBlending()
+        internal void SetDefaultBlending()
         {
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
         }
@@ -243,21 +243,21 @@ namespace Render.RenderRequests
 
             // Set up framebuffers
             {
-                bool newRes = m_frontFbo == null || Resolution.Width != m_frontFbo.Size.X || Resolution.Height != m_frontFbo.Size.Y;
+                bool newRes = FrontFbo == null || Resolution.Width != FrontFbo.Size.X || Resolution.Height != FrontFbo.Size.Y;
 
                 if (newRes)
                 {
                     // Reallocate front fbo
-                    if (m_frontFbo != null)
-                        m_frontFbo.Dispose();
+                    if (FrontFbo != null)
+                        FrontFbo.Dispose();
 
-                    m_frontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    FrontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
 
                     // Reallocate back fbo; only if it was already allocated
-                    if (m_backFbo != null)
-                        m_backFbo.Dispose();
+                    if (BackFbo != null)
+                        BackFbo.Dispose();
 
-                    m_backFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    BackFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
                 }
 
                 // Reallocate MS fbo
@@ -265,12 +265,12 @@ namespace Render.RenderRequests
                 {
                     int multisampleCount = 1 << (int)MultisampleLevel; // 4x to 32x (4 levels)
 
-                    if (newRes || m_fboMs == null || multisampleCount != m_fboMs.MultisampleCount)
+                    if (newRes || FboMs == null || multisampleCount != FboMs.MultisampleCount)
                     {
-                        if (m_fboMs != null)
-                            m_fboMs.Dispose();
+                        if (FboMs != null)
+                            FboMs.Dispose();
 
-                        m_fboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
+                        FboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
                     }
                     // No need to enable Multisample capability, it is enabled automatically
                     // GL.Enable(EnableCap.Multisample);
@@ -289,47 +289,53 @@ namespace Render.RenderRequests
                             world.TilesetTable.TileBorder))
                     .ToArray();
 
-                m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
+                TilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
             }
 
             // Set up tile grid shader
             {
-                m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-                renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
+                Effect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(Effect); // Need to use the effect to set uniforms
 
                 // Set up static uniforms
                 Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
                                         world.TilesetTable.TileBorder * 2; // twice the border, on each side once
-                Vector2 tileCount = (Vector2)m_tilesetTexture.Size / (Vector2)fullTileSize;
-                m_effect.TexSizeCountUniform(new Vector3I(m_tilesetTexture.Size.X, m_tilesetTexture.Size.Y, (int)tileCount.X));
-                m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-                m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+                Vector2 tileCount = (Vector2)TilesetTexture.Size / (Vector2)fullTileSize;
+                Effect.TexSizeCountUniform(new Vector3I(TilesetTexture.Size.X, TilesetTexture.Size.Y, (int)tileCount.X));
+                Effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+                Effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
-                m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+                Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
             }
 
             // Set up geometry
-            m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
-            m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+            Quad = renderer.GeometryManager.Get<FullScreenQuad>();
+            QuadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+
+            // Initialize renderers
+            EffectRenderer.Init(this, renderer, world, Effects);
+            PostprocessRenderer.Init(this, renderer, world, Postprocessing);
+            OverlayRenderer.Init(this, renderer, world, Overlay);
+            ImageRenderer.Init(this, renderer, world, Image);
         }
 
         protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
-            if (m_dirtyParams.HasFlag(DirtyParams.Size))
+            if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                m_gridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
-                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                GridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
+                ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
                 // Flip the image to have its origin in the top-left corner
 
                 if (FlipYAxis)
-                    m_projMatrix *= Matrix.CreateScale(1, -1, 1);
+                    ProjMatrix *= Matrix.CreateScale(1, -1, 1);
 
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
             }
 
-            m_dirtyParams = DirtyParams.None;
+            DirtyParams = DirtyParam.None;
         }
 
         #endregion
@@ -340,14 +346,14 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            if (m_imageRenderer != null)
-                m_imageRenderer.OnPreDraw();
+            if (ImageRenderer != null)
+                ImageRenderer.OnPreDraw();
         }
 
         public virtual void OnPostDraw()
         {
-            if (m_imageRenderer != null)
-                m_imageRenderer.OnPostDraw();
+            if (ImageRenderer != null)
+                ImageRenderer.OnPostDraw();
         }
 
         #endregion
@@ -360,55 +366,49 @@ namespace Render.RenderRequests
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             if (MultisampleLevel > 0)
-                m_fboMs.Bind();
+                FboMs.Bind();
             else
-                m_frontFbo.Bind();
+                FrontFbo.Bind();
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
             GL.Enable(EnableCap.Blend);
             SetDefaultBlending();
 
             // View and proj transforms
-            m_viewProjectionMatrix = GetViewMatrix(PositionCenterV);
-            m_viewProjectionMatrix *= m_projMatrix;
+            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
+            ViewProjectionMatrix *= ProjMatrix;
 
             // Bind stuff to GL
-            renderer.TextureManager.Bind(m_tilesetTexture);
-            renderer.EffectManager.Use(m_effect);
-            m_effect.TextureUniform(0);
-            m_effect.DiffuseUniform(
-                new Vector4(
-                    1, 1, 1,
-                    (1 - AmbientTerm)
-                    * (Effects.EnabledEffects.HasFlag(RenderRequestEffect.DayNight)
-                        ? world.Atlas.Day
-                        : 1)));
+            renderer.TextureManager.Bind(TilesetTexture);
+            renderer.EffectManager.Use(Effect);
+            Effect.TextureUniform(0);
+            Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(world)));
 
             // Draw the scene
             DrawTileLayers(world);
             DrawObjectLayers(world);
 
             // Draw effects
-            m_effectRenderer.Draw(this, renderer, world);
+            EffectRenderer.Draw(this, renderer, world);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
             {
                 // We have to blit to another fbo to resolve multisampling before readPixels and postprocessing, unfortunatelly
-                m_fboMs.Bind(FramebufferTarget.ReadFramebuffer);
-                m_frontFbo.Bind(FramebufferTarget.DrawFramebuffer);
+                FboMs.Bind(FramebufferTarget.ReadFramebuffer);
+                FrontFbo.Bind(FramebufferTarget.DrawFramebuffer);
                 GL.BlitFramebuffer(
-                    0, 0, m_fboMs.Size.X, m_fboMs.Size.Y,
-                    0, 0, m_frontFbo.Size.X, m_frontFbo.Size.Y,
+                    0, 0, FboMs.Size.X, FboMs.Size.Y,
+                    0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
                     BlitFramebufferFilter.Linear);
             }
 
-            m_postprocessRenderer.Draw(this, renderer, world);
-            m_overlayRenderer.Draw(this, renderer, world);
+            PostprocessRenderer.Draw(this, renderer, world);
+            OverlayRenderer.Draw(this, renderer, world);
 
             // Copy the rendered scene
-            m_imageRenderer.Draw(this, renderer, world);
+            ImageRenderer.Draw(this, renderer, world);
         }
 
         protected virtual void DrawTileLayers(ToyWorld world)
@@ -420,8 +420,8 @@ namespace Render.RenderRequests
             // World transform -- move center to view center
             transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
             // View and projection transforms
-            transform *= m_viewProjectionMatrix;
-            m_effect.ModelViewProjectionUniform(ref transform);
+            transform *= ViewProjectionMatrix;
+            Effect.ModelViewProjectionUniform(ref transform);
 
 
             // Draw tile layers
@@ -430,8 +430,8 @@ namespace Render.RenderRequests
 
             foreach (ITileLayer tileLayer in toRender)
             {
-                m_gridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));
-                m_gridOffset.Draw();
+                GridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));
+                GridOffset.Draw();
             }
         }
 
@@ -454,12 +454,12 @@ namespace Render.RenderRequests
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
                     // View and projection transforms
-                    transform *= m_viewProjectionMatrix;
-                    m_effect.ModelViewProjectionUniform(ref transform);
+                    transform *= ViewProjectionMatrix;
+                    Effect.ModelViewProjectionUniform(ref transform);
 
                     // Setup dynamic data
-                    m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
-                    m_quadOffset.Draw();
+                    QuadOffset.SetTextureOffsets(gameObject.TilesetId);
+                    QuadOffset.Draw();
                 }
             }
         }

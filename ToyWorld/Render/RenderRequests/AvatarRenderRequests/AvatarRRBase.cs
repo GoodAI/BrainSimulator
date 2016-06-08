@@ -37,11 +37,11 @@ namespace Render.RenderRequests
             set
             {
                 m_rotateMap = value;
-                m_dirtyParams |= DirtyParams.Size;
+                DirtyParams |= DirtyParam.Size;
             }
         }
 
-        protected override RectangleF ViewV
+        protected internal override RectangleF ViewV
         {
             get
             {
