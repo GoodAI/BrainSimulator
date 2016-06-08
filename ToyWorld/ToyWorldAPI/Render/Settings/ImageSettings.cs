@@ -27,6 +27,7 @@ namespace GoodAI.ToyWorld.Control
 
 
         #region Cpu
+
         /// <summary>
         /// location where data is copied if it should be transfered through CPU
         /// </summary>
