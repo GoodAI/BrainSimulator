@@ -17,6 +17,7 @@ namespace Render.RenderRequests
 
         protected NoiseEffect m_noiseEffect;
 
+
         private PostprocessingSettings m_settings;
 
         #endregion
@@ -31,10 +32,9 @@ namespace Render.RenderRequests
 
         #endregion
 
-
         #region Init
 
-        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
+        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, PostprocessingSettings settings)
         {
             if (m_noiseEffect == null)
                 m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();

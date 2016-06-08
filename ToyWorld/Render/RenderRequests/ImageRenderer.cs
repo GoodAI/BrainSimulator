@@ -15,6 +15,7 @@ namespace Render.RenderRequests
 
         protected Pbo m_pbo;
 
+
         private ImageSettings m_settings;
 
         #endregion
@@ -47,6 +48,26 @@ namespace Render.RenderRequests
                     settings.RenderedScene = new uint[Resolution.Width * Resolution.Height];
                     break;
             }
+        }
+
+        #endregion
+
+        #region Callbacks
+
+        public virtual void OnPreDraw()
+        {
+            var preCopyCallback = OnPreRenderingEvent;
+
+            if (preCopyCallback != null && m_pbo != null)
+                preCopyCallback(this, m_pbo.Handle);
+        }
+
+        public virtual void OnPostDraw()
+        {
+            var postCopyCallback = OnPostRenderingEvent;
+
+            if (postCopyCallback != null && m_pbo != null)
+                postCopyCallback(this, m_pbo.Handle);
         }
 
         #endregion

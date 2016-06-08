@@ -59,5 +59,11 @@ namespace GoodAI.ToyWorld.Control
         public ToolBackgroundType ToolBackground { get; set; }
 
         #endregion
+
+
+        public AvatarRROverlaySettings()
+        {
+            ToolBackground = ToolBackgroundType.BrownBorder;
+        }
     }
 }

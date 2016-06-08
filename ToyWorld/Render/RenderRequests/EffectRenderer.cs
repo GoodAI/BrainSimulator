@@ -16,6 +16,7 @@ namespace Render.RenderRequests
         protected SmokeEffect m_smokeEffect;
         protected PointLightEffect m_pointLightEffect;
 
+
         private EffectSettings m_settings;
 
         #endregion
@@ -32,10 +33,9 @@ namespace Render.RenderRequests
 
         #endregion
 
-
         #region Init
 
-        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
+        public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
         {
             if (m_settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {

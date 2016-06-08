@@ -33,5 +33,11 @@ namespace GoodAI.ToyWorld.Control
         public float NoiseIntensityCoefficient { get; set; }
 
         #endregion
+
+
+        public PostprocessingSettings()
+        {
+            NoiseIntensityCoefficient = 1.0f;
+        }
     }
 }

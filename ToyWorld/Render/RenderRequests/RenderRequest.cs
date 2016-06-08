@@ -13,7 +13,6 @@ using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas.Layers;
-using World.GameActors.GameObjects;
 using World.Physics;
 using World.ToyWorldCore;
 using Rectangle = VRageMath.Rectangle;
@@ -29,11 +28,6 @@ namespace Render.RenderRequests
         {
             None = 0,
             Size = 1,
-            Resolution = 1 << 1,
-            Image = 1 << 2,
-            Smoke = 1 << 3,
-            Noise = 1 << 4,
-            Overlay = 1 << 5,
         }
 
 
@@ -55,11 +49,13 @@ namespace Render.RenderRequests
         protected Matrix m_projMatrix;
         protected Matrix m_viewProjectionMatrix;
 
+        protected DirtyParams m_dirtyParams;
 
-        protected EffectRenderer m_effectRenderer;
-        protected PostprocessRenderer m_postprocessRenderer;
-        protected OverlayRenderer m_overlayRenderer;
-        protected ImageRenderer m_imageRenderer;
+
+        protected EffectRenderer m_effectRenderer = new EffectRenderer();
+        protected PostprocessRenderer m_postprocessRenderer = new PostprocessRenderer();
+        protected OverlayRenderer m_overlayRenderer = new OverlayRenderer();
+        protected ImageRenderer m_imageRenderer = new ImageRenderer();
 
         #endregion
 
@@ -67,6 +63,7 @@ namespace Render.RenderRequests
 
         protected RenderRequest()
         {
+            MultisampleLevel = RenderRequestMultisampleLevel.x4;
             PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
@@ -82,12 +79,18 @@ namespace Render.RenderRequests
                 m_fboMs.Dispose();
 
             m_effect.Dispose();
+
             m_tilesetTexture.Dispose();
 
             if (m_gridOffset != null) // It is initialized during Draw
                 m_gridOffset.Dispose();
             m_quadOffset.Dispose();
             m_quad.Dispose();
+
+            m_effectRenderer.Dispose();
+            m_postprocessRenderer.Dispose();
+            m_overlayRenderer.Dispose();
+            m_imageRenderer.Dispose();
         }
 
         #endregion
@@ -138,6 +141,7 @@ namespace Render.RenderRequests
 
         public bool CopyToWindow { get; set; }
 
+
         #region View controls
 
         public System.Drawing.PointF PositionCenter
@@ -186,43 +190,17 @@ namespace Render.RenderRequests
                     throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be at most " + maxResolution + " pixels.");
 
                 m_resolution = value;
-                m_dirtyParams |= DirtyParams.Resolution | DirtyParams.Image;
             }
         }
 
-        private RenderRequestMultisampleLevel m_multisampleLevel = RenderRequestMultisampleLevel.x4;
-        public RenderRequestMultisampleLevel MultisampleLevel
-        {
-            get { return m_multisampleLevel; }
-            set
-            {
-                m_multisampleLevel = value;
-                m_dirtyParams |= DirtyParams.Resolution;
-            }
-        }
+        public RenderRequestMultisampleLevel MultisampleLevel { get; set; }
 
         #endregion
-
-        private ImageSettings m_image;
-        public ImageSettings Image
-        {
-            get { return m_image; }
-            set { m_image = value; }
-        }
 
         public EffectSettings Effects { get; set; }
         public PostprocessingSettings Postprocessing { get; set; }
         public OverlaySettings Overlay { get; set; }
-
-
-
-        private System.Drawing.Color m_smokeColor = System.Drawing.Color.FromArgb(242, 242, 242, 242);
-        private float m_smokeTransformationSpeedCoefficient = 1f;
-        private float m_smokeIntensityCoefficient = 1f;
-        private float m_smokeScaleCoefficient = 1f;
-
-        private bool m_drawNoise;
-        private float m_noiseIntensityCoefficient = 1.0f;
+        public ImageSettings Image { get; set; }
 
 
         #endregion
@@ -258,64 +236,12 @@ namespace Render.RenderRequests
 
         public virtual void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            // Setup color and blending
+            // Set up color and blending
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
 
-
-            // Tileset textures and effect
-            {
-                // Set up tileset textures
-                IEnumerable<Tileset> tilesets = world.TilesetTable.GetTilesetImages();
-                TilesetImage[] tilesetImages = tilesets.Select(t =>
-                    new TilesetImage(
-                        t.Image.Source,
-                        new Vector2I(t.Tilewidth, t.Tileheight),
-                        new Vector2I(t.Spacing),
-                        world.TilesetTable.TileBorder))
-                    .ToArray();
-
-                m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-
-
-                // Set up tile grid shader
-                m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-                renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-
-                // Set up static uniforms
-                Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
-                                        world.TilesetTable.TileBorder * 2; // twice the border, on each side once
-                Vector2 tileCount = (Vector2)m_tilesetTexture.Size / (Vector2)fullTileSize;
-                m_effect.TexSizeCountUniform(new Vector3I(m_tilesetTexture.Size.X, m_tilesetTexture.Size.Y, (int)tileCount.X));
-                m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-                m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
-
-                m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
-            }
-
-
-            // Set up geometry
-            m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
-            m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
-        }
-
-        protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
-        {
-            // Only setup these things when their dependency has changed (property setters enable these)
-
-            if (m_dirtyParams.HasFlag(DirtyParams.Size))
-            {
-                m_gridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
-                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
-                // Flip the image to have its origin in the top-left corner
-
-                if (FlipYAxis)
-                    m_projMatrix *= Matrix.CreateScale(1, -1, 1);
-
-                //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
-            }
-            if (m_dirtyParams.HasFlag(DirtyParams.Resolution))
+            // Set up framebuffers
             {
                 bool newRes = m_frontFbo == null || Resolution.Width != m_frontFbo.Size.X || Resolution.Height != m_frontFbo.Size.Y;
 
@@ -351,6 +277,58 @@ namespace Render.RenderRequests
                 }
             }
 
+            // Tileset textures
+            {
+                // Set up tileset textures
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetTilesetImages();
+                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                        new TilesetImage(
+                            t.Image.Source,
+                            new Vector2I(t.Tilewidth, t.Tileheight),
+                            new Vector2I(t.Spacing),
+                            world.TilesetTable.TileBorder))
+                    .ToArray();
+
+                m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
+            }
+
+            // Set up tile grid shader
+            {
+                m_effect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
+
+                // Set up static uniforms
+                Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
+                                        world.TilesetTable.TileBorder * 2; // twice the border, on each side once
+                Vector2 tileCount = (Vector2)m_tilesetTexture.Size / (Vector2)fullTileSize;
+                m_effect.TexSizeCountUniform(new Vector3I(m_tilesetTexture.Size.X, m_tilesetTexture.Size.Y, (int)tileCount.X));
+                m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+                m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+
+                m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+            }
+
+            // Set up geometry
+            m_quad = renderer.GeometryManager.Get<FullScreenQuad>();
+            m_quadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+        }
+
+        protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
+        {
+            // Only setup these things when their dependency has changed (property setters enable these)
+
+            if (m_dirtyParams.HasFlag(DirtyParams.Size))
+            {
+                m_gridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
+                m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                // Flip the image to have its origin in the top-left corner
+
+                if (FlipYAxis)
+                    m_projMatrix *= Matrix.CreateScale(1, -1, 1);
+
+                //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
+            }
+
             m_dirtyParams = DirtyParams.None;
         }
 
@@ -362,18 +340,14 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            var preCopyCallback = OnPreRenderingEvent;
-
-            if (preCopyCallback != null && m_pbo != null)
-                preCopyCallback(this, m_pbo.Handle);
+            if (m_imageRenderer != null)
+                m_imageRenderer.OnPreDraw();
         }
 
         public virtual void OnPostDraw()
         {
-            var postCopyCallback = OnPostRenderingEvent;
-
-            if (postCopyCallback != null && m_pbo != null)
-                postCopyCallback(this, m_pbo.Handle);
+            if (m_imageRenderer != null)
+                m_imageRenderer.OnPostDraw();
         }
 
         #endregion
@@ -434,7 +408,7 @@ namespace Render.RenderRequests
             m_overlayRenderer.Draw(this, renderer, world);
 
             // Copy the rendered scene
-            GatherAndDistributeData(renderer);
+            m_imageRenderer.Draw(this, renderer, world);
         }
 
         protected virtual void DrawTileLayers(ToyWorld world)
@@ -453,6 +427,7 @@ namespace Render.RenderRequests
             // Draw tile layers
             List<ITileLayer> tileLayers = world.Atlas.TileLayers;
             IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+
             foreach (ITileLayer tileLayer in toRender)
             {
                 m_gridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));

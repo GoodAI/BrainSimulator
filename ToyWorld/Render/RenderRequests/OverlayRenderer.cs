@@ -40,7 +40,6 @@ namespace Render.RenderRequests
 
         #endregion
 
-
         #region Init
 
         public virtual void Init(RenderRequest renderRequest, RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
@@ -48,11 +47,11 @@ namespace Render.RenderRequests
             // Set up overlay textures
             IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlayImages();
             TilesetImage[] tilesetImages = tilesets.Select(t =>
-                new TilesetImage(
-                    t.Image.Source,
-                    new Vector2I(t.Tilewidth, t.Tileheight),
-                    new Vector2I(t.Spacing),
-                    world.TilesetTable.TileBorder))
+                    new TilesetImage(
+                        t.Image.Source,
+                        new Vector2I(t.Tilewidth, t.Tileheight),
+                        new Vector2I(t.Spacing),
+                        world.TilesetTable.TileBorder))
                 .ToArray();
 
             m_overlayTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);

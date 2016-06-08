@@ -56,5 +56,14 @@ namespace GoodAI.ToyWorld.Control
         public float SmokeScaleCoefficient { get; set; }
 
         #endregion
+
+
+        public EffectSettings()
+        {
+            SmokeColor = Color.FromArgb(242, 242, 242, 242);
+            SmokeTransformationSpeedCoefficient = 1f;
+            SmokeIntensityCoefficient = 1f;
+            SmokeScaleCoefficient = 1f;
+        }
     }
 }
