@@ -36,6 +36,32 @@ namespace GoodAI.ToyWorld
                 Owner.AvatarCtrl = Owner.GameCtrl.GetAvatarController(myAvatarId);
 
                 // Setup render requests
+
+                EffectSettings effects = null;
+                PostprocessingSettings post = null;
+                OverlaySettings overlays = null;
+
+                if (Owner.DrawSmoke || Owner.DrawLights)
+                    effects = new EffectSettings
+                    {
+                        EnableDayAndNightCycle = Owner.EnableDayAndNightCycle,
+                        DrawLights = Owner.DrawLights,
+
+                        DrawSmoke = Owner.DrawSmoke,
+                        SmokeIntensityCoefficient = Owner.SmokeIntensity,
+                        SmokeScaleCoefficient = Owner.SmokeScale,
+                        SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed,
+                    };
+
+                if (Owner.DrawNoise)
+                    post = new PostprocessingSettings
+                    {
+                        DrawNoise = Owner.DrawNoise,
+                        NoiseIntensityCoefficient = Owner.NoiseIntensity,
+                    };
+
+                // Overlays are not used for now (no BrainSim property to switch them on) because there is a separate renderrequest for inventory Tool
+
                 Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, myAvatarId,
                     rr =>
                     {
@@ -43,14 +69,9 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
                         rr.MultisampleLevel = Owner.FoVMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
-                        rr.DrawNoise = Owner.DrawNoise;
-                        rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
-                        rr.DrawSmoke = Owner.DrawSmoke;
-                        rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
-                        rr.SmokeScaleCoefficient = Owner.SmokeScale;
-                        rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
-                        rr.DrawLights = Owner.DrawLights;
-                        rr.EnableDayAndNightCycle = Owner.EnableDayAndNightCycle;
+                        rr.Effects = effects;
+                        rr.Postprocessing = post;
+                        rr.Overlay = overlays;
                     });
 
                 Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
@@ -61,14 +82,9 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
                         rr.MultisampleLevel = Owner.FoFMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
-                        rr.DrawNoise = Owner.DrawNoise;
-                        rr.NoiseIntensityCoefficient = Owner.NoiseIntensity;
-                        rr.DrawSmoke = Owner.DrawSmoke;
-                        rr.SmokeIntensityCoefficient = Owner.SmokeIntensity;
-                        rr.SmokeScaleCoefficient = Owner.SmokeScale;
-                        rr.SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed;
-                        rr.DrawLights = Owner.DrawLights;
-                        rr.EnableDayAndNightCycle = Owner.EnableDayAndNightCycle;
+                        rr.Effects = effects;
+                        rr.Postprocessing = post;
+                        rr.Overlay = overlays;
                     });
 
                 Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
@@ -95,33 +111,38 @@ namespace GoodAI.ToyWorld
 
             private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
             {
-                // Setup the render request properties
-                rr.GatherImage = true;
-
                 if (initializer != null)
                     initializer.Invoke(rr);
 
                 rr.FlipYAxis = true;
 
-                rr.CopyImageThroughCpu = Owner.CopyDataThroughCPU;
+
+                // Setup image copying from RR
+                rr.Image = new ImageSettings
+                {
+                    GatherImage = true,
+                    CopyImageThroughCpu = Owner.CopyDataThroughCPU,
+                };
+
                 targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
 
                 if (Owner.CopyDataThroughCPU)
                     return rr;
 
+
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
                 CudaOpenGLBufferInteropResource renderResource = null;
 
-                rr.OnPreRenderingEvent += (sender, vbo) =>
+                rr.Image.OnPreRenderingEvent += (sender, vbo) =>
                 {
                     if (renderResource != null && renderResource.IsMapped)
                         renderResource.UnMap();
                 };
 
-                rr.OnPostRenderingEvent += (sender, vbo) =>
+                rr.Image.OnPostRenderingEvent += (sender, vbo) =>
                 {
-                    // Vbo can be allocated during drawing, create the resource after that
+                    // Vbo can be allocated during drawing, create the resource after that (post-rendering)
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).SetCurrent();
 
                     if (renderResource == null || vbo != renderTextureHandle)
@@ -348,7 +369,7 @@ namespace GoodAI.ToyWorld
 
             private static void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
             {
-                uint[] data = rr.Image;
+                uint[] data = rr.Image.RenderedScene;
                 int width = rr.Resolution.Width;
                 int stride = width * sizeof(uint);
                 int lines = data.Length / width;
