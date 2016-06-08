@@ -75,18 +75,16 @@ namespace Game
             // speed must be between [0,1]
 
             var jointSpeed = JointSpeed(fSpeed, rSpeed);
-
             m_avatar.DesiredSpeed = jointSpeed;
+
             float jointDirection =
-                MathHelper.WrapAngle(m_avatar.Rotation +
-                                     (float)
-                                         Math.Atan2(m_avatarControls.DesiredRightSpeed,
-                                             m_avatarControls.DesiredForwardSpeed));
+                MathHelper.WrapAngle(m_avatar.Rotation
+                                     + (float)Math.Atan2(m_avatarControls.DesiredForwardSpeed, m_avatarControls.DesiredRightSpeed)
+                                     - MathHelper.PiOver2); // Our zero angle is the up direction (instead of right)
             m_avatar.Direction = jointDirection;
-            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
+            m_avatar.DesiredLeftRotation = m_avatarControls.DesiredLeftRotation;
             m_avatar.Interact = m_avatarControls.Interact;
             m_avatar.PickUp = m_avatarControls.PickUp;
-            m_avatar.DesiredRotation = m_avatarControls.DesiredRotation;
             m_avatar.UseTool = m_avatarControls.Use;
             m_avatar.Fof = m_avatarControls.Fof;
         }
