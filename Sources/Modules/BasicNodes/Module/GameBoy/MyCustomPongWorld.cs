@@ -35,7 +35,8 @@ namespace GoodAI.Modules.GameBoy
     {
         public class GamePauseRequestSignal : MySignal { }
         public GamePauseRequestSignal GamePauseRequest { get; private set; }
-        
+        private int m_gameStepsMade;
+
         public class MyGameObject
         {
             public float2 position;
@@ -438,6 +439,7 @@ namespace GoodAI.Modules.GameBoy
             {
                 m_control = 0;
                 m_controlCoolDown = 0;
+                Owner.m_gameStepsMade = 0;
             }
 
             protected virtual void ExecutePrepareHost()
@@ -452,7 +454,7 @@ namespace GoodAI.Modules.GameBoy
 
             private void EcecuteRandomPaddleShuffle()
             {
-                if (RndPaddleShuffle > 0 && SimulationStep % RndPaddleShuffle == 0)
+                if (RndPaddleShuffle > 0 && Owner.m_gameStepsMade % RndPaddleShuffle == 0)
                 {
                     MyGameObject paddle = Owner.m_gameObjects[1];
                     float rnd = (float)m_random.NextDouble();
@@ -504,6 +506,8 @@ namespace GoodAI.Modules.GameBoy
                 {
                     return;
                 }
+                Owner.m_gameStepsMade++;
+
                 ExecutePrepareHost();
 
                 ExecuteResolveEvents();
