@@ -367,7 +367,33 @@ namespace GoodAI.Modules.GameBoy
             [YAXSerializableField(DefaultValue = 0)]
             public int RndPaddleShuffle { get; set; }
 
+            private float m_friction;
+            [MyBrowsable, Category("Dynamics"), 
+            Description("Set paddle friction.\npaddle.velocity += (control * PADDLE_ACCELERATION - paddle.velocity * PaddleFriction) * DELTA_T ")]
+            [YAXSerializableField(DefaultValue = PADDLE_FRICTION)]
+            public float PaddleFriction
+            {
+                get { return m_friction; }
+                set
+                {
+                    if (value <= 1 && value >= 0)
+                    {
+                        m_friction = value;
+                    }
+                }
+            }
 
+            [MyBrowsable, Category("Dynamics"), 
+            Description("If true, dynamics of the paddle will be ignored (velocity/friction). "+
+                "Now only the current control signal is taken into account (with some coolDown)")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool IgnorePaddleDynamics { get; set; }
+
+            [MyBrowsable, Category("Dynamics"),
+            Description("By default, the nonzero control signal is preserved for several steps when STAY control signal is sent (this disables it).")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool IgnoreControlCoolDown { get; set; }
+            
             private int stepsFrozen = 0;
 
             [MyBrowsable, Category("Events")]
@@ -418,11 +444,11 @@ namespace GoodAI.Modules.GameBoy
 
             private void EcecuteRandomPaddleShuffle()
             {
-                if (RndPaddleShuffle>0 && SimulationStep % RndPaddleShuffle == 0)
+                if (RndPaddleShuffle > 0 && SimulationStep % RndPaddleShuffle == 0)
                 {
                     MyGameObject paddle = Owner.m_gameObjects[1];
                     float rnd = (float)m_random.NextDouble();
-                    paddle.position.x =  rnd * (Owner.Scene.Width - paddle.pixelSize.x) - paddle.pixelSize.x * .5f;
+                    paddle.position.x = rnd * (Owner.Scene.Width - paddle.pixelSize.x);
                 }
             }
 
@@ -590,17 +616,25 @@ namespace GoodAI.Modules.GameBoy
 
             protected void ResolvePaddleEvents(MyGameObject paddle, float control)
             {
-                paddle.velocity += (control * PADDLE_ACCELERATION - paddle.velocity * PADDLE_FRICTION) * DELTA_T;
-
-                if (paddle.velocity.x > MAX_PADDLE_VELOCITY)
+                if (IgnorePaddleDynamics)
                 {
-                    paddle.velocity.x = MAX_PADDLE_VELOCITY;
+                    paddle.velocity.x = control * DELTA_T;
                 }
-                else if (paddle.velocity.x < -MAX_PADDLE_VELOCITY)
+                else
                 {
-                    paddle.velocity.x = -MAX_PADDLE_VELOCITY;
+                    paddle.velocity += (control * PADDLE_ACCELERATION - paddle.velocity * PaddleFriction) * DELTA_T;
+                    
+                    if (paddle.velocity.x > MAX_PADDLE_VELOCITY)
+                    {
+                        paddle.velocity.x = MAX_PADDLE_VELOCITY;
+                    }
+                    else if (paddle.velocity.x < -MAX_PADDLE_VELOCITY)
+                    {
+                        paddle.velocity.x = -MAX_PADDLE_VELOCITY;
+                    }
                 }
 
+                
                 float2 futurePos = paddle.position + paddle.velocity;
 
                 if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.Scene.Width)
@@ -692,7 +726,7 @@ namespace GoodAI.Modules.GameBoy
                 }
                 else
                 {
-                    if (controlCoolDown < 0)
+                    if (controlCoolDown < 0 || IgnoreControlCoolDown)
                     {
                         control = 0;
                     }
