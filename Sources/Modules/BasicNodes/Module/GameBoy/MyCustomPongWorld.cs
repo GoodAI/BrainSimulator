@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
+using GoodAI.Core.Signals;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using ManagedCuda;
@@ -32,6 +33,9 @@ namespace GoodAI.Modules.GameBoy
     /// </description>
     public class MyCustomPongWorld : MyWorld
     {
+        public class GamePauseRequestSignal : MySignal { }
+        public GamePauseRequestSignal GamePauseRequest { get; private set; }
+        
         public class MyGameObject
         {
             public float2 position;
@@ -302,7 +306,7 @@ namespace GoodAI.Modules.GameBoy
         }
 
         /// <summary>
-        /// Renders the game to visual output.
+        /// Renders the game to visual output. If the GamePauseRequest signal is rised, the game is paused.
         /// </summary>
         public class MyRenderTask : MyTask<MyCustomPongWorld>
         {
@@ -317,6 +321,10 @@ namespace GoodAI.Modules.GameBoy
 
             public override void Execute()
             {
+                if (Owner.GamePauseRequest.IsRised() || Owner.GamePauseRequest.IsIncomingRised())
+                {
+                    return;
+                }
                 Owner.Visual.Fill(1.0f);
 
                 if (Owner.BricksEnabled)
@@ -351,7 +359,7 @@ namespace GoodAI.Modules.GameBoy
         }
 
         /// <summary>
-        /// BinaryEvent output has a vector of binary events as follows: "bounce ball", "brick destroyed", "lost life".
+        /// BinaryEvent output has a vector of binary events as follows: "bounce ball", "brick destroyed", "lost life". If the GamePauseRequest signal is rised, the game is paused.
         /// </summary>
         public class MyUpdateTask : MyTask<MyCustomPongWorld>
         {
@@ -492,6 +500,10 @@ namespace GoodAI.Modules.GameBoy
 
             public override void Execute()
             {
+                if (Owner.GamePauseRequest.IsRised() || Owner.GamePauseRequest.IsIncomingRised())
+                {
+                    return;
+                }
                 ExecutePrepareHost();
 
                 ExecuteResolveEvents();
