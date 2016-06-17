@@ -27,6 +27,10 @@ namespace Render.RenderRequests
 
         #region Genesis
 
+        public OverlayRenderer(RenderRequest owner)
+            : base(owner)
+        { }
+
         public virtual void Dispose()
         {
             if (m_overlayEffect != null)
@@ -39,7 +43,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, OverlaySettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
         {
             // Set up overlay textures
             IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlayImages();

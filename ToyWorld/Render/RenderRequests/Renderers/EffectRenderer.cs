@@ -22,6 +22,10 @@ namespace Render.RenderRequests
 
         #region Genesis
 
+        public EffectRenderer(RenderRequest owner)
+            : base(owner)
+        { }
+
         public virtual void Dispose()
         {
             if (m_smokeEffect != null)
@@ -44,7 +48,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, EffectSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
         {
             Settings = settings;
 

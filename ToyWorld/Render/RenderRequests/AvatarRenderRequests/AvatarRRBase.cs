@@ -7,28 +7,36 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public abstract class AvatarRRBase : RenderRequest, IAvatarRenderRequest
+    public abstract class AvatarRRBase
+        : RenderRequest, IAvatarRenderRequest
     {
-        class ARROverlayRenderer
+        // Internal class that replaces the base renderer, adding new features
+        internal class ARROverlayRenderer
             : OverlayRenderer
         {
-            private new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
-            private new AvatarRROverlaySettings Settings { get { return (AvatarRROverlaySettings)base.Settings; } }
+            internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
+            internal new AvatarRROverlaySettings Settings { get { return (AvatarRROverlaySettings)base.Settings; } set { base.Settings = value; } }
 
+            public ARROverlayRenderer(RenderRequest owner)
+                : base(owner)
+            { }
 
             public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
             {
                 base.Draw(renderer, world);
 
-                // Compute transform of the center of the inventory
-                const float margin = 0.05f;
-                Vector2 size = new Vector2(0.08f);
-                Vector2 position = Vector2.One - (new Vector2(margin) + size * 0.5f);
-
-                DrawAvatarTool(renderer, world.GetAvatar(Owner.AvatarID), size, position, Settings.ToolBackground);
+                DrawAvatarTool(
+                    renderer, world.GetAvatar(Owner.AvatarID),
+                    (Vector2)Settings.ToolSize, (Vector2)Settings.ToolPosition,
+                    Settings.ToolBackground);
             }
         }
 
+        internal new ARROverlayRenderer OverlayRenderer
+        {
+            get { return (ARROverlayRenderer)base.OverlayRenderer; }
+            set { base.OverlayRenderer = value; }
+        }
 
 
         private Vector3? m_avatarDirection;
@@ -97,7 +105,7 @@ namespace Render.RenderRequests
         {
             base.Init(renderer, world);
 
-            OverlayRenderer = new ARROverlayRenderer();
+            OverlayRenderer = new ARROverlayRenderer(this);
         }
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)

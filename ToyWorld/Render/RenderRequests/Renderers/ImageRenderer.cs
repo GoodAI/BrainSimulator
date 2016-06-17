@@ -18,6 +18,10 @@ namespace Render.RenderRequests
         #endregion
 
         #region Genesis
+        
+        public ImageRenderer(RenderRequest owner)
+            : base(owner)
+        { }
 
         public virtual void Dispose()
         {
@@ -29,7 +33,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, ImageSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, ImageSettings settings)
         {
             if (settings == null)
                 return;

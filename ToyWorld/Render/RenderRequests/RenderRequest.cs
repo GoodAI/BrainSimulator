@@ -33,6 +33,11 @@ namespace Render.RenderRequests
 
         #region Fields
 
+        internal EffectRenderer EffectRenderer;
+        internal PostprocessRenderer PostprocessRenderer;
+        internal OverlayRenderer OverlayRenderer;
+        internal ImageRenderer ImageRenderer;
+
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
 
@@ -49,22 +54,22 @@ namespace Render.RenderRequests
 
         protected internal DirtyParam DirtyParams;
 
-
-        internal EffectRenderer EffectRenderer = new EffectRenderer();
-        internal PostprocessRenderer PostprocessRenderer = new PostprocessRenderer();
-        internal OverlayRenderer OverlayRenderer = new OverlayRenderer();
-        internal ImageRenderer ImageRenderer = new ImageRenderer();
-
         #endregion
 
         #region Genesis
 
         protected RenderRequest()
         {
-            MultisampleLevel = RenderRequestMultisampleLevel.x4;
+            EffectRenderer = new EffectRenderer(this);
+            PostprocessRenderer = new PostprocessRenderer(this);
+            OverlayRenderer = new OverlayRenderer(this);
+            ImageRenderer = new ImageRenderer(this);
+
             PositionCenterV = new Vector3(0, 0, 20);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
+
+            MultisampleLevel = RenderRequestMultisampleLevel.x4;
         }
 
         public virtual void Dispose()
@@ -312,10 +317,10 @@ namespace Render.RenderRequests
             QuadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
             // Initialize renderers
-            EffectRenderer.Init(renderer, world, this, Effects);
-            PostprocessRenderer.Init(renderer, world, this, Postprocessing);
-            OverlayRenderer.Init(renderer, world, this, Overlay);
-            ImageRenderer.Init(renderer, world, this, Image);
+            EffectRenderer.Init(renderer, world, Effects);
+            PostprocessRenderer.Init(renderer, world, Postprocessing);
+            OverlayRenderer.Init(renderer, world, Overlay);
+            ImageRenderer.Init(renderer, world, Image);
         }
 
         protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)

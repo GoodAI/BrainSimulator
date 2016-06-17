@@ -1,4 +1,5 @@
-﻿using RenderingBase.Renderer;
+﻿using System.Diagnostics;
+using RenderingBase.Renderer;
 using World.ToyWorldCore;
 
 namespace Render.RenderRequests
@@ -7,11 +8,18 @@ namespace Render.RenderRequests
         where TSettings : class
         where TOwner : class
     {
-        protected TSettings Settings;
-        protected TOwner Owner;
+        internal TSettings Settings;
+        protected readonly TOwner Owner;
 
 
-        public abstract void Init(RendererBase<ToyWorld> renderer, ToyWorld world, TOwner owner, TSettings settings);
+        protected RRRendererBase(TOwner owner)
+        {
+            Debug.Assert(owner != null);
+            Owner = owner;
+        }
+
+
+        public abstract void Init(RendererBase<ToyWorld> renderer, ToyWorld world, TSettings settings);
         public abstract void Draw(RendererBase<ToyWorld> renderer, ToyWorld world);
     }
 }

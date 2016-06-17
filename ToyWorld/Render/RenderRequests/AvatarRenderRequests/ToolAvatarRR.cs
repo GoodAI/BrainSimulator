@@ -26,16 +26,24 @@ namespace Render.RenderRequests
             SizeV = new Vector2(0.9f);
 
             MultisampleLevel = RenderRequestMultisampleLevel.None;
-            DrawOverlay = true;
-            EnableDayAndNightCycle = false;
+            
+            if (EffectRenderer.Settings != null)
+                EffectRenderer.Settings.EnabledEffects = RenderRequestEffect.None;
+            if (PostprocessRenderer.Settings != null)
+                PostprocessRenderer.Settings.EnabledPostprocessing = RenderRequestPostprocessing.None;
+
+            OverlayRenderer.Settings = new AvatarRROverlaySettings
+            {
+                EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool,
+                ToolSize = new PointF(SizeV.X, SizeV.Y),
+                ToolPosition = new PointF(),
+            };
 
             base.Init(renderer, world);
         }
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            DirtyParams &= DirtyParam.Size | DirtyParam.Resolution | DirtyParam.Image | DirtyParam.Overlay;
-
             base.Draw(renderer, world);
         }
 
@@ -49,20 +57,6 @@ namespace Render.RenderRequests
 
         protected override void DrawObjectLayers(ToyWorld world)
         { }
-
-        protected override void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
-        { }
-
-        protected override void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
-        { }
-
-        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
-        {
-            var avatar = world.GetAvatar(AvatarID);
-
-
-            DrawAvatarTool(renderer, avatar, SizeV, Vector2.Zero, ToolBackgroundType);
-        }
 
         #endregion
     }

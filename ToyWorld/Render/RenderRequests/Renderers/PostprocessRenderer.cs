@@ -21,6 +21,10 @@ namespace Render.RenderRequests
 
         #region Genesis
 
+        public PostprocessRenderer(RenderRequest owner)
+            : base(owner)
+        { }
+
         public virtual void Dispose()
         {
             if (m_noiseEffect != null)
@@ -31,12 +35,12 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, RenderRequest renderRequest, PostprocessingSettings settings)
+        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, PostprocessingSettings settings)
         {
             if (m_noiseEffect == null)
                 m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
             renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-            m_noiseEffect.ViewportSizeUniform((Vector2I)renderRequest.Resolution);
+            m_noiseEffect.ViewportSizeUniform((Vector2I)Owner.Resolution);
             m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
         }
 
