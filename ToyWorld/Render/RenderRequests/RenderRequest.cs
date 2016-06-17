@@ -38,6 +38,7 @@ namespace Render.RenderRequests
         internal OverlayRenderer OverlayRenderer;
         internal ImageRenderer ImageRenderer;
 
+
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
 
@@ -74,6 +75,8 @@ namespace Render.RenderRequests
 
         public virtual void Dispose()
         {
+            UnregisterRenderRequest();
+
             if (FrontFbo != null)
                 FrontFbo.Dispose();
             if (BackFbo != null)
@@ -142,7 +145,13 @@ namespace Render.RenderRequests
 
         #region IRenderRequestBase overrides
 
-        public bool CopyToWindow { get; set; }
+        public void UnregisterRenderRequest()
+        {
+            Renderer.RemoveRenderRequest(this);
+        }
+
+        public RendererBase<ToyWorld> Renderer { get; set; }
+        public ToyWorld World { get; set; }
 
 
         #region View controls
@@ -200,12 +209,14 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region Settings
 
         public EffectSettings Effects { get; set; }
         public PostprocessingSettings Postprocessing { get; set; }
         public OverlaySettings Overlay { get; set; }
         public ImageSettings Image { get; set; }
 
+        #endregion
 
         #endregion
 
@@ -238,7 +249,7 @@ namespace Render.RenderRequests
 
         #region Init
 
-        public virtual void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public virtual void Init()
         {
             // Set up color and blending
             const int baseIntensity = 50;
@@ -255,13 +266,13 @@ namespace Render.RenderRequests
                     if (FrontFbo != null)
                         FrontFbo.Dispose();
 
-                    FrontFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    FrontFbo = new BasicFbo(Renderer.RenderTargetManager, (Vector2I)Resolution);
 
                     // Reallocate back fbo; only if it was already allocated
                     if (BackFbo != null)
                         BackFbo.Dispose();
 
-                    BackFbo = new BasicFbo(renderer.RenderTargetManager, (Vector2I)Resolution);
+                    BackFbo = new BasicFbo(Renderer.RenderTargetManager, (Vector2I)Resolution);
                 }
 
                 // Reallocate MS fbo
@@ -274,7 +285,7 @@ namespace Render.RenderRequests
                         if (FboMs != null)
                             FboMs.Dispose();
 
-                        FboMs = new BasicFboMultisample(renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
+                        FboMs = new BasicFboMultisample(Renderer.RenderTargetManager, (Vector2I)Resolution, multisampleCount);
                     }
                     // No need to enable Multisample capability, it is enabled automatically
                     // GL.Enable(EnableCap.Multisample);
@@ -284,43 +295,42 @@ namespace Render.RenderRequests
             // Tileset textures
             {
                 // Set up tileset textures
-                IEnumerable<Tileset> tilesets = world.TilesetTable.GetTilesetImages();
+                IEnumerable<Tileset> tilesets = World.TilesetTable.GetTilesetImages();
                 TilesetImage[] tilesetImages = tilesets.Select(t =>
                         new TilesetImage(
                             t.Image.Source,
                             new Vector2I(t.Tilewidth, t.Tileheight),
                             new Vector2I(t.Spacing),
-                            world.TilesetTable.TileBorder))
+                            World.TilesetTable.TileBorder))
                     .ToArray();
 
-                TilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
+                TilesetTexture = Renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
             }
 
             // Set up tile grid shader
             {
-                Effect = renderer.EffectManager.Get<NoEffectOffset>();
-                renderer.EffectManager.Use(Effect); // Need to use the effect to set uniforms
+                Effect = Renderer.EffectManager.Get<NoEffectOffset>();
+                Renderer.EffectManager.Use(Effect); // Need to use the effect to set uniforms
 
                 // Set up static uniforms
-                Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
-                                        world.TilesetTable.TileBorder * 2; // twice the border, on each side once
+                Vector2I fullTileSize = World.TilesetTable.TileSize + World.TilesetTable.TileMargins +
+                                        World.TilesetTable.TileBorder * 2; // twice the border, on each side once
                 Vector2 tileCount = (Vector2)TilesetTexture.Size / (Vector2)fullTileSize;
                 Effect.TexSizeCountUniform(new Vector3I(TilesetTexture.Size.X, TilesetTexture.Size.Y, (int)tileCount.X));
-                Effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-                Effect.TileBorderUniform(world.TilesetTable.TileBorder);
+                Effect.TileSizeMarginUniform(new Vector4I(World.TilesetTable.TileSize, World.TilesetTable.TileMargins));
+                Effect.TileBorderUniform(World.TilesetTable.TileBorder);
 
                 Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
             }
 
             // Set up geometry
-            Quad = renderer.GeometryManager.Get<FullScreenQuad>();
-            QuadOffset = renderer.GeometryManager.Get<FullScreenQuadOffset>();
+            Quad = Renderer.GeometryManager.Get<FullScreenQuad>();
+            QuadOffset = Renderer.GeometryManager.Get<FullScreenQuadOffset>();
 
-            // Initialize renderers
-            EffectRenderer.Init(renderer, world, Effects);
-            PostprocessRenderer.Init(renderer, world, Postprocessing);
-            OverlayRenderer.Init(renderer, world, Overlay);
-            ImageRenderer.Init(renderer, world, Image);
+            EffectRenderer.Init(Renderer, World, Effects);
+            PostprocessRenderer.Init(Renderer, World, Postprocessing);
+            OverlayRenderer.Init(Renderer, World, Overlay);
+            ImageRenderer.Init(Renderer, World, Image);
         }
 
         protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
@@ -363,9 +373,9 @@ namespace Render.RenderRequests
         #endregion
 
 
-        public virtual void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public virtual void Draw()
         {
-            CheckDirtyParams(renderer, world);
+            CheckDirtyParams(Renderer, World);
 
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
@@ -383,18 +393,18 @@ namespace Render.RenderRequests
             ViewProjectionMatrix *= ProjMatrix;
 
             // Bind stuff to GL
-            renderer.TextureManager.Bind(TilesetTexture);
-            renderer.EffectManager.Use(Effect);
+            Renderer.TextureManager.Bind(TilesetTexture);
+            Renderer.EffectManager.Use(Effect);
             Effect.TextureUniform(0);
-            Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(world)));
+            Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
 
             // Draw the scene
-            DrawTileLayers(world);
-            DrawObjectLayers(world);
+            DrawTileLayers(World);
+            DrawObjectLayers(World);
 
             // Draw effects
             if (EffectRenderer.Enabled)
-                EffectRenderer.Draw(renderer, world);
+                EffectRenderer.Draw(Renderer, World);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -410,13 +420,13 @@ namespace Render.RenderRequests
             }
 
             if (PostprocessRenderer.Enabled)
-                PostprocessRenderer.Draw(renderer, world);
+                PostprocessRenderer.Draw(Renderer, World);
             if (OverlayRenderer.Enabled)
-                OverlayRenderer.Draw(renderer, world);
+                OverlayRenderer.Draw(Renderer, World);
 
             // Copy the rendered scene
             if (ImageRenderer.Enabled)
-                ImageRenderer.Draw(renderer, world);
+                ImageRenderer.Draw(Renderer, World);
         }
 
         protected virtual void DrawTileLayers(ToyWorld world)

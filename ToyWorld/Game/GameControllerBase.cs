@@ -127,7 +127,8 @@ namespace Game
                     string.Format("Incorrect type argument; the type {0} is not registered for use in this controller version.",
                     typeof(T).Name));
 
-            rrBase.Init(Renderer, World);
+            rrBase.Renderer = Renderer;
+            rrBase.World = World;
         }
 
 

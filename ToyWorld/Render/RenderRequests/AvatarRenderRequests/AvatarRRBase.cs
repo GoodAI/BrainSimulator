@@ -1,7 +1,6 @@
 ﻿using System;
 using GoodAI.ToyWorld.Control;
 using RenderingBase.Renderer;
-using RenderingBase.RenderRequests;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -101,26 +100,26 @@ namespace Render.RenderRequests
         }
 
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
-            base.Init(renderer, world);
+            base.Init();
 
             OverlayRenderer = new ARROverlayRenderer(this);
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
             PositionCenterV2 += RelativePositionV;
 
             if (RotateMap)
             {
-                var avatar = world.GetAvatar(AvatarID);
+                var avatar = World.GetAvatar(AvatarID);
                 Vector3 dir = Vector3.Up;
                 dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
-            base.Draw(renderer, world);
+            base.Draw();
         }
     }
 }

@@ -21,12 +21,12 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
             SizeV = new Vector2(0.9f);
 
             MultisampleLevel = RenderRequestMultisampleLevel.None;
-            
+
             if (EffectRenderer.Settings != null)
                 EffectRenderer.Settings.EnabledEffects = RenderRequestEffect.None;
             if (PostprocessRenderer.Settings != null)
@@ -39,12 +39,12 @@ namespace Render.RenderRequests
                 ToolPosition = new PointF(),
             };
 
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
-            base.Draw(renderer, world);
+            base.Draw();
         }
 
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)

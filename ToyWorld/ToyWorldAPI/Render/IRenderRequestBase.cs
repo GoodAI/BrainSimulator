@@ -15,7 +15,14 @@ namespace GoodAI.ToyWorld.Control
     /// 
     /// </summary>
     public interface IRenderRequestBase
+        : IDisposable
     {
+        /// <summary>
+        /// Use this method to remove the request from processing queue. Dispose works too.
+        /// </summary>
+        void UnregisterRenderRequest();
+
+
         /// <summary>
         /// 
         /// </summary>

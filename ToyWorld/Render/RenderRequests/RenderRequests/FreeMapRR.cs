@@ -25,19 +25,19 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
-            SizeV = (Vector2)world.Size;
+            SizeV = (Vector2)World.Size;
             PositionCenterV2 = SizeV * 0.5f;
 
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
             // TODO: setup camera
 
-            base.Draw(renderer, world);
+            base.Draw();
         }
 
         #endregion
