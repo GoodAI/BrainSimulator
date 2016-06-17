@@ -73,9 +73,9 @@ namespace Render.RenderRequests
                 m_noiseEffect.VarianceUniform(Settings.NoiseIntensityCoefficient);
 
                 Owner.Quad.Draw();
+                Owner.SwapBuffers();
             }
 
-            Owner.SwapBuffers();
 
             // more stuffs
 

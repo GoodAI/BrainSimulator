@@ -5,6 +5,14 @@ namespace GoodAI.ToyWorld.Control
     public enum RenderRequestImageCopyingMode
     {
         /// <summary>
+        /// No copying anywhere (scene is stored in internal framebuffer).
+        /// </summary>
+        None,
+        /// <summary>
+        /// Data will be copied to default window's framebuffer (accessible through the world's renderer object).
+        /// </summary>
+        DefaultFbo,
+        /// <summary>
         /// Copies data to the <see cref="ImageSettings.RenderedScene"/> array. Set to true if the cuda/opengl interop is failing.
         /// </summary>
         Cpu,

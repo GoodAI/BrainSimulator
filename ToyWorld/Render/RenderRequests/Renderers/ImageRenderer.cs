@@ -81,24 +81,21 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            if (Owner.CopyToWindow)
-            {
-                // TODO: TEMP: copy to default framebuffer (our window) -- will be removed
-                Owner.FrontFbo.Bind(FramebufferTarget.ReadFramebuffer);
-                GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
-                GL.BlitFramebuffer(
-                    0, 0, Owner.FrontFbo.Size.X, Owner.FrontFbo.Size.Y,
-                    0, 0, renderer.Width, renderer.Height,
-                    ClearBufferMask.ColorBufferBit,
-                    BlitFramebufferFilter.Nearest);
-            }
-
             // Gather data to host mem
             Owner.FrontFbo.Bind();
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
             switch (Settings.CopyMode)
             {
+                case RenderRequestImageCopyingMode.DefaultFbo:
+                    //Owner.FrontFbo.Bind(FramebufferTarget.ReadFramebuffer);
+                    GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
+                    GL.BlitFramebuffer(
+                        0, 0, Owner.FrontFbo.Size.X, Owner.FrontFbo.Size.Y,
+                        0, 0, renderer.Width, renderer.Height,
+                        ClearBufferMask.ColorBufferBit,
+                        BlitFramebufferFilter.Nearest);
+                    break;
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     m_pbo.Bind();
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));

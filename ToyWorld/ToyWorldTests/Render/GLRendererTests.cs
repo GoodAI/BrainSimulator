@@ -56,12 +56,12 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
-            ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
             rr.RotateMap = true;
 
             rr.Effects = new EffectSettings();
             rr.Postprocessing = new PostprocessingSettings();
             rr.Overlay = new AvatarRROverlaySettings { EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool };
+            rr.Image = new ImageSettings{CopyMode = RenderRequestImageCopyingMode.DefaultFbo};
 
 
             #region Controls
