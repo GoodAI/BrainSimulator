@@ -39,7 +39,7 @@ namespace Render.RenderRequests
 
         public float GetGlobalDiffuseComponent(ToyWorld world)
         {
-            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
+            if (Settings != null && Settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
                 return (1 - AmbientTerm) * world.Atlas.Day;
 
             return 1 - AmbientTerm;
@@ -50,6 +50,9 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
         {
+            if (settings == null)
+                return;
+
             Settings = settings;
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))

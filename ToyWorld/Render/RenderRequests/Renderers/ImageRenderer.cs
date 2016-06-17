@@ -18,7 +18,7 @@ namespace Render.RenderRequests
         #endregion
 
         #region Genesis
-        
+
         public ImageRenderer(RenderRequest owner)
             : base(owner)
         { }
@@ -37,6 +37,8 @@ namespace Render.RenderRequests
         {
             if (settings == null)
                 return;
+
+            Settings = settings;
 
             switch (settings.CopyMode)
             {
@@ -57,12 +59,18 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
+            if (Settings == null)
+                return;
+
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
                 Settings.InvokePreRenderingEvent(Owner, m_pbo.Handle);
         }
 
         public virtual void OnPostDraw()
         {
+            if (Settings == null)
+                return;
+
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
                 Settings.InvokePostRenderingEvent(Owner, m_pbo.Handle);
         }

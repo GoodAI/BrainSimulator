@@ -37,11 +37,19 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, PostprocessingSettings settings)
         {
-            if (m_noiseEffect == null)
-                m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
-            renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
-            m_noiseEffect.ViewportSizeUniform((Vector2I)Owner.Resolution);
-            m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
+            if (settings == null)
+                return;
+
+            Settings = settings;
+
+            if (Settings.EnabledPostprocessing.HasFlag(RenderRequestPostprocessing.Noise))
+            {
+                if (m_noiseEffect == null)
+                    m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
+                renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
+                m_noiseEffect.ViewportSizeUniform((Vector2I)Owner.Resolution);
+                m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
+            }
         }
 
         #endregion

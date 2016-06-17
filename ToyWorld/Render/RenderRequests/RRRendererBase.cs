@@ -12,6 +12,9 @@ namespace Render.RenderRequests
         protected readonly TOwner Owner;
 
 
+        public bool Enabled { get { return Settings != null; } }
+
+
         protected RRRendererBase(TOwner owner)
         {
             Debug.Assert(owner != null);

@@ -45,6 +45,11 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
         {
+            if (settings == null)
+                return;
+
+            Settings = settings;
+
             // Set up overlay textures
             IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlayImages();
             TilesetImage[] tilesetImages = tilesets.Select(t =>
