@@ -8,33 +8,8 @@ namespace GoodAI.ToyWorld.Control
     {
         None,
 
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    public struct OverlaySettings
-    {
         /// <summary>
-        /// Specifies which overlays should be used.
-        /// </summary>
-        public RenderRequestOverlay EnabledOverlays { get; set; }
-
-        public OverlaySettings(RenderRequestOverlay enabledOverlays)
-            : this()
-        {
-            EnabledOverlays = enabledOverlays;
-        }
-    }
-
-
-    [Flags]
-    public enum AvatarRenderRequestOverlay
-    {
-        None,
-
-        /// <summary>
-        /// Draws the inventory tool to a corner of the screen
+        /// Draws the inventory tool to a corner of the screen. Has no effect for non-AvatarRRs.
         /// </summary>
         InventoryTool = 1,
     }
@@ -48,13 +23,15 @@ namespace GoodAI.ToyWorld.Control
         Gray = 10,
     }
 
-    public struct AvatarRROverlaySettings
+    /// <summary>
+    /// 
+    /// </summary>
+    public struct OverlaySettings
     {
-
         /// <summary>
         /// Specifies which overlays should be used.
         /// </summary>
-        public AvatarRenderRequestOverlay EnabledOverlays { get; set; }
+        public RenderRequestOverlay EnabledOverlays { get; set; }
 
 
         #region Inventory Tool
@@ -77,7 +54,7 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public AvatarRROverlaySettings(AvatarRenderRequestOverlay enabledOverlays)
+        public OverlaySettings(RenderRequestOverlay enabledOverlays)
             : this()
         {
             EnabledOverlays = enabledOverlays;

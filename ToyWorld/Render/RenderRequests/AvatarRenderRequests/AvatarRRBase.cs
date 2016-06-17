@@ -9,30 +9,40 @@ namespace Render.RenderRequests
     public abstract class AvatarRRBase
         : RenderRequest, IAvatarRenderRequest
     {
+        #region Internal overlay class
+
         // Internal class that replaces the base renderer, adding new features
         internal class ARROverlayRenderer
             : OverlayRenderer
         {
             internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
-            internal new AvatarRROverlaySettings Settings { get; set; }
 
             public ARROverlayRenderer(RenderRequest owner)
                 : base(owner)
             { }
 
+            public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
+            {
+                base.Init(renderer, world, settings);
+            }
+
             public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
             {
-                if (Settings.EnabledOverlays == AvatarRenderRequestOverlay.None)
+                if (Settings.EnabledOverlays == RenderRequestOverlay.None)
                     return;
 
                 base.Draw(renderer, world);
 
-                DrawAvatarTool(
-                    renderer, world.GetAvatar(Owner.AvatarID),
-                    (Vector2)Settings.ToolSize, (Vector2)Settings.ToolPosition,
-                    Settings.ToolBackground);
+                if (Settings.EnabledOverlays.HasFlag(RenderRequestOverlay.InventoryTool))
+                    DrawAvatarTool(
+                        renderer, world.GetAvatar(Owner.AvatarID),
+                        (Vector2)Settings.ToolSize, (Vector2)Settings.ToolPosition,
+                        Settings.ToolBackground);
             }
         }
+
+        #endregion
+
 
         internal new ARROverlayRenderer OverlayRenderer
         {
@@ -49,6 +59,7 @@ namespace Render.RenderRequests
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;
+            OverlayRenderer = new ARROverlayRenderer(this);
         }
 
 
@@ -91,9 +102,6 @@ namespace Render.RenderRequests
             }
         }
 
-
-        public new AvatarRROverlaySettings Overlay { get; set; }
-
         #endregion
 
 
@@ -106,8 +114,6 @@ namespace Render.RenderRequests
         public override void Init()
         {
             base.Init();
-
-            OverlayRenderer = new ARROverlayRenderer(this);
         }
 
         public override void Draw()

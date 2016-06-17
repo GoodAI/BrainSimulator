@@ -84,7 +84,7 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            if (Settings.EnabledOverlays == RenderRequestOverlay.None)
+            if ((Settings.EnabledOverlays ^ RenderRequestOverlay.InventoryTool) == RenderRequestOverlay.None)
                 return;
 
             Owner.FrontFbo.Bind();
@@ -93,6 +93,9 @@ namespace Render.RenderRequests
             renderer.TextureManager.Bind(Owner.TilesetTexture);
             renderer.EffectManager.Use(Owner.Effect);
             Owner.Effect.TextureUniform(0);
+
+
+            // some stuffs
         }
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)

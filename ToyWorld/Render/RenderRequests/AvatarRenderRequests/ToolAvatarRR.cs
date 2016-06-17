@@ -1,6 +1,5 @@
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
-using RenderingBase.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -12,7 +11,9 @@ namespace Render.RenderRequests
 
         public ToolAvatarRR(int avatarID)
             : base(avatarID)
-        { }
+        {
+            MultisampleLevel = RenderRequestMultisampleLevel.None;
+        }
 
         #endregion
 
@@ -23,19 +24,20 @@ namespace Render.RenderRequests
 
         public override void Init()
         {
+            var effects = Effects;
+            effects.EnabledEffects = RenderRequestEffect.None;
+            Effects = effects;
+
+            var post = Postprocessing;
+            post.EnabledPostprocessing = RenderRequestPostprocessing.None;
+            Postprocessing = post;
+
             SizeV = new Vector2(0.9f);
-
-            MultisampleLevel = RenderRequestMultisampleLevel.None;
-
-            EffectRenderer.Settings.EnabledEffects = RenderRequestEffect.None;
-            PostprocessRenderer.Settings.EnabledPostprocessing = RenderRequestPostprocessing.None;
-
-            OverlayRenderer.Settings = new AvatarRROverlaySettings
-            {
-                EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool,
-                ToolSize = new PointF(SizeV.X, SizeV.Y),
-                ToolPosition = new PointF(),
-            };
+            var overlay = Overlay;
+            overlay.EnabledOverlays |= RenderRequestOverlay.InventoryTool;
+            overlay.ToolSize = new PointF(SizeV.X, SizeV.Y);
+            overlay.ToolPosition = new PointF();
+            Overlay = overlay;
 
             base.Init();
         }

@@ -21,12 +21,6 @@ namespace GoodAI.ToyWorld.Control
         /// If true, rotates the map around the agent (which stays fixed looking upwards).
         /// </summary>
         bool RotateMap { get; set; }
-
-
-        /// <summary>
-        /// Contains the desired settings for scene overlays.
-        /// </summary>
-        new AvatarRROverlaySettings Overlay { get; set; }
     }
 
     /// <summary>

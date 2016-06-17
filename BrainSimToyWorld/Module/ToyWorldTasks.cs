@@ -108,7 +108,7 @@ namespace GoodAI.ToyWorld
                     {
                         rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
                         rr.Resolution = new Size(Owner.ToolResWidth, Owner.ToolResHeight);
-                        rr.Overlay = new AvatarRROverlaySettings(AvatarRenderRequestOverlay.InventoryTool)
+                        rr.Overlay = new OverlaySettings(RenderRequestOverlay.InventoryTool)
                         {
                             ToolBackground = Owner.ToolBackgroundType,
                         };

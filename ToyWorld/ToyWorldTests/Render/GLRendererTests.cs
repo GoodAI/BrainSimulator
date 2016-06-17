@@ -60,8 +60,9 @@ namespace ToyWorldTests.Render
 
             rr.Effects = new EffectSettings(RenderRequestEffect.None);
             rr.Postprocessing = new PostprocessingSettings(RenderRequestPostprocessing.None);
-            rr.Overlay = new AvatarRROverlaySettings(AvatarRenderRequestOverlay.InventoryTool);
+            rr.Overlay = new OverlaySettings(RenderRequestOverlay.InventoryTool) { ToolBackground = ToolBackgroundType.BrownBorder };
             rr.Image = new ImageSettings(RenderRequestImageCopyingMode.DefaultFbo);
+
 
             #region Controls
 
