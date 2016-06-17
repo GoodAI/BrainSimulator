@@ -403,8 +403,7 @@ namespace Render.RenderRequests
             DrawObjectLayers(World);
 
             // Draw effects
-            if (EffectRenderer.Enabled)
-                EffectRenderer.Draw(Renderer, World);
+            EffectRenderer.Draw(Renderer, World);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -419,14 +418,11 @@ namespace Render.RenderRequests
                     BlitFramebufferFilter.Linear);
             }
 
-            if (PostprocessRenderer.Enabled)
-                PostprocessRenderer.Draw(Renderer, World);
-            if (OverlayRenderer.Enabled)
-                OverlayRenderer.Draw(Renderer, World);
+            PostprocessRenderer.Draw(Renderer, World);
+            OverlayRenderer.Draw(Renderer, World);
 
             // Copy the rendered scene
-            if (ImageRenderer.Enabled)
-                ImageRenderer.Draw(Renderer, World);
+            ImageRenderer.Draw(Renderer, World);
         }
 
         protected virtual void DrawTileLayers(ToyWorld world)

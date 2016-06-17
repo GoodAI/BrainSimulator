@@ -13,12 +13,18 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public class OverlaySettings
+    public struct OverlaySettings
     {
         /// <summary>
         /// Specifies which overlays should be used.
         /// </summary>
-        public AvatarRenderRequestOverlay EnabledOverlays { get; set; }
+        public RenderRequestOverlay EnabledOverlays { get; set; }
+
+        public OverlaySettings(RenderRequestOverlay enabledOverlays)
+            : this()
+        {
+            EnabledOverlays = enabledOverlays;
+        }
     }
 
 
@@ -30,7 +36,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// Draws the inventory tool to a corner of the screen
         /// </summary>
-        InventoryTool,
+        InventoryTool = 1,
     }
 
     public enum ToolBackgroundType
@@ -42,13 +48,13 @@ namespace GoodAI.ToyWorld.Control
         Gray = 10,
     }
 
-    public class AvatarRROverlaySettings : OverlaySettings
+    public struct AvatarRROverlaySettings
     {
 
         /// <summary>
         /// Specifies which overlays should be used.
         /// </summary>
-        public new AvatarRenderRequestOverlay EnabledOverlays { get; set; }
+        public AvatarRenderRequestOverlay EnabledOverlays { get; set; }
 
 
         #region Inventory Tool
@@ -71,8 +77,11 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public AvatarRROverlaySettings()
+        public AvatarRROverlaySettings(AvatarRenderRequestOverlay enabledOverlays)
+            : this()
         {
+            EnabledOverlays = enabledOverlays;
+
             const float toolSize = 0.08f;
             const float toolMargin = 0.05f;
             ToolSize = new PointF(toolSize, toolSize);

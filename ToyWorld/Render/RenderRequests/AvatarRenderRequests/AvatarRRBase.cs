@@ -14,7 +14,7 @@ namespace Render.RenderRequests
             : OverlayRenderer
         {
             internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
-            internal new AvatarRROverlaySettings Settings { get { return (AvatarRROverlaySettings)base.Settings; } set { base.Settings = value; } }
+            internal new AvatarRROverlaySettings Settings { get; set; }
 
             public ARROverlayRenderer(RenderRequest owner)
                 : base(owner)
@@ -22,6 +22,9 @@ namespace Render.RenderRequests
 
             public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
             {
+                if (Settings.EnabledOverlays == AvatarRenderRequestOverlay.None)
+                    return;
+
                 base.Draw(renderer, world);
 
                 DrawAvatarTool(

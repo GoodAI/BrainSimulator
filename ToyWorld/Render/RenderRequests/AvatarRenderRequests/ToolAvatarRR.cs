@@ -27,10 +27,8 @@ namespace Render.RenderRequests
 
             MultisampleLevel = RenderRequestMultisampleLevel.None;
 
-            if (EffectRenderer.Settings != null)
-                EffectRenderer.Settings.EnabledEffects = RenderRequestEffect.None;
-            if (PostprocessRenderer.Settings != null)
-                PostprocessRenderer.Settings.EnabledPostprocessing = RenderRequestPostprocessing.None;
+            EffectRenderer.Settings.EnabledEffects = RenderRequestEffect.None;
+            PostprocessRenderer.Settings.EnabledPostprocessing = RenderRequestPostprocessing.None;
 
             OverlayRenderer.Settings = new AvatarRROverlaySettings
             {

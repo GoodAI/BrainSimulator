@@ -37,9 +37,6 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, PostprocessingSettings settings)
         {
-            if (settings == null)
-                return;
-
             Settings = settings;
 
             if (Settings.EnabledPostprocessing.HasFlag(RenderRequestPostprocessing.Noise))
@@ -58,6 +55,9 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            if (Settings.EnabledPostprocessing == RenderRequestPostprocessing.None)
+                return;
+
             // Always draw post-processing from the front to the back buffer
             Owner.BackFbo.Bind();
 

@@ -11,21 +11,21 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// Specifies, if the day progression should dim the scene.
         /// </summary>
-        DayNight,
+        DayNight = 1,
         /// <summary>
         /// Specifies whether light sources should emanate light
         /// </summary>
-        Lights,
+        Lights = 1 << 1,
         /// <summary>
         /// Draws cloud-like smoke above the world.
         /// </summary>
-        Smoke,
+        Smoke = 1 << 2,
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class EffectSettings
+    public struct EffectSettings
     {
         /// <summary>
         /// Specifies which effects should be used.
@@ -58,8 +58,11 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public EffectSettings()
+        public EffectSettings(RenderRequestEffect enabledEffects)
+            : this()
         {
+            EnabledEffects = enabledEffects;
+
             SmokeColor = Color.FromArgb(242, 242, 242, 242);
             SmokeTransformationSpeedCoefficient = 1f;
             SmokeIntensityCoefficient = 1f;

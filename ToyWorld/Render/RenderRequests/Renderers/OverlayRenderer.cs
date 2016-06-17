@@ -45,9 +45,6 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
         {
-            if (settings == null)
-                return;
-
             Settings = settings;
 
             // Set up overlay textures
@@ -87,6 +84,9 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            if (Settings.EnabledOverlays == RenderRequestOverlay.None)
+                return;
+
             Owner.FrontFbo.Bind();
 
             // Bind stuff to GL

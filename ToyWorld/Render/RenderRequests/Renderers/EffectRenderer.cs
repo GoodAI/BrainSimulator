@@ -39,7 +39,7 @@ namespace Render.RenderRequests
 
         public float GetGlobalDiffuseComponent(ToyWorld world)
         {
-            if (Settings != null && Settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.DayNight))
                 return (1 - AmbientTerm) * world.Atlas.Day;
 
             return 1 - AmbientTerm;
@@ -50,9 +50,6 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, EffectSettings settings)
         {
-            if (settings == null)
-                return;
-
             Settings = settings;
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
@@ -76,6 +73,9 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            if (Settings.EnabledEffects == RenderRequestEffect.None)
+                return;
+
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin

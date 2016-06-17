@@ -35,9 +35,6 @@ namespace Render.RenderRequests
 
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, ImageSettings settings)
         {
-            if (settings == null)
-                return;
-
             Settings = settings;
 
             switch (settings.CopyMode)
@@ -59,18 +56,12 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            if (Settings == null)
-                return;
-
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
                 Settings.InvokePreRenderingEvent(Owner, m_pbo.Handle);
         }
 
         public virtual void OnPostDraw()
         {
-            if (Settings == null)
-                return;
-
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
                 Settings.InvokePostRenderingEvent(Owner, m_pbo.Handle);
         }
@@ -81,6 +72,9 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            if (Settings.CopyMode == RenderRequestImageCopyingMode.None)
+                return;
+
             // Gather data to host mem
             Owner.FrontFbo.Bind();
             GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)

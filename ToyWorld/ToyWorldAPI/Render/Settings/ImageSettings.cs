@@ -25,7 +25,7 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     /// 
     /// </summary>
-    public class ImageSettings
+    public struct ImageSettings
     {
         /// <summary>
         /// Specifies what means should be used to gather the rendered scene.
@@ -55,7 +55,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// You should not use this method. Stay away!
         /// </summary>
-        public virtual void InvokePreRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        public void InvokePreRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
         {
             var preCopyCallback = OnPreRenderingEvent;
 
@@ -75,7 +75,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// You should not use this method. Stay away!
         /// </summary>
-        public virtual void InvokePostRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        public void InvokePostRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
         {
             var postCopyCallback = OnPostRenderingEvent;
 
@@ -86,9 +86,11 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public ImageSettings()
+        public ImageSettings(RenderRequestImageCopyingMode copyingMode)
+            : this()
         {
-            CopyMode = RenderRequestImageCopyingMode.OpenglPbo;
+            CopyMode = copyingMode;
+
             RenderedScene = new uint[0];
         }
     }

@@ -37,8 +37,8 @@ namespace GoodAI.ToyWorld
 
                 // Setup render requests
 
-                EffectSettings effects = null;
-                PostprocessingSettings post = null;
+                EffectSettings? effects = null;
+                PostprocessingSettings? post = null;
                 // Overlays are not used for now (no BrainSim property to switch them on) because there is a separate renderrequest for inventory Tool
 
                 RenderRequestEffect enabledEffects = RenderRequestEffect.None;
@@ -51,9 +51,8 @@ namespace GoodAI.ToyWorld
                     enabledEffects |= RenderRequestEffect.Smoke;
 
                 if (enabledEffects != RenderRequestEffect.None)
-                    effects = new EffectSettings
+                    effects = new EffectSettings(enabledEffects)
                     {
-                        EnabledEffects = enabledEffects,
                         SmokeIntensityCoefficient = Owner.SmokeIntensity,
                         SmokeScaleCoefficient = Owner.SmokeScale,
                         SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed,
@@ -65,9 +64,8 @@ namespace GoodAI.ToyWorld
                     enabledPostprocessing |= RenderRequestPostprocessing.Noise;
 
                 if (enabledPostprocessing != RenderRequestPostprocessing.None)
-                    post = new PostprocessingSettings
+                    post = new PostprocessingSettings(enabledPostprocessing)
                     {
-                        EnabledPostprocessing = enabledPostprocessing,
                         NoiseIntensityCoefficient = Owner.NoiseIntensity,
                     };
 
@@ -79,9 +77,8 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
                         rr.MultisampleLevel = Owner.FoVMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
-                        rr.Effects = effects;
-                        rr.Postprocessing = post;
-                        rr.Overlay = null;
+                        rr.Effects = effects ?? new EffectSettings(RenderRequestEffect.None);
+                        rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
 
                 Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
@@ -92,9 +89,8 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
                         rr.MultisampleLevel = Owner.FoFMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
-                        rr.Effects = effects;
-                        rr.Postprocessing = post;
-                        rr.Overlay = null;
+                        rr.Effects = effects ?? new EffectSettings(RenderRequestEffect.None);
+                        rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
 
                 Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
@@ -104,7 +100,7 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.ResolutionWidth, Owner.ResolutionHeight);
                         rr.MultisampleLevel = Owner.FreeViewMultisampleLevel;
                         rr.SetPositionCenter(Owner.CenterX, Owner.CenterY);
-                        // no noise or smoke, this view is for the researcher
+                        // no noise, smoke, postprocessing or overlays -- this view is for the researcher
                     });
 
                 Owner.ToolRR = ObtainRR<IToolAvatarRR>(Owner.VisualTool, myAvatarId,
@@ -112,9 +108,8 @@ namespace GoodAI.ToyWorld
                     {
                         rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
                         rr.Resolution = new Size(Owner.ToolResWidth, Owner.ToolResHeight);
-                        rr.Overlay = new AvatarRROverlaySettings
+                        rr.Overlay = new AvatarRROverlaySettings(AvatarRenderRequestOverlay.InventoryTool)
                         {
-                            EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool,
                             ToolBackground = Owner.ToolBackgroundType,
                         };
                         // None of the other settings have any effect
@@ -131,29 +126,29 @@ namespace GoodAI.ToyWorld
                 rr.FlipYAxis = true;
 
 
-                // Setup image copying from RR
-                rr.Image = new ImageSettings
-                {
-                    CopyMode = Owner.CopyDataThroughCPU ? RenderRequestImageCopyingMode.Cpu : RenderRequestImageCopyingMode.OpenglPbo,
-                };
-
                 targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
 
                 if (Owner.CopyDataThroughCPU)
+                {
+                    rr.Image = new ImageSettings(RenderRequestImageCopyingMode.Cpu);
                     return rr;
+                }
 
+
+                // Setup image copying from RR
+                ImageSettings image = new ImageSettings(Owner.CopyDataThroughCPU ? RenderRequestImageCopyingMode.Cpu : RenderRequestImageCopyingMode.OpenglPbo);
 
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
                 CudaOpenGLBufferInteropResource renderResource = null;
 
-                rr.Image.OnPreRenderingEvent += (sender, vbo) =>
-                {
-                    if (renderResource != null && renderResource.IsMapped)
-                        renderResource.UnMap();
-                };
+                image.OnPreRenderingEvent += (sender, vbo) =>
+                 {
+                     if (renderResource != null && renderResource.IsMapped)
+                         renderResource.UnMap();
+                 };
 
-                rr.Image.OnPostRenderingEvent += (sender, vbo) =>
+                image.OnPostRenderingEvent += (sender, vbo) =>
                 {
                     // Vbo can be allocated during drawing, create the resource after that (post-rendering)
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).SetCurrent();
@@ -173,6 +168,8 @@ namespace GoodAI.ToyWorld
                     targetMemBlock.FreeDevice();
                     targetMemBlock.AllocateDevice();
                 };
+
+                rr.Image = image;
 
 
                 // Initialize the target memory block

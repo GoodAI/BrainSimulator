@@ -5,14 +5,11 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal abstract class RRRendererBase<TSettings, TOwner>
-        where TSettings : class
+        where TSettings : struct 
         where TOwner : class
     {
         internal TSettings Settings;
         protected readonly TOwner Owner;
-
-
-        public bool Enabled { get { return Settings != null; } }
 
 
         protected RRRendererBase(TOwner owner)

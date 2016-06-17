@@ -11,13 +11,13 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// Adds random gaussian noise to every color component of the resulting scene.
         /// </summary>
-        Noise,
+        Noise = 1,
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class PostprocessingSettings
+    public struct PostprocessingSettings
     {
         /// <summary>
         /// Specifies which postprocessing effects should be used.
@@ -35,8 +35,11 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public PostprocessingSettings()
+        public PostprocessingSettings(RenderRequestPostprocessing enabledPostprocessing)
+            : this()
         {
+            EnabledPostprocessing = enabledPostprocessing;
+
             NoiseIntensityCoefficient = 1.0f;
         }
     }

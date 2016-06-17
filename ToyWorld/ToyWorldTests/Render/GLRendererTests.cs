@@ -58,11 +58,10 @@ namespace ToyWorldTests.Render
             //rr.FovAvatarRenderRequest = rr1;
             rr.RotateMap = true;
 
-            rr.Effects = new EffectSettings();
-            rr.Postprocessing = new PostprocessingSettings();
-            rr.Overlay = new AvatarRROverlaySettings { EnabledOverlays = AvatarRenderRequestOverlay.InventoryTool };
-            rr.Image = new ImageSettings{CopyMode = RenderRequestImageCopyingMode.DefaultFbo};
-
+            rr.Effects = new EffectSettings(RenderRequestEffect.None);
+            rr.Postprocessing = new PostprocessingSettings(RenderRequestPostprocessing.None);
+            rr.Overlay = new AvatarRROverlaySettings(AvatarRenderRequestOverlay.InventoryTool);
+            rr.Image = new ImageSettings(RenderRequestImageCopyingMode.DefaultFbo);
 
             #region Controls
 
@@ -85,16 +84,32 @@ namespace ToyWorldTests.Render
                     switch (toggle)
                     {
                         case Key.Number1:
-                            rr.Effects.EnabledEffects ^= RenderRequestEffect.Smoke;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects ^= RenderRequestEffect.Smoke;
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number2:
-                            rr.Postprocessing.EnabledPostprocessing ^= RenderRequestPostprocessing.Noise;
+                            {
+                                var post = rr.Postprocessing;
+                                post.EnabledPostprocessing ^= RenderRequestPostprocessing.Noise;
+                                rr.Postprocessing = post;
+                            }
                             break;
                         case Key.Number3:
-                            rr.Effects.EnabledEffects ^= RenderRequestEffect.DayNight;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects ^= RenderRequestEffect.DayNight;
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number4:
-                            rr.Effects.EnabledEffects ^= RenderRequestEffect.Lights;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects ^= RenderRequestEffect.Lights;
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number5:
                         case Key.Number6:
@@ -109,6 +124,9 @@ namespace ToyWorldTests.Render
                             rr.MultisampleLevel = (RenderRequestMultisampleLevel)(((int)rr.MultisampleLevel + 1) % 5);
                             break;
                     }
+
+                    // A hack that enables recomputing the renderers based on new settings; it sets some stuff like size to default, though
+                    ((IRenderRequestBaseInternal<ToyWorld>)rr).Init();
                 },
                 (movement, isKeyUp) =>
                 {
