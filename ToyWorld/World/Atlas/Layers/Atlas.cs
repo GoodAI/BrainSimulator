@@ -44,7 +44,7 @@ namespace World.Atlas.Layers
 
         public Atlas()
         {
-            m_timeTicks = new DateTime(2000, 1, 1, 0,0,0).Ticks;
+            m_timeTicks = new DateTime(2000, 1, 1, 0, 0, 0).Ticks;
             NewAutoupdateables = new List<IAutoupdateableGameActor>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
@@ -278,7 +278,10 @@ namespace World.Atlas.Layers
 
         public void UpdateTiles()
         {
-            
+            foreach (ITileLayer tileLayer in TileLayers)
+            {
+                tileLayer.UpdateTileStates(Summer);
+            }
         }
 
         public float Summer
@@ -288,7 +291,7 @@ namespace World.Atlas.Layers
                 long year = YearLength.Ticks;
                 long halfYear = year / 2;
                 bool secondHalf = m_timeTicks % year >= halfYear;
-                float f = m_timeTicks%halfYear/(float) halfYear;
+                float f = m_timeTicks % halfYear / (float)halfYear;
                 return secondHalf ? 1 - f : f;
             }
         }
@@ -300,9 +303,9 @@ namespace World.Atlas.Layers
             get
             {
                 long day = DayLength.Ticks;
-                long halfDay = day/2;
-                bool secondHalf = m_timeTicks%day >= halfDay;
-                float f = m_timeTicks%halfDay/(float) halfDay;
+                long halfDay = day / 2;
+                bool secondHalf = m_timeTicks % day >= halfDay;
+                float f = m_timeTicks % halfDay / (float)halfDay;
                 return secondHalf ? 1 - f : f;
             }
         }

@@ -11,11 +11,17 @@ namespace World.Atlas.Layers
 {
     public class SimpleTileLayer : ITileLayer
     {
+        private const int TILESETS_OFFSET = 2 << 12; // Must be larger than the number of tiles in any tileset
+        private const int BACKGROUND_TILE_NUMBER = 6;
+        private const int OBSTACLE_TILE_NUMBER = 7;
+
         private readonly Random m_random;
+
+        private Vector3 m_summerCache; // Z value holds the Atlas' summer state
+
         private int m_tileCount;
         private int[] m_tileTypes;
-        private readonly int BACKGROUND_TILE_NUMBER = 6;
-        private readonly int OBSTACLE_TILE_NUMBER = 7;
+
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -47,9 +53,10 @@ namespace World.Atlas.Layers
             Render = true;
         }
 
-
-        public void UpdateTileStates(float summer, int gradient)
+        public void UpdateTileStates(float summer)
         {
+            m_summerCache.Z = summer;
+
             const float tileUpdateCountFactor = 0.02f;
             float summerDepthFactor = summer + 0.5f;
             int tileUpdateCount = (int)(m_tileCount * tileUpdateCountFactor * summerDepthFactor);
@@ -67,6 +74,7 @@ namespace World.Atlas.Layers
                 // TODO: more states defined by atlas
             }
         }
+
 
         public Tile GetActorAt(int x, int y)
         {
@@ -86,6 +94,13 @@ namespace World.Atlas.Layers
         public Tile GetActorAt(Vector2I coordinates)
         {
             return GetActorAt(coordinates.X, coordinates.Y);
+        }
+
+        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        {
+            Vector2I intBotRight = topLeft + size;
+            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
+            return GetRectangle(rectangle);
         }
 
         public int[] GetRectangle(Rectangle rectangle)
@@ -119,7 +134,7 @@ namespace World.Atlas.Layers
             for (int j = rectangle.Top; j < bot; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows inside of map
@@ -127,38 +142,43 @@ namespace World.Atlas.Layers
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < left; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
 
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
                 {
                     var tile = Tiles[i][j];
                     if (tile != null)
-                        m_tileTypes[idx++] = tile.TilesetId;
+                        m_tileTypes[idx++] = tile.TilesetId + TileStates[i][j] * TILESETS_OFFSET;
                     else
                         m_tileTypes[idx++] = 0; // inside map: must be always 0
                 }
 
                 // Tiles after end of map
                 for (int i = right; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows after end of map
             for (int j = top; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             return m_tileTypes;
         }
 
-        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        private int GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
-            Vector2I intBotRight = topLeft + size;
-            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
-            return GetRectangle(rectangle);
+            m_summerCache.X = x;
+            m_summerCache.Y = y;
+            double hash = m_summerCache.GetHash() / (double)int.MaxValue; // Should be uniformly distributed between 0, 1
+
+            if (hash <= m_summerCache.Z)
+                return defaultTileOffset;
+
+            return defaultTileOffset + TileStates[x][y] * TILESETS_OFFSET;
         }
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
