@@ -130,7 +130,21 @@ namespace GoodAI.ToyWorld
 
                 if (Owner.CopyDataThroughCPU)
                 {
-                    rr.Image = new ImageSettings(RenderRequestImageCopyingMode.Cpu);
+                    ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu);
+
+                    imageSettings.OnSceneBufferPrepared += (request, data) =>
+                    {
+                        int width = rr.Resolution.Width;
+                        int stride = width * sizeof(uint);
+                        int lines = data.Length / width;
+
+                        for (int i = 0; i < lines; ++i)
+                            Buffer.BlockCopy(data, i * stride, targetMemBlock.Host, i * width * sizeof(uint), stride);
+
+                        // targetMemBlock.SafeCopyToDevice(); this needs to be called on the BrainSim thread
+                    };
+
+                    rr.Image = imageSettings;
                     return rr;
                 }
 
@@ -312,10 +326,10 @@ namespace GoodAI.ToyWorld
 
                 if (Owner.CopyDataThroughCPU)
                 {
-                    TransferFromRRToMemBlock(Owner.FovRR, Owner.VisualFov);
-                    TransferFromRRToMemBlock(Owner.FofRR, Owner.VisualFof);
-                    TransferFromRRToMemBlock(Owner.FreeRR, Owner.VisualFree);
-                    TransferFromRRToMemBlock(Owner.ToolRR, Owner.VisualTool);
+                    Owner.VisualFov.SafeCopyToDevice();
+                    Owner.VisualFof.SafeCopyToDevice();
+                    Owner.VisualFree.SafeCopyToDevice();
+                    Owner.VisualTool.SafeCopyToDevice();
                 }
 
                 ObtainMessageFromBrain();
@@ -375,19 +389,6 @@ namespace GoodAI.ToyWorld
                     return;
                 Owner.TextIn.SafeCopyToHost();
                 Owner.AvatarCtrl.MessageOut = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
-            }
-
-            private static void TransferFromRRToMemBlock(IRenderRequestBase rr, MyMemoryBlock<float> mb)
-            {
-                uint[] data = rr.Image.RenderedScene;
-                int width = rr.Resolution.Width;
-                int stride = width * sizeof(uint);
-                int lines = data.Length / width;
-
-                for (int i = 0; i < lines; ++i)
-                    Buffer.BlockCopy(data, i * stride, mb.Host, i * width * sizeof(uint), stride);
-
-                mb.SafeCopyToDevice();
             }
         }
     }

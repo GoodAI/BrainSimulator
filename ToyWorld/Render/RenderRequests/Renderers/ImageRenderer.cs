@@ -13,7 +13,8 @@ namespace Render.RenderRequests
     {
         #region Fields
 
-        protected Pbo m_pbo;
+        protected Pbo Pbo;
+        protected uint[] RenderedScene;
 
         #endregion
 
@@ -25,8 +26,8 @@ namespace Render.RenderRequests
 
         public virtual void Dispose()
         {
-            if (m_pbo != null)
-                m_pbo.Dispose();
+            if (Pbo != null)
+                Pbo.Dispose();
         }
 
         #endregion
@@ -36,16 +37,18 @@ namespace Render.RenderRequests
         public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, ImageSettings settings)
         {
             Settings = settings;
+            int bufferSize = Owner.Resolution.Width * Owner.Resolution.Height;
 
-            switch (settings.CopyMode)
+            switch (Settings.CopyMode)
             {
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
-                    m_pbo = new Pbo();
-                    m_pbo.Init(Owner.Resolution.Width * Owner.Resolution.Height, null, BufferUsageHint.StreamDraw);
+                    Pbo = new Pbo();
+                    Pbo.Init(bufferSize, null, BufferUsageHint.StreamDraw);
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
-                    settings.RenderedScene = new uint[Owner.Resolution.Width * Owner.Resolution.Height];
+                    if (RenderedScene == null || RenderedScene.Length < bufferSize)
+                        RenderedScene = new uint[bufferSize];
                     break;
             }
         }
@@ -57,13 +60,13 @@ namespace Render.RenderRequests
         public virtual void OnPreDraw()
         {
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
-                Settings.InvokePreRenderingEvent(Owner, m_pbo.Handle);
+                Settings.InvokePreRenderingEvent(Owner, Pbo.Handle);
         }
 
         public virtual void OnPostDraw()
         {
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
-                Settings.InvokePostRenderingEvent(Owner, m_pbo.Handle);
+                Settings.InvokePostRenderingEvent(Owner, Pbo.Handle);
         }
 
         #endregion
@@ -91,12 +94,13 @@ namespace Render.RenderRequests
                         BlitFramebufferFilter.Nearest);
                     break;
                 case RenderRequestImageCopyingMode.OpenglPbo:
-                    m_pbo.Bind();
+                    Pbo.Bind();
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
                     GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
-                    GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, Settings.RenderedScene);
+                    GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, RenderedScene);
+                    Settings.InvokePostBufferPrepared(Owner, RenderedScene);
                     break;
             }
         }

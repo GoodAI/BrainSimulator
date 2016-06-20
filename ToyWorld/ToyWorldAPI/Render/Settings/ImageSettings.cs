@@ -36,9 +36,20 @@ namespace GoodAI.ToyWorld.Control
         #region Cpu
 
         /// <summary>
-        /// Location where data is copied if it should be transfered through CPU.
+        /// Called after a scene image was copied to the buffer.
         /// </summary>
-        public uint[] RenderedScene { get; set; }
+        public event Action<IRenderRequestBase, uint[]> OnSceneBufferPrepared;
+
+        /// <summary>
+        /// You should not use this method. Stay away!
+        /// </summary>
+        public void InvokePostBufferPrepared(IRenderRequestBase renderRequest, uint[] buffer)
+        {
+            var callback = OnSceneBufferPrepared;
+
+            if (callback != null)
+                callback(renderRequest, buffer);
+        }
 
         #endregion
 
@@ -90,8 +101,6 @@ namespace GoodAI.ToyWorld.Control
             : this()
         {
             CopyMode = copyingMode;
-
-            RenderedScene = new uint[0];
         }
     }
 }
