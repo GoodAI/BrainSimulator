@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
@@ -11,13 +12,15 @@ namespace World.Atlas.Layers
 {
     public class SimpleTileLayer : ITileLayer
     {
-        private const int TILESETS_OFFSET = 2 << 12; // Must be larger than the number of tiles in any tileset
+        private const int TILESETS_BITS = 12;
+        private const int TILESETS_OFFSET = 2 << TILESETS_BITS; // Must be larger than the number of tiles in any tileset and must correspond to the BasicOffset.vert shader
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
         private readonly Random m_random;
 
-        private Vector3 m_summerCache; // Z value holds the Atlas' summer state
+        private float m_summer; // Local copy of the Atlas' summer
+        private Vector3 m_summerCache;
 
         private int m_tileCount;
         private int[] m_tileTypes;
@@ -46,6 +49,7 @@ namespace World.Atlas.Layers
             m_random = new Random();
             m_tileTypes = new int[0];
             LayerType = layerType;
+            m_summerCache.Z = m_random.Next();
             Height = height;
             Width = width;
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
@@ -53,13 +57,16 @@ namespace World.Atlas.Layers
             Render = true;
         }
 
+
         public void UpdateTileStates(float summer)
         {
-            m_summerCache.Z = summer;
+            m_summer = summer;
 
-            const float tileUpdateCountFactor = 0.02f;
-            float summerDepthFactor = summer + 0.5f;
-            int tileUpdateCount = (int)(m_tileCount * tileUpdateCountFactor * summerDepthFactor);
+            const float tileUpdateCountFactor = 0.005f;
+            float summerDepthFactor = Math.Abs(summer - 0.5f) + 1;
+            int tileUpdateCount = (int)(m_tileCount * summerDepthFactor * tileUpdateCountFactor);
+
+            Debug.WriteLine(summer.ToString() + '\t' + tileUpdateCount);
 
             for (int i = 0; i < tileUpdateCount; i++)
             {
@@ -173,12 +180,12 @@ namespace World.Atlas.Layers
         {
             m_summerCache.X = x;
             m_summerCache.Y = y;
-            double hash = m_summerCache.GetHash() / (double)int.MaxValue; // Should be uniformly distributed between 0, 1
+            double hash = (Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) / int.MaxValue; // Should be uniformly distributed between 0, 1
 
-            if (hash <= m_summerCache.Z)
+            if (hash >= m_summer)
                 return defaultTileOffset;
 
-            return defaultTileOffset + TileStates[x][y] * TILESETS_OFFSET;
+            return defaultTileOffset + TILESETS_OFFSET;
         }
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
@@ -198,6 +205,9 @@ namespace World.Atlas.Layers
                 return true;
             }
 
+            if (Tiles[x][y] == null)
+                m_tileCount++;
+
             Tiles[x][y] = tileReplacement;
             return true;
         }
@@ -206,13 +216,23 @@ namespace World.Atlas.Layers
         {
             int x = (int)gameActorPosition.Position.X;
             int y = (int)gameActorPosition.Position.Y;
+
             if (Tiles[x][y] != null)
-            {
                 return false;
-            }
-            Tiles[x][y] = gameActorPosition.Actor as Tile;
-            m_tileCount++;
+
+            Tile actor = gameActorPosition.Actor as Tile;
+            Tiles[x][y] = actor;
+
+            if (actor != null)
+                m_tileCount++;
+
             return true;
+        }
+
+        public void AddInternal(int x, int y, Tile tile)
+        {
+            Tiles[x][y] = tile;
+            m_tileCount++;
         }
     }
 }
