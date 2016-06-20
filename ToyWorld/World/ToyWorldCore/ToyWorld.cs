@@ -129,37 +129,7 @@ namespace World.ToyWorldCore
         //
 
 
-        private void UpdatePhysics()
-        {
-            m_collisionResolver.ResolveCollisions();
-        }
-
-        private void UpdateCharacters()
-        {
-            List<ICharacter> characters = Atlas.Characters;
-            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = characters.Select(x => x.PhysicalEntity).ToList();
-            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
-        }
-
-        private void UpdateAvatars()
-        {
-            List<IAvatar> avatars = Atlas.GetAvatars();
-            Physics.TransformControlsPhysicalProperties(avatars);
-            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
-            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
-        }
-
-        private void UpdateScheduled()
-        {
-            TileDetectorRegister.Update();
-            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
-            AutoupdateRegister.Tick();
-        }
-
-        private void UpdateAtmosphere()
-        {
-            Atlas.Atmosphere.Update();
-        }
+        #region Updating
 
         public void Update()
         {
@@ -180,6 +150,46 @@ namespace World.ToyWorldCore
             Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
         }
 
+        private void UpdateScheduled()
+        {
+            TileDetectorRegister.Update();
+            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
+            AutoupdateRegister.Tick();
+        }
+
+        private void UpdateTiles()
+        {
+            Atlas.UpdateTiles();
+        }
+
+        private void UpdateCharacters()
+        {
+            List<ICharacter> characters = Atlas.Characters;
+            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = characters.Select(x => x.PhysicalEntity).ToList();
+            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
+        }
+
+        private void UpdateAvatars()
+        {
+            List<IAvatar> avatars = Atlas.GetAvatars();
+            Physics.TransformControlsPhysicalProperties(avatars);
+            List<IForwardMovablePhysicalEntity> forwardMovablePhysicalEntities = avatars.Select(x => x.PhysicalEntity).ToList();
+            Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
+        }
+
+        private void UpdatePhysics()
+        {
+            m_collisionResolver.ResolveCollisions();
+        }
+
+        private void UpdateAtmosphere()
+        {
+            Atlas.Atmosphere.Update();
+        }
+
+        #endregion
+
+
         public List<int> GetAvatarsIds()
         {
             return Atlas.Avatars.Keys.ToList();
@@ -193,10 +203,6 @@ namespace World.ToyWorldCore
         public IAvatar GetAvatar(int id)
         {
             return Atlas.Avatars[id];
-        }
-
-        private void UpdateTiles()
-        {
         }
 
         [ContractInvariantMethod]

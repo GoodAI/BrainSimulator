@@ -10,6 +10,8 @@ namespace World.Atlas.Layers
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
+        void UpdateTileStates(float summer, int gradient);
+
         /// <summary>
         /// Returns Tiles in given region, where extremes are included.
         /// </summary>
@@ -79,6 +81,9 @@ namespace World.Atlas.Layers
         {
             return default(bool);
         }
+
+        public void UpdateTileStates(float summer, int gradient)
+        { }
 
         public int[] GetRectangle(Rectangle rectangle)
         {

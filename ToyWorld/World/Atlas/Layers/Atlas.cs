@@ -111,8 +111,7 @@ namespace World.Atlas.Layers
             return false;
         }
 
-        public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All,
-            float width = 0.5f)
+        public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All, float width = 0.5f)
         {
             List<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
             // for all layers except object layer
@@ -275,6 +274,11 @@ namespace World.Atlas.Layers
         public void IncrementTime(TimeSpan timeSpan)
         {
             m_timeTicks += timeSpan.Ticks;
+        }
+
+        public void UpdateTiles()
+        {
+            
         }
 
         public float Summer

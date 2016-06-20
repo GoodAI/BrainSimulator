@@ -11,6 +11,8 @@ namespace World.Atlas.Layers
 {
     public class SimpleTileLayer : ITileLayer
     {
+        private readonly Random m_random;
+        private int m_tileCount;
         private int[] m_tileTypes;
         private readonly int BACKGROUND_TILE_NUMBER = 6;
         private readonly int OBSTACLE_TILE_NUMBER = 7;
@@ -20,9 +22,12 @@ namespace World.Atlas.Layers
 
         public Tile[][] Tiles { get; set; }
 
+        public byte[][] TileStates { get; set; }
+
         public bool Render { get; set; }
 
         public LayerType LayerType { get; set; }
+
 
         public SimpleTileLayer(LayerType layerType, int width, int height)
         {
@@ -32,12 +37,35 @@ namespace World.Atlas.Layers
                 throw new ArgumentOutOfRangeException("height", "Tile height has to be positive");
             Contract.EndContractBlock();
 
+            m_random = new Random();
             m_tileTypes = new int[0];
             LayerType = layerType;
             Height = height;
             Width = width;
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
+            TileStates = ArrayCreator.CreateJaggedArray<byte[][]>(width, height);
             Render = true;
+        }
+
+
+        public void UpdateTileStates(float summer, int gradient)
+        {
+            const float tileUpdateCountFactor = 0.02f;
+            float summerDepthFactor = summer + 0.5f;
+            int tileUpdateCount = (int)(m_tileCount * tileUpdateCountFactor * summerDepthFactor);
+
+            for (int i = 0; i < tileUpdateCount; i++)
+            {
+                int x = m_random.Next(Width);
+                int y = m_random.Next(Height);
+
+                if (summer - 0.5f < 0)
+                    TileStates[x][y] = 0; // summer
+                else
+                    TileStates[x][y] = 1; // winter
+
+                // TODO: more states defined by atlas
+            }
         }
 
         public Tile GetActorAt(int x, int y)
@@ -67,7 +95,7 @@ namespace World.Atlas.Layers
 
             // Use cached getter value
             int viewRight = rectangle.Right;
-            
+
             int left = Math.Max(rectangle.Left, Math.Min(0, rectangle.Left + rectangle.Width));
             int right = Math.Min(viewRight, Math.Max(Tiles.Length, viewRight - rectangle.Width));
             // Rectangle origin is in top-left; it's top is thus our bottom
@@ -82,7 +110,7 @@ namespace World.Atlas.Layers
             {
                 defaultTileOffset = BACKGROUND_TILE_NUMBER;
             }
-            else if(LayerType == LayerType.Obstacle)
+            else if (LayerType == LayerType.Obstacle)
             {
                 defaultTileOffset = OBSTACLE_TILE_NUMBER;
             }
@@ -138,24 +166,32 @@ namespace World.Atlas.Layers
             int x = (int)Math.Floor(original.Position.X);
             int y = (int)Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
+
             if (item != original.Actor) return false;
 
             Tiles[x][y] = null;
-            if (!(replacement is Tile)) return true;
-            Tiles[x][y] = replacement as Tile;
+            Tile tileReplacement = replacement as Tile;
 
+            if (replacement == null)
+            {
+                m_tileCount--;
+                return true;
+            }
+
+            Tiles[x][y] = tileReplacement;
             return true;
         }
 
         public bool Add(GameActorPosition gameActorPosition)
         {
-            int x = (int) gameActorPosition.Position.X;
-            int y = (int) gameActorPosition.Position.Y;
+            int x = (int)gameActorPosition.Position.X;
+            int y = (int)gameActorPosition.Position.Y;
             if (Tiles[x][y] != null)
             {
                 return false;
             }
             Tiles[x][y] = gameActorPosition.Actor as Tile;
+            m_tileCount++;
             return true;
         }
     }

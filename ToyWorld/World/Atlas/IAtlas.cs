@@ -150,6 +150,8 @@ namespace World.Atlas
         /// </summary>
         void IncrementTime(TimeSpan timeSpan);
 
+        void UpdateTiles();
+
         /// <summary>
         /// [0,1] Winter/Summer
         /// </summary>
