@@ -273,14 +273,25 @@ namespace World.Atlas.Layers
 
         public void IncrementTime(TimeSpan timeSpan)
         {
-            m_timeTicks += timeSpan.Ticks;
+            m_timeTicks += timeSpan.Ticks * 10;
         }
 
         public void UpdateTiles()
         {
             foreach (ITileLayer tileLayer in TileLayers)
             {
-                tileLayer.UpdateTileStates(Summer);
+                tileLayer.UpdateTileStates(Summer, SummerGradient);
+            }
+        }
+
+        public float SummerGradient
+        {
+            get
+            {
+                long year = YearLength.Ticks;
+                long halfYear = year / 2;
+                bool secondHalf = m_timeTicks % year >= halfYear;
+                return secondHalf ? -1 : 1; // summer or fall
             }
         }
 

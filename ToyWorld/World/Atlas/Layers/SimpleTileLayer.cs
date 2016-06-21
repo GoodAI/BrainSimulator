@@ -58,25 +58,36 @@ namespace World.Atlas.Layers
         }
 
 
-        public void UpdateTileStates(float summer)
+        public void UpdateTileStates(float summer, float gradient)
         {
             m_summer = summer;
 
-            const float tileUpdateCountFactor = 0.0002f;
-            float summerDepthFactor = Math.Abs(summer - 0.5f) + 1;
-            int tileUpdateCount = (int)(m_tileCount * summerDepthFactor * tileUpdateCountFactor) + 1;
+            const float tileUpdateCountFactor = 0.002f;
+            float weatherChangeIntensityFactor = 1.3f;
 
-            Debug.WriteLine(summer.ToString() + '\t' + tileUpdateCount);
+            bool isWinter = Math.Abs(summer * gradient) < 0.25f;
+
+            if (isWinter) // It is winter -- start adding or removing snow
+            {
+                weatherChangeIntensityFactor = summer * 4; // It is Oct to Jan, strengthen intensity towards Jan
+
+                if (gradient < 0)
+                    weatherChangeIntensityFactor = 1 - weatherChangeIntensityFactor; // It is Jan to Mar, strenghten intensity towards Mar
+            }
+
+            int tileUpdateCount = (int)(m_tileCount * weatherChangeIntensityFactor * tileUpdateCountFactor) + 1;
+
+            Debug.WriteLine(summer.ToString() + '\t' + gradient + '\t' + tileUpdateCount);
 
             for (int i = 0; i < tileUpdateCount; i++)
             {
                 int x = m_random.Next(Width);
                 int y = m_random.Next(Height);
 
-                if (summer - 0.5f < 0)
-                    TileStates[x][y] = 0; // summer
-                else
+                if (isWinter && gradient < 0) // It only snows from Oct to Jan
                     TileStates[x][y] = 1; // winter
+                else
+                    TileStates[x][y] = 0; // summer
 
                 // TODO: more states defined by atlas
             }
@@ -180,7 +191,12 @@ namespace World.Atlas.Layers
         {
             m_summerCache.X = x;
             m_summerCache.Y = y;
+
             double hash = (Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) / int.MaxValue; // Should be uniformly distributed between 0, 1
+            const float offset = 0.2f;
+            // Scale to (offset, 1-offset)
+            hash *= 1 - offset * 2;
+            hash += offset;
 
             if (hash >= m_summer)
                 return defaultTileOffset;

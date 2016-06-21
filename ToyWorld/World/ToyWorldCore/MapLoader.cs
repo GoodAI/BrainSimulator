@@ -295,9 +295,10 @@ namespace World.ToyWorldCore
             LayerType layerType,
             Dictionary<int, StaticTile> staticTilesContainer,
             TilesetTable tilesetTable,
-            Action<GameActor> initializer)
+            Action<GameActor> initializer,
+            Random random)
         {
-            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
+            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height, random);
             string[] lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             Assembly assembly = Assembly.GetExecutingAssembly();
