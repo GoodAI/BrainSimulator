@@ -212,6 +212,7 @@
     <Compile Include="VRageRIP\Lib\Extensions\DirectoryExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\DoubleExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\EnabledAttribute.cs" />
+    <Compile Include="VRageRIP\Lib\Extensions\EnumExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\ExpressionExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\FieldExtensions.cs" />
     <Compile Include="VRageRIP\Lib\Extensions\FloatExtensions.cs" />

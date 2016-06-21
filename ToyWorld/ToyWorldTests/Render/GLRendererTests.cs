@@ -11,6 +11,7 @@ using RenderingBase.Renderer;
 using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.ToyWorldCore;
 using Xunit;
@@ -87,28 +88,28 @@ namespace ToyWorldTests.Render
                         case Key.Number1:
                             {
                                 var effects = rr.Effects;
-                                effects.EnabledEffects ^= RenderRequestEffect.Smoke;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.Smoke);
                                 rr.Effects = effects;
                             }
                             break;
                         case Key.Number2:
                             {
                                 var post = rr.Postprocessing;
-                                post.EnabledPostprocessing ^= RenderRequestPostprocessing.Noise;
+                                post.EnabledPostprocessing = post.EnabledPostprocessing.FlipEnumFlag(RenderRequestPostprocessing.Noise);
                                 rr.Postprocessing = post;
                             }
                             break;
                         case Key.Number3:
                             {
                                 var effects = rr.Effects;
-                                effects.EnabledEffects ^= RenderRequestEffect.DayNight;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.DayNight);
                                 rr.Effects = effects;
                             }
                             break;
                         case Key.Number4:
                             {
                                 var effects = rr.Effects;
-                                effects.EnabledEffects ^= RenderRequestEffect.Lights;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.Lights);
                                 rr.Effects = effects;
                             }
                             break;

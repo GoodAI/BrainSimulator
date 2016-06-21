@@ -150,7 +150,10 @@ namespace GoodAI.ToyWorld
 
 
                 // Setup image copying from RR
-                ImageSettings image = new ImageSettings(Owner.CopyDataThroughCPU ? RenderRequestImageCopyingMode.Cpu : RenderRequestImageCopyingMode.OpenglPbo);
+                ImageSettings image = new ImageSettings(
+                    Owner.CopyDataThroughCPU
+                        ? RenderRequestImageCopyingMode.Cpu
+                        : RenderRequestImageCopyingMode.OpenglPbo);
 
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
