@@ -47,6 +47,11 @@ namespace VRage.Library.Collections
             m_internalArray = defaultCapacity > 0 ? new T[defaultCapacity] : EmptyArray<T>.Value;
         }
 
+        public void Add(T item)
+        {
+            this[Length] = item;
+        }
+
         public void Clear()
         {
             Array.Clear(m_internalArray, 0, m_internalArray.Length);
