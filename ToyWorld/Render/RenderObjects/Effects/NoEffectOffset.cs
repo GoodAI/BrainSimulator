@@ -14,6 +14,7 @@ namespace Render.RenderObjects.Effects
             mvp,
 
             tilesetTexture,
+            tilesetTextureWinter,
             diffuse,
             ambient,
         }
@@ -48,6 +49,11 @@ namespace Render.RenderObjects.Effects
         public void TextureUniform(int val)
         {
             SetUniform1(base[Uniforms.tilesetTexture], val);
+        }
+
+        public void TextureWinterUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tilesetTextureWinter], val);
         }
 
         public void AmbientUniform(Vector4 val)

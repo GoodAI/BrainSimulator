@@ -28,7 +28,7 @@ void main()
 		out_color = texture(tilesetTextureWinter, f_texCoods);
 		break;
 	default:
-		out_color.xyz = vec3(1);
+		out_color.xyz = vec3(1, 0, 0);
 		break;
 	}
 

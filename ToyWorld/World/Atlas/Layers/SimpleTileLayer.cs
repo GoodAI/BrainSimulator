@@ -38,7 +38,7 @@ namespace World.Atlas.Layers
         public LayerType LayerType { get; set; }
 
 
-        public SimpleTileLayer(LayerType layerType, int width, int height)
+        public SimpleTileLayer(LayerType layerType, int width, int height, Random random = null)
         {
             if (width <= 0)
                 throw new ArgumentOutOfRangeException("width", "Tile width has to be positive");
@@ -46,7 +46,7 @@ namespace World.Atlas.Layers
                 throw new ArgumentOutOfRangeException("height", "Tile height has to be positive");
             Contract.EndContractBlock();
 
-            m_random = new Random();
+            m_random = random ?? new Random();
             m_tileTypes = new int[0];
             LayerType = layerType;
             m_summerCache.Z = m_random.Next();
@@ -62,9 +62,9 @@ namespace World.Atlas.Layers
         {
             m_summer = summer;
 
-            const float tileUpdateCountFactor = 0.005f;
+            const float tileUpdateCountFactor = 0.0002f;
             float summerDepthFactor = Math.Abs(summer - 0.5f) + 1;
-            int tileUpdateCount = (int)(m_tileCount * summerDepthFactor * tileUpdateCountFactor);
+            int tileUpdateCount = (int)(m_tileCount * summerDepthFactor * tileUpdateCountFactor) + 1;
 
             Debug.WriteLine(summer.ToString() + '\t' + tileUpdateCount);
 

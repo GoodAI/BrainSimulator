@@ -24,6 +24,9 @@ flat out int f_samplerIdx;
 
 vec2 GetTexCoods(int tileOffset)
 {
+	// Tiles are indexed from 1.......
+	tileOffset--;
+
 	// Tile positions
 	ivec2 off = ivec2(tileOffset % texSizeCount.z, tileOffset / texSizeCount.z);
 	// Texture positions (top-left)
@@ -67,7 +70,7 @@ void main()
 {
 	int tileOffset = v_texOffset & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
 
-	if (tileOffset <= 0)
+	if (tileOffset <= 1) // Tiles are indexed from 1......
 	{
 		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
 		gl_Position = vec4(0, 0, 2000, 0);
@@ -76,7 +79,6 @@ void main()
 	}
 
 	f_texCoods = GetTexCoods(tileOffset);
-	f_samplerIdx = v_texOffset / (1 << MODULO_BITS); // It's the same as v_texOffset / (MODULO_MASK + 1)
-	f_samplerIdx = 1;
+	f_samplerIdx = v_texOffset >> (MODULO_BITS + 1); // It's the same as v_texOffset / (MODULO_MASK + 1)
 	gl_Position = mvp * vec4(v_position, 0, 1);
 }

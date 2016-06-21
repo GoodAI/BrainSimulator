@@ -69,15 +69,16 @@ namespace World.ToyWorldCore
                         Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
+                    Random rnd = new Random(); // Shared across all layers
                     ITileLayer filledTileLayer = FillTileLayer(
                         tileLayer,
                         layerType,
                         atlas.StaticTilesContainer,
                         tilesetTable,
-                        initializer);
+                        initializer,
+                        rnd);
                     atlas.TileLayers.Add(
-                        filledTileLayer
-                        );
+                        filledTileLayer);
                 }
             }
 
