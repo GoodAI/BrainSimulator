@@ -79,6 +79,6 @@ void main()
 	}
 
 	f_texCoods = GetTexCoods(tileOffset);
-	f_samplerIdx = v_texOffset >> (MODULO_BITS + 1); // It's the same as v_texOffset / (MODULO_MASK + 1)
+	f_samplerIdx = v_texOffset >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
 	gl_Position = mvp * vec4(v_position, 0, 1);
 }

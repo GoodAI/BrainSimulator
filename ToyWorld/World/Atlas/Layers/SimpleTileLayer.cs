@@ -13,7 +13,7 @@ namespace World.Atlas.Layers
     public class SimpleTileLayer : ITileLayer
     {
         private const int TILESETS_BITS = 12;
-        private const int TILESETS_OFFSET = 2 << TILESETS_BITS; // Must be larger than the number of tiles in any tileset and must correspond to the BasicOffset.vert shader
+        private const int TILESETS_OFFSET = 1 << TILESETS_BITS; // Must be larger than the number of tiles in any tileset and must correspond to the BasicOffset.vert shader
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
