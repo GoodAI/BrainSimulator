@@ -273,14 +273,14 @@ namespace World.Atlas.Layers
 
         public void IncrementTime(TimeSpan timeSpan)
         {
-            m_timeTicks += timeSpan.Ticks * 10;
+            m_timeTicks += timeSpan.Ticks;
         }
 
         public void UpdateTiles()
         {
             foreach (ITileLayer tileLayer in TileLayers)
             {
-                tileLayer.UpdateTileStates(Summer, SummerGradient);
+                tileLayer.UpdateTileStates(this);
             }
         }
 
@@ -295,6 +295,8 @@ namespace World.Atlas.Layers
             }
         }
 
+        // 0 is Dec/Jan
+        // 1 is Jun/Jul
         public float Summer
         {
             get

@@ -75,6 +75,12 @@ namespace System.Collections.Generic
             list.RemoveAt(lastPos);
         }
 
+        public static void RemoveEnd<T>(this List<T> list, int count)
+        {
+            count = Math.Min(count, list.Count);
+            list.RemoveRange(list.Count - count, count);
+        }
+
         public static T[] GetInternalArray<T>(this List<T> list)
         {
             return ListInternalAccessor<T>.GetArray(list);

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
@@ -17,24 +17,31 @@ namespace World.Atlas.Layers
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
+
+        #region Summer/winter stuff
+
         private readonly Random m_random;
 
         private float m_summer; // Local copy of the Atlas' summer
+        private float m_gradient; // Local copy of the Atlas' gradient
+        private float m_previousGradient;
         private Vector3 m_summerCache;
+        private bool IsWinter { get { return m_summer < 0.25f; } }
+
+        private readonly HashSet<Vector2I> m_snowyTilesSet; // Two values -- present or not -- for summer/winter; Dictionary<> will be needed for more states
+        private readonly List<Vector2I> m_snowyTiles;
 
         private int m_tileCount;
         private int[] m_tileTypes;
 
+        #endregion
+
+
         public int Width { get; set; }
         public int Height { get; set; }
 
-
         public Tile[][] Tiles { get; set; }
-
-        public byte[][] TileStates { get; set; }
-
         public bool Render { get; set; }
-
         public LayerType LayerType { get; set; }
 
 
@@ -47,50 +54,109 @@ namespace World.Atlas.Layers
             Contract.EndContractBlock();
 
             m_random = random ?? new Random();
+
             m_tileTypes = new int[0];
             LayerType = layerType;
             m_summerCache.Z = m_random.Next();
+
             Height = height;
             Width = width;
+
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
-            TileStates = ArrayCreator.CreateJaggedArray<byte[][]>(width, height);
+            m_snowyTilesSet = new HashSet<Vector2I>();
+            m_snowyTiles = new List<Vector2I>();
+
             Render = true;
         }
 
 
-        public void UpdateTileStates(float summer, float gradient)
+        public void UpdateTileStates(Atlas atlas)
         {
-            m_summer = summer;
+            m_summer = atlas.Summer;
+            m_gradient = atlas.SummerGradient;
 
-            const float tileUpdateCountFactor = 0.002f;
-            float weatherChangeIntensityFactor = 1.3f;
+            if (m_tileCount == 0) // Nothing to update
+                return;
 
-            bool isWinter = Math.Abs(summer * gradient) < 0.25f;
+            if (!IsWinter)
+                return;
 
-            if (isWinter) // It is winter -- start adding or removing snow
-            {
-                weatherChangeIntensityFactor = summer * 4; // It is Oct to Jan, strengthen intensity towards Jan
+            if (m_gradient < 0)
+                AddSnow(); // It is Oct to Dec
+            else
+                RemoveSnow(); // It is Jan to Mar
 
-                if (gradient < 0)
-                    weatherChangeIntensityFactor = 1 - weatherChangeIntensityFactor; // It is Jan to Mar, strenghten intensity towards Mar
-            }
+            // TODO: more states defined by atlas
 
-            int tileUpdateCount = (int)(m_tileCount * weatherChangeIntensityFactor * tileUpdateCountFactor) + 1;
+            m_previousGradient = m_gradient;
+        }
 
-            Debug.WriteLine(summer.ToString() + '\t' + gradient + '\t' + tileUpdateCount);
+        private void AddSnow()
+        {
+            float snowyTilesNeeded = GetSnowyTilesNeededCount();
+
+            if (snowyTilesNeeded <= 0) // We have enough snowy tiles for this part of the year -- we don't need to add any
+                return;
+
+            int tileUpdateCount = (int)Math.Ceiling(snowyTilesNeeded); // Always add something if snowyTilesNeeded is not zero
+
+            int repetitions = 0;
 
             for (int i = 0; i < tileUpdateCount; i++)
             {
-                int x = m_random.Next(Width);
-                int y = m_random.Next(Height);
+                Vector2I position = new Vector2I(m_random.Next(Width), m_random.Next(Height));
 
-                if (isWinter && gradient < 0) // It only snows from Oct to Jan
-                    TileStates[x][y] = 1; // winter
-                else
-                    TileStates[x][y] = 0; // summer
+                bool added = m_snowyTilesSet.Add(position);
 
-                // TODO: more states defined by atlas
+                if (!added && ++repetitions <= 5) // Try more tiles for each missing snowy tile before giving up
+                {
+                    i--;
+                    continue;
+                }
+
+                repetitions = 0;
+                m_snowyTiles.Add(position);
             }
+        }
+
+        private void RemoveSnow()
+        {
+            if (m_snowyTiles.Count == 0) // No snowy tiles to remove
+                return;
+
+            if (m_previousGradient != m_gradient) // Jan has just begun -- snow starts to melt in random order
+                m_snowyTiles.ShuffleFisherYates(m_random); // TODO: amortize by shuffling during addition
+
+
+            float snowyTilesNeeded = GetSnowyTilesNeededCount();
+
+            if (snowyTilesNeeded >= 0) // We don't need to remove any snowy tiles
+                return;
+
+            int tileUpdateCount = (int)Math.Ceiling(-snowyTilesNeeded); // Always remove something if snowyTilesNeeded is not zero
+
+
+            int removeStartIdx = Math.Max(m_snowyTiles.Count - tileUpdateCount, 0);
+
+            for (int i = m_snowyTiles.Count - 1; i >= removeStartIdx; i--)
+                m_snowyTilesSet.Remove(m_snowyTiles[i]);
+
+            m_snowyTiles.RemoveEnd(tileUpdateCount);
+        }
+
+        private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
+        {
+            return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises faster than y=x (for x in (0,1))
+        }
+
+        private float GetSnowyTilesNeededCount()
+        {
+            float winterIntensityFactor = 1 - m_summer * 4; // It is Oct to Mar, strengthen intensity towards Dec/Jan
+            winterIntensityFactor = GetModifiedWinterIntensityFactor(winterIntensityFactor);
+
+            // Update so many snowy tiles, so that the ratio of snowed to non-snowed tiles is exactly winterIntensityFactor
+            float currentSnowyTilesRatio = m_snowyTiles.Count / (float)m_tileCount;
+            return (winterIntensityFactor - currentSnowyTilesRatio) * m_tileCount; // Negative values for when there are more tiles than the required amount
         }
 
 
@@ -167,7 +233,14 @@ namespace World.Atlas.Layers
                 {
                     var tile = Tiles[i][j];
                     if (tile != null)
-                        m_tileTypes[idx++] = tile.TilesetId + TileStates[i][j] * TILESETS_OFFSET;
+                    {
+                        int tileId = tile.TilesetId;
+
+                        if (m_snowyTilesSet.Contains(new Vector2I(i, j)))
+                            tileId += TILESETS_OFFSET;
+
+                        m_tileTypes[idx++] = tileId;
+                    }
                     else
                         m_tileTypes[idx++] = 0; // inside map: must be always 0
                 }
@@ -187,22 +260,30 @@ namespace World.Atlas.Layers
             return m_tileTypes;
         }
 
+        // This is rather slow to compute, but we assume only small portions of grid view will be in sight
         private int GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
-            m_summerCache.X = x;
-            m_summerCache.Y = y;
-
-            double hash = (Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) / int.MaxValue; // Should be uniformly distributed between 0, 1
-            const float offset = 0.2f;
-            // Scale to (offset, 1-offset)
-            hash *= 1 - offset * 2;
-            hash += offset;
-
-            if (hash >= m_summer)
+            if (!IsWinter)
                 return defaultTileOffset;
 
-            return defaultTileOffset + TILESETS_OFFSET;
+            m_summerCache.X = x;
+            m_summerCache.Y = y;
+            double hash = (Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) / int.MaxValue; // Should be uniformly distributed between 0, 1
+
+            float weatherChangeIntensityFactor = 1 - m_summer * 4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
+            weatherChangeIntensityFactor = GetModifiedWinterIntensityFactor(weatherChangeIntensityFactor);
+
+            const float maxWinterIntensityFactor = 0.8f;
+            const float winterOffset = 0.02f;
+            weatherChangeIntensityFactor *= maxWinterIntensityFactor + winterOffset; // Makes even the hardest winter (summer close to 0) not fill everything with snow
+            weatherChangeIntensityFactor -= winterOffset; // Makes winter end a little sooner
+
+            if (hash < weatherChangeIntensityFactor)
+                return defaultTileOffset + TILESETS_OFFSET;
+
+            return defaultTileOffset;
         }
+
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
