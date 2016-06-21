@@ -48,18 +48,25 @@ namespace GoodAI.ToyWorld
             set { SetOutput(2, value); }
         }
 
-        [MyOutputBlock(3)]
-        public MyMemoryBlock<float> Text
+        [MyOutputBlock(3), MyUnmanaged]
+        public MyMemoryBlock<float> VisualTool
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
         [MyOutputBlock(4)]
-        public MyMemoryBlock<float> ChosenActions
+        public MyMemoryBlock<float> Text
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
+        }
+
+        [MyOutputBlock(5)]
+        public MyMemoryBlock<float> ChosenActions
+        {
+            get { return GetOutput(5); }
+            set { SetOutput(5, value); }
         }
 
         [MyInputBlock(0)]
@@ -144,67 +151,84 @@ namespace GoodAI.ToyWorld
 
         #region RenderRequests
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF size")]
+        [MyBrowsable, Category("RR: FoF view"), DisplayName("Size")]
         [YAXSerializableField(DefaultValue = 3)]
         public int FoFSize { get; set; }
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution width")]
+        [MyBrowsable, Category("RR: FoF view"), DisplayName("Resolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoFResWidth { get; set; }
 
-        [MyBrowsable, Category("FoF view"), DisplayName("FoF resolution height")]
+        [MyBrowsable, Category("RR: FoF view"), DisplayName("Resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoFResHeight { get; set; }
 
-        [MyBrowsable, Category("FoF view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FoFMultisampleLevel { get; set; }
+        [MyBrowsable, Category("RR: FoF view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FoFMultisampleLevel { get; set; }
 
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV size")]
+        [MyBrowsable, Category("RR: FoV view"), DisplayName("Size")]
         [YAXSerializableField(DefaultValue = 21)]
         public int FoVSize { get; set; }
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution width")]
+        [MyBrowsable, Category("RR: FoV view"), DisplayName("Resolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoVResWidth { get; set; }
 
-        [MyBrowsable, Category("FoV view"), DisplayName("FoV resolution height")]
+        [MyBrowsable, Category("RR: FoV view"), DisplayName("Resolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int FoVResHeight { get; set; }
 
-        [MyBrowsable, Category("FoV view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FoVMultisampleLevel { get; set; }
+        [MyBrowsable, Category("RR: FoV view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FoVMultisampleLevel { get; set; }
 
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tCenter - X")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tCenter - X")]
         [YAXSerializableField(DefaultValue = 25)]
         public float CenterX { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tCenter - Y")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tCenter - Y")]
         [YAXSerializableField(DefaultValue = 25)]
         public float CenterY { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tWidth")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tWidth")]
         [YAXSerializableField(DefaultValue = 50)]
         public float Width { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tHeight")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tHeight")]
         [YAXSerializableField(DefaultValue = 50)]
         public float Height { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tResolution width")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tResolution width")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionWidth { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("\tResolution height")]
+        [MyBrowsable, Category("RR: Free view"), DisplayName("\tResolution height")]
         [YAXSerializableField(DefaultValue = 1024)]
         public int ResolutionHeight { get; set; }
 
-        [MyBrowsable, Category("Free view"), DisplayName("Multisample level")]
-        [YAXSerializableField(DefaultValue = 2)]
-        public int FreeViewMultisampleLevel { get; set; }
+        [MyBrowsable, Category("RR: Free view"), DisplayName("Multisample level")]
+        [YAXSerializableField(DefaultValue = RenderRequestMultisampleLevel.x4)]
+        public RenderRequestMultisampleLevel FreeViewMultisampleLevel { get; set; }
+
+
+        [MyBrowsable, Category("RR: Tool view"), DisplayName("Size")]
+        [YAXSerializableField(DefaultValue = 0.9f)]
+        public float ToolSize { get; set; }
+
+        [MyBrowsable, Category("RR: Tool view"), DisplayName("Resolution width")]
+        [YAXSerializableField(DefaultValue = 128)]
+        public int ToolResWidth { get; set; }
+
+        [MyBrowsable, Category("RR: Tool view"), DisplayName("Resolution height")]
+        [YAXSerializableField(DefaultValue = 128)]
+        public int ToolResHeight { get; set; }
+
+        [MyBrowsable, Category("RR: Tool view"), DisplayName("Background type")]
+        [YAXSerializableField(DefaultValue = ToolBackgroundType.BrownBorder)]
+        public ToolBackgroundType ToolBackgroundType { get; set; }
 
         #endregion
 
@@ -231,6 +255,7 @@ namespace GoodAI.ToyWorld
         private IFovAvatarRR FovRR { get; set; }
         private IFofAvatarRR FofRR { get; set; }
         private IFreeMapRR FreeRR { get; set; }
+        private IToolAvatarRR ToolRR { get; set; }
 
         private int SignalCount { get; set; }
 
@@ -266,12 +291,9 @@ namespace GoodAI.ToyWorld
             validator.AssertError(Height > 0, this, "Free view height has to be positive.");
             validator.AssertError(ResolutionWidth > 0, this, "Free view resolution width has to be positive.");
             validator.AssertError(ResolutionHeight > 0, this, "Free view resolution height has to be positive.");
-            validator.AssertError(FoFMultisampleLevel >= 0 && FoFMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
-            validator.AssertError(FoVMultisampleLevel >= 0 && FoVMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
-            validator.AssertError(FreeViewMultisampleLevel >= 0 && FreeViewMultisampleLevel <= 4, this, "Multisample level must be between zero and five.");
-            validator.AssertWarning(
-                FoFMultisampleLevel != 1 && FoVMultisampleLevel != 1 && FreeViewMultisampleLevel != 1,
-                this, "Multisample level of 1 is the same as level 2 (4x MSAA). Don't ask why.");
+            validator.AssertError(ToolSize > 0, this, "Tool size has to be positive.");
+            validator.AssertError(ToolResWidth > 0, this, "Tool resolution width has to be positive.");
+            validator.AssertError(ToolResHeight > 0, this, "Tool resolution height has to be positive.");
 
             if (Controls != null)
                 validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
@@ -316,7 +338,7 @@ namespace GoodAI.ToyWorld
             if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
                 return;
 
-            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree })
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree, VisualTool })
             {
                 memBlock.Unmanaged = !CopyDataThroughCPU;
                 memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
@@ -325,6 +347,7 @@ namespace GoodAI.ToyWorld
             VisualFov.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
             VisualFof.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
             VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
+            VisualTool.Dims = new TensorDimensions(ToolResWidth, ToolResHeight);
 
             Text.Count = MaxMessageLength;
 

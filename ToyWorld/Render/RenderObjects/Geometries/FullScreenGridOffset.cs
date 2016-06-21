@@ -6,12 +6,12 @@ using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    public class FullScreenGridTex : FullScreenGrid
+    public class FullScreenGridOffset : FullScreenGrid
     {
         private readonly Vector4I[] m_offsetsInternal;
 
 
-        public FullScreenGridTex(Vector2I dimensions)
+        public FullScreenGridOffset(Vector2I dimensions)
             : base(dimensions)
         {
             // We need to send the same offset to every vertex of the quad (size*4)...

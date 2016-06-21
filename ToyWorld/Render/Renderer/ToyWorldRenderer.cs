@@ -24,6 +24,7 @@ namespace Render.Renderer
 
             RenderRequestFactory.CaseParamInternal<IFovAvatarRR, FovAvatarRR>();
             RenderRequestFactory.CaseParamInternal<IFofAvatarRR, FofAvatarRR>();
+            RenderRequestFactory.CaseParamInternal<IToolAvatarRR, ToolAvatarRR>();
         }
 
         public ToyWorldRenderer()
@@ -38,7 +39,7 @@ namespace Render.Renderer
 
             // Parameterized geometries
             GeometryManager.CaseParam<FullScreenGrid>();
-            GeometryManager.CaseParam<FullScreenGridTex>();
+            GeometryManager.CaseParam<FullScreenGridOffset>();
 
 
             EffectManager.Case<NoEffectTex>();

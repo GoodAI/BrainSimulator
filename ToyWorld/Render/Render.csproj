@@ -73,10 +73,11 @@
     <Compile Include="RenderObjects\Effects\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Effects\PointLightEffect.cs" />
     <Compile Include="RenderObjects\Effects\SmokeEffect.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGridTex.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenGridOffset.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
     <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
     <Compile Include="Renderer\ToyWorldRenderer.cs" />
+    <Compile Include="RenderRequests\AvatarRenderRequests\ToolAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FreeMapRR.cs" />
     <Compile Include="RenderRequests\RenderRequests\FullMapRR.cs" />
@@ -90,6 +91,10 @@
     <ProjectReference Include="..\RenderingBase\RenderingBase.csproj">
       <Project>{272a6b2f-921a-4ac2-aced-a3e0f487954c}</Project>
       <Name>RenderingBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
+      <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
+      <Name>TmxMapSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{527728E6-91BE-4678-912F-45A507D0BC67}</Project>

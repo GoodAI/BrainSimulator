@@ -57,38 +57,78 @@ namespace ToyWorldTests.Render
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
             ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
+            ((IRenderRequestBaseInternal<ToyWorld>)rr).DrawOverlay = true;
+            rr.RotateMap = true;
 
+
+            #region Controls
 
             var ac = m_gameController.GetAvatarController(aID);
-            var controls = new AvatarControls(5) { DesiredForwardSpeed = .3f };
+            var controls = new AvatarControls(5);
 
             CancellationToken token = SetupWindow(
                 delta =>
                 {
                     //rr.PositionCenter = new PointF(rr.PositionCenter.X - delta.X, rr.PositionCenter.Y + delta.Y);
-                    controls.DesiredLeftRotation = MathHelper.WrapAngle(-delta.X * 0.1f);
+                    controls.DesiredLeftRotation = MathHelper.WrapAngle(delta.X * -0.1f);
                     //controls.Fof = new PointF(0, controls.Fof.Value.Y + -delta.Y * 0.1f);
                 },
                 delta =>
                 {
                     rr.Size = new SizeF(rr.Size.Width - delta, rr.Size.Height - delta);
                 },
-                key =>
+                toggle =>
                 {
-                    if (key == Key.Number1)
-                        rr.DrawSmoke = !rr.DrawSmoke;
-                    if (key == Key.Number2)
-                        rr.DrawNoise = !rr.DrawNoise;
-                    if (key == Key.Number3)
-                        rr.EnableDayAndNightCycle = !rr.EnableDayAndNightCycle;
-                    if (key == Key.Number4)
-                        rr.DrawLights = !rr.DrawLights;
-                    if (key == Key.Number7)
-                        rr.RotateMap = !rr.RotateMap;
-                    if (key == Key.Number0)
-                        rr.MultisampleLevel = (rr.MultisampleLevel + 1) % 5;
+                    switch (toggle)
+                    {
+                        case Key.Number1:
+                            rr.DrawSmoke = !rr.DrawSmoke;
+                            break;
+                        case Key.Number2:
+                            rr.DrawNoise = !rr.DrawNoise;
+                            break;
+                        case Key.Number3:
+                            rr.EnableDayAndNightCycle = !rr.EnableDayAndNightCycle;
+                            break;
+                        case Key.Number4:
+                            rr.DrawLights = !rr.DrawLights;
+                            break;
+                        case Key.Number5:
+                        case Key.Number6:
+                        case Key.Number7:
+                            rr.RotateMap = !rr.RotateMap;
+                            break;
+                        case Key.Number8:
+                            controls.PickUp = true;
+                            break;
+                        case Key.Number9:
+                        case Key.Number0:
+                            rr.MultisampleLevel = (RenderRequestMultisampleLevel)(((int)rr.MultisampleLevel + 1) % 5);
+                            break;
+                    }
+                },
+                (movement, isKeyUp) =>
+                {
+                    float movementChange = isKeyUp ? 0 : 0.6f;
+
+                    switch (movement)
+                    {
+                        case Key.W:
+                            controls.DesiredForwardSpeed = movementChange;
+                            break;
+                        case Key.S:
+                            controls.DesiredForwardSpeed = -movementChange;
+                            break;
+                        case Key.A:
+                            controls.DesiredRightSpeed = -movementChange;
+                            break;
+                        case Key.D:
+                            controls.DesiredRightSpeed = movementChange;
+                            break;
+                    }
                 });
 
+            #endregion
 
             while (Renderer.Window.Exists && !token.IsCancellationRequested)
             {
@@ -103,14 +143,18 @@ namespace ToyWorldTests.Render
 
                 ac.SetActions(controls);
 
+                if (controls.PickUp)
+                    controls.PickUp = false;
+
                 m_gameController.MakeStep();
                 Renderer.Context.SwapBuffers();
+
             }
 
             Assert.True(token.IsCancellationRequested);
         }
 
-        private CancellationToken SetupWindow(Action<Vector3> onDrag, Action<float> onScroll, Action<Key> onToggle)
+        private CancellationToken SetupWindow(Action<Vector3> onDrag, Action<float> onScroll, Action<Key> onToggle, Action<Key, bool> onMove)
         {
             CancellationTokenSource tokenSource = new CancellationTokenSource(new TimeSpan(1, 0, 0));
 
@@ -118,8 +162,11 @@ namespace ToyWorldTests.Render
             {
                 switch (args.Key)
                 {
+                    case Key.W:
+                    case Key.S:
                     case Key.A:
-                        tokenSource.Cancel();
+                    case Key.D:
+                        onMove(args.Key, false);
                         break;
 
                     case Key.Number1:
@@ -133,6 +180,19 @@ namespace ToyWorldTests.Render
                     case Key.Number9:
                     case Key.Number0:
                         onToggle(args.Key);
+                        break;
+                }
+            };
+
+            Renderer.Window.KeyUp += (sender, args) =>
+            {
+                switch (args.Key)
+                {
+                    case Key.W:
+                    case Key.S:
+                    case Key.A:
+                    case Key.D:
+                        onMove(args.Key, true);
                         break;
                 }
             };

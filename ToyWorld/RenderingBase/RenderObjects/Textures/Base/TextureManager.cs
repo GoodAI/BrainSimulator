@@ -27,7 +27,7 @@ namespace RenderingBase.RenderObjects.Textures
         /// TODO: Texture caching -- we don't want to cache render target textures
         ////////////////////
 
-        public T Get<T>(TilesetImage[] images)
+        public T Get<T>(params TilesetImage[] images)
             where T : TextureBase
         {
             return m_textures.Switch<T>(images);

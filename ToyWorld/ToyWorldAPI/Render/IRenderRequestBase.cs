@@ -3,6 +3,14 @@ using System.Drawing;
 
 namespace GoodAI.ToyWorld.Control
 {
+    public enum RenderRequestMultisampleLevel
+    {
+        None,
+        x4 = 2,
+        x8,
+        x16,
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -38,7 +46,7 @@ namespace GoodAI.ToyWorld.Control
         /// The level of multisampling to use (each pixel uses 2^MultisampleLevel samples). Must be between 0 (no AA) and 4 (16x MSAA).
         /// Currently level 1 is equal to level 2 (both are 4x MSAA).
         /// </summary>
-        int MultisampleLevel { get; set; }
+        RenderRequestMultisampleLevel MultisampleLevel { get; set; }
 
 
         /// <summary>
@@ -73,6 +81,11 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
 
+
+        /// <summary>
+        /// Enables the drawing of UI elements.
+        /// </summary>
+        bool DrawOverlay { get; set; }
 
         /// <summary>
         /// Specifies, if the day progression should dim the scene.

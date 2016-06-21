@@ -10,8 +10,10 @@ using RenderingBase.RenderObjects.Buffers;
 using RenderingBase.RenderObjects.Geometries;
 using RenderingBase.RenderObjects.Textures;
 using RenderingBase.RenderRequests;
+using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas.Layers;
+using World.GameActors.GameObjects;
 using World.Physics;
 using World.ToyWorldCore;
 using FullScreenQuadOffset = Render.RenderObjects.Geometries.FullScreenQuadOffset;
@@ -32,34 +34,36 @@ namespace Render.RenderRequests
             Image = 1 << 2,
             Smoke = 1 << 3,
             Noise = 1 << 4,
+            Overlay = 1 << 5,
         }
 
 
         #region Fields
 
-        const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
-        const float AmbientTerm = 0.25f;
+        protected const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
+        protected const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
+        protected const float AmbientTerm = 0.25f;
 
-        public bool CopyToWindow { get; set; }
+        protected BasicFbo m_frontFbo, m_backFbo;
+        protected BasicFboMultisample m_fboMs;
 
-        private BasicFbo m_frontFbo, m_backFbo;
-        private BasicFboMultisample m_fboMs;
+        protected NoEffectOffset m_effect;
+        protected NoEffectOffset m_overlayEffect;
+        protected SmokeEffect m_smokeEffect;
+        protected NoiseEffect m_noiseEffect;
+        protected PointLightEffect m_pointLightEffect;
 
-        private NoEffectOffset m_effect;
-        private SmokeEffect m_smokeEffect;
-        private NoiseEffect m_noiseEffect;
-        private PointLightEffect m_pointLightEffect;
+        protected TilesetTexture m_tilesetTexture;
+        protected TilesetTexture m_overlayTexture;
 
-        private TilesetTexture m_tex;
+        protected FullScreenGridOffset m_gridOffset;
+        protected FullScreenQuadOffset m_quadOffset;
+        protected FullScreenQuad m_quad;
 
-        private FullScreenGridTex m_grid;
-        private FullScreenQuadOffset m_quadOffset;
-        private FullScreenQuad m_quad;
+        protected Pbo m_pbo;
 
-        private Pbo m_pbo;
-
-        private Matrix m_projMatrix;
-        private Matrix m_viewProjectionMatrix;
+        protected Matrix m_projMatrix;
+        protected Matrix m_viewProjectionMatrix;
 
         protected DirtyParams m_dirtyParams;
 
@@ -86,15 +90,19 @@ namespace Render.RenderRequests
                 m_fboMs.Dispose();
 
             m_effect.Dispose();
+            if (m_overlayEffect != null)
+                m_overlayEffect.Dispose();
             if (m_smokeEffect != null)
                 m_smokeEffect.Dispose();
             if (m_noiseEffect != null)
                 m_noiseEffect.Dispose();
 
-            m_tex.Dispose();
+            m_tilesetTexture.Dispose();
+            if (m_overlayTexture != null)
+                m_overlayTexture.Dispose();
 
-            if (m_grid != null) // It is initialized during Draw
-                m_grid.Dispose();
+            if (m_gridOffset != null) // It is initialized during Draw
+                m_gridOffset.Dispose();
             m_quadOffset.Dispose();
             m_quad.Dispose();
 
@@ -148,6 +156,8 @@ namespace Render.RenderRequests
 
         #region IRenderRequestBase overrides
 
+        public bool CopyToWindow { get; set; }
+
         #region View controls
 
         public System.Drawing.PointF PositionCenter
@@ -200,19 +210,12 @@ namespace Render.RenderRequests
             }
         }
 
-        private int m_multisampleLevel = 2;
-        public int MultisampleLevel
+        private RenderRequestMultisampleLevel m_multisampleLevel = RenderRequestMultisampleLevel.x4;
+        public RenderRequestMultisampleLevel MultisampleLevel
         {
             get { return m_multisampleLevel; }
             set
             {
-                const int minSamples = 0;
-                const int maxSamples = 4;
-                if (value < minSamples)
-                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be positive.");
-                if (value > maxSamples)
-                    throw new ArgumentOutOfRangeException("value", "Invalid multisample level: must be at most " + maxSamples + ".");
-
                 m_multisampleLevel = value;
                 m_dirtyParams |= DirtyParams.Resolution;
             }
@@ -324,6 +327,21 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region UI overlay
+
+        private bool m_drawOverlay;
+        public bool DrawOverlay
+        {
+            get { return m_drawOverlay; }
+            set
+            {
+                m_drawOverlay = value;
+                m_dirtyParams |= DirtyParams.Overlay;
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Helpers
@@ -334,6 +352,21 @@ namespace Render.RenderRequests
             m_backFbo = m_frontFbo;
             m_frontFbo = tmp;
             return m_frontFbo;
+        }
+
+        private void SetDefaultBlending()
+        {
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
+        }
+
+        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            if (!cameraDirection.HasValue)
+                cameraDirection = Vector3.Forward;
+
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
+
+            return viewMatrix;
         }
 
         #endregion
@@ -348,35 +381,35 @@ namespace Render.RenderRequests
             GL.BlendEquation(BlendEquationMode.FuncAdd);
 
 
-            // Set up tileset textures
-            string[] tilesetImagePaths = world.TilesetTable.GetTilesetImages();
-            TilesetImage[] tilesetImages = new TilesetImage[tilesetImagePaths.Length];
+            // Tileset textures and effect
+            {
+                // Set up tileset textures
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetTilesetImages();
+                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                    new TilesetImage(
+                        t.Image.Source,
+                        new Vector2I(t.Tilewidth, t.Tileheight),
+                        new Vector2I(t.Spacing),
+                        world.TilesetTable.TileBorder))
+                    .ToArray();
 
-            for (int i = 0; i < tilesetImages.Length; i++)
-                tilesetImages[i] = new TilesetImage(tilesetImagePaths[i], world.TilesetTable.TileSize,
-                                                    world.TilesetTable.TileMargins, world.TilesetTable.TileBorder);
-
-            m_tex = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-
-
-            // Set up tile grid shader
-            m_effect = renderer.EffectManager.Get<NoEffectOffset>();
-            renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
-            m_effect.TextureUniform(0);
-
-            // Set up static uniforms
-            Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
-                world.TilesetTable.TileBorder * 2; // twice the border, on each side once
-            Vector2 tileCount = (Vector2)m_tex.Size / (Vector2)fullTileSize;
-            m_effect.TexSizeCountUniform(new Vector3I(m_tex.Size.X, m_tex.Size.Y, (int)tileCount.X));
-            m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
-            m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
-
-            m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+                m_tilesetTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
 
 
-            // Set up light shader
-            m_pointLightEffect = new PointLightEffect();
+                // Set up tile grid shader
+                m_effect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(m_effect); // Need to use the effect to set uniforms
+
+                // Set up static uniforms
+                Vector2I fullTileSize = world.TilesetTable.TileSize + world.TilesetTable.TileMargins +
+                                        world.TilesetTable.TileBorder * 2; // twice the border, on each side once
+                Vector2 tileCount = (Vector2)m_tilesetTexture.Size / (Vector2)fullTileSize;
+                m_effect.TexSizeCountUniform(new Vector3I(m_tilesetTexture.Size.X, m_tilesetTexture.Size.Y, (int)tileCount.X));
+                m_effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
+                m_effect.TileBorderUniform(world.TilesetTable.TileBorder);
+
+                m_effect.AmbientUniform(new Vector4(1, 1, 1, AmbientTerm));
+            }
 
 
             // Set up geometry
@@ -392,13 +425,13 @@ namespace Render.RenderRequests
             // Don't call CheckDirtyParams here because stuff like Resolution can be set by the user only after Init is called.
         }
 
-        private void CheckDirtyParams(RendererBase<ToyWorld> renderer)
+        protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
             if (m_dirtyParams.HasFlag(DirtyParams.Size))
             {
-                m_grid = renderer.GeometryManager.Get<FullScreenGridTex>(GridView.Size);
+                m_gridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
                 m_projMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
                 // Flip the image to have its origin in the top-left corner
 
@@ -432,10 +465,7 @@ namespace Render.RenderRequests
                 // Reallocate MS fbo
                 if (MultisampleLevel > 0)
                 {
-                    int multisampleCount = 1 << MultisampleLevel; // 4x to 32x (4 levels)
-
-                    if (MultisampleLevel == 1)
-                        multisampleCount = 4; // 2x does not seem to be working, force it to be at least 4x
+                    int multisampleCount = 1 << (int)MultisampleLevel; // 4x to 32x (4 levels)
 
                     if (newRes || m_fboMs == null || multisampleCount != m_fboMs.MultisampleCount)
                     {
@@ -478,6 +508,42 @@ namespace Render.RenderRequests
                 m_noiseEffect.ViewportSizeUniform((Vector2I)Resolution);
                 m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
             }
+            if (m_dirtyParams.HasFlag(DirtyParams.Overlay))
+            {
+                // Set up overlay textures
+                IEnumerable<Tileset> tilesets = world.TilesetTable.GetOverlayImages();
+                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                    new TilesetImage(
+                        t.Image.Source,
+                        new Vector2I(t.Tilewidth, t.Tileheight),
+                        new Vector2I(t.Spacing),
+                        world.TilesetTable.TileBorder))
+                    .ToArray();
+
+                m_overlayTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
+                renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+
+                // Set up overlay shader
+                m_overlayEffect = renderer.EffectManager.Get<NoEffectOffset>();
+                renderer.EffectManager.Use(m_overlayEffect); // Need to use the effect to set uniforms
+
+                // Set up static uniforms
+                Vector2I tileSize = tilesetImages[0].TileSize;
+                Vector2I tileMargins = tilesetImages[0].TileMargin;
+                Vector2I tileBorder = tilesetImages[0].TileBorder;
+
+                Vector2I fullTileSize = tileSize + tileMargins + tileBorder * 2; // twice the border, on each side once
+                Vector2 tileCount = (Vector2)m_overlayTexture.Size / (Vector2)fullTileSize;
+                m_overlayEffect.TexSizeCountUniform(new Vector3I(m_overlayTexture.Size.X, m_overlayTexture.Size.Y, (int)tileCount.X));
+                m_overlayEffect.TileSizeMarginUniform(new Vector4I(tileSize, tileMargins));
+                m_overlayEffect.TileBorderUniform(tileBorder);
+
+                m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
+            }
+            // Set up light shader
+            if (DrawLights && m_pointLightEffect == null)
+                m_pointLightEffect = new PointLightEffect();
+
 
             m_dirtyParams = DirtyParams.None;
         }
@@ -509,7 +575,7 @@ namespace Render.RenderRequests
 
         public virtual void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            CheckDirtyParams(renderer);
+            CheckDirtyParams(renderer, world);
 
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
@@ -527,8 +593,9 @@ namespace Render.RenderRequests
             m_viewProjectionMatrix *= m_projMatrix;
 
             // Bind stuff to GL
-            renderer.TextureManager.Bind(m_tex);
+            renderer.TextureManager.Bind(m_tilesetTexture);
             renderer.EffectManager.Use(m_effect);
+            m_effect.TextureUniform(0);
             m_effect.DiffuseUniform(new Vector4(1, 1, 1, (1 - AmbientTerm) * (EnableDayAndNightCycle ? world.Atlas.Day : 1)));
 
             // Draw the scene
@@ -557,26 +624,15 @@ namespace Render.RenderRequests
                 ApplyPostProcessingEffects(renderer);
             }
 
+            // Draw UI and overlays
+            if (DrawOverlay)
+                DrawOverlays(renderer, world);
+
             // Copy the rendered scene
             GatherAndDistributeData(renderer);
         }
 
-        private void SetDefaultBlending()
-        {
-            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
-        }
-
-        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
-        {
-            if (!cameraDirection.HasValue)
-                cameraDirection = Vector3.Forward;
-
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
-
-            return viewMatrix;
-        }
-
-        private void DrawTileLayers(ToyWorld world)
+        protected virtual void DrawTileLayers(ToyWorld world)
         {
             // Set up transformation to screen space for tiles
             Matrix transform = Matrix.Identity;
@@ -594,12 +650,12 @@ namespace Render.RenderRequests
             IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
             foreach (ITileLayer tileLayer in toRender)
             {
-                m_grid.SetTextureOffsets(tileLayer.GetRectangle(GridView));
-                m_grid.Draw();
+                m_gridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));
+                m_gridOffset.Draw();
             }
         }
 
-        private void DrawObjectLayers(ToyWorld world)
+        protected virtual void DrawObjectLayers(ToyWorld world)
         {
             // Draw objects
             foreach (var objectLayer in world.Atlas.ObjectLayers)
@@ -623,13 +679,12 @@ namespace Render.RenderRequests
 
                     // Setup dynamic data
                     m_quadOffset.SetTextureOffsets(gameObject.TilesetId);
-
                     m_quadOffset.Draw();
                 }
             }
         }
 
-        private void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
+        protected virtual void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
@@ -682,7 +737,7 @@ namespace Render.RenderRequests
             // more stufffs
         }
 
-        private void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
+        protected virtual void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
         {
             // Always draw post-processing from the front to the back buffer
             m_backFbo.Bind();
@@ -708,7 +763,47 @@ namespace Render.RenderRequests
             // The final scene should be left in the front buffer
         }
 
-        private void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
+        protected virtual void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
+        { }
+
+        protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
+        {
+            if (FlipYAxis)
+            {
+                size.Y = -size.Y;
+                position.Y = -position.Y;
+            }
+
+            Matrix transform = Matrix.CreateScale(size);
+            transform *= Matrix.CreateTranslation(position.X, position.Y, 0.01f);
+
+
+            // Draw the inventory background
+            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+            renderer.EffectManager.Use(m_overlayEffect);
+            m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
+            m_overlayEffect.ModelViewProjectionUniform(ref transform);
+
+            m_quadOffset.SetTextureOffsets((int)type);
+            m_quadOffset.Draw();
+
+
+            // Draw the inventory Tool
+            if (avatar.Tool != null)
+            {
+                renderer.TextureManager.Bind(m_tilesetTexture);
+                renderer.EffectManager.Use(m_effect);
+                m_effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+
+                Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
+                m_effect.ModelViewProjectionUniform(ref toolTransform);
+
+                m_quadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
+                m_quadOffset.Draw();
+            }
+        }
+
+        protected virtual void GatherAndDistributeData(RendererBase<ToyWorld> renderer)
         {
             if (CopyToWindow)
             {

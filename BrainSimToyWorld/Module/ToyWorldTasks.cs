@@ -81,6 +81,15 @@ namespace GoodAI.ToyWorld
                         // no noise or smoke, this view is for the researcher
                     });
 
+                Owner.ToolRR = ObtainRR<IToolAvatarRR>(Owner.VisualTool, myAvatarId,
+                    rr =>
+                    {
+                        rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
+                        rr.Resolution = new Size(Owner.ToolResWidth, Owner.ToolResHeight);
+                        rr.ToolBackgroundType = Owner.ToolBackgroundType;
+                        // None of the other settings have any effect
+                    });
+
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
 
@@ -275,6 +284,7 @@ namespace GoodAI.ToyWorld
                     TransferFromRRToMemBlock(Owner.FovRR, Owner.VisualFov);
                     TransferFromRRToMemBlock(Owner.FofRR, Owner.VisualFof);
                     TransferFromRRToMemBlock(Owner.FreeRR, Owner.VisualFree);
+                    TransferFromRRToMemBlock(Owner.ToolRR, Owner.VisualTool);
                 }
 
                 ObtainMessageFromBrain();
