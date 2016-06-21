@@ -1,6 +1,5 @@
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
-using RenderingBase.Renderer;
 using VRageMath;
 using World.ToyWorldCore;
 
@@ -12,7 +11,9 @@ namespace Render.RenderRequests
 
         public ToolAvatarRR(int avatarID)
             : base(avatarID)
-        { }
+        {
+            MultisampleLevel = RenderRequestMultisampleLevel.None;
+        }
 
         #endregion
 
@@ -21,22 +22,29 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
+            var effects = Effects;
+            effects.EnabledEffects = RenderRequestEffect.None;
+            Effects = effects;
+
+            var post = Postprocessing;
+            post.EnabledPostprocessing = RenderRequestPostprocessing.None;
+            Postprocessing = post;
+
             SizeV = new Vector2(0.9f);
+            var overlay = Overlay;
+            overlay.EnabledOverlays |= RenderRequestOverlay.InventoryTool;
+            overlay.ToolSize = new PointF(SizeV.X, SizeV.Y);
+            overlay.ToolPosition = new PointF();
+            Overlay = overlay;
 
-            MultisampleLevel = RenderRequestMultisampleLevel.None;
-            DrawOverlay = true;
-            EnableDayAndNightCycle = false;
-
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
-            m_dirtyParams &= DirtyParams.Size | DirtyParams.Resolution | DirtyParams.Image | DirtyParams.Overlay;
-
-            base.Draw(renderer, world);
+            base.Draw();
         }
 
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -49,20 +57,6 @@ namespace Render.RenderRequests
 
         protected override void DrawObjectLayers(ToyWorld world)
         { }
-
-        protected override void DrawEffects(RendererBase<ToyWorld> renderer, ToyWorld world)
-        { }
-
-        protected override void ApplyPostProcessingEffects(RendererBase<ToyWorld> renderer)
-        { }
-
-        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
-        {
-            var avatar = world.GetAvatar(AvatarID);
-
-
-            DrawAvatarTool(renderer, avatar, SizeV, Vector2.Zero, ToolBackgroundType);
-        }
 
         #endregion
     }

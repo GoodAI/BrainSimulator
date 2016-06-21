@@ -50,27 +50,27 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
             SizeV = new Vector2(3, 3);
 
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
             if (FovAvatarRenderRequest == null)
                 throw new MissingFieldException("Missing the IFovAvatarRR. Please specify one before using this render request.");
 
             // Setup params
-            var avatar = world.GetAvatar(AvatarID);
+            var avatar = World.GetAvatar(AvatarID);
             PositionCenterV2 =
                 avatar.Position
                 // Offset so that the FofOffset interval (-1,1) spans the entire Fov view and doesn't reach outside of it
             + ((Vector2)FovAvatarRenderRequest.Size - SizeV) / 2
             * (Vector2)avatar.Fof;
 
-            base.Draw(renderer, world);
+            base.Draw();
         }
 
         #endregion

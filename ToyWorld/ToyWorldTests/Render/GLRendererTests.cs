@@ -11,6 +11,7 @@ using RenderingBase.Renderer;
 using RenderingBase.RenderRequests;
 using TmxMapSerializer.Elements;
 using TmxMapSerializer.Serializer;
+using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.ToyWorldCore;
 using Xunit;
@@ -23,7 +24,7 @@ namespace ToyWorldTests.Render
         private readonly GameControllerBase m_gameController;
 
         protected ToyWorld World { get { return m_gameController.World; } }
-        protected GLRenderer<ToyWorld> Renderer { get { return (GLRenderer<ToyWorld>)m_gameController.Renderer; } }
+        protected GLRenderer<ToyWorld> Renderer { get { return m_gameController.Renderer; } }
 
 
         public GLRendererTestBase()
@@ -56,9 +57,12 @@ namespace ToyWorldTests.Render
             //var rr = m_gameController.RegisterRenderRequest<IFofAvatarRR>(aID);
             //rr1.Size = new SizeF(50, 50);
             //rr.FovAvatarRenderRequest = rr1;
-            ((IRenderRequestBaseInternal<ToyWorld>)rr).CopyToWindow = true;
-            ((IRenderRequestBaseInternal<ToyWorld>)rr).DrawOverlay = true;
             rr.RotateMap = true;
+
+            rr.Effects = new EffectSettings(RenderRequestEffect.None);
+            rr.Postprocessing = new PostprocessingSettings(RenderRequestPostprocessing.None);
+            rr.Overlay = new OverlaySettings(RenderRequestOverlay.InventoryTool) { ToolBackground = ToolBackgroundType.BrownBorder };
+            rr.Image = new ImageSettings(RenderRequestImageCopyingMode.DefaultFbo);
 
 
             #region Controls
@@ -82,16 +86,32 @@ namespace ToyWorldTests.Render
                     switch (toggle)
                     {
                         case Key.Number1:
-                            rr.DrawSmoke = !rr.DrawSmoke;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.Smoke);
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number2:
-                            rr.DrawNoise = !rr.DrawNoise;
+                            {
+                                var post = rr.Postprocessing;
+                                post.EnabledPostprocessing = post.EnabledPostprocessing.FlipEnumFlag(RenderRequestPostprocessing.Noise);
+                                rr.Postprocessing = post;
+                            }
                             break;
                         case Key.Number3:
-                            rr.EnableDayAndNightCycle = !rr.EnableDayAndNightCycle;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.DayNight);
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number4:
-                            rr.DrawLights = !rr.DrawLights;
+                            {
+                                var effects = rr.Effects;
+                                effects.EnabledEffects = effects.EnabledEffects.FlipEnumFlag(RenderRequestEffect.Lights);
+                                rr.Effects = effects;
+                            }
                             break;
                         case Key.Number5:
                         case Key.Number6:
@@ -106,6 +126,9 @@ namespace ToyWorldTests.Render
                             rr.MultisampleLevel = (RenderRequestMultisampleLevel)(((int)rr.MultisampleLevel + 1) % 5);
                             break;
                     }
+
+                    // A hack that enables recomputing the renderers based on new settings; it sets some stuff like size to default, though
+                    ((IRenderRequestBaseInternal<ToyWorld>)rr).Init();
                 },
                 (movement, isKeyUp) =>
                 {

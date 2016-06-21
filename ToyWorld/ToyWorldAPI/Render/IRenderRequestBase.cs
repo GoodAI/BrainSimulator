@@ -15,7 +15,14 @@ namespace GoodAI.ToyWorld.Control
     /// 
     /// </summary>
     public interface IRenderRequestBase
+        : IDisposable
     {
+        /// <summary>
+        /// Use this method to remove the request from processing queue. Dispose works too.
+        /// </summary>
+        void UnregisterRenderRequest();
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -50,88 +57,26 @@ namespace GoodAI.ToyWorld.Control
 
 
         /// <summary>
-        /// 
+        /// Contains the desired settings of rendered image copying.
         /// </summary>
-        bool GatherImage { get; set; }
-
-        /// <summary>
-        /// set to true if the cuda/opengl interop is failing
-        /// </summary>
-        bool CopyImageThroughCpu { get; set; }
-
-        /// <summary>
-        /// location where data is copied if it should be transfered through CPU
-        /// </summary>
-        uint[] Image { get; }
-
-        /// <summary>
-        /// Called before the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
-        /// The argument is an OpenGL handle to the underlying buffer object.
-        /// Use this callback to release any mapping related to the buffer object.
-        /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
-        /// </summary>
-        event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
-
-        /// <summary>
-        /// Called after the timeframe in which the buffer object (VBO) will be used as a target to copy rendered results to.
-        /// The argument is an OpenGL handle to the underlying buffer object.
-        /// Because an internal OpenGL context is now active, you can use this callback to do any copying
-        /// from the buffer object or to map a CUDA pointer using CUDA-GL interop.
-        /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
-        /// </summary>
-        event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
+        ImageSettings Image { get; set; }
 
 
         /// <summary>
-        /// Enables the drawing of UI elements.
+        /// Contains the desired settings of scene effects.
         /// </summary>
-        bool DrawOverlay { get; set; }
-
-        /// <summary>
-        /// Specifies, if the day progression should dim the scene.
-        /// </summary>
-        bool EnableDayAndNightCycle { get; set; }
-
-        /// <summary>
-        /// Specifies whether light sources should emanate light
-        /// </summary>
-        bool DrawLights { get; set; }
+        EffectSettings Effects { get; set; }
 
 
         /// <summary>
-        /// 
+        /// Contains the desired settings for scene postprocessing.
         /// </summary>
-        bool DrawSmoke { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        Color SmokeColor { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        float SmokeTransformationSpeedCoefficient { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        float SmokeIntensityCoefficient { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        float SmokeScaleCoefficient { get; set; }
+        PostprocessingSettings Postprocessing { get; set; }
 
 
         /// <summary>
-        /// 
+        /// Contains the desired settings for scene overlays.
         /// </summary>
-        bool DrawNoise { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        float NoiseIntensityCoefficient { get; set; }
+        OverlaySettings Overlay { get; set; }
     }
 }

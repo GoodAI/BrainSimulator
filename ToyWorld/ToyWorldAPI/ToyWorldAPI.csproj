@@ -110,6 +110,10 @@
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
     <Compile Include="MessageEvent.cs" />
+    <Compile Include="Render\Settings\OverlaySettings.cs" />
+    <Compile Include="Render\Settings\PostprocessingSettings.cs" />
+    <Compile Include="Render\Settings\EffectSettings.cs" />
+    <Compile Include="Render\Settings\ImageSettings.cs" />
     <Compile Include="Render\IRenderRequestBase.cs" />
     <Compile Include="Render\RenderRequestNotImplementedException.cs" />
     <Compile Include="Control\IAvatarController.cs" />

@@ -20,19 +20,19 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
             SizeV = new Vector2(20, 20);
 
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
-            var avatar = world.GetAvatar(AvatarID);
+            var avatar = World.GetAvatar(AvatarID);
             PositionCenterV2 = avatar.Position;
 
-            base.Draw(renderer, world);
+            base.Draw();
         }
 
         #endregion

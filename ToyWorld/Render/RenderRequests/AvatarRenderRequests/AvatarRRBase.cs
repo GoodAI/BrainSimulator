@@ -1,14 +1,56 @@
 ﻿using System;
 using GoodAI.ToyWorld.Control;
 using RenderingBase.Renderer;
-using RenderingBase.RenderRequests;
 using VRageMath;
 using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    public abstract class AvatarRRBase : RenderRequest, IAvatarRenderRequest
+    public abstract class AvatarRRBase
+        : RenderRequest, IAvatarRenderRequest
     {
+        #region Internal overlay class
+
+        // Internal class that replaces the base renderer, adding new features
+        internal class ARROverlayRenderer
+            : OverlayRenderer
+        {
+            internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
+
+            public ARROverlayRenderer(RenderRequest owner)
+                : base(owner)
+            { }
+
+            public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world, OverlaySettings settings)
+            {
+                base.Init(renderer, world, settings);
+            }
+
+            public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+            {
+                if (Settings.EnabledOverlays == RenderRequestOverlay.None)
+                    return;
+
+                base.Draw(renderer, world);
+
+                if (Settings.EnabledOverlays.HasFlag(RenderRequestOverlay.InventoryTool))
+                    DrawAvatarTool(
+                        renderer, world.GetAvatar(Owner.AvatarID),
+                        (Vector2)Settings.ToolSize, (Vector2)Settings.ToolPosition,
+                        Settings.ToolBackground);
+            }
+        }
+
+        #endregion
+
+
+        internal new ARROverlayRenderer OverlayRenderer
+        {
+            get { return (ARROverlayRenderer)base.OverlayRenderer; }
+            set { base.OverlayRenderer = value; }
+        }
+
+
         private Vector3? m_avatarDirection;
 
         protected Vector2 RelativePositionV { get; set; }
@@ -17,6 +59,7 @@ namespace Render.RenderRequests
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;
+            OverlayRenderer = new ARROverlayRenderer(this);
         }
 
 
@@ -37,11 +80,11 @@ namespace Render.RenderRequests
             set
             {
                 m_rotateMap = value;
-                m_dirtyParams |= DirtyParams.Size;
+                DirtyParams |= DirtyParam.Size;
             }
         }
 
-        protected override RectangleF ViewV
+        protected internal override RectangleF ViewV
         {
             get
             {
@@ -59,8 +102,6 @@ namespace Render.RenderRequests
             }
         }
 
-        public ToolBackgroundType ToolBackgroundType { get; set; }
-
         #endregion
 
 
@@ -70,38 +111,24 @@ namespace Render.RenderRequests
         }
 
 
-        public override void Init(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Init()
         {
-            ToolBackgroundType = ToolBackgroundType.BrownBorder;
-            
-            base.Init(renderer, world);
+            base.Init();
         }
 
-        public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
+        public override void Draw()
         {
             PositionCenterV2 += RelativePositionV;
 
             if (RotateMap)
             {
-                var avatar = world.GetAvatar(AvatarID);
+                var avatar = World.GetAvatar(AvatarID);
                 Vector3 dir = Vector3.Up;
                 dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
-            base.Draw(renderer, world);
-        }
-
-        protected override void DrawOverlays(RendererBase<ToyWorld> renderer, ToyWorld world)
-        {
-            base.DrawOverlays(renderer, world);
-
-            // Compute transform of the center of the inventory
-            const float margin = 0.05f;
-            Vector2 size = new Vector2(0.08f);
-            Vector2 position = Vector2.One - (new Vector2(margin) + size * 0.5f);
-
-            DrawAvatarTool(renderer, world.GetAvatar(AvatarID), size, position, ToolBackgroundType);
+            base.Draw();
         }
     }
 }

@@ -5,13 +5,14 @@ using RenderingBase.Renderer;
 namespace RenderingBase.RenderRequests
 {
     public interface IRenderRequestBaseInternal<TWorld>
-        : IRenderRequestBase, IDisposable
+        : IRenderRequestBase
         where TWorld : class
     {
-        bool CopyToWindow { get; set; }
+        RendererBase<TWorld> Renderer { get; set; }
+        TWorld World { get; set; }
 
-        void Init(RendererBase<TWorld> renderer, TWorld world);
-        void Draw(RendererBase<TWorld> renderer, TWorld world);
+        void Init();
+        void Draw();
 
         void OnPreDraw();
         void OnPostDraw();

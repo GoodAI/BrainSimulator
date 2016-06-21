@@ -19,6 +19,7 @@ namespace RenderingBase.Renderer
         public uint SimTime { get; private set; }
 
         private readonly IterableQueue<IRenderRequestBaseInternal<TWorld>> m_renderRequestQueue = new IterableQueue<IRenderRequestBaseInternal<TWorld>>();
+        private readonly IterableQueue<IRenderRequestBaseInternal<TWorld>> m_dirtyRenderRequestQueue = new IterableQueue<IRenderRequestBaseInternal<TWorld>>();
 
         public readonly GeometryManager GeometryManager = new GeometryManager();
         public readonly EffectManager EffectManager = new EffectManager();
@@ -60,13 +61,25 @@ namespace RenderingBase.Renderer
         public virtual void Init()
         {
             m_renderRequestQueue.Clear();
+            m_dirtyRenderRequestQueue.Clear();
         }
 
         public virtual void ProcessRequests(TWorld world)
         {
+            // Init stuff
             SimTime++;
             MakeContextCurrent();
 
+            // Init and add new RRs
+            foreach (var dirtyRenderRequest in m_dirtyRenderRequestQueue)
+            {
+                dirtyRenderRequest.Init();
+                m_renderRequestQueue.Enqueue(dirtyRenderRequest);
+            }
+
+            m_dirtyRenderRequestQueue.Clear();
+
+            // Process RRs
             foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
                 renderRequest.OnPreDraw();
 
@@ -82,7 +95,7 @@ namespace RenderingBase.Renderer
 
         protected virtual void Process(IRenderRequestBaseInternal<TWorld> request, TWorld world)
         {
-            request.Draw(this, world);
+            request.Draw();
         }
 
         [Conditional("DEBUG")]
@@ -94,12 +107,17 @@ namespace RenderingBase.Renderer
 
         public void EnqueueRequest(IRenderRequest request)
         {
-            m_renderRequestQueue.Enqueue((IRenderRequestBaseInternal<TWorld>)request);
+            m_dirtyRenderRequestQueue.Enqueue((IRenderRequestBaseInternal<TWorld>)request);
         }
 
         public void EnqueueRequest(IAvatarRenderRequest request)
         {
-            m_renderRequestQueue.Enqueue((IRenderRequestBaseInternal<TWorld>)request);
+            m_dirtyRenderRequestQueue.Enqueue((IRenderRequestBaseInternal<TWorld>)request);
+        }
+
+        public void RemoveRenderRequest(IRenderRequestBaseInternal<TWorld> request)
+        {
+            m_renderRequestQueue.Remove(request);
         }
     }
 }
