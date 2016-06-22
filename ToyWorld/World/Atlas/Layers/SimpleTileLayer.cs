@@ -78,7 +78,7 @@ namespace World.Atlas.Layers
             if (m_tileCount == 0) // Nothing to update
                 return;
 
-            if (!IsWinter)
+            if (!IsWinter) // This erases any leftover snowy tiles when winter ends
                 return;
 
             if (m_gradient < 0)
