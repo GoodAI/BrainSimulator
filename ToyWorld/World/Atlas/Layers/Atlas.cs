@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using GoodAI.Logging;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
@@ -104,7 +105,7 @@ namespace World.Atlas.Layers
         {
             NewAutoupdateables.Add(actor);
         }
-        
+
         public void UpdateTiles()
         {
             foreach (ITileLayer tileLayer in TileLayers)
@@ -322,7 +323,6 @@ namespace World.Atlas.Layers
         {
             m_timeTicks += timeSpan.Ticks;
 
-
             long year = YearLength.Ticks;
             long halfYear = year / 2;
             bool secondHalf = m_timeTicks % year >= halfYear;
@@ -331,6 +331,14 @@ namespace World.Atlas.Layers
 
             float f = m_timeTicks % halfYear / (float)halfYear;
             Summer = secondHalf ? 1 - f : f;
+
+
+            const int logEvery = 24;  // Only log every half month
+            const int logTimeAmount = 365 / 2;  // Logging lasts for two days
+            float logInterval = Summer % (1f / logEvery) * logEvery; // A number between 0,1
+
+            if ((int)(logInterval * logTimeAmount) == 0) // Logging happens only in the beggining of the interval
+                Log.Instance.Debug(string.Format("Day: {0} \tYear: {1} \tGradient: {2}", Day, Summer, SummerGradient));
 
 
             long day = DayLength.Ticks;

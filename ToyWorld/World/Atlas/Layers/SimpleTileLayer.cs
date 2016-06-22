@@ -79,7 +79,16 @@ namespace World.Atlas.Layers
                 return;
 
             if (!IsWinter) // This erases any leftover snowy tiles when winter ends
+            {
+                if (m_snowyTiles.Count > 0)
+                {
+                    foreach (var snowyTile in m_snowyTiles) // Remove the few leftover snowy tiles directly
+                        m_snowyTilesSet.Remove(snowyTile);
+
+                    m_snowyTiles.Clear();
+                }
                 return;
+            }
 
             if (m_gradient < 0)
                 AddSnow(); // It is Oct to Dec
