@@ -132,7 +132,7 @@ namespace GoodAI.ToyWorld
                 {
                     ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu);
 
-                    imageSettings.OnSceneBufferPrepared += (request, data) =>
+                    imageSettings.OnSceneBufferPrepared += (request, data, depthData) =>
                     {
                         int width = rr.Resolution.Width;
                         int stride = width * sizeof(uint);
@@ -159,13 +159,13 @@ namespace GoodAI.ToyWorld
                 uint renderTextureHandle = 0;
                 CudaOpenGLBufferInteropResource renderResource = null;
 
-                image.OnPreRenderingEvent += (sender, vbo) =>
+                image.OnPreRenderingEvent += (sender, vbo, depthVbo) =>
                  {
                      if (renderResource != null && renderResource.IsMapped)
                          renderResource.UnMap();
                  };
 
-                image.OnPostRenderingEvent += (sender, vbo) =>
+                image.OnPostRenderingEvent += (sender, vbo, depthVbo) =>
                 {
                     // Vbo can be allocated during drawing, create the resource after that (post-rendering)
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).SetCurrent();

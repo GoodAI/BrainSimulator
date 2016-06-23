@@ -13,8 +13,10 @@ namespace Render.RenderRequests
     {
         #region Fields
 
-        protected Pbo Pbo;
+        protected Pbo<uint> Pbo;
+        protected Pbo<float> DepthPbo;
         protected uint[] RenderedScene;
+        protected float[] RenderedSceneDepth;
 
         #endregion
 
@@ -42,13 +44,24 @@ namespace Render.RenderRequests
             switch (Settings.CopyMode)
             {
                 case RenderRequestImageCopyingMode.OpenglPbo:
-                    // Set up pixel buffer object for data transfer to RR issuer; don't allocate any memory (it's done in CheckDirtyParams)
-                    Pbo = new Pbo();
+                    // Set up pixel buffer object for data transfer to RR issuer
+                    Pbo = new Pbo<uint>();
                     Pbo.Init(bufferSize, null, BufferUsageHint.StreamDraw);
+
+                    if (Settings.CopyDepth)
+                    {
+                        DepthPbo = new Pbo<float>();
+                        DepthPbo.Init(bufferSize, null, BufferUsageHint.StreamDraw);
+                    }
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
                     if (RenderedScene == null || RenderedScene.Length < bufferSize)
+                    {
                         RenderedScene = new uint[bufferSize];
+                    
+                        if (Settings.CopyDepth)
+                            RenderedSceneDepth = new float[bufferSize];
+                    }
                     break;
             }
         }
@@ -60,13 +73,20 @@ namespace Render.RenderRequests
         public virtual void OnPreDraw()
         {
             if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
-                Settings.InvokePreRenderingEvent(Owner, Pbo.Handle);
+                Settings.InvokePreRenderingEvent(Owner, Pbo.Handle, Settings.CopyDepth ? DepthPbo.Handle : 0);
         }
 
         public virtual void OnPostDraw()
         {
-            if (Settings.CopyMode == RenderRequestImageCopyingMode.OpenglPbo)
-                Settings.InvokePostRenderingEvent(Owner, Pbo.Handle);
+            switch (Settings.CopyMode)
+            {
+                case RenderRequestImageCopyingMode.OpenglPbo:
+                    Settings.InvokePostRenderingEvent(Owner, Pbo.Handle, Settings.CopyDepth ? DepthPbo.Handle : 0);
+                    break;
+                case RenderRequestImageCopyingMode.Cpu:
+                    Settings.InvokePostBufferPrepared(Owner, RenderedScene, Settings.CopyDepth ? RenderedSceneDepth : null);
+                    break;
+            }
         }
 
         #endregion
@@ -80,12 +100,10 @@ namespace Render.RenderRequests
 
             // Gather data to host mem
             Owner.FrontFbo.Bind();
-            GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
 
             switch (Settings.CopyMode)
             {
                 case RenderRequestImageCopyingMode.DefaultFbo:
-                    //Owner.FrontFbo.Bind(FramebufferTarget.ReadFramebuffer);
                     GL.BindFramebuffer(FramebufferTarget.DrawFramebuffer, 0);
                     GL.BlitFramebuffer(
                         0, 0, Owner.FrontFbo.Size.X, Owner.FrontFbo.Size.Y,
@@ -95,12 +113,22 @@ namespace Render.RenderRequests
                     break;
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     Pbo.Bind();
+                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
+
+                    if (Settings.CopyDepth)
+                    {
+                        DepthPbo.Bind();
+                        GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.Float, default(IntPtr));
+                    }
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
                     GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, RenderedScene);
-                    Settings.InvokePostBufferPrepared(Owner, RenderedScene);
+
+                    if (Settings.CopyDepth)
+                        GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.Float, RenderedSceneDepth);
                     break;
             }
         }
