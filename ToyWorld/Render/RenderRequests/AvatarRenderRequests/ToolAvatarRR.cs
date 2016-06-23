@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using VRageMath;
@@ -38,6 +39,8 @@ namespace Render.RenderRequests
             overlay.ToolSize = new PointF(SizeV.X, SizeV.Y);
             overlay.ToolPosition = new PointF();
             Overlay = overlay;
+
+            Debug.Assert(!Image.CopyDepth, "Depth information for inventory overlay seems useless...");
 
             base.Init();
         }

@@ -34,39 +34,61 @@ namespace GoodAI.ToyWorld
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1), MyUnmanaged]
-        public MyMemoryBlock<float> VisualFof
+        [MyOutputBlock(1)]
+        public MyMemoryBlock<float> VisualFovDepth
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
         [MyOutputBlock(2), MyUnmanaged]
-        public MyMemoryBlock<float> VisualFree
+        public MyMemoryBlock<float> VisualFof
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
-        [MyOutputBlock(3), MyUnmanaged]
-        public MyMemoryBlock<float> VisualTool
+        [MyOutputBlock(3)]
+        public MyMemoryBlock<float> VisualFofDepth
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
-        [MyOutputBlock(4)]
-        public MyMemoryBlock<float> Text
+        [MyOutputBlock(4), MyUnmanaged]
+        public MyMemoryBlock<float> VisualFree
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
         }
 
         [MyOutputBlock(5)]
-        public MyMemoryBlock<float> ChosenActions
+        public MyMemoryBlock<float> VisualFreeDepth
         {
             get { return GetOutput(5); }
             set { SetOutput(5, value); }
+        }
+
+        [MyOutputBlock(6), MyUnmanaged]
+        public MyMemoryBlock<float> VisualTool
+        {
+            get { return GetOutput(6); }
+            set { SetOutput(6, value); }
+        }
+
+
+        [MyOutputBlock(7)]
+        public MyMemoryBlock<float> Text
+        {
+            get { return GetOutput(7); }
+            set { SetOutput(7, value); }
+        }
+
+        [MyOutputBlock(8)]
+        public MyMemoryBlock<float> ChosenActions
+        {
+            get { return GetOutput(8); }
+            set { SetOutput(8, value); }
         }
 
         [MyInputBlock(0)]
@@ -96,6 +118,10 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Runtime"), DisplayName("Copy data through CPU")]
         [YAXSerializableField(DefaultValue = false)]
         public bool CopyDataThroughCPU { get; set; }
+
+        [MyBrowsable, Category("Runtime"), DisplayName("Copy depth data")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool CopyDepthData { get; set; }
 
 
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
@@ -344,9 +370,9 @@ namespace GoodAI.ToyWorld
                 memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
             }
 
-            VisualFov.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
-            VisualFof.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
-            VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
+            VisualFov.Dims = VisualFovDepth.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
+            VisualFof.Dims = VisualFofDepth.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
+            VisualFree.Dims = VisualFreeDepth.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
             VisualTool.Dims = new TensorDimensions(ToolResWidth, ToolResHeight);
 
             Text.Count = MaxMessageLength;
