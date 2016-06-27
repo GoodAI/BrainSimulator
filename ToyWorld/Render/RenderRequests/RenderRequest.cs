@@ -255,8 +255,7 @@ namespace Render.RenderRequests
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthFunc(DepthFunction.Lequal);
+            GL.DepthFunc(DepthFunction.Always); // Ignores stored depth values, but still writes them
 
             // Set up framebuffers
             {
@@ -358,7 +357,7 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        #region Callbacks
+        #region Events
 
         public virtual void OnPreDraw()
         {
@@ -386,9 +385,11 @@ namespace Render.RenderRequests
             else
                 FrontFbo.Bind();
 
+            // Setup stuff
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
             SetDefaultBlending();
+            GL.Enable(EnableCap.DepthTest);
 
             // View and proj transforms
             ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
@@ -417,11 +418,11 @@ namespace Render.RenderRequests
                     0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
-                GL.BlitFramebuffer(
-                    0, 0, FboMs.Size.X, FboMs.Size.Y,
-                    0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
-                    ClearBufferMask.DepthBufferBit,
-                    BlitFramebufferFilter.Nearest);
+                //GL.BlitFramebuffer(
+                //    0, 0, FboMs.Size.X, FboMs.Size.Y,
+                //    0, 0, FrontFbo.Size.X, FrontFbo.Size.Y, // TODO: read directly to PBO (we don't need it for other effects)
+                //    ClearBufferMask.DepthBufferBit,
+                //    BlitFramebufferFilter.Nearest);
             }
 
             // Effects cannot be used with depth testing
@@ -438,24 +439,28 @@ namespace Render.RenderRequests
 
         protected virtual void DrawTileLayers(ToyWorld world)
         {
+            Rectangle gridView = GridView;
+
             // Set up transformation to screen space for tiles
             Matrix transform = Matrix.Identity;
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-            transform *= Matrix.CreateScale((Vector2)GridView.Size / 2);
-            // World transform -- move center to view center
-            transform *= Matrix.CreateTranslation(new Vector2(GridView.Center));
-            // View and projection transforms
-            transform *= ViewProjectionMatrix;
-            Effect.ModelViewProjectionUniform(ref transform);
-
+            transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
 
             // Draw tile layers
             List<ITileLayer> tileLayers = world.Atlas.TileLayers;
             IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+            int i = 0;
 
             foreach (ITileLayer tileLayer in toRender)
             {
-                GridOffset.SetTextureOffsets(tileLayer.GetRectangle(GridView));
+                i++;
+                // World transform -- move center to view center
+                Matrix t = transform * Matrix.CreateTranslation(new Vector3(gridView.Center, i * 1f));
+                // View and projection transforms
+                t *= ViewProjectionMatrix;
+                Effect.ModelViewProjectionUniform(ref t);
+
+                GridOffset.SetTextureOffsets(tileLayer.GetRectangle(gridView));
                 GridOffset.Draw();
             }
         }
