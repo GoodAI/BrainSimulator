@@ -66,7 +66,7 @@ namespace Render.RenderRequests
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            PositionCenterV = new Vector3(0, 0, 20);
+            PositionCenterV = new Vector3(0, 0, 10);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
 
@@ -255,6 +255,8 @@ namespace Render.RenderRequests
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Lequal);
 
             // Set up framebuffers
             {
@@ -340,7 +342,7 @@ namespace Render.RenderRequests
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
                 GridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
-                ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 500);
+                ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
                 // Flip the image to have its origin in the top-left corner
 
                 if (FlipYAxis)
@@ -384,7 +386,7 @@ namespace Render.RenderRequests
             else
                 FrontFbo.Bind();
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             GL.Enable(EnableCap.Blend);
             SetDefaultBlending();
 
@@ -416,8 +418,13 @@ namespace Render.RenderRequests
                 GL.BlitFramebuffer(
                     0, 0, FboMs.Size.X, FboMs.Size.Y,
                     0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
-                    ClearBufferMask.ColorBufferBit, // | ClearBufferMask.DepthBufferBit, // TODO: blit depth when needed
+                    ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
+                GL.BlitFramebuffer(
+                    0, 0, FboMs.Size.X, FboMs.Size.Y,
+                    0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
+                    ClearBufferMask.DepthBufferBit,
+                    BlitFramebufferFilter.Nearest);
             }
 
             PostprocessRenderer.Draw(Renderer, World);
@@ -468,7 +475,7 @@ namespace Render.RenderRequests
                         transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
-                    transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 0.01f));
+                    transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 5f));
                     // View and projection transforms
                     transform *= ViewProjectionMatrix;
                     Effect.ModelViewProjectionUniform(ref transform);
