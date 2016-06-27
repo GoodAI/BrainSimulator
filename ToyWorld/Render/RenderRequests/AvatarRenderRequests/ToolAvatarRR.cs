@@ -55,10 +55,10 @@ namespace Render.RenderRequests
             return Matrix.Identity;
         }
 
-        protected override void DrawTileLayers(ToyWorld world)
+        protected override void DrawTileLayers()
         { }
 
-        protected override void DrawObjectLayers(ToyWorld world)
+        protected override void DrawObjectLayers()
         { }
 
         #endregion

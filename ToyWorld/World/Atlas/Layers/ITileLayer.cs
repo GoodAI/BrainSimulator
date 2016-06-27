@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
@@ -20,14 +21,23 @@ namespace World.Atlas.Layers
         /// Returns Tiles in given region, where extremes are included.
         /// </summary>
         /// <param name="rectangle"></param>
-        int[] GetRectangle(Rectangle rectangle);
+        /// <param name="tileTypes"></param>
+        Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes);
+
+        /// <summary>
+        /// Returns Tiles in given region, where extremes are included.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="tileTypes"></param>
+        void GetRectangle(Rectangle rectangle, int[] tileTypes);
 
         /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
         /// </summary>
-        /// <param name="size"></param>
         /// <param name="pos"></param>
-        int[] GetRectangle(Vector2I pos, Vector2I size);
+        /// <param name="size"></param>
+        /// <param name="tileTypes"></param>
+        void GetRectangle(Vector2I pos, Vector2I size, int[] tileTypes);
 
 
         int Width { get; set; }
@@ -75,22 +85,24 @@ namespace World.Atlas.Layers
         public void UpdateTileStates(Atlas atlas)
         { }
 
-        public int[] GetRectangle(Rectangle rectangle)
+        public Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes)
+        {
+            GetRectangle(rectangle, tileTypes);
+            return null;
+        }
+
+        public void GetRectangle(Rectangle rectangle, int[] tileTypes)
         {
             if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
                 throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");
             Contract.EndContractBlock();
-
-            return default(int[]);
         }
 
-        public int[] GetRectangle(Vector2I pos, Vector2I size)
+        public void GetRectangle(Vector2I pos, Vector2I size, int[] tileTypes)
         {
             if (size.X <= 0 && size.Y <= 0)
                 throw new ArgumentOutOfRangeException("size", "size values doesn't form a valid rectangle");
             Contract.EndContractBlock();
-
-            return default(int[]);
         }
     }
 }

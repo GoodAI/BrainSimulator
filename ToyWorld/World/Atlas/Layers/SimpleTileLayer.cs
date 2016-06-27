@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
@@ -27,7 +29,6 @@ namespace World.Atlas.Layers
         private bool IsWinter { get { return m_summer < 0.25f; } }
 
         private int m_tileCount;
-        private int[] m_tileTypes;
 
         #endregion
 
@@ -50,7 +51,6 @@ namespace World.Atlas.Layers
 
             m_random = random ?? new Random();
 
-            m_tileTypes = new int[0];
             LayerType = layerType;
             m_summerCache.Z = m_random.Next();
 
@@ -83,17 +83,21 @@ namespace World.Atlas.Layers
             return GetActorAt(coordinates.X, coordinates.Y);
         }
 
-        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        public void GetRectangle(Vector2I topLeft, Vector2I size, int[] tileTypes)
         {
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
-            return GetRectangle(rectangle);
+            GetRectangle(rectangle, tileTypes);
         }
 
-        public int[] GetRectangle(Rectangle rectangle)
+        public async Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes)
         {
-            if (m_tileTypes.Length < rectangle.Size.Size())
-                m_tileTypes = new int[rectangle.Size.Size()];
+            await Task.Run(() => GetRectangle(rectangle, tileTypes));
+        }
+
+        public void GetRectangle(Rectangle rectangle, int[] tileTypes)
+        {
+            Debug.Assert(rectangle.Size.Size() <= tileTypes.Length, "Too little space for the grid tile types!");
 
             // Use cached getter value
             int viewRight = rectangle.Right;
@@ -121,7 +125,7 @@ namespace World.Atlas.Layers
             for (int j = rectangle.Top; j < bot; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows inside of map
@@ -129,7 +133,7 @@ namespace World.Atlas.Layers
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < left; i++)
-                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
 
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
@@ -138,22 +142,20 @@ namespace World.Atlas.Layers
                     if (tile != null)
                         m_tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
                     else
-                        m_tileTypes[idx++] = 0; // inside map: must be always 0
+                        tileTypes[idx++] = 0; // inside map: must be always 0
                 }
 
                 // Tiles after end of map
                 for (int i = right; i < viewRight; i++)
-                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows after end of map
             for (int j = top; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
-
-            return m_tileTypes;
         }
 
         // This is rather slow to compute, but we assume only small portions of grid view will be in sight

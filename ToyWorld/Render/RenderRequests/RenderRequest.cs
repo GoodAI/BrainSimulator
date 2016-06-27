@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
@@ -38,6 +40,8 @@ namespace Render.RenderRequests
         internal OverlayRenderer OverlayRenderer;
         internal ImageRenderer ImageRenderer;
 
+        private ConcurrentBag<int[]> m_tileTypes;
+        private Task<int[]>[] m_tileTypesTasks;
 
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
@@ -65,6 +69,8 @@ namespace Render.RenderRequests
             PostprocessRenderer = new PostprocessRenderer(this);
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
+
+            m_tileTypes = new ConcurrentBag<int[]>();
 
             PositionCenterV = new Vector3(0, 0, 10);
             SizeV = new Vector2(3, 3);
@@ -334,13 +340,13 @@ namespace Render.RenderRequests
             ImageRenderer.Init(Renderer, World, Image);
         }
 
-        protected virtual void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
+        protected virtual void CheckDirtyParams()
         {
             // Only setup these things when their dependency has changed (property setters enable these)
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                GridOffset = renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
+                GridOffset = Renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
                 ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
                 // Flip the image to have its origin in the top-left corner
 
@@ -348,6 +354,12 @@ namespace Render.RenderRequests
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);
 
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
+
+                int gridViewSize = GridView.Size.Size();
+                int[] buffer = m_tileTypes.FirstOrDefault();
+
+                if (buffer != null && buffer.Length < gridViewSize && !m_tileTypes.IsEmpty)
+                    m_tileTypes = new ConcurrentBag<int[]>();
             }
 
             DirtyParams = DirtyParam.None;
@@ -363,6 +375,24 @@ namespace Render.RenderRequests
         {
             if (ImageRenderer != null)
                 ImageRenderer.OnPreDraw();
+
+            // Start asynchronous computation of tile types
+            Rectangle gridView = GridView;
+
+            List<ITileLayer> tileLayers = World.Atlas.TileLayers;
+            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+
+            m_tileTypesTasks = toRender.Select(
+                async layer =>
+                {
+                    int[] buffer;
+
+                    if (!m_tileTypes.TryTake(out buffer))
+                        buffer = new int[gridView.Size.Size()];
+
+                    await layer.GetRectangleAsync(gridView, buffer);
+                    return buffer;
+                }).ToArray(); // Force enumeration
         }
 
         public virtual void OnPostDraw()
@@ -391,10 +421,6 @@ namespace Render.RenderRequests
             SetDefaultBlending();
             GL.Enable(EnableCap.DepthTest);
 
-            // View and proj transforms
-            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
-            ViewProjectionMatrix *= ProjMatrix;
-
             // Bind stuff to GL
             Renderer.TextureManager.Bind(TilesetTexture[0]);
             Renderer.TextureManager.Bind(TilesetTexture[1], TextureUnit.Texture1);
@@ -404,8 +430,8 @@ namespace Render.RenderRequests
             Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
 
             // Draw the scene
-            DrawTileLayers(World);
-            DrawObjectLayers(World);
+            DrawTileLayers();
+            DrawObjectLayers();
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -437,7 +463,7 @@ namespace Render.RenderRequests
             ImageRenderer.Draw(Renderer, World);
         }
 
-        protected virtual void DrawTileLayers(ToyWorld world)
+        protected virtual void DrawTileLayers()
         {
             Rectangle gridView = GridView;
 
@@ -447,28 +473,29 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
 
             // Draw tile layers
-            List<ITileLayer> tileLayers = world.Atlas.TileLayers;
-            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+            Task.WaitAll(m_tileTypesTasks);
             int i = 0;
 
-            foreach (ITileLayer tileLayer in toRender)
+            foreach (var tileTypes in m_tileTypesTasks.Select(task => task.Result))
             {
                 i++;
+
                 // World transform -- move center to view center
                 Matrix t = transform * Matrix.CreateTranslation(new Vector3(gridView.Center, i * 1f));
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
 
-                GridOffset.SetTextureOffsets(tileLayer.GetRectangle(gridView));
+                GridOffset.SetTextureOffsets(tileTypes);
+                m_tileTypes.Add(tileTypes);
                 GridOffset.Draw();
             }
         }
 
-        protected virtual void DrawObjectLayers(ToyWorld world)
+        protected virtual void DrawObjectLayers()
         {
             // Draw objects
-            foreach (var objectLayer in world.Atlas.ObjectLayers)
+            foreach (var objectLayer in World.Atlas.ObjectLayers)
             {
                 // TODO: Setup for this object layer
 
