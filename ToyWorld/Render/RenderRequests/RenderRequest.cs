@@ -41,7 +41,7 @@ namespace Render.RenderRequests
         internal ImageRenderer ImageRenderer;
 
         private ConcurrentBag<int[]> m_tileTypes;
-        private Task<int[]>[] m_tileTypesTasks;
+        private IEnumerable<Task<int[]>> m_tileTypesTasks;
 
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
@@ -373,9 +373,6 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            if (ImageRenderer != null)
-                ImageRenderer.OnPreDraw();
-
             // Start asynchronous computation of tile types
             Rectangle gridView = GridView;
 
@@ -392,11 +389,22 @@ namespace Render.RenderRequests
 
                     await layer.GetRectangleAsync(gridView, buffer);
                     return buffer;
-                }).ToArray(); // Force enumeration
+                });
+
+            m_tileTypesTasks.Count(); // Force enumeration
+
+
+            if (ImageRenderer != null)
+                ImageRenderer.OnPreDraw();
         }
 
         public virtual void OnPostDraw()
         {
+            // Copy the rendered scene -- doing this here lets GL time to finish the scene
+            if (ImageRenderer != null)
+                ImageRenderer.Draw(Renderer, World);
+
+
             if (ImageRenderer != null)
                 ImageRenderer.OnPostDraw();
         }
@@ -411,7 +419,6 @@ namespace Render.RenderRequests
             // View and proj transforms
             ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
             ViewProjectionMatrix *= ProjMatrix;
-
         }
 
         public virtual void Draw()
@@ -467,8 +474,8 @@ namespace Render.RenderRequests
             PostprocessRenderer.Draw(Renderer, World);
             OverlayRenderer.Draw(Renderer, World);
 
-            // Copy the rendered scene
-            ImageRenderer.Draw(Renderer, World);
+            // Tell OpenGL driver to submit any unissued commands to the GPU
+            GL.Flush();
         }
 
         protected virtual void DrawTileLayers()
@@ -481,10 +488,9 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
 
             // Draw tile layers
-            Task.WaitAll(m_tileTypesTasks);
             int i = 0;
 
-            foreach (var tileTypes in m_tileTypesTasks.Select(task => task.Result))
+            foreach (var tileTypeTask in m_tileTypesTasks)
             {
                 i++;
 
@@ -494,8 +500,8 @@ namespace Render.RenderRequests
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
 
-                GridOffset.SetTextureOffsets(tileTypes);
-                m_tileTypes.Add(tileTypes); // Return the buffer to the pool
+                GridOffset.SetTextureOffsets(tileTypeTask.Result); // Blocks and waits for the task to finish
+                m_tileTypes.Add(tileTypeTask.Result); // Return the buffer to the pool
                 GridOffset.Draw();
             }
         }
