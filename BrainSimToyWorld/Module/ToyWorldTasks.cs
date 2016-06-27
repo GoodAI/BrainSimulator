@@ -221,8 +221,11 @@ namespace GoodAI.ToyWorld
 
 
                 // Initialize the target memory block
-                targetMemBlock.ExternalPointer = 1;
                 // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+                targetMemBlock.ExternalPointer = 1;
+
+                if (targetDepthMemBlock != null)
+                    targetDepthMemBlock.ExternalPointer = 1;
 
                 return rr;
             }

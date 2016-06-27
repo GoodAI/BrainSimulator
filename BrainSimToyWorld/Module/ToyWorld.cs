@@ -34,7 +34,7 @@ namespace GoodAI.ToyWorld
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1)]
+        [MyOutputBlock(1), MyUnmanaged]
         public MyMemoryBlock<float> VisualFovDepth
         {
             get { return GetOutput(1); }
@@ -48,7 +48,7 @@ namespace GoodAI.ToyWorld
             set { SetOutput(2, value); }
         }
 
-        [MyOutputBlock(3)]
+        [MyOutputBlock(3), MyUnmanaged]
         public MyMemoryBlock<float> VisualFofDepth
         {
             get { return GetOutput(3); }
@@ -62,7 +62,7 @@ namespace GoodAI.ToyWorld
             set { SetOutput(4, value); }
         }
 
-        [MyOutputBlock(5)]
+        [MyOutputBlock(5), MyUnmanaged]
         public MyMemoryBlock<float> VisualFreeDepth
         {
             get { return GetOutput(5); }
@@ -364,10 +364,16 @@ namespace GoodAI.ToyWorld
             if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
                 return;
 
-            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree, VisualTool })
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree, VisualTool, })
             {
                 memBlock.Unmanaged = !CopyDataThroughCPU;
                 memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+            }
+
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFovDepth, VisualFofDepth, VisualFreeDepth, })
+            {
+                memBlock.Unmanaged = !CopyDataThroughCPU;
+                memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.BlackWhite;
             }
 
             VisualFov.Dims = VisualFovDepth.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
