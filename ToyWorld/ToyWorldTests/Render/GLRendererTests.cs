@@ -281,7 +281,7 @@ namespace ToyWorldTests.Render
         {
             // TODO: Doesn't work -- how to invoke the Resize event on Window?
             //m_renderer.Window.Size = new System.Drawing.Size((int)(m_renderer.Window.Width * 1.3f), (int)(m_renderer.Window.Height * 1.3f));
-            Renderer.ProcessRequests(World);
+            Renderer.ProcessRequests();
         }
     }
 }

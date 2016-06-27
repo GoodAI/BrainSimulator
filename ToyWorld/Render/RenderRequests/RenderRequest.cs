@@ -404,10 +404,18 @@ namespace Render.RenderRequests
         #endregion
 
 
+        public virtual void Update()
+        {
+            CheckDirtyParams();
+
+            // View and proj transforms
+            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
+            ViewProjectionMatrix *= ProjMatrix;
+
+        }
+
         public virtual void Draw()
         {
-            CheckDirtyParams(Renderer, World);
-
             GL.Viewport(new System.Drawing.Rectangle(0, 0, Resolution.Width, Resolution.Height));
 
             if (MultisampleLevel > 0)
@@ -487,7 +495,7 @@ namespace Render.RenderRequests
                 Effect.ModelViewProjectionUniform(ref t);
 
                 GridOffset.SetTextureOffsets(tileTypes);
-                m_tileTypes.Add(tileTypes);
+                m_tileTypes.Add(tileTypes); // Return the buffer to the pool
                 GridOffset.Draw();
             }
         }

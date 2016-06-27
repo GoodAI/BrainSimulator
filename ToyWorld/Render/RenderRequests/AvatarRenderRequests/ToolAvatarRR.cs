@@ -45,11 +45,6 @@ namespace Render.RenderRequests
             base.Init();
         }
 
-        public override void Draw()
-        {
-            base.Draw();
-        }
-
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             return Matrix.Identity;

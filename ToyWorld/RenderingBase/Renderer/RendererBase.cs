@@ -64,7 +64,7 @@ namespace RenderingBase.Renderer
             m_dirtyRenderRequestQueue.Clear();
         }
 
-        public virtual void ProcessRequests(TWorld world)
+        public virtual void ProcessRequests()
         {
             // Init stuff
             SimTime++;
@@ -81,11 +81,14 @@ namespace RenderingBase.Renderer
 
             // Process RRs
             foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
+                renderRequest.Update();
+
+            foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
                 renderRequest.OnPreDraw();
 
             foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
             {
-                Process(renderRequest, world);
+                Process(renderRequest);
                 CheckError();
             }
 
@@ -93,7 +96,7 @@ namespace RenderingBase.Renderer
                 renderRequest.OnPostDraw();
         }
 
-        protected virtual void Process(IRenderRequestBaseInternal<TWorld> request, TWorld world)
+        protected virtual void Process(IRenderRequestBaseInternal<TWorld> request)
         {
             request.Draw();
         }

@@ -33,10 +33,15 @@ namespace Render.RenderRequests
             base.Init();
         }
 
-        public override void Draw()
+        public override void Update()
         {
             // TODO: setup camera
 
+            base.Update();
+        }
+
+        public override void Draw()
+        {
             base.Draw();
         }
 
