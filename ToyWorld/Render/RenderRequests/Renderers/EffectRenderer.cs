@@ -76,6 +76,8 @@ namespace Render.RenderRequests
             if (Settings.EnabledEffects == RenderRequestEffect.None)
                 return;
 
+            Owner.FrontFbo.Bind();
+
             // Set up transformation to world and screen space for noise effect
             Matrix mw = Matrix.Identity;
             // Model transform -- scale from (-1,1) to viewSize/2, center on origin
