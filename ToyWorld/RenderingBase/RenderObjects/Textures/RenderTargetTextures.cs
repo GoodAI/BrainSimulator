@@ -36,7 +36,7 @@ namespace RenderingBase.RenderObjects.Textures
     internal class RenderTargetDepthTexture : RenderTargetTexture
     {
         public RenderTargetDepthTexture(Vector2I size)
-            : base(size, PixelFormat.DepthComponent, PixelInternalFormat.DepthComponent32f)
+            : base(size, PixelFormat.DepthComponent, PixelInternalFormat.DepthComponent32)
         { }
     }
 
