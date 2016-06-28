@@ -8,30 +8,28 @@ namespace Render.RenderObjects.Geometries
 {
     public class FullScreenGridOffset : FullScreenGrid
     {
-        private readonly Vector4I[] m_offsetsInternal;
-
-
         public FullScreenGridOffset(Vector2I dimensions)
             : base(dimensions)
         {
-            // We need to send the same offset to every vertex of the quad (size*4)...
-            m_offsetsInternal = new Vector4I[dimensions.Size()];
-
             this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(dimensions.Size(), null, 1);
             EnableAttrib(VboPosition.TextureOffsets);
         }
 
 
-        public void SetTextureOffsets(int[] data)
+        public void GetPaddedTextureOffsets(int[] data, Vector4I[] paddedData)
         {
-            // We need to duplicate the data for each vertex of the quad
+            // We need to send the same offset to every vertex of the quad (size*4)...
             int size = Dimensions.Size();
             Debug.Assert(size <= data.Length, "Too few data to update the texture offsets.");
+            Debug.Assert(size <= paddedData.Length, "Too few data to update the texture offsets.");
 
             for (int i = 0; i < size; i++)
-                m_offsetsInternal[i] = new Vector4I(data[i]);
+                paddedData[i] = new Vector4I(data[i]);
+        }
 
-            Update(VboPosition.TextureOffsets, m_offsetsInternal);
+        public void SetTextureOffsets(Vector4I[] data)
+        {
+            Update(VboPosition.TextureOffsets, data);
         }
     }
 }
