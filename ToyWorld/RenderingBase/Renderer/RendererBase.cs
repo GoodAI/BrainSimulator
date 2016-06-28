@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using GoodAI.ToyWorld.Control;
 using RenderingBase.RenderObjects.Buffers;
@@ -14,11 +15,27 @@ namespace RenderingBase.Renderer
         : IDisposable
         where TWorld : class
     {
+        #region RR comparer
+
+        class RenderRequestComparer
+            : IComparer<IRenderRequestBaseInternal<TWorld>>
+        {
+            public int Compare(IRenderRequestBaseInternal<TWorld> first, IRenderRequestBaseInternal<TWorld> second)
+            {
+                int resolutionFirst = first.Resolution.Width * first.Resolution.Height;
+                int resolutionSecond = second.Resolution.Width * second.Resolution.Height;
+
+                return Math.Sign(resolutionFirst - resolutionSecond);
+            }
+        }
+
+        #endregion
+
         #region Fields
 
         public uint SimTime { get; private set; }
 
-        private readonly IterableQueue<IRenderRequestBaseInternal<TWorld>> m_renderRequestQueue = new IterableQueue<IRenderRequestBaseInternal<TWorld>>();
+        private readonly SortedSet<IRenderRequestBaseInternal<TWorld>> m_renderRequestQueue;
         private readonly IterableQueue<IRenderRequestBaseInternal<TWorld>> m_dirtyRenderRequestQueue = new IterableQueue<IRenderRequestBaseInternal<TWorld>>();
 
         public readonly GeometryManager GeometryManager = new GeometryManager();
@@ -33,15 +50,21 @@ namespace RenderingBase.Renderer
         internal RendererBase()
         {
             StaticVboFactory.Init();
+
+            // Sort by resolution (let larger RRs more time to prepare data between phases)
+            m_renderRequestQueue = new SortedSet<IRenderRequestBaseInternal<TWorld>>(new RenderRequestComparer());
         }
 
         public virtual void Dispose()
         {
             // Dispose of RRs
-            foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
-                renderRequest.Dispose();
+            if (m_renderRequestQueue.Count > 0)
+            {
+                foreach (IRenderRequestBaseInternal<TWorld> renderRequest in m_renderRequestQueue)
+                    renderRequest.Dispose();
 
-            m_renderRequestQueue.Clear();
+                m_renderRequestQueue.Clear();
+            }
 
             StaticVboFactory.Clear();
         }
@@ -74,7 +97,7 @@ namespace RenderingBase.Renderer
             foreach (var dirtyRenderRequest in m_dirtyRenderRequestQueue)
             {
                 dirtyRenderRequest.Init();
-                m_renderRequestQueue.Enqueue(dirtyRenderRequest);
+                m_renderRequestQueue.Add(dirtyRenderRequest);
             }
 
             m_dirtyRenderRequestQueue.Clear();
