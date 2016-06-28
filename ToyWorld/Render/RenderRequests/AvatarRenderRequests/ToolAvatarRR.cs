@@ -50,6 +50,12 @@ namespace Render.RenderRequests
             return Matrix.Identity;
         }
 
+        public override void OnPreDraw()
+        {
+            if (ImageRenderer != null)
+                ImageRenderer.OnPreDraw();
+        }
+
         protected override void DrawTileLayers()
         { }
 
