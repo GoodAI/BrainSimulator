@@ -22,13 +22,6 @@ namespace World.Atlas.Layers
         /// </summary>
         /// <param name="rectangle"></param>
         /// <param name="tileTypes"></param>
-        Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes);
-
-        /// <summary>
-        /// Returns Tiles in given region, where extremes are included.
-        /// </summary>
-        /// <param name="rectangle"></param>
-        /// <param name="tileTypes"></param>
         void GetRectangle(Rectangle rectangle, int[] tileTypes);
 
         /// <summary>
@@ -84,12 +77,6 @@ namespace World.Atlas.Layers
 
         public void UpdateTileStates(Atlas atlas)
         { }
-
-        public Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes)
-        {
-            GetRectangle(rectangle, tileTypes);
-            return null;
-        }
 
         public void GetRectangle(Rectangle rectangle, int[] tileTypes)
         {

@@ -90,11 +90,6 @@ namespace World.Atlas.Layers
             GetRectangle(rectangle, tileTypes);
         }
 
-        public async Task GetRectangleAsync(Rectangle rectangle, int[] tileTypes)
-        {
-            await Task.Run(() => GetRectangle(rectangle, tileTypes));
-        }
-
         public void GetRectangle(Rectangle rectangle, int[] tileTypes)
         {
             Debug.Assert(rectangle.Size.Size() <= tileTypes.Length, "Too little space for the grid tile types!");

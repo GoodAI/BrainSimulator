@@ -41,7 +41,8 @@ namespace Render.RenderRequests
         internal ImageRenderer ImageRenderer;
 
         private ConcurrentBag<Tuple<int[], Vector4I[]>> m_tileTypesPool;
-        private IEnumerable<Task<Tuple<int[], Vector4I[]>>> m_tileTypesTasks;
+        private readonly Queue<Tuple<int[], Vector4I[]>> m_tileTypesTasks = new Queue<Tuple<int[], Vector4I[]>>();
+        private Task m_tileTypesTask;
 
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
@@ -379,8 +380,9 @@ namespace Render.RenderRequests
             List<ITileLayer> tileLayers = World.Atlas.TileLayers;
             IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
 
-            m_tileTypesTasks = toRender.Select(
-                async layer =>
+            m_tileTypesTask = Task.Run(() =>
+            {
+                foreach (var layer in toRender)
                 {
                     Tuple<int[], Vector4I[]> buffers;
 
@@ -391,12 +393,11 @@ namespace Render.RenderRequests
                         buffers = new Tuple<int[], Vector4I[]>(buffer, paddedBuffer);
                     }
 
-                    await layer.GetRectangleAsync(gridView, buffers.Item1);
+                    layer.GetRectangle(gridView, buffers.Item1);
                     GridOffset.GetPaddedTextureOffsets(buffers.Item1, buffers.Item2);
-                    return buffers;
-                });
-
-            m_tileTypesTasks.Count(); // Force enumeration
+                    m_tileTypesTasks.Enqueue(buffers);
+                }
+            });
 
 
             if (ImageRenderer != null)
@@ -494,6 +495,7 @@ namespace Render.RenderRequests
 
             // Draw tile layers
             int i = 0;
+            m_tileTypesTask.Wait();
 
             foreach (var tileTypeTask in m_tileTypesTasks)
             {
@@ -505,10 +507,12 @@ namespace Render.RenderRequests
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
 
-                GridOffset.SetTextureOffsets(tileTypeTask.Result.Item2); // Blocks and waits for the task to finish
-                m_tileTypesPool.Add(tileTypeTask.Result); // Return the buffer to the pool
+                GridOffset.SetTextureOffsets(tileTypeTask.Item2); // Blocks and waits for the task to finish
                 GridOffset.Draw();
+                m_tileTypesPool.Add(tileTypeTask); // Return the buffer to the pool
             }
+
+            m_tileTypesTasks.Clear();
         }
 
         protected virtual void DrawObjectLayers()
