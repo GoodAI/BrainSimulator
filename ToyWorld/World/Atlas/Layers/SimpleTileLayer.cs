@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
@@ -11,20 +12,35 @@ namespace World.Atlas.Layers
 {
     public class SimpleTileLayer : ITileLayer
     {
+        private const int TILESETS_BITS = 12;
+        private const int TILESETS_OFFSET = 1 << TILESETS_BITS; // Must be larger than the number of tiles in any tileset and must correspond to the BasicOffset.vert shader
+        private const int BACKGROUND_TILE_NUMBER = 6;
+        private const int OBSTACLE_TILE_NUMBER = 7;
+
+
+        #region Summer/winter stuff
+
+        private readonly Random m_random;
+
+        private float m_summer; // Local copy of the Atlas' summer
+        private Vector3 m_summerCache;
+        private bool IsWinter { get { return m_summer < 0.25f; } }
+
+        private int m_tileCount;
         private int[] m_tileTypes;
-        private readonly int BACKGROUND_TILE_NUMBER = 6;
-        private readonly int OBSTACLE_TILE_NUMBER = 7;
+
+        #endregion
+
+
         public int Width { get; set; }
         public int Height { get; set; }
 
-
         public Tile[][] Tiles { get; set; }
-
         public bool Render { get; set; }
-
         public LayerType LayerType { get; set; }
 
-        public SimpleTileLayer(LayerType layerType, int width, int height)
+
+        public SimpleTileLayer(LayerType layerType, int width, int height, Random random = null)
         {
             if (width <= 0)
                 throw new ArgumentOutOfRangeException("width", "Tile width has to be positive");
@@ -32,13 +48,26 @@ namespace World.Atlas.Layers
                 throw new ArgumentOutOfRangeException("height", "Tile height has to be positive");
             Contract.EndContractBlock();
 
+            m_random = random ?? new Random();
+
             m_tileTypes = new int[0];
             LayerType = layerType;
+            m_summerCache.Z = m_random.Next();
+
             Height = height;
             Width = width;
+
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
+
             Render = true;
         }
+
+
+        public void UpdateTileStates(Atlas atlas)
+        {
+            m_summer = atlas.Summer;
+        }
+
 
         public Tile GetActorAt(int x, int y)
         {
@@ -49,15 +78,16 @@ namespace World.Atlas.Layers
             return Tiles[x][y];
         }
 
-        public Tile GetActorAt(Shape shape)
-        {
-            Vector2I position = new Vector2I(Vector2.Floor(shape.Position));
-            return Tiles[position.X][position.Y];
-        }
-
         public Tile GetActorAt(Vector2I coordinates)
         {
             return GetActorAt(coordinates.X, coordinates.Y);
+        }
+
+        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        {
+            Vector2I intBotRight = topLeft + size;
+            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
+            return GetRectangle(rectangle);
         }
 
         public int[] GetRectangle(Rectangle rectangle)
@@ -67,7 +97,7 @@ namespace World.Atlas.Layers
 
             // Use cached getter value
             int viewRight = rectangle.Right;
-            
+
             int left = Math.Max(rectangle.Left, Math.Min(0, rectangle.Left + rectangle.Width));
             int right = Math.Min(viewRight, Math.Max(Tiles.Length, viewRight - rectangle.Width));
             // Rectangle origin is in top-left; it's top is thus our bottom
@@ -82,7 +112,7 @@ namespace World.Atlas.Layers
             {
                 defaultTileOffset = BACKGROUND_TILE_NUMBER;
             }
-            else if(LayerType == LayerType.Obstacle)
+            else if (LayerType == LayerType.Obstacle)
             {
                 defaultTileOffset = OBSTACLE_TILE_NUMBER;
             }
@@ -91,7 +121,7 @@ namespace World.Atlas.Layers
             for (int j = rectangle.Top; j < bot; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows inside of map
@@ -99,64 +129,108 @@ namespace World.Atlas.Layers
             {
                 // Tiles before start of map
                 for (int i = rectangle.Left; i < left; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
 
                 // Tiles inside of map
                 for (var i = left; i < right; i++)
                 {
                     var tile = Tiles[i][j];
                     if (tile != null)
-                        m_tileTypes[idx++] = tile.TilesetId;
+                        m_tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
                     else
                         m_tileTypes[idx++] = 0; // inside map: must be always 0
                 }
 
                 // Tiles after end of map
                 for (int i = right; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             // Rows after end of map
             for (int j = top; j < rectangle.Bottom; j++)
             {
                 for (int i = rectangle.Left; i < viewRight; i++)
-                    m_tileTypes[idx++] = defaultTileOffset;
+                    m_tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
             }
 
             return m_tileTypes;
         }
 
-        public int[] GetRectangle(Vector2I topLeft, Vector2I size)
+        // This is rather slow to compute, but we assume only small portions of grid view will be in sight
+        private int GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
-            Vector2I intBotRight = topLeft + size;
-            Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
-            return GetRectangle(rectangle);
+            if (!IsWinter)
+                return defaultTileOffset;
+
+            m_summerCache.X = x;
+            m_summerCache.Y = y;
+            float hash = (float)((Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) * (1 / (double)int.MaxValue)); // Should be uniformly distributed between 0, 1
+
+            float weatherChangeIntensityFactor = 1 - m_summer * 4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
+            weatherChangeIntensityFactor = GetModifiedWinterIntensityFactor(weatherChangeIntensityFactor);
+
+            const float maxWinterIntensityFactor = 0.8f;
+            const float winterOffset = 0.02f;
+            weatherChangeIntensityFactor *= maxWinterIntensityFactor + winterOffset; // Makes even the hardest winter (summer close to 0) not fill everything with snow
+            weatherChangeIntensityFactor -= winterOffset; // Makes winter end a little sooner
+
+            if (hash < weatherChangeIntensityFactor)
+                return defaultTileOffset + TILESETS_OFFSET;
+
+            return defaultTileOffset;
         }
+
+        private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
+        {
+            return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
+        }
+
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
             int x = (int)Math.Floor(original.Position.X);
             int y = (int)Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
+
             if (item != original.Actor) return false;
 
             Tiles[x][y] = null;
-            if (!(replacement is Tile)) return true;
-            Tiles[x][y] = replacement as Tile;
+            Tile tileReplacement = replacement as Tile;
 
+            if (replacement == null)
+            {
+                m_tileCount--;
+                return true;
+            }
+
+            if (Tiles[x][y] == null)
+                m_tileCount++;
+
+            Tiles[x][y] = tileReplacement;
             return true;
         }
 
         public bool Add(GameActorPosition gameActorPosition)
         {
-            int x = (int) gameActorPosition.Position.X;
-            int y = (int) gameActorPosition.Position.Y;
+            int x = (int)gameActorPosition.Position.X;
+            int y = (int)gameActorPosition.Position.Y;
+
             if (Tiles[x][y] != null)
-            {
                 return false;
-            }
-            Tiles[x][y] = gameActorPosition.Actor as Tile;
+
+            Tile actor = gameActorPosition.Actor as Tile;
+            Tiles[x][y] = actor;
+
+            if (actor != null)
+                m_tileCount++;
+
             return true;
+        }
+
+        public void AddInternal(int x, int y, Tile tile)
+        {
+            Tiles[x][y] = tile;
+            m_tileCount++;
         }
     }
 }

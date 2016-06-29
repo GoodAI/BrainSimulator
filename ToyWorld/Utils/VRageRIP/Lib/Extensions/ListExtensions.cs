@@ -75,6 +75,12 @@ namespace System.Collections.Generic
             list.RemoveAt(lastPos);
         }
 
+        public static void RemoveEnd<T>(this List<T> list, int count)
+        {
+            count = Math.Min(count, list.Count);
+            list.RemoveRange(list.Count - count, count);
+        }
+
         public static T[] GetInternalArray<T>(this List<T> list)
         {
             return ListInternalAccessor<T>.GetArray(list);
@@ -243,5 +249,128 @@ namespace System.Collections.Generic
             return true;
         }
 
+
+        #region Permutations / shuffling
+
+        #region Sattolo
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has only one cycle (there are (n-1)! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleSattolo<T>(this List<T> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i);
+                int iidx = i;
+
+                var tmp = arr[iidx];
+                arr[iidx] = arr[idx];
+                arr[idx] = tmp;
+            }
+        }
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has only one cycle (there are (n-1)! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleSattoloInPlace(this List<int> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i);
+                arr[i] = arr[idx];
+                arr[idx] = i;
+            }
+        }
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has only one cycle (there are (n-1)! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleSattoloInPlace(this List<float> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i);
+                arr[i] = arr[idx];
+                arr[idx] = i;
+            }
+        }
+
+        #endregion
+
+        #region FisherYates
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has random cycles (there are n! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleFisherYates<T>(this List<T> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i + 1);
+                int iidx = i;
+
+                //if (idx == iidx)
+                //    continue;
+
+                var tmp = arr[iidx];
+                arr[iidx] = arr[idx];
+                arr[idx] = tmp;
+            }
+        }
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has random cycles (there are n! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleFisherYatesInPlace<T>(this List<int> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i + 1);
+                arr[i] = arr[idx];
+                arr[idx] = i;
+            }
+        }
+
+        /// <summary>
+        /// Shuffles a part of a sequence. The permutation in the segment has random cycles (there are n! such permutations).
+        /// For more information see http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm
+        /// </summary>
+        /// <param name="arr">The segment to be shuffled.</param>
+        /// <param name="rnd">The random number generator used to permute the sequence.</param>
+        /// <returns>The random permutation.</returns>
+        public static void ShuffleFisherYatesInPlace<T>(this List<float> arr, Random rnd)
+        {
+            for (int i = 0; i < arr.Count; i++)
+            {
+                int idx = rnd.Next(i + 1);
+                arr[i] = arr[idx];
+                arr[idx] = i;
+            }
+        }
+
+        #endregion
+
+        #endregion
     }
 }

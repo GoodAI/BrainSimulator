@@ -36,9 +36,9 @@ namespace World.ToyWorldCore
 
                 Debug.Assert(layerName != null);
 
-                int type = (int) layerType;
+                int type = (int)layerType;
                 bool simpleType = type > 0 && (type & (type - 1)) == 0;
-                if(!simpleType) continue;
+                if (!simpleType) continue;
 
                 if (layerName.Contains("Object"))
                 {
@@ -69,15 +69,16 @@ namespace World.ToyWorldCore
                         Log.Instance.Warn("Layer " + layerName + " not found in given .tmx file!");
                         continue;
                     }
+                    Random rnd = new Random(); // Shared across all layers
                     ITileLayer filledTileLayer = FillTileLayer(
                         tileLayer,
                         layerType,
                         atlas.StaticTilesContainer,
                         tilesetTable,
-                        initializer);
+                        initializer,
+                        rnd);
                     atlas.TileLayers.Add(
-                        filledTileLayer
-                        );
+                        filledTileLayer);
                 }
             }
 
@@ -134,7 +135,7 @@ namespace World.ToyWorldCore
             float polY = polyline.Y;
             foreach (Vector2 point in polyline.Polyline.GetPoints())
             {
-                yield return new Vector2(polX + point.X/tilewidth, polY - point.Y/tileheight);
+                yield return new Vector2(polX + point.X / tilewidth, polY - point.Y / tileheight);
             }
         }
 
@@ -149,10 +150,10 @@ namespace World.ToyWorldCore
             IEnumerable<string> names = areaLabels.Select(x => x.Name);
             List<Tuple<Vector2I, string>> namesPositions = positions.Zip(names, (x, y) => new Tuple<Vector2I, string>(x, y)).ToList();
 
-            atlas.AreasCarrier = new AreasCarrier((ITileLayer) atlas.GetLayer(LayerType.Background),
-                (ITileLayer) atlas.GetLayer(LayerType.Area), namesPositions);
+            atlas.AreasCarrier = new AreasCarrier((ITileLayer)atlas.GetLayer(LayerType.Background),
+                (ITileLayer)atlas.GetLayer(LayerType.Area), namesPositions);
         }
-        
+
         private static IObjectLayer FillObjectLayer(
             IAtlas atlas,
             ObjectGroup objectLayer,
@@ -294,10 +295,11 @@ namespace World.ToyWorldCore
             LayerType layerType,
             Dictionary<int, StaticTile> staticTilesContainer,
             TilesetTable tilesetTable,
-            Action<GameActor> initializer)
+            Action<GameActor> initializer,
+            Random random)
         {
-            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height);
-            string[] lines = layer.Data.RawData.Split(new[] {'\n'}, StringSplitOptions.RemoveEmptyEntries)
+            SimpleTileLayer newSimpleLayer = new SimpleTileLayer(layerType, layer.Width, layer.Height, random);
+            string[] lines = layer.Data.RawData.Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries)
                 .Where(l => !string.IsNullOrWhiteSpace(l)).ToArray();
             Assembly assembly = Assembly.GetExecutingAssembly();
             Type[] cachedTypes = assembly.GetTypes().Where(x => x.IsSubclassOf(typeof(Tile))).ToArray();
@@ -316,7 +318,7 @@ namespace World.ToyWorldCore
                     int y = layer.Height - 1 - i;
                     if (staticTilesContainer.ContainsKey(tileNumber))
                     {
-                        newSimpleLayer.Tiles[x][y] = staticTilesContainer[tileNumber];
+                        newSimpleLayer.AddInternal(x, y, staticTilesContainer[tileNumber]);
                     }
                     else
                     {
@@ -325,7 +327,7 @@ namespace World.ToyWorldCore
                         {
                             Tile newTile = CreateInstance(tileName, tileNumber, cachedTypes, new Vector2I(x, y));
                             initializer.Invoke(newTile);
-                            newSimpleLayer.Tiles[x][y] = newTile;
+                            newSimpleLayer.AddInternal(x, y, newTile);
                             if (newTile is StaticTile)
                             {
                                 staticTilesContainer.Add(tileNumber, newTile as StaticTile);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using GoodAI.Logging;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.GameObjects;
@@ -42,9 +43,10 @@ namespace World.Atlas.Layers
 
         public Dictionary<int, StaticTile> StaticTilesContainer { get; private set; }
 
+
         public Atlas()
         {
-            m_timeTicks = new DateTime(2000, 1, 1, 0,0,0).Ticks;
+            m_timeTicks = new DateTime(2000, 1, 1, 0, 0, 0).Ticks;
             NewAutoupdateables = new List<IAutoupdateableGameActor>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
@@ -52,6 +54,7 @@ namespace World.Atlas.Layers
             ObjectLayers = new List<IObjectLayer>();
             StaticTilesContainer = new Dictionary<int, StaticTile>();
         }
+
 
         public ILayer<GameActor> GetLayer(LayerType layerType)
         {
@@ -98,21 +101,24 @@ namespace World.Atlas.Layers
         }
 
 
-        public bool ContainsCollidingTile(Vector2I coordinates)
+        public void RegisterToAutoupdate(IAutoupdateableGameActor actor)
         {
-            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
-            {
-                return true;
-            }
-            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
-            {
-                return true;
-            }
-            return false;
+            NewAutoupdateables.Add(actor);
         }
 
-        public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All,
-            float width = 0.5f)
+        public void UpdateLayers()
+        {
+            foreach (ITileLayer tileLayer in TileLayers)
+            {
+                tileLayer.UpdateTileStates(this);
+            }
+        }
+
+
+
+        #region Query helpers
+
+        public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All, float width = 0.5f)
         {
             List<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
             // for all layers except object layer
@@ -174,20 +180,50 @@ namespace World.Atlas.Layers
             return target;
         }
 
-        private bool IsCoordinateFree(Vector2I position, LayerType type)
-        {
-            return !ActorsAt(new Vector2(position), type).Any();
-        }
-
         public IEnumerable<Vector2I> FreePositionsAround(Vector2I position, LayerType type = LayerType.All)
         {
             return Neighborhoods.ChebyshevNeighborhood(position).Where(x => IsCoordinateFree(x, type));
         }
 
-        public void Remove(GameActorPosition target)
+        public List<IGameObject> StayingOnTile(Vector2I tilePosition)
         {
-            ReplaceWith(target, null);
+            return ((IObjectLayer)GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
         }
+
+
+        public static bool InsideTile(Vector2I tilePosition, Vector2 position)
+        {
+            Vector2 start = new Vector2(tilePosition);
+            Vector2 end = new Vector2(tilePosition) + Vector2.One;
+            return position.X >= start.X && position.X <= end.X && position.Y >= start.Y && position.Y <= end.Y;
+        }
+
+        public static Vector2I OnTile(Vector2 position)
+        {
+            return new Vector2I(Vector2.Floor(position));
+        }
+
+        private bool IsCoordinateFree(Vector2I position, LayerType type)
+        {
+            return !ActorsAt(new Vector2(position), type).Any();
+        }
+
+        public bool ContainsCollidingTile(Vector2I coordinates)
+        {
+            if (((ITileLayer)GetLayer(LayerType.Obstacle)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            {
+                return true;
+            }
+            if (((ITileLayer)GetLayer(LayerType.ObstacleInteractable)).GetActorAt(coordinates.X, coordinates.Y) != null)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        #endregion
+
+        #region Tile manipulation
 
         public bool Add(GameActorPosition gameActorPosition, bool collidesWithObstacles = false)
         {
@@ -229,6 +265,11 @@ namespace World.Atlas.Layers
             return layer.Add(gameActorPosition);
         }
 
+        public void Remove(GameActorPosition target)
+        {
+            ReplaceWith(target, null);
+        }
+
         public void ReplaceWith(GameActorPosition original, GameActor replacement)
         {
             if ((original.Actor is Tile && replacement is GameObject)
@@ -240,70 +281,14 @@ namespace World.Atlas.Layers
             GetLayer(original.Layer).ReplaceWith(original, replacement);
         }
 
-        public List<IGameObject> StayingOnTile(Vector2I tilePosition)
-        {
-            return ((IObjectLayer)GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
-        }
+        #endregion
 
-        public static bool InsideTile(Vector2I tilePosition, Vector2 position)
-        {
-            Vector2 start = new Vector2(tilePosition);
-            Vector2 end = new Vector2(tilePosition) + Vector2.One;
-            return position.X >= start.X && position.X <= end.X && position.Y >= start.Y && position.Y <= end.Y;
-        }
-
-        public static Vector2I OnTile(Vector2 position)
-        {
-            return new Vector2I(Vector2.Floor(position));
-        }
-
-        public void RegisterToAutoupdate(IAutoupdateableGameActor actor)
-        {
-            NewAutoupdateables.Add(actor);
-        }
+        #region Temperature
 
         public float Temperature(Vector2 position)
         {
             return Atmosphere.Temperature(position);
         }
-
-        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0)
-        {
-            m_timeTicks += new TimeSpan(days, hours, minutes, seconds, millis).Ticks;
-        }
-
-        public void IncrementTime(TimeSpan timeSpan)
-        {
-            m_timeTicks += timeSpan.Ticks;
-        }
-
-        public float Summer
-        {
-            get
-            {
-                long year = YearLength.Ticks;
-                long halfYear = year / 2;
-                bool secondHalf = m_timeTicks % year >= halfYear;
-                float f = m_timeTicks%halfYear/(float) halfYear;
-                return secondHalf ? 1 - f : f;
-            }
-        }
-
-        public TimeSpan YearLength { get; set; }
-
-        public float Day
-        {
-            get
-            {
-                long day = DayLength.Ticks;
-                long halfDay = day/2;
-                bool secondHalf = m_timeTicks%day >= halfDay;
-                float f = m_timeTicks%halfDay/(float) halfDay;
-                return secondHalf ? 1 - f : f;
-            }
-        }
-
-        public TimeSpan DayLength { get; set; }
 
         public void RegisterHeatSource(IHeatSource heatSource)
         {
@@ -314,5 +299,55 @@ namespace World.Atlas.Layers
         {
             Atmosphere.UnregisterHeatSource(heatSource);
         }
+
+        #endregion
+
+        #region Atlas time
+
+        public TimeSpan YearLength { get; set; }
+        public TimeSpan DayLength { get; set; }
+
+        public float SummerGradient { get; private set; }
+
+        // 0 is Dec/Jan
+        // 1 is Jun/Jul
+        public float Summer { get; private set; }
+        public float Day { get; private set; }
+
+        public void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0)
+        {
+            IncrementTime(new TimeSpan(days, hours, minutes, seconds, millis));
+        }
+
+        public void IncrementTime(TimeSpan timeSpan)
+        {
+            m_timeTicks += timeSpan.Ticks;
+
+            long year = YearLength.Ticks;
+            long halfYear = year / 2;
+            bool secondHalf = m_timeTicks % year >= halfYear;
+
+            SummerGradient = secondHalf ? -1 : 1; // summer or fall
+
+            float f = m_timeTicks % halfYear / (float)halfYear;
+            Summer = secondHalf ? 1 - f : f;
+
+
+            const int logEvery = 24;  // Only log every half month
+            const int logTimeAmount = 365 / 2;  // Logging lasts for two days
+            float logInterval = Summer % (1f / logEvery) * logEvery; // A number between 0,1
+
+            if ((int)(logInterval * logTimeAmount) == 0) // Logging happens only in the beggining of the interval
+                Log.Instance.Debug(string.Format("Day: {0} \tYear: {1} \tGradient: {2}", Day, Summer, SummerGradient));
+
+
+            long day = DayLength.Ticks;
+            long halfDay = day / 2;
+            secondHalf = m_timeTicks % day >= halfDay;
+            f = m_timeTicks % halfDay / (float)halfDay;
+            Day = secondHalf ? 1 - f : f;
+        }
+
+        #endregion
     }
 }

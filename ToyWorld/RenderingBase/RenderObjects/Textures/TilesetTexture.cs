@@ -10,10 +10,12 @@ namespace RenderingBase.RenderObjects.Textures
 {
     public class TilesetTexture : TextureBase
     {
-        readonly List<TextureBase> m_textures = new List<TextureBase>();
+        private readonly List<TextureBase> m_textures = new List<TextureBase>();
 
         public int Count { get { return m_textures.Count; } }
 
+
+        #region Genesis
 
         public TilesetTexture(params TilesetImage[] tilesetImages)
         {
@@ -81,8 +83,6 @@ namespace RenderingBase.RenderObjects.Textures
             Size = m_textures[0].Size;
             Debug.Assert(m_textures.TrueForAll(a => a.Size == Size), "Tilesets have to be of the same dimensionality.");
         }
-
-
 
         // simulates OpenGL's GL_CLAMP_TO_EDGE on the tileset
         protected static void IncreaseTileBorders(BitmapData dataOrig, BitmapData dataNew, int tilesPerRow, int tilesPerColumn,
@@ -179,12 +179,12 @@ namespace RenderingBase.RenderObjects.Textures
         // needed for correct blended texture filtering (scaling and interpolation)
         private static void PremultiplyAlpha(byte[] dataBytesNew, int stride, int iRowNew)
         {
-            for (int i = iRowNew * stride; i < (iRowNew+1) * stride; i += 4)
+            for (int i = iRowNew * stride; i < (iRowNew + 1) * stride; i += 4)
             {
                 float alpha = dataBytesNew[i + 3] / 255.0f;
                 for (int j = 0; j < 3; j++)
                 {
-                    dataBytesNew[i + j] = (byte)(dataBytesNew[i + j]*alpha);
+                    dataBytesNew[i + j] = (byte)(dataBytesNew[i + j] * alpha);
                 }
             }
         }
@@ -211,6 +211,18 @@ namespace RenderingBase.RenderObjects.Textures
             base.Dispose();
         }
 
+        #endregion
+
+        #region Indexing
+
+        public TextureBase this[int index]
+        {
+            get { return m_textures[index]; }
+        }
+
+        #endregion
+
+        #region Binding
 
         public override void Bind()
         {
@@ -221,5 +233,7 @@ namespace RenderingBase.RenderObjects.Textures
         {
             m_textures[tilesetIdx].Bind();
         }
+
+        #endregion
     }
 }

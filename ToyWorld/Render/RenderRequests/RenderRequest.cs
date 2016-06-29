@@ -393,9 +393,11 @@ namespace Render.RenderRequests
             ViewProjectionMatrix *= ProjMatrix;
 
             // Bind stuff to GL
-            Renderer.TextureManager.Bind(TilesetTexture);
+            Renderer.TextureManager.Bind(TilesetTexture[0]);
+            Renderer.TextureManager.Bind(TilesetTexture[1], TextureUnit.Texture1);
             Renderer.EffectManager.Use(Effect);
             Effect.TextureUniform(0);
+            Effect.TextureWinterUniform(1);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
 
             // Draw the scene

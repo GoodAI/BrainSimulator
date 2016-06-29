@@ -1,6 +1,10 @@
 ﻿#version 330
 
 
+const int MODULO_BITS = 12;
+const int MODULO_MASK = (1 << MODULO_BITS) - 1; // 0x00000FFF
+
+
 // Texture dimensions in px, tiles per row
 uniform ivec3	texSizeCount = ivec3(256, 256, 16);
 // Tile size, tile margin in px
@@ -14,13 +18,17 @@ uniform mat4 mvp = mat4(1);
 layout(location = 0) in vec2	v_position;
 layout(location = 1) in int		v_texOffset;
 
-out vec2 f_texCoods;
+smooth out vec2 f_texCoods;
+flat out int f_samplerIdx;
 
 
-vec2 GetTexCoods()
+vec2 GetTexCoods(int tileOffset)
 {
+	// Tiles are indexed from 1.......
+	tileOffset--;
+
 	// Tile positions
-	ivec2 off = ivec2(v_texOffset % texSizeCount.z, v_texOffset / texSizeCount.z);
+	ivec2 off = ivec2(tileOffset % texSizeCount.z, tileOffset / texSizeCount.z);
 	// Texture positions (top-left)
 	vec2 tileSize = tileSizeMargin.xy + tileSizeMargin.zw + tileBorder * 2;
 	vec2 uv = off * tileSize + tileBorder;
@@ -60,7 +68,9 @@ vec2 GetTexCoods()
 
 void main()
 {
-	if (v_texOffset <= 0)
+	int tileOffset = v_texOffset & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
+
+	if (tileOffset <= 1) // Tiles are indexed from 1......
 	{
 		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
 		gl_Position = vec4(0, 0, 2000, 0);
@@ -68,6 +78,7 @@ void main()
 		return;
 	}
 
-	f_texCoods = GetTexCoods();
+	f_texCoods = GetTexCoods(tileOffset);
+	f_samplerIdx = v_texOffset >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
 	gl_Position = mvp * vec4(v_position, 0, 1);
 }

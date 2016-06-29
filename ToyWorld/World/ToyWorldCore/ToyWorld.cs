@@ -129,9 +129,37 @@ namespace World.ToyWorldCore
         //
 
 
-        private void UpdatePhysics()
+        #region Updating
+
+        public void Update()
         {
-            m_collisionResolver.ResolveCollisions();
+            UpdateTime();
+            UpdateScheduled();
+            UpdateLayers();
+            UpdateAvatars();
+            UpdateCharacters();
+            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
+            UpdatePhysics();
+            UpdateAtmosphere();
+            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
+        }
+
+        private void UpdateTime()
+        {
+            Atlas.IncrementTime(TWConfig.Instance.StepLength);
+            Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
+        }
+
+        private void UpdateScheduled()
+        {
+            TileDetectorRegister.Update();
+            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
+            AutoupdateRegister.Tick();
+        }
+
+        private void UpdateLayers()
+        {
+            Atlas.UpdateLayers();
         }
 
         private void UpdateCharacters()
@@ -149,11 +177,9 @@ namespace World.ToyWorldCore
             Physics.MoveMovableDirectable(forwardMovablePhysicalEntities);
         }
 
-        private void UpdateScheduled()
+        private void UpdatePhysics()
         {
-            TileDetectorRegister.Update();
-            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
-            AutoupdateRegister.Tick();
+            m_collisionResolver.ResolveCollisions();
         }
 
         private void UpdateAtmosphere()
@@ -161,24 +187,8 @@ namespace World.ToyWorldCore
             Atlas.Atmosphere.Update();
         }
 
-        public void Update()
-        {
-            UpdateTime();
-            UpdateScheduled();
-            UpdateTiles();
-            UpdateAvatars();
-            UpdateCharacters();
-            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
-            UpdatePhysics();
-            UpdateAtmosphere();
-            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
-        }
+        #endregion
 
-        private void UpdateTime()
-        {
-            Atlas.IncrementTime(TWConfig.Instance.StepLength);
-            Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
-        }
 
         public List<int> GetAvatarsIds()
         {
@@ -193,10 +203,6 @@ namespace World.ToyWorldCore
         public IAvatar GetAvatar(int id)
         {
             return Atlas.Avatars[id];
-        }
-
-        private void UpdateTiles()
-        {
         }
 
         [ContractInvariantMethod]
