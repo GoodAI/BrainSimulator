@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
@@ -494,8 +495,9 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
 
             // Draw tile layers
+            SpinWait.SpinUntil(() => m_tileTypesTask.IsCompleted);
+
             int i = 0;
-            m_tileTypesTask.Wait();
 
             foreach (var tileTypeTask in m_tileTypesTasks)
             {
