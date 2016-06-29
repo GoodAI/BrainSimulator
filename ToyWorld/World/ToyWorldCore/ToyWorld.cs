@@ -135,7 +135,7 @@ namespace World.ToyWorldCore
         {
             UpdateTime();
             UpdateScheduled();
-            UpdateTiles();
+            UpdateLayers();
             UpdateAvatars();
             UpdateCharacters();
             AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
@@ -157,9 +157,9 @@ namespace World.ToyWorldCore
             AutoupdateRegister.Tick();
         }
 
-        private void UpdateTiles()
+        private void UpdateLayers()
         {
-            Atlas.UpdateTiles();
+            Atlas.UpdateLayers();
         }
 
         private void UpdateCharacters()

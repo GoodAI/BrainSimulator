@@ -106,7 +106,7 @@ namespace World.Atlas.Layers
             NewAutoupdateables.Add(actor);
         }
 
-        public void UpdateTiles()
+        public void UpdateLayers()
         {
             foreach (ITileLayer tileLayer in TileLayers)
             {

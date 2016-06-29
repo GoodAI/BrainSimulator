@@ -10,6 +10,10 @@ namespace World.Atlas.Layers
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
+        /// <summary>
+        /// Updates any internal states of tiles within the layer.
+        /// </summary>
+        /// <param name="atlas"></param>
         void UpdateTileStates(Atlas atlas);
 
         /// <summary>
