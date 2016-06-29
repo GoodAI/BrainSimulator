@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using VRageMath;
@@ -39,12 +40,9 @@ namespace Render.RenderRequests
             overlay.ToolPosition = new PointF();
             Overlay = overlay;
 
-            base.Init();
-        }
+            Debug.Assert(!Image.CopyDepth, "Depth information for inventory overlay seems useless...");
 
-        public override void Draw()
-        {
-            base.Draw();
+            base.Init();
         }
 
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
@@ -52,10 +50,16 @@ namespace Render.RenderRequests
             return Matrix.Identity;
         }
 
-        protected override void DrawTileLayers(ToyWorld world)
+        public override void OnPreDraw()
+        {
+            if (ImageRenderer != null)
+                ImageRenderer.OnPreDraw();
+        }
+
+        protected override void DrawTileLayers()
         { }
 
-        protected override void DrawObjectLayers(ToyWorld world)
+        protected override void DrawObjectLayers()
         { }
 
         #endregion

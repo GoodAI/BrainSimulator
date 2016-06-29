@@ -28,7 +28,7 @@ namespace RenderingBase.RenderObjects.Textures
     internal class RenderTargetDepthTextureMultisample : RenderTargetTextureMultisample
     {
         public RenderTargetDepthTextureMultisample(Vector2I size, int sampleCount)
-            : base(size, sampleCount, PixelInternalFormat.DepthComponent)
+            : base(size, sampleCount, PixelInternalFormat.DepthComponent32)
         { }
     }
 

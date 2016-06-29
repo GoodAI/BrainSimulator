@@ -35,38 +35,60 @@ namespace GoodAI.ToyWorld
         }
 
         [MyOutputBlock(1), MyUnmanaged]
-        public MyMemoryBlock<float> VisualFof
+        public MyMemoryBlock<float> VisualFovDepth
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
         [MyOutputBlock(2), MyUnmanaged]
-        public MyMemoryBlock<float> VisualFree
+        public MyMemoryBlock<float> VisualFof
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
         [MyOutputBlock(3), MyUnmanaged]
-        public MyMemoryBlock<float> VisualTool
+        public MyMemoryBlock<float> VisualFofDepth
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
-        [MyOutputBlock(4)]
-        public MyMemoryBlock<float> Text
+        [MyOutputBlock(4), MyUnmanaged]
+        public MyMemoryBlock<float> VisualFree
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
         }
 
-        [MyOutputBlock(5)]
-        public MyMemoryBlock<float> ChosenActions
+        [MyOutputBlock(5), MyUnmanaged]
+        public MyMemoryBlock<float> VisualFreeDepth
         {
             get { return GetOutput(5); }
             set { SetOutput(5, value); }
+        }
+
+        [MyOutputBlock(6), MyUnmanaged]
+        public MyMemoryBlock<float> VisualTool
+        {
+            get { return GetOutput(6); }
+            set { SetOutput(6, value); }
+        }
+
+
+        [MyOutputBlock(7)]
+        public MyMemoryBlock<float> Text
+        {
+            get { return GetOutput(7); }
+            set { SetOutput(7, value); }
+        }
+
+        [MyOutputBlock(8)]
+        public MyMemoryBlock<float> ChosenActions
+        {
+            get { return GetOutput(8); }
+            set { SetOutput(8, value); }
         }
 
         [MyInputBlock(0)]
@@ -96,6 +118,10 @@ namespace GoodAI.ToyWorld
         [MyBrowsable, Category("Runtime"), DisplayName("Copy data through CPU")]
         [YAXSerializableField(DefaultValue = false)]
         public bool CopyDataThroughCPU { get; set; }
+
+        [MyBrowsable, Category("Runtime"), DisplayName("Copy depth data")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool CopyDepthData { get; set; }
 
 
         [MyBrowsable, Category("Files"), EditorAttribute(typeof(FileNameEditor), typeof(UITypeEditor))]
@@ -338,15 +364,21 @@ namespace GoodAI.ToyWorld
             if (!File.Exists(SaveFile) || !File.Exists(TilesetTable) || FoFSize <= 0 || FoVSize <= 0 || Width <= 0 || Height <= 0 || ResolutionWidth <= 0 || ResolutionHeight <= 0 || FoFResHeight <= 0 || FoFResWidth <= 0 || FoVResHeight <= 0 || FoVResWidth <= 0)
                 return;
 
-            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree, VisualTool })
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFov, VisualFof, VisualFree, VisualTool, })
             {
                 memBlock.Unmanaged = !CopyDataThroughCPU;
                 memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
             }
 
-            VisualFov.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
-            VisualFof.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
-            VisualFree.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
+            foreach (MyMemoryBlock<float> memBlock in new[] { VisualFovDepth, VisualFofDepth, VisualFreeDepth, })
+            {
+                memBlock.Unmanaged = !CopyDataThroughCPU;
+                memBlock.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.BlackWhite;
+            }
+
+            VisualFov.Dims = VisualFovDepth.Dims = new TensorDimensions(FoVResWidth, FoVResHeight);
+            VisualFof.Dims = VisualFofDepth.Dims = new TensorDimensions(FoFResWidth, FoFResHeight);
+            VisualFree.Dims = VisualFreeDepth.Dims = new TensorDimensions(ResolutionWidth, ResolutionHeight);
             VisualTool.Dims = new TensorDimensions(ToolResWidth, ToolResHeight);
 
             Text.Count = MaxMessageLength;

@@ -27,12 +27,12 @@ namespace Render.RenderRequests
             base.Init();
         }
 
-        public override void Draw()
+        public override void Update()
         {
             var avatar = World.GetAvatar(AvatarID);
             PositionCenterV2 = avatar.Position;
 
-            base.Draw();
+            base.Update();
         }
 
         #endregion

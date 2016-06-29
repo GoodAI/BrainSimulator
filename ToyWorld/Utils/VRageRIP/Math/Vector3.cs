@@ -106,6 +106,13 @@ namespace VRageMath
             Z = 0;
         }
 
+        public Vector3(Vector2I value, float z)
+        {
+            X = value.X;
+            Y = value.Y;
+            Z = z;
+        }
+
         public Vector3(ref Vector3I value)
         {
             X = value.X;
@@ -360,12 +367,12 @@ namespace VRageMath
             return new Vector3(Math.Abs(value.X) < epsilon ? 1 : 0, Math.Abs(value.Y) < epsilon ? 1 : 0, Math.Abs(value.Z) < epsilon ? 1 : 0);
         }
 
-         // Per component Step (returns 0, 1 or -1 for each component)
+        // Per component Step (returns 0, 1 or -1 for each component)
         public static Vector3 Step(Vector3 value)
         {
             return new Vector3(value.X > 0 ? 1 : value.X < 0 ? -1 : 0, value.Y > 0 ? 1 : value.Y < 0 ? -1 : 0, value.Z > 0 ? 1 : value.Z < 0 ? -1 : 0);
         }
-        
+
         /// <summary>
         /// Retrieves a string representation of the current object.
         /// </summary>
@@ -1183,7 +1190,7 @@ namespace VRageMath
 
         /// <summary>Native Interop Function</summary>
         [DllImport("d3dx9_43.dll", EntryPoint = "D3DXVec3TransformCoord", CallingConvention = CallingConvention.StdCall, PreserveSig = true), SuppressUnmanagedCodeSecurityAttribute]
-        private unsafe extern static Vector3* D3DXVec3TransformCoord_([Out] Vector3* pOut, [In] Vector3* pV,[In] Matrix* pM);
+        private unsafe extern static Vector3* D3DXVec3TransformCoord_([Out] Vector3* pOut, [In] Vector3* pV, [In] Matrix* pM);
 
         public static void Transform_Native(ref Vector3 position, ref Matrix matrix, out Vector3 result)
         {
@@ -1287,7 +1294,7 @@ namespace VRageMath
 
         public static void TransformNormal(ref Vector3 normal, MyBlockOrientation orientation, out Vector3 result)
         {
-            result = - normal.X * Base6Directions.GetVector(orientation.Left)
+            result = -normal.X * Base6Directions.GetVector(orientation.Left)
                      + normal.Y * Base6Directions.GetVector(orientation.Up)
                      - normal.Z * Base6Directions.GetVector(orientation.Forward);
         }
@@ -1784,7 +1791,7 @@ namespace VRageMath
             return new Vector3(Math.Round(v.X), Math.Round(v.Y), Math.Round(v.Z));
         }
 
-        public static Vector3 Round(Vector3 v,int numDecimals)
+        public static Vector3 Round(Vector3 v, int numDecimals)
         {
             return new Vector3(Math.Round(v.X, numDecimals), Math.Round(v.Y, numDecimals), Math.Round(v.Z, numDecimals));
         }

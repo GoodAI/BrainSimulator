@@ -116,6 +116,11 @@ namespace Render.RenderRequests
             base.Init();
         }
 
+        public override void Update()
+        {
+            base.Update();
+        }
+
         public override void Draw()
         {
             PositionCenterV2 += RelativePositionV;

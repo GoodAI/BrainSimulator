@@ -12,6 +12,7 @@ namespace RenderingBase.RenderRequests
         TWorld World { get; set; }
 
         void Init();
+        void Update();
         void Draw();
 
         void OnPreDraw();

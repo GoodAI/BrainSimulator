@@ -8,6 +8,7 @@ namespace RenderingBase.RenderObjects.Textures
     {
         private readonly int m_handle;
         private readonly TextureTarget m_target;
+        private PixelFormat m_internalFormat;
 
         public int Handle { get { return m_handle; } }
         public TextureTarget Target { get { return m_target; } }
@@ -36,7 +37,9 @@ namespace RenderingBase.RenderObjects.Textures
             PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba,
             bool generateMipmap = false)
         {
-            GL.BindTexture(m_target, m_handle);
+            m_internalFormat = dataFormat;
+
+            Bind();
 
             GL.TexImage2D(
                 m_target,
@@ -56,6 +59,8 @@ namespace RenderingBase.RenderObjects.Textures
             int multiSampleCount = 4,
             PixelInternalFormat internalDataFormat = PixelInternalFormat.Rgba)
         {
+            m_internalFormat = PixelFormat.Bgra; // not valid for multisample textures
+
             Bind();
 
             GL.TexImage2DMultisample(
@@ -83,6 +88,18 @@ namespace RenderingBase.RenderObjects.Textures
         public virtual void Bind()
         {
             GL.BindTexture(m_target, m_handle);
+        }
+
+        public void Copy2D(PixelType targetType = PixelType.UnsignedInt)
+        {
+            Copy2D(targetType, default(uint[]));
+        }
+
+        public void Copy2D<T>(PixelType targetType = PixelType.UnsignedInt, T[] targetBuffer = null)
+            where T : struct
+        {
+            Bind();
+            GL.GetTexImage(m_target, 0, m_internalFormat, targetType, targetBuffer);
         }
     }
 }

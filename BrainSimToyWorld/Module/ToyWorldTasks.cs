@@ -70,7 +70,7 @@ namespace GoodAI.ToyWorld
                     };
 
 
-                Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, myAvatarId,
+                Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, Owner.VisualFovDepth, myAvatarId,
                     rr =>
                     {
                         rr.Size = new SizeF(Owner.FoVSize, Owner.FoVSize);
@@ -81,7 +81,7 @@ namespace GoodAI.ToyWorld
                         rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
 
-                Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, myAvatarId,
+                Owner.FofRR = ObtainRR<IFofAvatarRR>(Owner.VisualFof, Owner.VisualFofDepth, myAvatarId,
                     rr =>
                     {
                         rr.FovAvatarRenderRequest = Owner.FovRR;
@@ -93,7 +93,7 @@ namespace GoodAI.ToyWorld
                         rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
 
-                Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree,
+                Owner.FreeRR = ObtainRR<IFreeMapRR>(Owner.VisualFree, Owner.VisualFreeDepth,
                     rr =>
                     {
                         rr.Size = new SizeF(Owner.Width, Owner.Height);
@@ -103,7 +103,7 @@ namespace GoodAI.ToyWorld
                         // no noise, smoke, postprocessing or overlays -- this view is for the researcher
                     });
 
-                Owner.ToolRR = ObtainRR<IToolAvatarRR>(Owner.VisualTool, myAvatarId,
+                Owner.ToolRR = ObtainRR<IToolAvatarRR>(Owner.VisualTool, null, myAvatarId,
                     rr =>
                     {
                         rr.Size = new SizeF(Owner.ToolSize, Owner.ToolSize);
@@ -118,7 +118,8 @@ namespace GoodAI.ToyWorld
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }
 
-            private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequestBase
+            private T InitRR<T>(T rr, MyMemoryBlock<float> targetMemBlock, MyMemoryBlock<float> targetDepthMemBlock, Action<T> initializer = null)
+                where T : class, IRenderRequestBase
             {
                 if (initializer != null)
                     initializer.Invoke(rr);
@@ -128,11 +129,15 @@ namespace GoodAI.ToyWorld
 
                 targetMemBlock.ExternalPointer = 0; // first reset ExternalPointer
 
+                // Setup image copying from RR through Cpu
                 if (Owner.CopyDataThroughCPU)
                 {
-                    ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu);
+                    ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu)
+                    {
+                        CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null,
+                    };
 
-                    imageSettings.OnSceneBufferPrepared += (request, data) =>
+                    imageSettings.OnSceneBufferPrepared += (request, data, depthData) =>
                     {
                         int width = rr.Resolution.Width;
                         int stride = width * sizeof(uint);
@@ -141,7 +146,12 @@ namespace GoodAI.ToyWorld
                         for (int i = 0; i < lines; ++i)
                             Buffer.BlockCopy(data, i * stride, targetMemBlock.Host, i * width * sizeof(uint), stride);
 
+                        if (imageSettings.CopyDepth)
+                            for (int i = 0; i < lines; ++i)
+                                Buffer.BlockCopy(depthData, i * stride, targetDepthMemBlock.Host, i * width * sizeof(float), stride);
+
                         // targetMemBlock.SafeCopyToDevice(); this needs to be called on the BrainSim thread
+                        // targetDepthMemBlock.SafeCopyToDevice(); this needs to be called on the BrainSim thread
                     };
 
                     rr.Image = imageSettings;
@@ -149,27 +159,34 @@ namespace GoodAI.ToyWorld
                 }
 
 
-                // Setup image copying from RR
-                ImageSettings image = new ImageSettings(
-                    Owner.CopyDataThroughCPU
-                        ? RenderRequestImageCopyingMode.Cpu
-                        : RenderRequestImageCopyingMode.OpenglPbo);
+                // Setup image copying from RR through Pbo
+                ImageSettings image = new ImageSettings(RenderRequestImageCopyingMode.OpenglPbo)
+                {
+                    CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null,
+                };
 
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
+                uint depthRenderTextureHandle = 0;
                 CudaOpenGLBufferInteropResource renderResource = null;
+                CudaOpenGLBufferInteropResource depthRenderResource = null;
 
-                image.OnPreRenderingEvent += (sender, vbo) =>
-                 {
-                     if (renderResource != null && renderResource.IsMapped)
-                         renderResource.UnMap();
-                 };
+                image.OnPreRenderingEvent += (sender, vbo, depthVbo) =>
+                {
+                    if (renderResource != null && renderResource.IsMapped)
+                        renderResource.UnMap();
 
-                image.OnPostRenderingEvent += (sender, vbo) =>
+                    if (image.CopyDepth)
+                        if (depthRenderResource != null && depthRenderResource.IsMapped)
+                            depthRenderResource.UnMap();
+                };
+
+                image.OnPostRenderingEvent += (sender, vbo, depthVbo) =>
                 {
                     // Vbo can be allocated during drawing, create the resource after that (post-rendering)
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).SetCurrent();
 
+                    // Fill color memblock
                     if (renderResource == null || vbo != renderTextureHandle)
                     {
                         if (renderResource != null)
@@ -177,35 +194,60 @@ namespace GoodAI.ToyWorld
 
                         renderTextureHandle = vbo;
                         renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
-                            CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                           image.CopyDepth ? CUGraphicsRegisterFlags.None : CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
                     }
 
                     renderResource.Map();
                     targetMemBlock.ExternalPointer = renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
                     targetMemBlock.FreeDevice();
                     targetMemBlock.AllocateDevice();
+
+                    // Fill depth memblock
+                    if (image.CopyDepth)
+                    {
+                        if (depthRenderResource == null || depthVbo != depthRenderTextureHandle)
+                        {
+                            if (depthRenderResource != null)
+                                depthRenderResource.Dispose();
+
+                            depthRenderTextureHandle = depthVbo;
+                            depthRenderResource = new CudaOpenGLBufferInteropResource(
+                                depthRenderTextureHandle,
+                                CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                        }
+
+                        depthRenderResource.Map();
+                        targetDepthMemBlock.ExternalPointer = depthRenderResource.GetMappedPointer<float>().DevicePointer.Pointer;
+                        targetDepthMemBlock.FreeDevice();
+                        targetDepthMemBlock.AllocateDevice();
+                    }
                 };
 
                 rr.Image = image;
 
 
                 // Initialize the target memory block
-                targetMemBlock.ExternalPointer = 1;
                 // Use a dummy number that will get replaced on first Execute call to suppress MemBlock error during init
+                targetMemBlock.ExternalPointer = 1;
+
+                if (targetDepthMemBlock != null)
+                    targetDepthMemBlock.ExternalPointer = 1;
 
                 return rr;
             }
 
-            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, int avatarId, Action<T> initializer = null) where T : class, IAvatarRenderRequest
+            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, MyMemoryBlock<float> depthTargetMemBlock, int avatarId, Action<T> initializer = null)
+                where T : class, IAvatarRenderRequest
             {
                 T rr = Owner.GameCtrl.RegisterRenderRequest<T>(avatarId);
-                return InitRR(rr, targetMemBlock, initializer);
+                return InitRR(rr, targetMemBlock, depthTargetMemBlock, initializer);
             }
 
-            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, Action<T> initializer = null) where T : class, IRenderRequest
+            private T ObtainRR<T>(MyMemoryBlock<float> targetMemBlock, MyMemoryBlock<float> depthTargetMemBlock, Action<T> initializer = null)
+                where T : class, IRenderRequest
             {
                 T rr = Owner.GameCtrl.RegisterRenderRequest<T>();
-                return InitRR(rr, targetMemBlock, initializer);
+                return InitRR(rr, targetMemBlock, depthTargetMemBlock, initializer);
             }
 
             public override void Execute()
@@ -333,6 +375,13 @@ namespace GoodAI.ToyWorld
                     Owner.VisualFof.SafeCopyToDevice();
                     Owner.VisualFree.SafeCopyToDevice();
                     Owner.VisualTool.SafeCopyToDevice();
+
+                    if (Owner.CopyDepthData)
+                    {
+                        Owner.VisualFovDepth.SafeCopyToDevice();
+                        Owner.VisualFofDepth.SafeCopyToDevice();
+                        Owner.VisualFreeDepth.SafeCopyToDevice();
+                    }
                 }
 
                 ObtainMessageFromBrain();

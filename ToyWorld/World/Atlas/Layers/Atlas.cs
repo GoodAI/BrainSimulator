@@ -120,7 +120,7 @@ namespace World.Atlas.Layers
 
         public IEnumerable<GameActorPosition> ActorsAt(Vector2 position, LayerType type = LayerType.All, float width = 0.5f)
         {
-            List<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType)).ToList();
+            IEnumerable<ILayer<GameActor>> selectedLayers = Layers.Where(t => type.HasFlag(t.LayerType));
             // for all layers except object layer
             IEnumerable<ILayer<GameActor>> selectedTileLayers = selectedLayers.Where(t => LayerType.TileLayers.HasFlag(t.LayerType));
             foreach (ILayer<GameActor> layer in selectedTileLayers)

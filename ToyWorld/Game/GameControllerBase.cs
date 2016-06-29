@@ -82,7 +82,7 @@ namespace Game
 
             World.Update();
 
-            Renderer.ProcessRequests(World);
+            Renderer.ProcessRequests();
         }
 
         public virtual void FinishStep()

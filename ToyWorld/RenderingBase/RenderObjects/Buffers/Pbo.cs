@@ -2,7 +2,9 @@
 
 namespace RenderingBase.RenderObjects.Buffers
 {
-    public class Pbo : Vbo<uint>
+    public class Pbo<T>
+        : Vbo<T>
+        where T : struct
     {
         public Pbo()
             : base(target: BufferTarget.PixelPackBuffer)

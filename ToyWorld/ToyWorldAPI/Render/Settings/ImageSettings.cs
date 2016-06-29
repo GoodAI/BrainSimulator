@@ -13,7 +13,7 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         DefaultFbo,
         /// <summary>
-        /// Copies data to the <see cref="ImageSettings.RenderedScene"/> array. Set to true if the cuda/opengl interop is failing.
+        /// Copies data to an array and calls the supplied event. Set to true if the cuda/opengl interop is failing.
         /// </summary>
         Cpu,
         /// <summary>
@@ -32,23 +32,28 @@ namespace GoodAI.ToyWorld.Control
         /// </summary>
         public RenderRequestImageCopyingMode CopyMode { get; set; }
 
+        /// <summary>
+        /// If true, callbacks will include valid depth data.
+        /// </summary>
+        public bool CopyDepth { get; set; }
+
 
         #region Cpu
 
         /// <summary>
-        /// Called after a scene image was copied to the buffer.
+        /// Called after a scene image was copied to the buffer. Depth information is only valid if <see cref="CopyDepth"/> is set to true.
         /// </summary>
-        public event Action<IRenderRequestBase, uint[]> OnSceneBufferPrepared;
+        public event Action<IRenderRequestBase, uint[], float[]> OnSceneBufferPrepared;
 
         /// <summary>
         /// You should not use this method. Stay away!
         /// </summary>
-        public void InvokePostBufferPrepared(IRenderRequestBase renderRequest, uint[] buffer)
+        public void InvokePostBufferPrepared(IRenderRequestBase renderRequest, uint[] buffer, float[] depthBuffer)
         {
             var callback = OnSceneBufferPrepared;
 
             if (callback != null)
-                callback(renderRequest, buffer);
+                callback(renderRequest, buffer, depthBuffer);
         }
 
         #endregion
@@ -60,18 +65,19 @@ namespace GoodAI.ToyWorld.Control
         /// The argument is an OpenGL handle to the underlying buffer object.
         /// Use this callback to release any mapping related to the buffer object.
         /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
+        /// Depth information is only valid if <see cref="CopyDepth"/> is set to true.
         /// </summary>
-        public event Action<IRenderRequestBase, uint> OnPreRenderingEvent;
+        public event Action<IRenderRequestBase, uint, uint> OnPreRenderingEvent;
 
         /// <summary>
         /// You should not use this method. Stay away!
         /// </summary>
-        public void InvokePreRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        public void InvokePreRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle, uint depthPboHandle)
         {
             var preCopyCallback = OnPreRenderingEvent;
 
             if (preCopyCallback != null)
-                preCopyCallback(renderRequest, pboHandle);
+                preCopyCallback(renderRequest, pboHandle, depthPboHandle);
         }
 
         /// <summary>
@@ -80,18 +86,19 @@ namespace GoodAI.ToyWorld.Control
         /// Because an internal OpenGL context is now active, you can use this callback to do any copying
         /// from the buffer object or to map a CUDA pointer using CUDA-GL interop.
         /// This callback can be invoked from a different thread than the one calling MakeStep on GameController.
+        /// Depth information is only valid if <see cref="CopyDepth"/> is set to true.
         /// </summary>
-        public event Action<IRenderRequestBase, uint> OnPostRenderingEvent;
+        public event Action<IRenderRequestBase, uint, uint> OnPostRenderingEvent;
 
         /// <summary>
         /// You should not use this method. Stay away!
         /// </summary>
-        public void InvokePostRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle)
+        public void InvokePostRenderingEvent(IRenderRequestBase renderRequest, uint pboHandle, uint depthPboHandle)
         {
             var postCopyCallback = OnPostRenderingEvent;
 
             if (postCopyCallback != null)
-                postCopyCallback(renderRequest, pboHandle);
+                postCopyCallback(renderRequest, pboHandle, depthPboHandle);
         }
 
         #endregion

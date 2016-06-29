@@ -92,11 +92,11 @@ namespace RenderingBase.Renderer
                 Context.MakeCurrent(null);
         }
 
-        public override void ProcessRequests(TWorld world)
+        public override void ProcessRequests()
         {
             Window.ProcessEvents();
 
-            base.ProcessRequests(world);
+            base.ProcessRequests();
         }
 
         public override void CheckError()

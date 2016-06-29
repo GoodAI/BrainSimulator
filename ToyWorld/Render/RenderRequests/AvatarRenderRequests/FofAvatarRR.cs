@@ -57,7 +57,7 @@ namespace Render.RenderRequests
             base.Init();
         }
 
-        public override void Draw()
+        public override void Update()
         {
             if (FovAvatarRenderRequest == null)
                 throw new MissingFieldException("Missing the IFovAvatarRR. Please specify one before using this render request.");
@@ -70,7 +70,7 @@ namespace Render.RenderRequests
             + ((Vector2)FovAvatarRenderRequest.Size - SizeV) / 2
             * (Vector2)avatar.Fof;
 
-            base.Draw();
+            base.Update();
         }
 
         #endregion

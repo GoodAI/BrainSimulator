@@ -34,7 +34,7 @@ namespace ToyWorldTests.World
             Tile[] row1 = new Tile[] { tile1, tile1, tile0 };
             Tile[] row2 = new Tile[] { tile0, tile1, tile0 };
 
-            m_tileArray = new []
+            m_tileArray = new[]
                 {
                     row0, row1, row2
                 };
@@ -54,9 +54,11 @@ namespace ToyWorldTests.World
         [Fact]
         public void GetRectangleWholeArray()
         {
-            int[] rectangle = m_simpleTileLayer.GetRectangle(new Rectangle(0, 0, 3, 3));
+            Rectangle rectangle = new Rectangle(0, 0, 3, 3);
+            int[] tileTypes = new int[rectangle.Size.Size()];
+            m_simpleTileLayer.GetTileTypesAt(rectangle, tileTypes);
 
-            var isEqual = rectangle.SequenceEqual(m_tileSequenceArray.Select(x => x.TilesetId));
+            var isEqual = tileTypes.SequenceEqual(m_tileSequenceArray.Select(x => x.TilesetId));
 
             Assert.True(isEqual);
         }
@@ -64,9 +66,11 @@ namespace ToyWorldTests.World
         [Fact]
         public void GetRectangleSingle()
         {
-            int[] rectangle = m_simpleTileLayer.GetRectangle(new Rectangle(1,1,1,1));
+            Rectangle rectangle = new Rectangle(1, 1, 1, 1);
+            int[] tileTypes = new int[rectangle.Size.Size()];
+            m_simpleTileLayer.GetTileTypesAt(rectangle, tileTypes);
 
-            var isEqual = rectangle.SequenceEqual(new [] { (int)m_tileArray[1][1] });
+            var isEqual = tileTypes.SequenceEqual(new[] { (int)m_tileArray[1][1] });
 
             Assert.True(isEqual);
         }
