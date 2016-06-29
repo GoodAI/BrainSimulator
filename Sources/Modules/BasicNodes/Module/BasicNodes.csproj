@@ -350,6 +350,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Cuda\Transforms\Transform2DKernels.cu">
+      <Link>Transform2DKernels.cu</Link>
+    </None>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
   </ItemGroup>

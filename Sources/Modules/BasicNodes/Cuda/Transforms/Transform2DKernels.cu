@@ -5,44 +5,107 @@
 #include "float.h"
 #include <builtin_types.h>
 #include <vector_functions.h>
+#include <math.h>
 
 extern "C"  
 {
+	//__global__ void BilinearResampleKernel(float *input, float *output, int inputWidth, int inputHeight, int outputWidth, int outputHeight)
+	//{
+	//	int id = blockDim.x * blockIdx.y * gridDim.x
+	//			+ blockDim.x * blockIdx.x
+	//			+ threadIdx.x;
+	//	int size =  outputWidth * outputHeight;
+
+	//	if (id < size) 
+	//	{
+	//		int px = id % outputWidth;
+	//		int py = id / outputWidth;
+
+	//		float xRatio = (float)(inputWidth - 1) / (outputWidth);
+	//		float yRatio = (float)(inputHeight - 1) / (outputHeight);
+
+	//		int x = (int) (xRatio * (px+.5f));
+	//		int y = (int) (yRatio * (py+.5f));          
+ //
+	//		// X and Y distance difference
+	//		float xDist = (xRatio * (px+.5f)) - x+.5f;
+	//		float yDist = (yRatio * (py+.5f)) - y+.5f;
+ //
+	//		// Points
+	//		float topLeft = input[y * inputWidth + x];
+	//		float topRight = input[y * inputWidth + x + 1];
+	//		float bottomLeft = input[(y + 1) * inputWidth + x];
+	//		float bottomRight = input[(y + 1) * inputWidth + x + 1]; 
+ //               
+	//		float result = 
+	//			topLeft * (1 - xDist) * (1 - yDist) + 
+	//			topRight * xDist * (1 - yDist) + 
+	//			bottomLeft * yDist * (1 - xDist) + 
+	//			bottomRight * xDist * yDist;
+ //
+	//		output[py * outputWidth + px] = result;
+	//	}
+	//}
+
 	__global__ void BilinearResampleKernel(float *input, float *output, int inputWidth, int inputHeight, int outputWidth, int outputHeight)
 	{
 		int id = blockDim.x * blockIdx.y * gridDim.x
-				+ blockDim.x * blockIdx.x
-				+ threadIdx.x;
-		int size =  outputWidth * outputHeight;
+			+ blockDim.x * blockIdx.x
+			+ threadIdx.x;
+		int size = outputWidth * outputHeight;
+		float iT, iB;
 
-		if (id < size) 
+		if (id < size)
 		{
+			//output point coordinates
 			int px = id % outputWidth;
 			int py = id / outputWidth;
 
-			float xRatio = (float)(inputWidth - 1) / (outputWidth);
-			float yRatio = (float)(inputHeight - 1) / (outputHeight);
+			float xRatio = (float)(inputWidth - 1) / (outputWidth - 1);
+			float yRatio = (float)(inputHeight - 1) / (outputHeight - 1);
 
-			int x = (int) (xRatio * (px+.5f));
-			int y = (int) (yRatio * (py+.5f));          
- 
-			// X and Y distance difference
-			float xDist = (xRatio * (px+.5f)) - x+.5f;
-			float yDist = (yRatio * (py+.5f)) - y+.5f;
- 
-			// Points
-			float topLeft = input[y * inputWidth + x];
-			float topRight = input[y * inputWidth + x + 1];
-			float bottomLeft = input[(y + 1) * inputWidth + x];
-			float bottomRight = input[(y + 1) * inputWidth + x + 1]; 
-                
-			float result = 
-				topLeft * (1 - xDist) * (1 - yDist) + 
-				topRight * xDist * (1 - yDist) + 
-				bottomLeft * yDist * (1 - xDist) + 
-				bottomRight * xDist * yDist;
- 
-			output[py * outputWidth + px] = result;
+			//corresponding coordinates in the original image
+			float x = xRatio * px;
+			float y = yRatio * py;
+
+			//corresponding integer (pixel) coordinates in the original image
+			int xL = (int)floor(x);
+			int xR = (int)ceil(x);
+			int yT = (int)floor(y);
+			int yB = (int)ceil(y);
+
+
+			//inverse distances to these points
+			float dL = 1.0f - (x - xL);
+			float dR = 1.0f - (xR - x); 
+			float dT = 1.0f - (y - yT);
+			float dB = 1.0f - (yB - y);
+
+			//values at those points
+			float topLeft = input[yT * inputWidth + xL];
+			float topRight = input[yT * inputWidth + xR];
+			float bottomLeft = input[yB * inputWidth + xL];
+			float bottomRight = input[yB * inputWidth + xR];
+
+			//linear interpolation in X (i.e., top and bottom pairs of points)			
+			if (xL == xR) { //interpolated points corresponds exactly to one integer x-coordinate in the original image, choose any one of them
+				iT = topLeft;
+				iB = bottomLeft;
+			}
+			else {
+				iT = topLeft * dL + topRight * dR;
+				iB = bottomLeft * dL + bottomRight * dR;
+			}
+			
+			//linear interpolation in Y (i.e., linear interpolation of those two points)
+			if (yT == yB) //interpolated points corresponds exactly to one integer ycoordinate in the original image, choose any one of them
+			{
+				output[py * outputWidth + px] = iT;
+			}
+			else {
+				output[py * outputWidth + px] = iT * dT + iB * dB;
+			}
+			
 		}
 	}
 
