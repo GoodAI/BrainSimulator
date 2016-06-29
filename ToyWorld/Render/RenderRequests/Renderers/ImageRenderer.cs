@@ -58,7 +58,7 @@ namespace Render.RenderRequests
                     if (RenderedScene == null || RenderedScene.Length < bufferSize)
                     {
                         RenderedScene = new uint[bufferSize];
-                    
+
                         if (Settings.CopyDepth)
                             RenderedSceneDepth = new float[bufferSize];
                     }
@@ -114,12 +114,14 @@ namespace Render.RenderRequests
                 case RenderRequestImageCopyingMode.OpenglPbo:
                     Pbo.Bind();
                     GL.ReadBuffer(ReadBufferMode.ColorAttachment0); // Works for fbo bound to Framebuffer (not DrawFramebuffer)
+                    //Owner.FrontFbo[FramebufferAttachment.ColorAttachment0].Copy2D(PixelType.UnsignedByte); // This is half as fast as ReadPixels for color data
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, default(IntPtr));
 
                     if (Settings.CopyDepth)
                     {
                         DepthPbo.Bind();
-                        GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.Float, default(IntPtr));
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(); // This is twice as fast as ReadPixels for depth texture
+                        //GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.UnsignedInt, default(IntPtr));
                     }
                     break;
                 case RenderRequestImageCopyingMode.Cpu:
@@ -128,7 +130,7 @@ namespace Render.RenderRequests
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, RenderedScene);
 
                     if (Settings.CopyDepth)
-                        GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.Float, RenderedSceneDepth);
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.UnsignedInt, RenderedSceneDepth);
                     break;
             }
         }

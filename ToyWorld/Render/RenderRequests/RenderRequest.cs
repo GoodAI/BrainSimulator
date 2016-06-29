@@ -466,11 +466,12 @@ namespace Render.RenderRequests
                     0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
-                //GL.BlitFramebuffer(
-                //    0, 0, FboMs.Size.X, FboMs.Size.Y,
-                //    0, 0, FrontFbo.Size.X, FrontFbo.Size.Y, // TODO: read directly to PBO (we don't need it for other effects)
-                //    ClearBufferMask.DepthBufferBit,
-                //    BlitFramebufferFilter.Nearest);
+                if (ImageRenderer.Settings.CopyDepth)
+                    GL.BlitFramebuffer(
+                        0, 0, FboMs.Size.X, FboMs.Size.Y,
+                        0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
+                        ClearBufferMask.DepthBufferBit,
+                        BlitFramebufferFilter.Nearest);
             }
 
             // Effects cannot be used with depth testing

@@ -31,10 +31,6 @@ void main()
 		out_color = vec4(1, 0, 0, 1);
 		break;
 	}
-
-	if (out_color.w == 0)
-	{
-		gl_FragDepth = 800;
-	}
+	
 	out_color.xyz *= ambient.w * ambient.xyz + diffuse.w * diffuse.xyz;
 }

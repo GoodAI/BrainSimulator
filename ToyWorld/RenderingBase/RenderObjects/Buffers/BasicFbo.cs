@@ -16,9 +16,16 @@ namespace RenderingBase.RenderObjects.Buffers
 
             FramebufferErrorCode err = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
             Debug.Assert(err == FramebufferErrorCode.FramebufferComplete, "Framebuffer error: " + err);
+
+
+            // Getting of native internal texture format
+            //this[FramebufferAttachment.ColorAttachment0].Bind();
+            //var format = new int[20];
+            //GL.GetTexLevelParameter(TextureTarget.Texture2D, 0, GetTextureParameter.TextureInternalFormat, format);
         }
 
         #endregion
+
 
         public TextureBase this[FramebufferAttachment index]
         {
