@@ -25,6 +25,7 @@ namespace World.Atlas.Layers
         /// <param name="pos"></param>
         int[] GetRectangle(Vector2I pos, Vector2I size);
 
+
         int Width { get; set; }
 
         int Height { get; set; }
@@ -40,16 +41,6 @@ namespace World.Atlas.Layers
         public bool Render { get; set; }
         public LayerType LayerType { get; set; }
 
-        public Tile[,] GetRectangle(int x1, int y1, int x2, int y2)
-        {
-            if ((x2 - x1 + 1) <= 0)
-                throw new ArgumentOutOfRangeException("x1", "X values doesn't form a valid rectangle");
-            if ((y2 - y1 + 1) <= 0)
-                throw new ArgumentOutOfRangeException("y1", "Y values doesn't form a valid rectangle");
-            Contract.EndContractBlock();
-
-            return default(Tile[,]);
-        }
 
         public Tile GetActorAt(int x, int y)
         {
@@ -59,11 +50,6 @@ namespace World.Atlas.Layers
                 throw new ArgumentOutOfRangeException("y", "y has to be positive");
             Contract.EndContractBlock();
 
-            return default(Tile);
-        }
-
-        public Tile GetActorAt(Shape shape)
-        {
             return default(Tile);
         }
 
@@ -101,16 +87,6 @@ namespace World.Atlas.Layers
             Contract.EndContractBlock();
 
             return default(int[]);
-        }
-
-        public Tile GetTile(int x, int y)
-        {
-            return default(Tile);
-        }
-
-        public Tile GetTile(Vector2I coordinates)
-        {
-            return default(Tile);
         }
     }
 }
