@@ -82,15 +82,16 @@ namespace World.Atlas.Layers
             return GetActorAt(coordinates.X, coordinates.Y);
         }
 
-        public void GetRectangle(Vector2I topLeft, Vector2I size, int[] tileTypes)
+        public void GetTileTypesAt(Vector2I topLeft, Vector2I size, int[] tileTypes)
         {
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
-            GetRectangle(rectangle, tileTypes);
+            GetTileTypesAt(rectangle, tileTypes);
         }
 
-        public void GetRectangle(Rectangle rectangle, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
         {
+            // Store the resulting types in the parameter
             Debug.Assert(rectangle.Size.Size() <= tileTypes.Length, "Too little space for the grid tile types!");
 
             // Use cached getter value
@@ -134,7 +135,7 @@ namespace World.Atlas.Layers
                 {
                     var tile = Tiles[i][j];
                     if (tile != null)
-                        m_tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
+                        tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
                     else
                         tileTypes[idx++] = 0; // inside map: must be always 0
                 }

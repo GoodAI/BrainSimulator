@@ -56,7 +56,7 @@ namespace ToyWorldTests.World
         {
             Rectangle rectangle = new Rectangle(0, 0, 3, 3);
             int[] tileTypes = new int[rectangle.Size.Size()];
-            m_simpleTileLayer.GetRectangle(rectangle, tileTypes);
+            m_simpleTileLayer.GetTileTypesAt(rectangle, tileTypes);
 
             var isEqual = tileTypes.SequenceEqual(m_tileSequenceArray.Select(x => x.TilesetId));
 
@@ -68,7 +68,7 @@ namespace ToyWorldTests.World
         {
             Rectangle rectangle = new Rectangle(1, 1, 1, 1);
             int[] tileTypes = new int[rectangle.Size.Size()];
-            m_simpleTileLayer.GetRectangle(rectangle, tileTypes);
+            m_simpleTileLayer.GetTileTypesAt(rectangle, tileTypes);
 
             var isEqual = tileTypes.SequenceEqual(new[] { (int)m_tileArray[1][1] });
 

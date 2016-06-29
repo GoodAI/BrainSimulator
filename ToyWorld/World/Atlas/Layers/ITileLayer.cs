@@ -22,7 +22,7 @@ namespace World.Atlas.Layers
         /// </summary>
         /// <param name="rectangle"></param>
         /// <param name="tileTypes"></param>
-        void GetRectangle(Rectangle rectangle, int[] tileTypes);
+        void GetTileTypesAt(Rectangle rectangle, int[] tileTypes);
 
         /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
@@ -30,7 +30,7 @@ namespace World.Atlas.Layers
         /// <param name="pos"></param>
         /// <param name="size"></param>
         /// <param name="tileTypes"></param>
-        void GetRectangle(Vector2I pos, Vector2I size, int[] tileTypes);
+        void GetTileTypesAt(Vector2I pos, Vector2I size, int[] tileTypes);
 
 
         int Width { get; set; }
@@ -78,14 +78,14 @@ namespace World.Atlas.Layers
         public void UpdateTileStates(Atlas atlas)
         { }
 
-        public void GetRectangle(Rectangle rectangle, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
         {
             if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
                 throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");
             Contract.EndContractBlock();
         }
 
-        public void GetRectangle(Vector2I pos, Vector2I size, int[] tileTypes)
+        public void GetTileTypesAt(Vector2I pos, Vector2I size, int[] tileTypes)
         {
             if (size.X <= 0 && size.Y <= 0)
                 throw new ArgumentOutOfRangeException("size", "size values doesn't form a valid rectangle");

@@ -41,8 +41,8 @@ namespace Render.RenderRequests
         internal OverlayRenderer OverlayRenderer;
         internal ImageRenderer ImageRenderer;
 
-        private ConcurrentBag<Tuple<int[], Vector4I[]>> m_tileTypesPool;
-        private readonly Queue<Tuple<int[], Vector4I[]>> m_tileTypesTasks = new Queue<Tuple<int[], Vector4I[]>>();
+        private ConcurrentBag<Tuple<int[], Vector4I[]>> m_tileTypesBufferPool;
+        private readonly Queue<Tuple<int[], Vector4I[]>> m_tileTypeLayerQueue = new Queue<Tuple<int[], Vector4I[]>>();
         private Task m_tileTypesTask;
 
         protected internal BasicFbo FrontFbo, BackFbo;
@@ -72,7 +72,7 @@ namespace Render.RenderRequests
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            m_tileTypesPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
+            m_tileTypesBufferPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
 
             PositionCenterV = new Vector3(0, 0, 10);
             SizeV = new Vector2(3, 3);
@@ -358,10 +358,10 @@ namespace Render.RenderRequests
                 //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
 
                 int gridViewSize = GridView.Size.Size();
-                var buffer = m_tileTypesPool.FirstOrDefault();
+                var buffer = m_tileTypesBufferPool.FirstOrDefault();
 
-                if (buffer != null && buffer.Item1.Length < gridViewSize && !m_tileTypesPool.IsEmpty) // Reset pool to force reallocation
-                    m_tileTypesPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
+                if (buffer != null && buffer.Item1.Length < gridViewSize && !m_tileTypesBufferPool.IsEmpty) // Reset pool to force reallocation
+                    m_tileTypesBufferPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
             }
 
             DirtyParams = DirtyParam.None;
@@ -387,16 +387,16 @@ namespace Render.RenderRequests
                 {
                     Tuple<int[], Vector4I[]> buffers;
 
-                    if (!m_tileTypesPool.TryTake(out buffers))
+                    if (!m_tileTypesBufferPool.TryTake(out buffers))
                     {
                         int[] buffer = new int[gridView.Size.Size()];
                         Vector4I[] paddedBuffer = new Vector4I[gridView.Size.Size()];
                         buffers = new Tuple<int[], Vector4I[]>(buffer, paddedBuffer);
                     }
 
-                    layer.GetRectangle(gridView, buffers.Item1);
+                    layer.GetTileTypesAt(gridView, buffers.Item1);
                     GridOffset.GetPaddedTextureOffsets(buffers.Item1, buffers.Item2);
-                    m_tileTypesTasks.Enqueue(buffers);
+                    m_tileTypeLayerQueue.Enqueue(buffers);
                 }
             });
 
@@ -500,7 +500,7 @@ namespace Render.RenderRequests
 
             int i = 0;
 
-            foreach (var tileTypeTask in m_tileTypesTasks)
+            foreach (var tileTypeTask in m_tileTypeLayerQueue)
             {
                 i++;
 
@@ -512,10 +512,10 @@ namespace Render.RenderRequests
 
                 GridOffset.SetTextureOffsets(tileTypeTask.Item2); // Blocks and waits for the task to finish
                 GridOffset.Draw();
-                m_tileTypesPool.Add(tileTypeTask); // Return the buffer to the pool
+                m_tileTypesBufferPool.Add(tileTypeTask); // Return the buffer to the pool
             }
 
-            m_tileTypesTasks.Clear();
+            m_tileTypeLayerQueue.Clear();
         }
 
         protected virtual void DrawObjectLayers()

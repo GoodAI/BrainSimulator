@@ -132,7 +132,10 @@ namespace GoodAI.ToyWorld
                 // Setup image copying from RR through Cpu
                 if (Owner.CopyDataThroughCPU)
                 {
-                    ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu) { CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null, };
+                    ImageSettings imageSettings = new ImageSettings(RenderRequestImageCopyingMode.Cpu)
+                    {
+                        CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null,
+                    };
 
                     imageSettings.OnSceneBufferPrepared += (request, data, depthData) =>
                     {
@@ -157,7 +160,10 @@ namespace GoodAI.ToyWorld
 
 
                 // Setup image copying from RR through Pbo
-                ImageSettings image = new ImageSettings(RenderRequestImageCopyingMode.OpenglPbo) { CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null, };
+                ImageSettings image = new ImageSettings(RenderRequestImageCopyingMode.OpenglPbo)
+                {
+                    CopyDepth = Owner.CopyDepthData && targetDepthMemBlock != null,
+                };
 
                 // Setup data copying to our unmanaged memblocks
                 uint renderTextureHandle = 0;
