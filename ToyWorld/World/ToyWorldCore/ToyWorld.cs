@@ -139,7 +139,7 @@ namespace World.ToyWorldCore
             UpdateAvatars();
             UpdateCharacters();
             AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
-            //UpdatePhysics();
+            UpdatePhysics();
             UpdateAtmosphere();
             Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
         }

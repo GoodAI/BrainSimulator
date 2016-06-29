@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using System.Threading.Tasks;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
