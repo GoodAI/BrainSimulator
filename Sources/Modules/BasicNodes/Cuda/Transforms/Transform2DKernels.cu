@@ -9,44 +9,6 @@
 
 extern "C"  
 {
-	//__global__ void BilinearResampleKernel(float *input, float *output, int inputWidth, int inputHeight, int outputWidth, int outputHeight)
-	//{
-	//	int id = blockDim.x * blockIdx.y * gridDim.x
-	//			+ blockDim.x * blockIdx.x
-	//			+ threadIdx.x;
-	//	int size =  outputWidth * outputHeight;
-
-	//	if (id < size) 
-	//	{
-	//		int px = id % outputWidth;
-	//		int py = id / outputWidth;
-
-	//		float xRatio = (float)(inputWidth - 1) / (outputWidth);
-	//		float yRatio = (float)(inputHeight - 1) / (outputHeight);
-
-	//		int x = (int) (xRatio * (px+.5f));
-	//		int y = (int) (yRatio * (py+.5f));          
- //
-	//		// X and Y distance difference
-	//		float xDist = (xRatio * (px+.5f)) - x+.5f;
-	//		float yDist = (yRatio * (py+.5f)) - y+.5f;
- //
-	//		// Points
-	//		float topLeft = input[y * inputWidth + x];
-	//		float topRight = input[y * inputWidth + x + 1];
-	//		float bottomLeft = input[(y + 1) * inputWidth + x];
-	//		float bottomRight = input[(y + 1) * inputWidth + x + 1]; 
- //               
-	//		float result = 
-	//			topLeft * (1 - xDist) * (1 - yDist) + 
-	//			topRight * xDist * (1 - yDist) + 
-	//			bottomLeft * yDist * (1 - xDist) + 
-	//			bottomRight * xDist * yDist;
- //
-	//		output[py * outputWidth + px] = result;
-	//	}
-	//}
-
 	__global__ void BilinearResampleKernel(float *input, float *output, int inputWidth, int inputHeight, int outputWidth, int outputHeight)
 	{
 		int id = blockDim.x * blockIdx.y * gridDim.x
@@ -104,12 +66,9 @@ extern "C"
 			}
 			else {
 				output[py * outputWidth + px] = iT * dT + iB * dB;
-			}
-			
+			}		
 		}
 	}
-
-
 
 
 	__global__ void NNResampleKernel(float *input, float *output, int inputWidth, int inputHeight, int outputWidth, int outputHeight)
