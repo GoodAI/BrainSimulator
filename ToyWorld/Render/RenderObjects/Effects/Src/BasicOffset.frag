@@ -32,5 +32,8 @@ void main()
 		break;
 	}
 	
+	if (out_color.w < 0.1f)
+		discard;
+
 	out_color.xyz *= ambient.w * ambient.xyz + diffuse.w * diffuse.xyz;
 }
