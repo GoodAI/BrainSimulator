@@ -49,9 +49,6 @@ namespace GoodAI.Modules.Vision
             set { SetOutput(0, value); }
         }
 
-
-
-
         //----------------------------------------------------------------------------
         // :: INITS  ::
         public override void UpdateMemoryBlocks()
@@ -71,22 +68,7 @@ namespace GoodAI.Modules.Vision
             validator.AssertError(Image.Dims.Rank >= 4, this, "Input image should have rank at least 3 (3 dimensions)");
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public MaskCreationExecuteTask Execute { get; private set; }
-
 
         [Description("Execute")]
         public class MaskCreationExecuteTask : MyTask<MaskCreationNode>
@@ -106,9 +88,10 @@ namespace GoodAI.Modules.Vision
 
             private bool CropHasUsefullValueAndCopy2Host(MyMemoryBlock<float> Crop)
             {
-                if (Owner.XCrop == null)
+                if (Crop == null)
                     return false;
                 Crop.SafeCopyToHost();
+                // deadband aroud zero
                 if (Crop.Host[0] < 0.1f && Crop.Host[0] > -0.1f)
                     return false;
                 return true;
@@ -133,24 +116,13 @@ namespace GoodAI.Modules.Vision
                 {
                     if (Owner.YCrop.Host[0] > 0f)
                     {
-                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, 0, (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[0]), 0f);
+                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, 0, (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[1]), 0f);
                     }
                     else
                     {
-                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, (int)Owner.Output.Dims[0] + (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[0]), (int)Owner.Output.Dims[0], 0f);
+                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, (int)Owner.Output.Dims[1] + (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[1]), (int)Owner.Output.Dims[1], 0f);
                     }
                 }
-
-
-                /*       oid SetMatrixVauleMinMaxY(
-               float* matrix, 
-               int cols,
-               int size,
-               int id_min, 
-               int id_max, 
-               float value)*/
-
-
             }
         }
     }
