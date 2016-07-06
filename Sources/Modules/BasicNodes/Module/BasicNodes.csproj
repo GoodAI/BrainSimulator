@@ -517,6 +517,7 @@
     <EmbeddedResource Include="res\loopgroup_big.png" />
     <EmbeddedResource Include="res\scripting.png" />
     <EmbeddedResource Include="res\scripting_big.png" />
+    <EmbeddedResource Include="res\STCBGroup.png" />
     <Content Include="res\tetrisworld\brick_mask.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
