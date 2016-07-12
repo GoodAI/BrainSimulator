@@ -15,60 +15,132 @@ namespace GoodAI.Modules.Transforms
     [YAXSerializeAs("Resize2D")]
     public class MyResize2D : MyTransform
     {
-        public MyImageScaleTask ImageScale { get; private set; }
 
+        public enum InterpolationType
+        {
+            Bilinear,
+            Exact1toN
+        }
+
+        public enum ExactTransformationType
+        {
+            Increasing,
+            Decreasing,
+            Mixed
+        }
+
+        private float m_factor = 0.5f;
+        public MyImageScaleTask ImageScale { get; private set; }
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 0.5f)]
-        public float Factor { get; set; }
+        public float Factor
+        {
+            get { return m_factor; }
+            set
+            {
+                if (value > 0)
+                {
+                    m_factor = value;
+                }
+            }
+        }
 
         [MyBrowsable, Category("Params")]
         [YAXSerializableField(DefaultValue = 0f)]
-        public float FactorHeight { get; set; }    
+        public float FactorHeight { get; set; }
+
+        [MyBrowsable, Category("Params")]
+        [YAXSerializableField(DefaultValue = InterpolationType.Bilinear)]
+        public InterpolationType Interpolation { get; set; }    
 
         public override string Description { get { return "x" + Factor.ToString(); } }
 
-        /// <description>Uses bilinear resampling for perfroming resize</a></description>
-        [Description("Image Scale"), MyTaskInfo(OneShot = false)]
-        public class MyImageScaleTask : MyTask<MyResize2D>
+
+        #region Validation
+
+        private bool isDivisible(int a, int b)
         {
-            private MyCudaKernel m_kernel { get; set; }
-
-            private int inputWidth, inputHeight, outputWidth, outputHeight;
-
-            public override void Init(Int32 nGPU)
-            {
-                if (Owner.Factor <= 0)
-                    return;
-
-                inputWidth = Owner.Input.ColumnHint;
-                inputHeight = Owner.Input.Count / Owner.Input.ColumnHint;
-
-                outputWidth = Owner.Output.ColumnHint;
-                outputHeight = Owner.Output.Count / Owner.Output.ColumnHint;
-
-                m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
-                m_kernel.SetupExecution(outputWidth * outputHeight);
-            }
-
-            public override void Execute()
-            {
-                if (Owner.Factor <= 0)
-                    return;
-
-                m_kernel.Run(Owner.Input, Owner.Output, inputWidth, inputHeight, outputWidth, outputHeight);
-            }
-
+            return (a % b == 0 || b % a == 0);
         }
 
+        public ExactTransformationType GetTransformationType()
+        {
+            if (outputWidth > inputWidth) 
+            {
+                if (outputHeight >= inputHeight) 
+                {
+                    return ExactTransformationType.Increasing;
+                } 
+                else 
+                {
+                    return ExactTransformationType.Mixed;
+                }
+            }  
+            if (outputWidth < inputWidth) {
+                if (outputHeight <= inputHeight) {
+                    return ExactTransformationType.Decreasing;
+                }
+                else
+                {
+                    return ExactTransformationType.Mixed;
+                }
+            }
+            //outputWidth == inputWidth
+            if (outputHeight >= inputHeight) 
+            {
+                return ExactTransformationType.Increasing;
+            } 
+            else 
+            {
+                return ExactTransformationType.Decreasing;
+            }
+        }
+
+        public bool AreParametersValid()
+        {
+            if (outputWidth == 0 || outputHeight == 0)
+            {
+                MyLog.ERROR.WriteLine(Name + ": too small factor, one output dimension would be less than 1!");
+                return false;
+            }
+            
+            if (Interpolation == InterpolationType.Exact1toN)
+            {
+                bool increasingWidth = outputWidth >= inputWidth;
+                bool increasingHeight = outputHeight >= inputHeight;
+
+                if (GetTransformationType() == ExactTransformationType.Mixed || !isDivisible(inputWidth, outputWidth) || !isDivisible(inputHeight, outputHeight))
+                {
+                   MyLog.ERROR.WriteLine("Exact1toN interpolation needs such input sizes and factors that to each pixel either in input or output image there would be exactly NxM pixels in the second image.");
+                   return false;
+                }   
+            }
+            return true;
+        }
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+
+            if (!AreParametersValid()) 
+            {
+                validator.AddError(this, "Current parameter values or their combination are not valid.");
+            }
+        }
+
+        #endregion
+
+        int inputWidth, inputHeight, outputWidth, outputHeight;
+
         public override void UpdateMemoryBlocks()
-        {           
+        {
             if (Input != null)
             {
-                int inputWidth = Input.ColumnHint;
-                int inputHeight = Input.Count / Input.ColumnHint;
+                inputWidth = Input.ColumnHint;
+                inputHeight = Input.Count / Input.ColumnHint;
 
-                int outputWidth = (int) (inputWidth * Factor);
-                int outputHeight;
+                outputWidth = (int)(inputWidth * Factor);
+                
                 if (FactorHeight > 0)
                 {
                     outputHeight = (int)(inputHeight * FactorHeight);
@@ -80,6 +152,10 @@ namespace GoodAI.Modules.Transforms
 
                 Output.ColumnHint = outputWidth > 0 ? outputWidth : 1;
                 OutputSize = outputWidth * outputHeight;
+                if (OutputSize == 0)
+                {
+                    OutputSize = 1;
+                }
             }
             else
             {
@@ -88,10 +164,44 @@ namespace GoodAI.Modules.Transforms
             }
         }
 
-        public override void Validate(MyValidator validator)
+
+        /// <description>Uses bilinear resampling for perfroming resize</a></description>
+        [Description("Image Scale"), MyTaskInfo(OneShot = false)]
+        public class MyImageScaleTask : MyTask<MyResize2D>
         {
-            base.Validate(validator);
-            validator.AssertError(Factor > 0, this, ("Factor must be a positive decimal (currently " + Factor.ToString() + ")"));
+            private MyCudaKernel m_kernel { get; set; }
+
+            public override void Init(Int32 nGPU)
+            {
+
+                switch (Owner.Interpolation)
+                {
+                    case InterpolationType.Bilinear:
+                        m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "BilinearResampleKernel");
+                        m_kernel.SetupExecution(Owner.outputWidth * Owner.outputHeight);
+                        break;
+                    case InterpolationType.Exact1toN:
+                        if (Owner.GetTransformationType() == ExactTransformationType.Increasing) {
+                            m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "ExactResampleKernel_1toN");
+                        } 
+                        else 
+                        {
+                            m_kernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "ExactResampleKernel_Nto1");
+                        }
+                        m_kernel.SetupExecution(Owner.outputWidth * Owner.outputHeight);
+                        break;
+                    default:
+                        throw new InvalidEnumArgumentException("Unknown interpolation type " + Owner.Interpolation);
+                }
+            }
+
+            public override void Execute()
+            {
+                if (Owner.AreParametersValid())
+                {
+                    m_kernel.Run(Owner.Input, Owner.Output, Owner.inputWidth, Owner.inputHeight, Owner.outputWidth, Owner.outputHeight);
+                }   
+            }
         }
     }
 }
