@@ -7,11 +7,18 @@ using YAXLib;
 
 namespace GoodAI.Modules.Transforms
 {
+ 
     /// <author>GoodAI</author>
-    /// <meta>df</meta>
+    /// <meta>df,pd</meta>
     /// <status>Working</status>
     /// <summary>Resizes input data.</summary>
-    /// <description>It is meant to be used with 2D-data (images).</description>
+    /// <description>
+    /// <h3>It is meant to be used with 2D-data (images).</h3> 
+    /// <b>Exact1toN interpolation type </b> - Input image sizes (both X and Y) must be either divisible or multiples of corresponding resize factors. 
+    /// In another words, to each pixel either in the output image or in the input image must correspond a rectangle of pixels  in the second image. 
+    /// When increasing size, each pixel in the output image has the same value as the corresponding input image, when decreasing size, 
+    /// values of each pixel in the output image are computed as average over all corresponding pixels in the input image. 
+    /// </description>
     [YAXSerializeAs("Resize2D")]
     public class MyResize2D : MyTransform
     {
