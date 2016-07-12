@@ -393,15 +393,15 @@ namespace GoodAI.Modules.GameBoy
             }
 
             [MyBrowsable, Category("Dynamics"), 
-            Description("If true, dynamics of the paddle will be ignored (velocity/friction). "+
+            Description("If false, dynamics of the paddle will be ignored (velocity/friction). "+
                 "Now only the current control signal is taken into account (with some coolDown)")]
-            [YAXSerializableField(DefaultValue = false)]
-            public bool IgnorePaddleDynamics { get; set; }
+            [YAXSerializableField(DefaultValue = true)]
+            public bool EnablePaddleDynamics { get; set; }
 
             [MyBrowsable, Category("Dynamics"),
-            Description("By default, the nonzero control signal is preserved for several steps when STAY control signal is sent (this disables it).")]
-            [YAXSerializableField(DefaultValue = false)]
-            public bool IgnoreControlCoolDown { get; set; }
+            Description("By default, the nonzero control signal is preserved for several steps when STAY control signal is sent.")]
+            [YAXSerializableField(DefaultValue = true)]
+            public bool EnableControlCoolDown { get; set; }
             
             private int stepsFrozen = 0;
 
@@ -632,14 +632,10 @@ namespace GoodAI.Modules.GameBoy
 
             protected void ResolvePaddleEvents(MyGameObject paddle, float control)
             {
-                if (IgnorePaddleDynamics)
-                {
-                    paddle.velocity.x = control * DELTA_T;
-                }
-                else
+                if (EnablePaddleDynamics)
                 {
                     paddle.velocity += (control * PADDLE_ACCELERATION - paddle.velocity * PaddleFriction) * DELTA_T;
-                    
+
                     if (paddle.velocity.x > MAX_PADDLE_VELOCITY)
                     {
                         paddle.velocity.x = MAX_PADDLE_VELOCITY;
@@ -649,8 +645,11 @@ namespace GoodAI.Modules.GameBoy
                         paddle.velocity.x = -MAX_PADDLE_VELOCITY;
                     }
                 }
+                else
+                {
+                    paddle.velocity.x = control * DELTA_T;
+                }
 
-                
                 float2 futurePos = paddle.position + paddle.velocity;
 
                 if (futurePos.x < 0 || futurePos.x + paddle.pixelSize.x > Owner.Scene.Width)
@@ -742,7 +741,7 @@ namespace GoodAI.Modules.GameBoy
                 }
                 else
                 {
-                    if (controlCoolDown < 0 || IgnoreControlCoolDown)
+                    if (controlCoolDown < 0 || !EnableControlCoolDown)
                     {
                         control = 0;
                     }
