@@ -36,6 +36,10 @@
     <Node type="GoodAI.Core.Nodes.MySignalNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png">
       <Label>Control &amp; Dataflow</Label>
     </Node>
+    <Node type="GoodAI.Core.Nodes.MySignalToFloatNode" CanBeAdded="true" BigIcon="signal_big.png" SmallIcon="signal.png">
+      <Label>Control &amp; Dataflow</Label>
+    </Node>
+
 
     <Node type="GoodAI.Modules.Common.MultiplexerNode" CanBeAdded="true">
       <Label>Control &amp; Dataflow</Label>
