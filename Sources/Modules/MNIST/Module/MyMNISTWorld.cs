@@ -200,6 +200,7 @@ namespace MNIST
 
         public override void Init(int nGPU)
         {
+
         }
 
         public override void Execute()

@@ -29,7 +29,7 @@ namespace MNIST
 
     public class MyMNISTManager
     {
-        private int m_imagesServed;
+        private int m_lastServedImage;
         public int m_trainingExamplesPerDigitCnt;
         public int m_testExamplesPerDigitCnt;
         private string m_baseFolder;
@@ -45,6 +45,11 @@ namespace MNIST
 
         public bool RandomEnumerate = false;
         private Random rand;
+
+
+        public bool inintialized = false;
+        public bool[] alreadyShown;
+        public int howManyLeft;
 
         /// <summary>
         /// Converts between little-endian and big-endian
@@ -83,7 +88,7 @@ namespace MNIST
             m_afterLastImage = afterLastImage;
             m_trainingExamplesPerDigitCnt = trainingExamplesPerDigitCnt;
             m_testExamplesPerDigitCnt = testExamplesPerDigitCnt;
-            m_imagesServed = 0;
+            m_lastServedImage = 0;
             m_sequenceIterator = 0;
             m_definedOrder = false;
 
@@ -92,6 +97,10 @@ namespace MNIST
             //sw.Start();
             ReadMnistSet("train-images.idx3-ubyte", "train-labels.idx1-ubyte", m_trainingExamplesPerDigitCnt, m_trainingImages);
             ReadMnistSet("t10k-images.idx3-ubyte", "t10k-labels.idx1-ubyte", m_testExamplesPerDigitCnt, m_testImages);
+
+            
+
+
 
             byte[,] data = new byte[28, 28];
             m_blankImage = new MyMNISTImage(data, 0);
@@ -155,6 +164,22 @@ namespace MNIST
             brLabels.Close();
         }
 
+        private void DecreaseLeftCounter(int id, int totalNumberToShow)
+        {
+            howManyLeft--;
+            alreadyShown[id] = true;
+            if (howManyLeft == 0)
+            {
+                howManyLeft = totalNumberToShow;
+                for (int i = 0; i < alreadyShown.Length; i++)
+                {
+                    alreadyShown[i] = false;
+                }
+
+            }
+        }
+
+
         /// <summary>
         /// Gets the next values
         /// </summary>
@@ -162,6 +187,8 @@ namespace MNIST
         /// <returns>Array of arrays of floats, in which the values is encoded.</returns>
         public MyMNISTImage GetNextImage(int[] validNumbers, MNISTSetType setType)
         {
+            MyMNISTImage imageToReturn = null;
+
             ArrayList images = null;
             IEnumerator enumerator = null;
             int examplesPerDigitCnt = 0;
@@ -177,64 +204,101 @@ namespace MNIST
                 enumerator = m_testImagesEnumerator;
                 examplesPerDigitCnt = m_testExamplesPerDigitCnt;
             }
+
+            if (!inintialized)
+            {
+                inintialized = true;
+                //indicates whether this particular image was already shown. This prevents the situation that some numbers start to repeat while others do not appear on the output
+                alreadyShown = new bool[examplesPerDigitCnt * 10];
+                for (int i = 0; i < alreadyShown.Length; i++)
+                {
+                    alreadyShown[i] = false;
+                }
+
+                //how many images to show until the set starts to repeat again
+                howManyLeft = examplesPerDigitCnt * validNumbers.Length;
+
+            }
+       
             
             if (RandomEnumerate)
             {
-                MyMNISTImage im = (MyMNISTImage)images[rand.Next(Math.Min(examplesPerDigitCnt * 10, images.Count))];
+                m_lastServedImage = rand.Next(Math.Min(examplesPerDigitCnt * 10, images.Count));
+                MyMNISTImage im = (MyMNISTImage)images[m_lastServedImage];
 
                 // choose random image until it is in the validNumbers set;
                 // if "sequence ordered" is ON it also has to be the expected next number in given sequence
-                if (m_definedOrder && im.Label != validNumbers[m_sequenceIterator] || !validNumbers.Contains(im.Label))
+                if ((m_definedOrder && im.Label != validNumbers[m_sequenceIterator]) || !validNumbers.Contains(im.Label))
                 {
                     return this.GetNextImage(validNumbers, setType);
                 }
 
-                m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
-                return im;
+               // m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
+
+                imageToReturn = im;
             }
             else
             {
                 MyMNISTImage im = null;
-                while (enumerator.MoveNext() && m_imagesServed < images.Count)
+                while (enumerator.MoveNext() && m_lastServedImage < images.Count)
                 {
                     im = (MyMNISTImage)enumerator.Current;
-                    m_imagesServed++;
+                    m_lastServedImage++;
 
                     if (m_definedOrder)
                     {
                         if (im.Label == validNumbers[m_sequenceIterator])
                         {
-                            m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
-                            return im;
+                            imageToReturn = im;
+                            break;
                         }
                     }
                     else
                     {
                         if (validNumbers.Contains(im.Label))
                         {
-                            return im;
+                            imageToReturn = im;
+                            break;
                         }
                     }
                 }
 
-                switch (m_afterLastImage)
+                if (imageToReturn == null)
                 {
-                    case MNISTLastImageMethod.ResetToStart:
-                        {
-                            enumerator.Reset();
-                            m_imagesServed = 0; // Hack
-                            return GetNextImage(validNumbers, setType);
-                        }
-                    case MNISTLastImageMethod.SendNothing:
-                        {
-                            return m_blankImage;
-                        }
-                    default:
-                        {
-                            return GetNextImage(validNumbers, setType);
-                        }
+
+                    switch (m_afterLastImage)
+                    {
+                        case MNISTLastImageMethod.ResetToStart:
+                            {
+                                enumerator.Reset();
+                                m_lastServedImage = 0; // Hack
+                                return GetNextImage(validNumbers, setType);
+                            }
+                        case MNISTLastImageMethod.SendNothing:
+                            {
+                                return m_blankImage;
+                            }
+                        default:
+                            {
+                                return GetNextImage(validNumbers, setType);
+                            }
+                    }
                 }
             }
+
+            if (alreadyShown[m_lastServedImage])
+            {
+                return this.GetNextImage(validNumbers, setType);
+            }
+            else
+            {
+                DecreaseLeftCounter(m_lastServedImage, examplesPerDigitCnt * validNumbers.Length);
+                m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
+                return imageToReturn;
+            }
+
+
+
         }
     }
 
