@@ -49,8 +49,17 @@ namespace GoodAI.Core.Nodes
 
         public override void UpdateMemoryBlocks()
         {
-            Output.Count = GetInputSize(0);
-            Output.ColumnHint = Input != null ? Input.ColumnHint : 1;
+            /*Output.Count = GetInputSize(0);
+            Output.ColumnHint = Input != null ? Input.ColumnHint : 1;*/
+
+            if (Input!=null && Input.Dims!=null)
+            {
+                Output.Dims = Input.Dims;
+            }
+            else
+            {
+                Output.Count = 1;
+            }
 
             if (!SignalName.Equals("<none>"))
             {
