@@ -233,8 +233,6 @@ namespace MNIST
                     return this.GetNextImage(validNumbers, setType);
                 }
 
-               // m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
-
                 imageToReturn = im;
             }
             else
@@ -296,9 +294,6 @@ namespace MNIST
                 m_sequenceIterator = (m_sequenceIterator + 1) % validNumbers.Length;
                 return imageToReturn;
             }
-
-
-
         }
     }
 
