@@ -62,6 +62,7 @@
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\Cube.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />

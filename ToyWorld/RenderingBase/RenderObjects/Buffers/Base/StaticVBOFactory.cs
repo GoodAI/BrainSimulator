@@ -12,7 +12,9 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Public getters
 
-        public static VboBase FullscreenQuadVertices { get { return _fullscreenQuadVertices.Value; } }
+        public static VboBase QuadVertices { get { return _quadVertices.Value; } }
+        public static VboBase CubeVertices { get { return _cubeVertices.Value; } }
+        public static VboBase CubeElements { get { return _cubeElements.Value; } }
         public static VboBase QuadColors { get { return _quadColors.Value; } }
 
         public static VboBase GetGridVertices(Vector2I gridSize) { return GetGridVerticesInternal(gridSize); }
@@ -23,7 +25,9 @@ namespace RenderingBase.RenderObjects.Buffers
 
         public static void Init()
         {
-            _fullscreenQuadVertices = new Lazy<VboBase>(GenerateSquareVertices);
+            _quadVertices = new Lazy<VboBase>(GenerateSquareVertices);
+            _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
+            _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
             _quadColors = new Lazy<VboBase>(GenerateSquareColors);
         }
 
@@ -31,7 +35,7 @@ namespace RenderingBase.RenderObjects.Buffers
         {
             GridVertices.Clear();
 
-            _fullscreenQuadVertices = null;
+            _quadVertices = null;
             _quadColors = null;
         }
 
@@ -41,7 +45,7 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Square
 
-        private static Lazy<VboBase> _fullscreenQuadVertices;
+        private static Lazy<VboBase> _quadVertices;
         private static VboBase GenerateSquareVertices()
         {
             Vector2[] squareVertices =
@@ -67,6 +71,44 @@ namespace RenderingBase.RenderObjects.Buffers
             };
 
             return new StaticVbo<float>(buf.Length, buf, 3, hint: BufferUsageHint.StaticDraw);
+        }
+
+        #endregion
+
+        #region Cube
+
+        private static Lazy<VboBase> _cubeVertices;
+        private static VboBase GenerateCubeVertices()
+        {
+            Vector3[] cubeVertices =
+            {
+               new Vector3(-1,-1,-1),
+               new Vector3(-1, 1,-1),
+               new Vector3( 1, 1,-1),
+               new Vector3( 1,-1,-1),
+               new Vector3(-1,-1, 1),
+               new Vector3(-1, 1, 1),
+               new Vector3( 1, 1, 1),
+               new Vector3( 1,-1, 1),
+            };
+
+            return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
+        }
+
+        private static Lazy<VboBase> _cubeElements;
+        private static VboBase GenerateCubeElements()
+        {
+            Vector4UByte[] cubeElements =
+            {
+               new Vector4UByte(3, 2, 1, 0), // Back
+               new Vector4UByte(4, 5, 6, 7), // Front
+               new Vector4UByte(4, 5, 1, 0), // Left
+               new Vector4UByte(7, 6, 2, 3), // Right
+               new Vector4UByte(5, 1, 2, 6), // Up
+               new Vector4UByte(7, 3, 0, 4), // Down
+            };
+
+            return new StaticVbo<Vector4UByte>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
         }
 
         #endregion

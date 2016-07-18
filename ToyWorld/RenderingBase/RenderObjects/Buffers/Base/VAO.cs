@@ -17,11 +17,15 @@ namespace RenderingBase.RenderObjects.Buffers
             Colors = 7,
         }
 
+        public enum OtherVbo // Not used as shader attributes
+        {
+            Elements = 1,
+        }
 
 
         public uint Handle { get; private set; }
 
-        private readonly Dictionary<VboPosition, VboBase> m_vbos = new Dictionary<VboPosition, VboBase>();
+        private readonly Dictionary<int, VboBase> m_vbos = new Dictionary<int, VboBase>();
 
 
         #region Genesis
@@ -47,8 +51,16 @@ namespace RenderingBase.RenderObjects.Buffers
 
         protected VboBase this[VboPosition id]
         {
-            get { return m_vbos[id]; }
-            set { m_vbos[id] = value; }
+            get { return m_vbos[(int)id]; }
+            set { m_vbos[(int)id] = value; }
+        }
+
+        const int KeyOffset = 0x0f000000;
+
+        protected VboBase this[OtherVbo id]
+        {
+            get { return m_vbos[(int)id + KeyOffset]; }
+            set { m_vbos[(int)id + KeyOffset] = value; }
         }
 
         #endregion

@@ -8,7 +8,7 @@ namespace RenderingBase.RenderObjects.Geometries
     {
         public FullScreenQuad()
         {
-            this[VboPosition.Vertices] = StaticVboFactory.FullscreenQuadVertices;
+            this[VboPosition.Vertices] = StaticVboFactory.QuadVertices;
             EnableAttrib(VboPosition.Vertices);
         }
 

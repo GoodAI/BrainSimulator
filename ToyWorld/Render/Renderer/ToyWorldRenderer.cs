@@ -36,12 +36,14 @@ namespace Render.Renderer
             GeometryManager.Case<FullScreenQuad>();
             GeometryManager.Case<FullScreenQuadTex>();
             GeometryManager.Case<FullScreenQuadOffset>();
+            GeometryManager.Case<Cube>();
 
             // Parameterized geometries
             GeometryManager.CaseParam<FullScreenGrid>();
             GeometryManager.CaseParam<FullScreenGridOffset>();
 
 
+            //// Effect registration
             EffectManager.Case<NoEffectTex>();
             EffectManager.Case<NoEffectOffset>();
             EffectManager.Case<SmokeEffect>();
