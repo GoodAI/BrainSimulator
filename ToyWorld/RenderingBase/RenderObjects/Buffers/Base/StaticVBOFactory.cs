@@ -24,19 +24,16 @@ namespace RenderingBase.RenderObjects.Buffers
         #region Genesis
 
         public static void Init()
-        {
-            _quadVertices = new Lazy<VboBase>(GenerateSquareVertices);
-            _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
-            _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
-            _quadColors = new Lazy<VboBase>(GenerateSquareColors);
-        }
+        { }
 
         public static void Clear()
         {
-            GridVertices.Clear();
-
             _quadVertices = null;
             _quadColors = null;
+            _cubeVertices = null;
+            _cubeElements = null;
+
+            GridVertices.Clear();
         }
 
         #endregion
@@ -45,7 +42,7 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Square
 
-        private static Lazy<VboBase> _quadVertices;
+        private static Lazy<VboBase> _quadVertices = new Lazy<VboBase>(GenerateSquareVertices);
         private static VboBase GenerateSquareVertices()
         {
             Vector2[] squareVertices =
@@ -59,7 +56,7 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<Vector2>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
-        private static Lazy<VboBase> _quadColors;
+        private static Lazy<VboBase> _quadColors = new Lazy<VboBase>(GenerateSquareColors);
         private static VboBase GenerateSquareColors()
         {
             float[] buf =
@@ -77,7 +74,7 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Cube
 
-        private static Lazy<VboBase> _cubeVertices;
+        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
         private static VboBase GenerateCubeVertices()
         {
             Vector3[] cubeVertices =
@@ -95,7 +92,7 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
         }
 
-        private static Lazy<VboBase> _cubeElements;
+        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
         private static VboBase GenerateCubeElements()
         {
             Vector4UByte[] cubeElements =
@@ -117,12 +114,10 @@ namespace RenderingBase.RenderObjects.Buffers
 
         private static VboBase GetGridVerticesInternal(Vector2I gridSize)
         {
-            {
-                VboBase grid;
+            VboBase grid;
 
-                if (GridVertices.TryGetValue(gridSize, out grid))
-                    return grid;
-            }
+            if (GridVertices.TryGetValue(gridSize, out grid))
+                return grid;
 
 
             Vector2[] vertices = new Vector2[gridSize.Size() * 4];
@@ -154,7 +149,9 @@ namespace RenderingBase.RenderObjects.Buffers
                 botLeft.X = -gridSize.X;
             }
 
-            return new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);
+            grid = new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);
+            GridVertices.Add(gridSize, grid);
+            return grid;
         }
 
         #endregion
