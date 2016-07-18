@@ -54,6 +54,7 @@ namespace Render.RenderRequests
 
         protected internal FullScreenGridOffset GridOffset;
         protected internal FullScreenQuadOffset QuadOffset;
+        protected internal CubeOffset CubeOffset;
         protected internal FullScreenQuad Quad;
 
         protected internal Matrix ProjMatrix;
@@ -99,6 +100,7 @@ namespace Render.RenderRequests
             if (GridOffset != null) // It is initialized during Draw
                 GridOffset.Dispose();
             QuadOffset.Dispose();
+            CubeOffset.Dispose();
             Quad.Dispose();
 
             EffectRenderer.Dispose();
@@ -335,6 +337,7 @@ namespace Render.RenderRequests
             // Set up geometry
             Quad = Renderer.GeometryManager.Get<FullScreenQuad>();
             QuadOffset = Renderer.GeometryManager.Get<FullScreenQuadOffset>();
+            CubeOffset = Renderer.GeometryManager.Get<CubeOffset>();
 
             EffectRenderer.Init(Renderer, World, Effects);
             PostprocessRenderer.Init(Renderer, World, Postprocessing);
@@ -541,8 +544,8 @@ namespace Render.RenderRequests
                     Effect.ModelViewProjectionUniform(ref transform);
 
                     // Setup dynamic data
-                    QuadOffset.SetTextureOffsets(gameObject.TilesetId);
-                    QuadOffset.Draw();
+                    CubeOffset.SetTextureOffsets(gameObject.TilesetId);
+                    CubeOffset.Draw();
                 }
             }
         }

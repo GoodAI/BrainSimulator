@@ -37,6 +37,7 @@ namespace Render.Renderer
             GeometryManager.Case<FullScreenQuadTex>();
             GeometryManager.Case<FullScreenQuadOffset>();
             GeometryManager.Case<Cube>();
+            GeometryManager.Case<CubeOffset>();
 
             // Parameterized geometries
             GeometryManager.CaseParam<FullScreenGrid>();
