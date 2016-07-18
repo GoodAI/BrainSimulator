@@ -182,7 +182,7 @@ namespace MNIST
                 }
                 if (Owner != null && Owner.MNISTManager != null)
                 {
-                    Owner.MNISTManager.m_sequenceIterator = 0;
+                    Owner.MNISTManager.Reset();
                 }
             }
         }

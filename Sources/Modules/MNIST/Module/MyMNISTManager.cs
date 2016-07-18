@@ -47,7 +47,7 @@ namespace MNIST
         private Random rand;
 
 
-        public bool inintialized = false;
+        public bool initialized = false;
         public bool[] alreadyShown;
         public int howManyLeft;
 
@@ -61,6 +61,13 @@ namespace MNIST
             byte[] intAsBytes = BitConverter.GetBytes(value);
             Array.Reverse(intAsBytes);
             return BitConverter.ToInt32(intAsBytes, 0);
+        }
+
+        public void Reset()
+        {
+            initialized = false;
+            m_sequenceIterator = 0;
+            m_lastServedImage = -1;
         }
 
         /// <summary>
@@ -88,7 +95,7 @@ namespace MNIST
             m_afterLastImage = afterLastImage;
             m_trainingExamplesPerDigitCnt = trainingExamplesPerDigitCnt;
             m_testExamplesPerDigitCnt = testExamplesPerDigitCnt;
-            m_lastServedImage = 0;
+            m_lastServedImage = -1;
             m_sequenceIterator = 0;
             m_definedOrder = false;
 
@@ -110,6 +117,8 @@ namespace MNIST
 
             //sw.Stop();
             //Console.WriteLine("Elapsed={0}", sw.Elapsed);
+
+      
         }
 
         private void ReadMnistSet(String imagesInputFile, String labelsInputFile, int numDigitClasses, ArrayList images)
@@ -205,9 +214,9 @@ namespace MNIST
                 examplesPerDigitCnt = m_testExamplesPerDigitCnt;
             }
 
-            if (!inintialized)
+            if (!initialized)
             {
-                inintialized = true;
+                initialized = true;
                 //indicates whether this particular image was already shown. This prevents the situation that some numbers start to repeat while others do not appear on the output
                 alreadyShown = new bool[examplesPerDigitCnt * 10];
                 for (int i = 0; i < alreadyShown.Length; i++)
@@ -217,7 +226,8 @@ namespace MNIST
 
                 //how many images to show until the set starts to repeat again
                 howManyLeft = examplesPerDigitCnt * validNumbers.Length;
-
+                m_sequenceIterator = 0;
+                m_lastServedImage = -1;
             }
        
             
@@ -238,7 +248,7 @@ namespace MNIST
             else
             {
                 MyMNISTImage im = null;
-                while (enumerator.MoveNext() && m_lastServedImage < images.Count)
+                while (enumerator.MoveNext() && m_lastServedImage < images.Count - 1)
                 {
                     im = (MyMNISTImage)enumerator.Current;
                     m_lastServedImage++;
@@ -269,7 +279,7 @@ namespace MNIST
                         case MNISTLastImageMethod.ResetToStart:
                             {
                                 enumerator.Reset();
-                                m_lastServedImage = 0; // Hack
+                                m_lastServedImage = -1;
                                 return GetNextImage(validNumbers, setType);
                             }
                         case MNISTLastImageMethod.SendNothing:
