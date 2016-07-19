@@ -197,7 +197,7 @@ namespace RenderingBase.RenderObjects.Buffers
 
                     // The other face
                     for (int k = 0; k < 4; k++)
-                        vertices[idx++] = vertices[idx - 4] + zStep;
+                        vertices[idx++] = vertices[idx - 5] + zStep;
 
                     botLeft += xStep;
                 }
@@ -214,17 +214,18 @@ namespace RenderingBase.RenderObjects.Buffers
         private static VboBase GetCubeGridElementsInternal(Vector2I gridSize)
         {
             HalfVector4[] cubeElements = GetCubeElements();
-            HalfVector4[] gridElements = new HalfVector4[gridSize.Size() * 6];
+            HalfVector4[] gridElements = new HalfVector4[gridSize.Size() * cubeElements.Length];
 
-            for (int i = 0; i < gridSize.Size(); )
+            for (int i = 0; i < gridSize.Size(); i++)
             {
+                int baseIdx = i * cubeElements.Length;
                 ushort offset = (ushort)(i * 8);
 
-                for (int j = 0; j < 6; j++)
-                    gridElements[i++] = cubeElements[j] + offset;
+                for (int j = 0; j < cubeElements.Length; j++)
+                    gridElements[baseIdx + j] = cubeElements[j] + offset;
             }
 
-            return new StaticVbo<HalfVector4>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
+            return new StaticVbo<HalfVector4>(gridElements.Length, gridElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
         }
 
         #endregion

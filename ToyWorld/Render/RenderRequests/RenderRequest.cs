@@ -77,7 +77,7 @@ namespace Render.RenderRequests
 
             m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
 
-            PositionCenterV = new Vector3(0, 0, 15);
+            PositionCenterV = new Vector3(0, 0, 5);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
 
@@ -395,7 +395,7 @@ namespace Render.RenderRequests
                     if (!m_tileTypesBufferPool.TryTake(out buffers))
                     {
                         int[] buffer = new int[gridView.Size.Size()];
-                        Vector4I[] paddedBuffer = new Vector4I[gridView.Size.Size()];
+                        Vector4I[] paddedBuffer = new Vector4I[GridOffset.GetPaddedBufferSize()];
                         buffers = new TupleType(layer, buffer, paddedBuffer);
                     }
 
@@ -539,7 +539,7 @@ namespace Render.RenderRequests
                         transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
                     transform *= Matrix.CreateScale(new Vector3(gameObject.Size, objectLayer.Thickness) * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
-                    transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 5f));
+                    transform *= Matrix.CreateTranslation(gameObject.Position);
                     transform *= layerTransform;
                     // View and projection transforms
                     transform *= ViewProjectionMatrix;

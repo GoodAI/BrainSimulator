@@ -23,7 +23,7 @@ namespace World.Atlas.Layers
         public SimpleObjectLayer(LayerType layerType)
         {
             Thickness = 0.7f;
-            SpanIntervalFrom = 3f;
+            SpanIntervalFrom = 1.05f;
 
             LayerType = layerType;
             GameObjects = new List<IGameObject>();
