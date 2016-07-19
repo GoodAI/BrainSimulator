@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using VRageMath;
+using VRageMath.PackedVector;
 
 namespace RenderingBase.RenderObjects.Buffers
 {
@@ -95,17 +96,17 @@ namespace RenderingBase.RenderObjects.Buffers
         private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
         private static VboBase GenerateCubeElements()
         {
-            Vector4UByte[] cubeElements =
+            HalfVector4[] cubeElements =
             {
-               new Vector4UByte(3, 2, 1, 0), // Back
-               new Vector4UByte(4, 5, 6, 7), // Front
-               new Vector4UByte(4, 5, 1, 0), // Left
-               new Vector4UByte(7, 6, 2, 3), // Right
-               new Vector4UByte(5, 1, 2, 6), // Up
-               new Vector4UByte(7, 3, 0, 4), // Down
+               new HalfVector4(3, 2, 1, 0), // Back
+               new HalfVector4(4, 5, 6, 7), // Front
+               new HalfVector4(4, 5, 1, 0), // Left
+               new HalfVector4(7, 6, 2, 3), // Right
+               new HalfVector4(5, 1, 2, 6), // Up
+               new HalfVector4(7, 3, 0, 4), // Down
             };
 
-            return new StaticVbo<Vector4UByte>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
+            return new StaticVbo<HalfVector4>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
         }
 
         #endregion

@@ -15,7 +15,7 @@ uniform ivec2   tileBorder = ivec2(2, 2);
 uniform mat4 mvp = mat4(1);
 
 
-layout(location = 0) in vec2	v_position;
+layout(location = 0) in vec3	v_position;
 layout(location = 1) in int		v_texOffset;
 
 smooth out vec2 f_texCoods;
@@ -80,5 +80,5 @@ void main()
 
 	f_texCoods = GetTexCoods(tileOffset);
 	f_samplerIdx = v_texOffset >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
-	gl_Position = mvp * vec4(v_position, 0, 1);
+	gl_Position = mvp * vec4(v_position, 1);
 }

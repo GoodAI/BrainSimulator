@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using RenderingBase.RenderObjects.Buffers;
-using RenderingBase.RenderObjects.Geometries;
 
 namespace RenderingBase.RenderObjects.Geometries
 {
@@ -20,7 +19,7 @@ namespace RenderingBase.RenderObjects.Geometries
         public override void Draw()
         {
             GL.BindVertexArray(Handle);
-            GL.DrawElements(PrimitiveType.Quads, 6, DrawElementsType.UnsignedByte, 0);
+            GL.DrawElements(PrimitiveType.Quads, 6 * 4, DrawElementsType.UnsignedShort, 0);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using RenderingBase.RenderObjects.Buffers;
 using RenderingBase.RenderObjects.Geometries;
 using VRageMath;
@@ -19,7 +18,7 @@ namespace Render.RenderObjects.Geometries
             m_offsetsInternal = new Vector4I[QuadCount];
 
             // No init data because we update it (nearly) every step
-            this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(1, null, 1, hint: BufferUsageHint.StaticDraw);
+            this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(QuadCount, null, 1, hint: BufferUsageHint.StaticDraw);
             EnableAttrib(VboPosition.TextureOffsets);
         }
 

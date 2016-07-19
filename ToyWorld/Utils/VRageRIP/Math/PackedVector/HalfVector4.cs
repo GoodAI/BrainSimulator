@@ -19,6 +19,15 @@ namespace VRageMath.PackedVector
         /// Initializes a new instance of the HalfVector4 class.
         /// </summary>
         /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
+        public HalfVector4(ushort x, ushort y, ushort z, ushort w)
+        {
+            this.PackedValue = HalfVector4.PackHelper(x, y, z, w);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the HalfVector4 class.
+        /// </summary>
+        /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
         public HalfVector4(float x, float y, float z, float w)
         {
             this.PackedValue = HalfVector4.PackHelper(x, y, z, w);
@@ -54,6 +63,11 @@ namespace VRageMath.PackedVector
         void IPackedVector.PackFromVector4(Vector4 vector)
         {
             this.PackedValue = HalfVector4.PackHelper(vector.X, vector.Y, vector.Z, vector.W);
+        }
+
+        private static ulong PackHelper(ushort vectorX, ushort vectorY, ushort vectorZ, ushort vectorW)
+        {
+            return vectorX | (ulong)vectorY << 16 | (ulong)vectorZ << 32 | (ulong)vectorW << 48;
         }
 
         private static ulong PackHelper(float vectorX, float vectorY, float vectorZ, float vectorW)
