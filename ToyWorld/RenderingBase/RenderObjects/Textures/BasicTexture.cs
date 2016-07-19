@@ -1,9 +1,14 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using VRageMath;
 
 namespace RenderingBase.RenderObjects.Textures
 {
     public class BasicTexture : TextureBase
     {
+        public BasicTexture(Vector2I size)
+            : this(size.X, size.Y)
+        { }
+
         public BasicTexture(int width, int height, TextureTarget textureTarget = TextureTarget.Texture2D)
             : base(width, height, textureTarget)
         { }

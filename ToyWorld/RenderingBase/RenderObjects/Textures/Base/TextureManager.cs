@@ -15,8 +15,8 @@ namespace RenderingBase.RenderObjects.Textures
 
         public TextureManager()
         {
-            TileCaseInternal<BasicTexture>();
-            CaseInternal<TilesetTexture>();
+            CaseInternal<BasicTexture>();
+            TileCaseInternal<TilesetTexture>();
         }
 
         private void TileCaseInternal<T>()

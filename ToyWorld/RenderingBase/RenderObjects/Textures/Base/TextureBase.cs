@@ -85,10 +85,18 @@ namespace RenderingBase.RenderObjects.Textures
         }
 
 
-        public virtual void Bind()
+        public void Update(Vector2I count, Vector2I offset = default(Vector2I), PixelType targetType = PixelType.UnsignedInt)
         {
-            GL.BindTexture(m_target, m_handle);
+            Update(count, offset, targetType, default(uint[]));
         }
+
+        public void Update<T>(Vector2I count, Vector2I offset = default(Vector2I), PixelType targetType = PixelType.UnsignedInt, T[] data = null)
+            where T : struct
+        {
+            Bind();
+            GL.TexSubImage2D(m_target, 0, offset.X, offset.Y, count.X, count.Y, m_internalFormat, targetType, data);
+        }
+
 
         public void Copy2D(PixelType targetType = PixelType.UnsignedInt)
         {
@@ -100,6 +108,12 @@ namespace RenderingBase.RenderObjects.Textures
         {
             Bind();
             GL.GetTexImage(m_target, 0, m_internalFormat, targetType, targetBuffer);
+        }
+
+
+        public virtual void Bind()
+        {
+            GL.BindTexture(m_target, m_handle);
         }
     }
 }
