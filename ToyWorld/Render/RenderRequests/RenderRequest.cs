@@ -53,8 +53,9 @@ namespace Render.RenderRequests
         protected internal NoEffectOffset Effect;
 
         protected internal TilesetTexture TilesetTexture;
+        protected internal BasicTexture TileTypesTexure;
 
-        protected internal GridOffset GridOffset;
+        protected internal CubeGridOffset GridOffset;
         protected internal QuadOffset QuadOffset;
         protected internal CubeOffset CubeOffset;
         protected internal Quad Quad;
@@ -98,6 +99,7 @@ namespace Render.RenderRequests
             Effect.Dispose();
 
             TilesetTexture.Dispose();
+            TileTypesTexure.Dispose();
 
             if (GridOffset != null) // It is initialized during Draw
                 GridOffset.Dispose();
@@ -369,11 +371,16 @@ namespace Render.RenderRequests
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);
 
 
-                int gridViewSize = GridView.Size.Size();
+                // If we need more space, reallocate
+                Vector2I gridSize = GridView.Size;
+                int gridViewSize = gridSize.Size();
                 var buffer = m_tileTypesBufferPool.FirstOrDefault();
 
                 if (buffer != null && buffer.Item2.Length < gridViewSize && !m_tileTypesBufferPool.IsEmpty) // Reset pool to force reallocation
+                {
                     m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
+                    TileTypesTexure = Renderer.TextureManager.Get<BasicTexture>(gridSize);
+                }
             }
 
             DirtyParams = DirtyParam.None;

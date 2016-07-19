@@ -2,7 +2,7 @@
 
 namespace RenderingBase.RenderObjects.Textures
 {
-    internal class BasicTexture : TextureBase
+    public class BasicTexture : TextureBase
     {
         public BasicTexture(int width, int height, TextureTarget textureTarget = TextureTarget.Texture2D)
             : base(width, height, textureTarget)
