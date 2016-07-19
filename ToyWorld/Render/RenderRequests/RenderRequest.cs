@@ -508,8 +508,8 @@ namespace Render.RenderRequests
             foreach (var tileTypeTask in m_tileTypeLayerQueue)
             {
                 // World transform -- move center to view center
-                Matrix t = transform * Matrix.CreateTranslation(new Vector3(gridView.Center, tileTypeTask.Item1.SpanIntervalFrom));
-
+                Matrix t = transform * Matrix.CreateScale(1, 1, tileTypeTask.Item1.Thickness);
+                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileTypeTask.Item1.SpanIntervalFrom));
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
@@ -527,7 +527,7 @@ namespace Render.RenderRequests
             // Draw objects
             foreach (var objectLayer in World.Atlas.ObjectLayers)
             {
-                Matrix layerTransform = Matrix.CreateTranslation(0, 0, objectLayer.Thickness);
+                Matrix layerTransform = Matrix.CreateTranslation(0, 0, objectLayer.SpanIntervalFrom);
 
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(GridView)))
                 {
@@ -537,7 +537,7 @@ namespace Render.RenderRequests
                     IRotatable rotatableObject = gameObject as IRotatable;
                     if (rotatableObject != null)
                         transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
-                    transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
+                    transform *= Matrix.CreateScale(new Vector3(gameObject.Size, objectLayer.Thickness) * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 5f));
                     transform *= layerTransform;
