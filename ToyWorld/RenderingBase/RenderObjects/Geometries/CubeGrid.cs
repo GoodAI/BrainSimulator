@@ -25,7 +25,7 @@ namespace RenderingBase.RenderObjects.Geometries
         public override void Draw()
         {
             GL.BindVertexArray(Handle);
-            GL.DrawElements(PrimitiveType.Quads,  6 * 4, DrawElementsType.UnsignedShort, 0);
+            GL.DrawElements(PrimitiveType.Quads, Dimensions.Size() * 6 * 4, DrawElementsType.UnsignedShort, 0);
         }
     }
 }

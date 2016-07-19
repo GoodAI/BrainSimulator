@@ -52,6 +52,14 @@ namespace VRageMath.PackedVector
         /// Initializes a new instance of the HalfVector4 class.
         /// </summary>
         /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
+        public HalfVector4(int x, int y, int z, int w)
+            : this((ushort)x, (ushort)y, (ushort)z, (ushort)w)
+        { }
+
+        /// <summary>
+        /// Initializes a new instance of the HalfVector4 class.
+        /// </summary>
+        /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
         public HalfVector4(float x, float y, float z, float w)
             : this(
                 HalfUtils.Pack(x),
