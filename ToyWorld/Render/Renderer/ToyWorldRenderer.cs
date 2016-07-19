@@ -41,7 +41,9 @@ namespace Render.Renderer
 
             // Parameterized geometries
             GeometryManager.CaseParam<Grid>();
+            GeometryManager.CaseParam<CubeGrid>();
             GeometryManager.CaseParam<GridOffset>();
+            GeometryManager.CaseParam<CubeGridOffset>();
 
 
             //// Effect registration

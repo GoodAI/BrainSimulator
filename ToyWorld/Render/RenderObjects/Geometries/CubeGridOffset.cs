@@ -6,19 +6,22 @@ using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    public class GridOffset : Grid
+    public class CubeGridOffset : CubeGrid
     {
-        public GridOffset(Vector2I dimensions)
+        const int QuadCount = 2;
+
+
+        public CubeGridOffset(Vector2I dimensions)
             : base(dimensions)
         {
-            this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(dimensions.Size(), null, 1);
+            this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(dimensions.Size() * QuadCount, null, 1);
             EnableAttrib(VboPosition.TextureOffsets);
         }
 
 
         public int GetPaddedBufferSize()
         {
-            return Dimensions.Size();
+            return Dimensions.Size() * QuadCount;
         }
 
         public void GetPaddedTextureOffsets(int[] data, Vector4I[] paddedData)
@@ -26,10 +29,15 @@ namespace Render.RenderObjects.Geometries
             // We need to send the same offset to every vertex of the quad (size*4)...
             int size = Dimensions.Size();
             Debug.Assert(size <= data.Length, "Too few data to update the texture offsets.");
-            Debug.Assert(size <= paddedData.Length, "Too few data to update the texture offsets.");
+            Debug.Assert(size <= paddedData.Length / QuadCount, "Too few data to update the texture offsets.");
 
-            for (int i = 0; i < size; i++)
-                paddedData[i] = new Vector4I(data[i]);
+            for (int i = 0; i < paddedData.Length; )
+            {
+                int val = data[i >> 1];
+
+                for (int j = 0; j < QuadCount; j++)
+                    paddedData[i++] = new Vector4I(val);
+            }
         }
 
         public void SetTextureOffsets(Vector4I[] data)

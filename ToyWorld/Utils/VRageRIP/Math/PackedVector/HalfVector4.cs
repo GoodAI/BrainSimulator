@@ -1,19 +1,39 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace VRageMath.PackedVector
 {
     /// <summary>
     /// Packed vector type containing four 16-bit floating-point values.
     /// </summary>
-    public struct HalfVector4 : IPackedVector<ulong>, IPackedVector, IEquatable<HalfVector4>
+    [StructLayout(LayoutKind.Explicit, Size = 8)]
+    public struct HalfVector4 : IPackedVector<ulong>, IEquatable<HalfVector4>
     {
-        public ulong PackedValue;
-
-        ulong IPackedVector<ulong>.PackedValue
+        public unsafe struct F2
         {
-            get { return PackedValue; }
-            set { PackedValue = value; }
+            public fixed ushort RawValues[4];
         }
+
+        [FieldOffset(0)]
+        public F2 Values;
+
+        [FieldOffset(0)]
+        public ulong Packed;
+
+        public ulong PackedValue { get { return Packed; } set { Packed = value; } }
+
+        [FieldOffset(0)]
+        public ushort X;
+
+        [FieldOffset(2)]
+        public ushort Y;
+
+        [FieldOffset(4)]
+        public ushort Z;
+
+        [FieldOffset(6)]
+        public ushort W;
+
 
         /// <summary>
         /// Initializes a new instance of the HalfVector4 class.
@@ -21,7 +41,11 @@ namespace VRageMath.PackedVector
         /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
         public HalfVector4(ushort x, ushort y, ushort z, ushort w)
         {
-            this.PackedValue = HalfVector4.PackHelper(x, y, z, w);
+            Packed = 0;
+            X = x;
+            Y = y;
+            Z = z;
+            W = w;
         }
 
         /// <summary>
@@ -29,18 +53,20 @@ namespace VRageMath.PackedVector
         /// </summary>
         /// <param name="x">Initial value for the x component.</param><param name="y">Initial value for the y component.</param><param name="z">Initial value for the z component.</param><param name="w">Initial value for the w component.</param>
         public HalfVector4(float x, float y, float z, float w)
-        {
-            this.PackedValue = HalfVector4.PackHelper(x, y, z, w);
-        }
+            : this(
+                HalfUtils.Pack(x),
+                HalfUtils.Pack(y),
+                HalfUtils.Pack(z),
+                HalfUtils.Pack(w))
+        { }
 
         /// <summary>
         /// Initializes a new instance of the HalfVector4 structure.
         /// </summary>
         /// <param name="vector">A vector containing the initial values for the components of the HalfVector4 structure.</param>
         public HalfVector4(Vector4 vector)
-        {
-            this.PackedValue = HalfVector4.PackHelper(vector.X, vector.Y, vector.Z, vector.W);
-        }
+            : this(vector.X, vector.Y, vector.Z, vector.W)
+        { }
 
         /// <summary>
         /// Compares the current instance of a class to another instance to determine whether they are the same.
@@ -63,25 +89,23 @@ namespace VRageMath.PackedVector
         public static HalfVector4 operator +(HalfVector4 a, ushort val)
         {
             return new HalfVector4(
-                (ushort)a.PackedValue + val,
-                (ushort)(a.PackedValue << 16) + val,
-                (ushort)(a.PackedValue << 32) + val,
-                (ushort)(a.PackedValue << 48) + val);
+                a.X + val,
+                a.Y + val,
+                a.Z + val,
+                a.W + val);
         }
 
         void IPackedVector.PackFromVector4(Vector4 vector)
         {
-            this.PackedValue = HalfVector4.PackHelper(vector.X, vector.Y, vector.Z, vector.W);
+            PackHelper(vector.X, vector.Y, vector.Z, vector.W);
         }
 
-        private static ulong PackHelper(ushort vectorX, ushort vectorY, ushort vectorZ, ushort vectorW)
+        private void PackHelper(float x, float y, float z, float w)
         {
-            return vectorX | (ulong)vectorY << 16 | (ulong)vectorZ << 32 | (ulong)vectorW << 48;
-        }
-
-        private static ulong PackHelper(float vectorX, float vectorY, float vectorZ, float vectorW)
-        {
-            return (ulong)HalfUtils.Pack(vectorX) | (ulong)HalfUtils.Pack(vectorY) << 16 | (ulong)HalfUtils.Pack(vectorZ) << 32 | (ulong)HalfUtils.Pack(vectorW) << 48;
+            X = HalfUtils.Pack(x);
+            Y = HalfUtils.Pack(y);
+            Z = HalfUtils.Pack(z);
+            W = HalfUtils.Pack(w);
         }
 
         /// <summary>
@@ -90,10 +114,10 @@ namespace VRageMath.PackedVector
         public Vector4 ToVector4()
         {
             Vector4 vector4;
-            vector4.X = HalfUtils.Unpack((ushort)this.PackedValue);
-            vector4.Y = HalfUtils.Unpack((ushort)(this.PackedValue >> 16));
-            vector4.Z = HalfUtils.Unpack((ushort)(this.PackedValue >> 32));
-            vector4.W = HalfUtils.Unpack((ushort)(this.PackedValue >> 48));
+            vector4.X = HalfUtils.Unpack(X);
+            vector4.Y = HalfUtils.Unpack(Y);
+            vector4.Z = HalfUtils.Unpack(Z);
+            vector4.W = HalfUtils.Unpack(W);
             return vector4;
         }
 
@@ -110,7 +134,7 @@ namespace VRageMath.PackedVector
         /// </summary>
         public override int GetHashCode()
         {
-            return this.PackedValue.GetHashCode();
+            return PackedValue.GetHashCode();
         }
 
         /// <summary>
