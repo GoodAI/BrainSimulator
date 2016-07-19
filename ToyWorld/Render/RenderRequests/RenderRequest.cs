@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ using World.Physics;
 using World.ToyWorldCore;
 using Rectangle = VRageMath.Rectangle;
 using RectangleF = VRageMath.RectangleF;
+using TupleType = System.Tuple<World.Atlas.Layers.ITileLayer, int[], VRageMath.Vector4I[]>;
 
 namespace Render.RenderRequests
 {
@@ -41,8 +43,8 @@ namespace Render.RenderRequests
         internal OverlayRenderer OverlayRenderer;
         internal ImageRenderer ImageRenderer;
 
-        private ConcurrentBag<Tuple<int[], Vector4I[]>> m_tileTypesBufferPool;
-        private readonly Queue<Tuple<int[], Vector4I[]>> m_tileTypeLayerQueue = new Queue<Tuple<int[], Vector4I[]>>();
+        private ConcurrentBag<TupleType> m_tileTypesBufferPool;
+        private readonly Queue<TupleType> m_tileTypeLayerQueue = new Queue<TupleType>();
         private Task m_tileTypesTask;
 
         protected internal BasicFbo FrontFbo, BackFbo;
@@ -73,9 +75,9 @@ namespace Render.RenderRequests
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            m_tileTypesBufferPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
+            m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
 
-            PositionCenterV = new Vector3(0, 0, 10);
+            PositionCenterV = new Vector3(0, 0, 15);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
 
@@ -363,8 +365,8 @@ namespace Render.RenderRequests
                 int gridViewSize = GridView.Size.Size();
                 var buffer = m_tileTypesBufferPool.FirstOrDefault();
 
-                if (buffer != null && buffer.Item1.Length < gridViewSize && !m_tileTypesBufferPool.IsEmpty) // Reset pool to force reallocation
-                    m_tileTypesBufferPool = new ConcurrentBag<Tuple<int[], Vector4I[]>>();
+                if (buffer != null && buffer.Item2.Length < gridViewSize && !m_tileTypesBufferPool.IsEmpty) // Reset pool to force reallocation
+                    m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
             }
 
             DirtyParams = DirtyParam.None;
@@ -388,17 +390,17 @@ namespace Render.RenderRequests
             {
                 foreach (var layer in toRender)
                 {
-                    Tuple<int[], Vector4I[]> buffers;
+                    TupleType buffers;
 
                     if (!m_tileTypesBufferPool.TryTake(out buffers))
                     {
                         int[] buffer = new int[gridView.Size.Size()];
                         Vector4I[] paddedBuffer = new Vector4I[gridView.Size.Size()];
-                        buffers = new Tuple<int[], Vector4I[]>(buffer, paddedBuffer);
+                        buffers = new TupleType(layer, buffer, paddedBuffer);
                     }
 
-                    layer.GetTileTypesAt(gridView, buffers.Item1);
-                    GridOffset.GetPaddedTextureOffsets(buffers.Item1, buffers.Item2);
+                    layer.GetTileTypesAt(gridView, buffers.Item2);
+                    GridOffset.GetPaddedTextureOffsets(buffers.Item2, buffers.Item3);
                     m_tileTypeLayerQueue.Enqueue(buffers);
                 }
             });
@@ -500,20 +502,19 @@ namespace Render.RenderRequests
 
             // Draw tile layers
             SpinWait.SpinUntil(() => m_tileTypesTask.IsCompleted);
-
-            int i = 0;
+            Debug.Assert(m_tileTypeLayerQueue.Count <= 50, "A strange amount of layers to render (" + m_tileTypeLayerQueue.Count + ") " +
+                                                           "-- a bug with async computation?");
 
             foreach (var tileTypeTask in m_tileTypeLayerQueue)
             {
-                i++;
-
                 // World transform -- move center to view center
-                Matrix t = transform * Matrix.CreateTranslation(new Vector3(gridView.Center, i * 1f));
+                Matrix t = transform * Matrix.CreateTranslation(new Vector3(gridView.Center, tileTypeTask.Item1.SpanIntervalFrom));
+
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
 
-                GridOffset.SetTextureOffsets(tileTypeTask.Item2); // Blocks and waits for the task to finish
+                GridOffset.SetTextureOffsets(tileTypeTask.Item3); // Blocks and waits for the task to finish
                 GridOffset.Draw();
                 m_tileTypesBufferPool.Add(tileTypeTask); // Return the buffer to the pool
             }
@@ -526,7 +527,7 @@ namespace Render.RenderRequests
             // Draw objects
             foreach (var objectLayer in World.Atlas.ObjectLayers)
             {
-                // TODO: Setup for this object layer
+                Matrix layerTransform = Matrix.CreateTranslation(0, 0, objectLayer.Thickness);
 
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(GridView)))
                 {
@@ -539,6 +540,7 @@ namespace Render.RenderRequests
                     transform *= Matrix.CreateScale(gameObject.Size * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
                     transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, 5f));
+                    transform *= layerTransform;
                     // View and projection transforms
                     transform *= ViewProjectionMatrix;
                     Effect.ModelViewProjectionUniform(ref transform);
