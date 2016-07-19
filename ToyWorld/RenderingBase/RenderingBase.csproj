@@ -61,6 +61,7 @@
     <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
+    <Compile Include="RenderObjects\Geometries\FullScreenCubeGrid.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
     <Compile Include="RenderObjects\Geometries\Cube.cs" />
     <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />

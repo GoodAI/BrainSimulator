@@ -60,6 +60,15 @@ namespace VRageMath.PackedVector
             return !a.Equals(b);
         }
 
+        public static HalfVector4 operator +(HalfVector4 a, ushort val)
+        {
+            return new HalfVector4(
+                (ushort)a.PackedValue + val,
+                (ushort)(a.PackedValue << 16) + val,
+                (ushort)(a.PackedValue << 32) + val,
+                (ushort)(a.PackedValue << 48) + val);
+        }
+
         void IPackedVector.PackFromVector4(Vector4 vector)
         {
             this.PackedValue = HalfVector4.PackHelper(vector.X, vector.Y, vector.Z, vector.W);
