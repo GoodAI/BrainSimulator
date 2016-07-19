@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
@@ -43,10 +42,6 @@ namespace Render.RenderRequests
         internal OverlayRenderer OverlayRenderer;
         internal ImageRenderer ImageRenderer;
 
-        private ConcurrentBag<TupleType> m_tileTypesBufferPool;
-        private readonly Queue<TupleType> m_tileTypeLayerQueue = new Queue<TupleType>();
-        private Task m_tileTypesTask;
-
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
 
@@ -54,6 +49,9 @@ namespace Render.RenderRequests
 
         protected internal TilesetTexture TilesetTexture;
         protected internal BasicTexture TileTypesTexure;
+
+        private ConcurrentBag<Pbo<int>> m_tileTypesBufferPool;
+        readonly List<Pbo<int>> m_usedPbos = new List<Pbo<int>>();
 
         protected internal CubeGridOffset GridOffset;
         protected internal QuadOffset QuadOffset;
@@ -76,8 +74,6 @@ namespace Render.RenderRequests
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
-
             PositionCenterV = new Vector3(0, 0, 5);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
@@ -96,6 +92,9 @@ namespace Render.RenderRequests
             if (FboMs != null)
                 FboMs.Dispose();
 
+            foreach (var pbo in m_tileTypesBufferPool)
+                pbo.Dispose();
+            
             Effect.Dispose();
 
             TilesetTexture.Dispose();
@@ -373,12 +372,16 @@ namespace Render.RenderRequests
 
                 // If we need more space, reallocate
                 Vector2I gridSize = GridView.Size;
-                int gridViewSize = gridSize.Size();
-                var buffer = m_tileTypesBufferPool.FirstOrDefault();
 
-                if (buffer != null && buffer.Item2.Length < gridViewSize && !m_tileTypesBufferPool.IsEmpty) // Reset pool to force reallocation
+                if (TileTypesTexure == null || gridSize.Size() > TileTypesTexure.Size.Size())
                 {
-                    m_tileTypesBufferPool = new ConcurrentBag<TupleType>();
+                    // Clearing forces buffer reallocation
+                    foreach (var pbo in m_tileTypesBufferPool)
+                        pbo.Dispose();
+                    m_tileTypesBufferPool = new ConcurrentBag<Pbo<int>>();
+
+                    if (TileTypesTexure != null)
+                        TileTypesTexure.Dispose();
                     TileTypesTexure = Renderer.TextureManager.Get<BasicTexture>(gridSize);
                 }
             }
@@ -394,30 +397,41 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            // Start asynchronous computation of tile types
+            // Start asynchronous copying of tile types
             Rectangle gridView = GridView;
 
             List<ITileLayer> tileLayers = World.Atlas.TileLayers;
-            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
+            ITileLayer[] toRender = tileLayers.Where(x => x.Render).ToArray();
 
-            m_tileTypesTask = Task.Run(() =>
+            foreach (var layer in toRender)
             {
-                foreach (var layer in toRender)
+                Pbo<int> buffer;
+
+                if (!m_tileTypesBufferPool.TryTake(out buffer))
                 {
-                    TupleType buffers;
-
-                    if (!m_tileTypesBufferPool.TryTake(out buffers))
-                    {
-                        int[] buffer = new int[gridView.Size.Size()];
-                        Vector4I[] paddedBuffer = new Vector4I[GridOffset.GetPaddedBufferSize()];
-                        buffers = new TupleType(layer, buffer, paddedBuffer);
-                    }
-
-                    layer.GetTileTypesAt(gridView, buffers.Item2);
-                    GridOffset.GetPaddedTextureOffsets(buffers.Item2, buffers.Item3);
-                    m_tileTypeLayerQueue.Enqueue(buffers);
+                    buffer = new Pbo<int>();
+                    buffer.Init(gridView.Size.Size(), hint: BufferUsageHint.StreamDraw);
                 }
-            });
+
+                m_usedPbos.Add(buffer);
+
+                // Store data directly to device memory
+                buffer.Bind(BufferTarget.PixelUnpackBuffer);
+                IntPtr bufferPtr = GL.MapBuffer(BufferTarget.PixelUnpackBuffer, BufferAccess.WriteOnly);
+                layer.GetTileTypesAt(gridView, bufferPtr, gridView.Size.Size());
+                GL.UnmapBuffer(BufferTarget.PixelUnpackBuffer);
+                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+
+                // Start async copying to the texture
+                buffer.Bind(BufferTarget.PixelPackBuffer);
+                TileTypesTexure.Update(gridView.Size, targetType: PixelType.Int);
+            }
+
+            // Return buffers to the pool (they should not be used elsewhere
+            foreach (var usedPbo in m_usedPbos)
+                m_tileTypesBufferPool.Add(usedPbo);
+
+            m_usedPbos.Clear();
 
 
             if (ImageRenderer != null)
@@ -517,25 +531,21 @@ namespace Render.RenderRequests
             transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
 
             // Draw tile layers
-            SpinWait.SpinUntil(() => m_tileTypesTask.IsCompleted);
-            Debug.Assert(m_tileTypeLayerQueue.Count <= 50, "A strange amount of layers to render (" + m_tileTypeLayerQueue.Count + ") " +
-                                                           "-- a bug with async computation?");
+            List<ITileLayer> tileLayers = World.Atlas.TileLayers;
+            IEnumerable<ITileLayer> toRender = tileLayers.Where(x => x.Render);
 
-            foreach (var tileTypeTask in m_tileTypeLayerQueue)
+            foreach (var tileLayer in toRender)
             {
                 // World transform -- move center to view center
-                Matrix t = transform * Matrix.CreateScale(1, 1, tileTypeTask.Item1.Thickness / 2);
-                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileTypeTask.Item1.SpanIntervalFrom));
+                Matrix t = transform * Matrix.CreateScale(1, 1, tileLayer.Thickness / 2);
+                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
 
-                GridOffset.SetTextureOffsets(tileTypeTask.Item3); // Blocks and waits for the task to finish
+                // Using the tileTypes texture should block until the data is fully copied from the pbo
                 GridOffset.Draw();
-                m_tileTypesBufferPool.Add(tileTypeTask); // Return the buffer to the pool
             }
-
-            m_tileTypeLayerQueue.Clear();
         }
 
         protected virtual void DrawObjectLayers()
