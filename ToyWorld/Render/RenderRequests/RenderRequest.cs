@@ -249,10 +249,15 @@ namespace Render.RenderRequests
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            if (!cameraDirection.HasValue)
-                cameraDirection = Vector3.Forward;
+            //cameraDirection = Vector3.Forward;
+            cameraDirection = cameraDirection ?? new Vector3(0, 5f, -1);
+            //up = up ?? Vector3.Up;
+            up = up ?? Vector3.Backward;
 
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, up ?? Vector3.Up);
+            Vector3 cross = Vector3.Cross(cameraDirection.Value, up.Value); // Perpendicular to both
+            cross = Vector3.Cross(cross, cameraDirection.Value); // Up vector closest to the original up
+
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos - cameraDirection.Value * 10, cameraPos, cross);
 
             return viewMatrix;
         }
@@ -267,7 +272,8 @@ namespace Render.RenderRequests
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.DepthFunc(DepthFunction.Always); // Ignores stored depth values, but still writes them
+            GL.DepthFunc(DepthFunction.Less); // Ignores stored depth values, but still writes them
+            //GL.DepthFunc(DepthFunction.Always); // Ignores stored depth values, but still writes them
 
             // Set up framebuffers
             {
@@ -353,14 +359,15 @@ namespace Render.RenderRequests
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
-                // Flip the image to have its origin in the top-left corner
-                GridOffset = Renderer.GeometryManager.Get<GridOffset>(GridView.Size);
+                GridOffset = Renderer.GeometryManager.Get<CubeGridOffset>(GridView.Size);
 
+                ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
+                //ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
+
+                // Flip the image to have its origin in the top-left corner
                 if (FlipYAxis)
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);
 
-                //m_projMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
 
                 int gridViewSize = GridView.Size.Size();
                 var buffer = m_tileTypesBufferPool.FirstOrDefault();
@@ -444,7 +451,7 @@ namespace Render.RenderRequests
 
             // Setup stuff
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            GL.Enable(EnableCap.Blend);
+            //GL.Enable(EnableCap.Blend);
             SetDefaultBlending();
             GL.Enable(EnableCap.DepthTest);
 

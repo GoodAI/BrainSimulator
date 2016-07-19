@@ -107,7 +107,7 @@ namespace Render.RenderRequests
 
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            return base.GetViewMatrix(cameraPos, cameraDirection, RotateMap ? m_avatarDirection : null);
+            return base.GetViewMatrix(cameraPos, RotateMap ? m_avatarDirection : cameraDirection, up);
         }
 
 
@@ -128,8 +128,9 @@ namespace Render.RenderRequests
             if (RotateMap)
             {
                 var avatar = World.GetAvatar(AvatarID);
-                Vector3 dir = Vector3.Up;
-                dir.RotateZ(avatar.Rotation);
+                //Vector3 dir = Vector3.Up;
+                Vector3 dir = new Vector3(0, 3f, -1);
+                dir.RotateX(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
