@@ -4,9 +4,9 @@ using RenderingBase.RenderObjects.Geometries;
 
 namespace RenderingBase.RenderObjects.Geometries
 {
-    public class FullScreenQuad : GeometryBase
+    public class Quad : GeometryBase
     {
-        public FullScreenQuad()
+        public Quad()
         {
             this[VboPosition.Vertices] = StaticVboFactory.QuadVertices;
             EnableAttrib(VboPosition.Vertices);

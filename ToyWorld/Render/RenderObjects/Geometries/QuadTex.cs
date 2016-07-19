@@ -4,9 +4,9 @@ using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    internal class FullScreenQuadTex : FullScreenQuad
+    internal class QuadTex : Quad
     {
-        public FullScreenQuadTex()
+        public QuadTex()
         {
             // 4 vertices * 2 vector components
             // No init data because we update it (nearly) every step

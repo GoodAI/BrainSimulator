@@ -6,9 +6,9 @@ using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    public class FullScreenGridOffset : FullScreenGrid
+    public class GridOffset : Grid
     {
-        public FullScreenGridOffset(Vector2I dimensions)
+        public GridOffset(Vector2I dimensions)
             : base(dimensions)
         {
             this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(dimensions.Size(), null, 1);

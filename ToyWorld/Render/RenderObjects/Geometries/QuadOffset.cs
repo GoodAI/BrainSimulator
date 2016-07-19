@@ -6,14 +6,14 @@ using VRageMath;
 
 namespace Render.RenderObjects.Geometries
 {
-    public class FullScreenQuadOffset : FullScreenQuad
+    public class QuadOffset : Quad
     {
         const int QuadCount = 1;
 
         private readonly Vector4I[] m_offsetsInternal;
 
 
-        public FullScreenQuadOffset()
+        public QuadOffset()
         {
             // We need to send the same offset to every vertex of the quad (size*4)...
             m_offsetsInternal = new Vector4I[QuadCount];

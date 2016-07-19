@@ -54,10 +54,10 @@ namespace Render.RenderRequests
 
         protected internal TilesetTexture TilesetTexture;
 
-        protected internal FullScreenGridOffset GridOffset;
-        protected internal FullScreenQuadOffset QuadOffset;
+        protected internal GridOffset GridOffset;
+        protected internal QuadOffset QuadOffset;
         protected internal CubeOffset CubeOffset;
-        protected internal FullScreenQuad Quad;
+        protected internal Quad Quad;
 
         protected internal Matrix ProjMatrix;
         protected internal Matrix ViewProjectionMatrix;
@@ -337,8 +337,8 @@ namespace Render.RenderRequests
             }
 
             // Set up geometry
-            Quad = Renderer.GeometryManager.Get<FullScreenQuad>();
-            QuadOffset = Renderer.GeometryManager.Get<FullScreenQuadOffset>();
+            Quad = Renderer.GeometryManager.Get<Quad>();
+            QuadOffset = Renderer.GeometryManager.Get<QuadOffset>();
             CubeOffset = Renderer.GeometryManager.Get<CubeOffset>();
 
             EffectRenderer.Init(Renderer, World, Effects);
@@ -353,9 +353,9 @@ namespace Render.RenderRequests
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                GridOffset = Renderer.GeometryManager.Get<FullScreenGridOffset>(GridView.Size);
                 ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
                 // Flip the image to have its origin in the top-left corner
+                GridOffset = Renderer.GeometryManager.Get<GridOffset>(GridView.Size);
 
                 if (FlipYAxis)
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);

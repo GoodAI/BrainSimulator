@@ -33,15 +33,15 @@ namespace Render.Renderer
 
             //// Geometry registration
             // Plain geometries
-            GeometryManager.Case<FullScreenQuad>();
-            GeometryManager.Case<FullScreenQuadTex>();
-            GeometryManager.Case<FullScreenQuadOffset>();
+            GeometryManager.Case<Quad>();
+            GeometryManager.Case<QuadTex>();
+            GeometryManager.Case<QuadOffset>();
             GeometryManager.Case<Cube>();
             GeometryManager.Case<CubeOffset>();
 
             // Parameterized geometries
-            GeometryManager.CaseParam<FullScreenGrid>();
-            GeometryManager.CaseParam<FullScreenGridOffset>();
+            GeometryManager.CaseParam<Grid>();
+            GeometryManager.CaseParam<GridOffset>();
 
 
             //// Effect registration

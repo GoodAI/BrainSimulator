@@ -5,12 +5,12 @@ using VRageMath;
 
 namespace RenderingBase.RenderObjects.Geometries
 {
-    public class FullScreenGrid : GeometryBase
+    public class Grid : GeometryBase
     {
         public Vector2I Dimensions { get; private set; }
 
 
-        public FullScreenGrid(Vector2I dimensions)
+        public Grid(Vector2I dimensions)
         {
             Dimensions = dimensions;
 
