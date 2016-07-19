@@ -465,9 +465,11 @@ namespace Render.RenderRequests
             // Bind stuff to GL
             Renderer.TextureManager.Bind(TilesetTexture[0]);
             Renderer.TextureManager.Bind(TilesetTexture[1], TextureUnit.Texture1);
+            Renderer.TextureManager.Bind(TileTypesTexure, TextureUnit.Texture4);
             Renderer.EffectManager.Use(Effect);
             Effect.TextureUniform(0);
             Effect.TextureWinterUniform(1);
+            Effect.TileTypesTextureUniform(4);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
 
             // Draw the scene

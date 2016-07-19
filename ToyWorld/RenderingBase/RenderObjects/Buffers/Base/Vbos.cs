@@ -35,6 +35,11 @@ namespace RenderingBase.RenderObjects.Buffers
 
         public void Bind()
         {
+            Bind(Target);
+        }
+
+        public void Bind(BufferTarget target)
+        {
             GL.BindBuffer(Target, Handle);
         }
 

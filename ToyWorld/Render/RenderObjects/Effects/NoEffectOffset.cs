@@ -1,5 +1,4 @@
-﻿using RenderingBase.RenderObjects.Effects;
-using VRageMath;
+﻿using VRageMath;
 
 namespace Render.RenderObjects.Effects
 {
@@ -15,6 +14,7 @@ namespace Render.RenderObjects.Effects
 
             tilesetTexture,
             tilesetTextureWinter,
+            tileTypesTexture,
             diffuse,
             ambient,
         }
@@ -54,6 +54,11 @@ namespace Render.RenderObjects.Effects
         public void TextureWinterUniform(int val)
         {
             SetUniform1(base[Uniforms.tilesetTextureWinter], val);
+        }
+
+        public void TileTypesTextureUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileTypesTexture], val);
         }
 
         public void AmbientUniform(Vector4 val)
