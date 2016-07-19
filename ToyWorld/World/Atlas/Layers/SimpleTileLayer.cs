@@ -18,7 +18,7 @@ namespace World.Atlas.Layers
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
-        private const float DEFAULT_THICKNESS = 1f;
+        private const float DEFAULT_THICKNESS = 1.15f;
 
 
         #region Summer/winter stuff
@@ -62,9 +62,6 @@ namespace World.Atlas.Layers
                     SpanIntervalFrom = 0;
                     break;
                 case LayerType.OnBackground:
-                    SpanIntervalFrom = DEFAULT_THICKNESS;
-                    Thickness = 0.2f;
-                    break;
                 case LayerType.Area:
                 case LayerType.OnGroundInteractable:
                 case LayerType.ObstacleInteractable:
@@ -72,10 +69,19 @@ namespace World.Atlas.Layers
                 case LayerType.Obstacles:
                 case LayerType.Interactables:
                     SpanIntervalFrom = DEFAULT_THICKNESS;
-                    Thickness = DEFAULT_THICKNESS;
                     break;
                 case LayerType.Foreground:
                     SpanIntervalFrom = DEFAULT_THICKNESS * 2;
+                    break;
+                default:
+                    SpanIntervalFrom = DEFAULT_THICKNESS;
+                    break;
+            }
+
+            switch (layerType)
+            {
+                case LayerType.OnBackground:
+                    Thickness = 0.2f;
                     break;
                 default:
                     Thickness = DEFAULT_THICKNESS;
@@ -193,9 +199,9 @@ namespace World.Atlas.Layers
 
             m_summerCache.X = x;
             m_summerCache.Y = y;
-            float hash = (float)((Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) * (1 / (double)int.MaxValue)); // Should be uniformly distributed between 0, 1
+            float hash = (float) ((Math.Abs(m_summerCache.GetHash())%(double) int.MaxValue)*(1/(double) int.MaxValue)); // Should be uniformly distributed between 0, 1
 
-            float weatherChangeIntensityFactor = 1 - m_summer * 4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
+            float weatherChangeIntensityFactor = 1 - m_summer*4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
             weatherChangeIntensityFactor = GetModifiedWinterIntensityFactor(weatherChangeIntensityFactor);
 
             const float maxWinterIntensityFactor = 0.8f;
@@ -211,14 +217,14 @@ namespace World.Atlas.Layers
 
         private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
         {
-            return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
+            return (float) Math.Sin(winterChangeIntensity*MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
         }
 
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            int x = (int)Math.Floor(original.Position.X);
-            int y = (int)Math.Floor(original.Position.Y);
+            int x = (int) Math.Floor(original.Position.X);
+            int y = (int) Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
 
             if (item != original.Actor)
@@ -242,8 +248,8 @@ namespace World.Atlas.Layers
 
         public bool Add(GameActorPosition gameActorPosition)
         {
-            int x = (int)gameActorPosition.Position.X;
-            int y = (int)gameActorPosition.Position.Y;
+            int x = (int) gameActorPosition.Position.X;
+            int y = (int) gameActorPosition.Position.Y;
 
             if (Tiles[x][y] != null)
                 return false;

@@ -508,7 +508,7 @@ namespace Render.RenderRequests
             foreach (var tileTypeTask in m_tileTypeLayerQueue)
             {
                 // World transform -- move center to view center
-                Matrix t = transform * Matrix.CreateScale(1, 1, tileTypeTask.Item1.Thickness);
+                Matrix t = transform * Matrix.CreateScale(1, 1, tileTypeTask.Item1.Thickness / 2);
                 t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileTypeTask.Item1.SpanIntervalFrom));
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
