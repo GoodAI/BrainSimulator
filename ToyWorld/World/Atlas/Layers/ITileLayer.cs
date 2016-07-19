@@ -30,6 +30,14 @@ namespace World.Atlas.Layers
         void GetTileTypesAt(Rectangle rectangle, int[] tileTypes);
 
         /// <summary>
+        /// Returns Tiles in given region, where extremes are included.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="tileTypes"></param>
+        /// <param name="bufferSize"></param>
+        void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize);
+
+        /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
         /// </summary>
         /// <param name="pos"></param>

@@ -129,8 +129,17 @@ namespace World.Atlas.Layers
 
         public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
         {
+            unsafe
+            {
+                fixed (int* types = tileTypes)
+                    GetTileTypesAt(rectangle, (IntPtr) types, tileTypes.Length);
+            }
+        }
+
+        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize)
+        {
             // Store the resulting types in the parameter
-            Debug.Assert(rectangle.Size.Size() <= tileTypes.Length, "Too little space for the grid tile types!");
+            Debug.Assert(rectangle.Size.Size() <= bufferSize, "Too little space for the grid tile types!");
 
             // Use cached getter value
             int viewRight = rectangle.Right;
@@ -154,40 +163,45 @@ namespace World.Atlas.Layers
                 defaultTileOffset = OBSTACLE_TILE_NUMBER;
             }
 
-            // Rows before start of map
-            for (int j = rectangle.Top; j < bot; j++)
+            unsafe
             {
-                for (int i = rectangle.Left; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-            }
+                int* tileTypesPtr = (int*) tileTypes.ToPointer();
 
-            // Rows inside of map
-            for (var j = bot; j < top; j++)
-            {
-                // Tiles before start of map
-                for (int i = rectangle.Left; i < left; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-
-                // Tiles inside of map
-                for (var i = left; i < right; i++)
+                // Rows before start of map
+                for (int j = rectangle.Top; j < bot; j++)
                 {
-                    var tile = Tiles[i][j];
-                    if (tile != null)
-                        tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
-                    else
-                        tileTypes[idx++] = 0; // inside map: must be always 0
+                    for (int i = rectangle.Left; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
                 }
 
-                // Tiles after end of map
-                for (int i = right; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-            }
+                // Rows inside of map
+                for (var j = bot; j < top; j++)
+                {
+                    // Tiles before start of map
+                    for (int i = rectangle.Left; i < left; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
 
-            // Rows after end of map
-            for (int j = top; j < rectangle.Bottom; j++)
-            {
-                for (int i = rectangle.Left; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    // Tiles inside of map
+                    for (var i = left; i < right; i++)
+                    {
+                        var tile = Tiles[i][j];
+                        if (tile != null)
+                            *tileTypesPtr++ = GetDefaultTileOffset(i, j, tile.TilesetId);
+                        else
+                            *tileTypesPtr++ = 0; // inside map: must be always 0
+                    }
+
+                    // Tiles after end of map
+                    for (int i = right; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
+                }
+
+                // Rows after end of map
+                for (int j = top; j < rectangle.Bottom; j++)
+                {
+                    for (int i = rectangle.Left; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
+                }
             }
         }
 
@@ -199,9 +213,9 @@ namespace World.Atlas.Layers
 
             m_summerCache.X = x;
             m_summerCache.Y = y;
-            float hash = (float) ((Math.Abs(m_summerCache.GetHash())%(double) int.MaxValue)*(1/(double) int.MaxValue)); // Should be uniformly distributed between 0, 1
+            float hash = (float)((Math.Abs(m_summerCache.GetHash()) % (double)int.MaxValue) * (1 / (double)int.MaxValue)); // Should be uniformly distributed between 0, 1
 
-            float weatherChangeIntensityFactor = 1 - m_summer*4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
+            float weatherChangeIntensityFactor = 1 - m_summer * 4; // It is Oct to Mar, use stronger intensity towards Dec/Jan
             weatherChangeIntensityFactor = GetModifiedWinterIntensityFactor(weatherChangeIntensityFactor);
 
             const float maxWinterIntensityFactor = 0.8f;
@@ -217,14 +231,14 @@ namespace World.Atlas.Layers
 
         private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
         {
-            return (float) Math.Sin(winterChangeIntensity*MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
+            return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
         }
 
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            int x = (int) Math.Floor(original.Position.X);
-            int y = (int) Math.Floor(original.Position.Y);
+            int x = (int)Math.Floor(original.Position.X);
+            int y = (int)Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
 
             if (item != original.Actor)
@@ -248,8 +262,8 @@ namespace World.Atlas.Layers
 
         public bool Add(GameActorPosition gameActorPosition)
         {
-            int x = (int) gameActorPosition.Position.X;
-            int y = (int) gameActorPosition.Position.Y;
+            int x = (int)gameActorPosition.Position.X;
+            int y = (int)gameActorPosition.Position.Y;
 
             if (Tiles[x][y] != null)
                 return false;
