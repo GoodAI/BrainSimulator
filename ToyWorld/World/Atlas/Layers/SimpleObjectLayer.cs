@@ -13,10 +13,18 @@ namespace World.Atlas.Layers
         private List<IGameObject> GameObjects { get; set; }
 
         public bool Render { get; set; }
+
+        public float Thickness { get; private set; }
+        public float SpanIntervalFrom { get; private set; }
+        public float SpanIntervalTo { get { return SpanIntervalFrom + Thickness; } }
+
         public LayerType LayerType { get; set; }
 
         public SimpleObjectLayer(LayerType layerType)
         {
+            Thickness = 0.7f;
+            SpanIntervalFrom = 3f;
+
             LayerType = layerType;
             GameObjects = new List<IGameObject>();
         }
@@ -54,7 +62,7 @@ namespace World.Atlas.Layers
 
             foreach (IGameObject o in GameObjects)
             {
-                var gameObject = (GameObject) o;
+                var gameObject = (GameObject)o;
                 IPhysicalEntity physicalEntity = gameObject.PhysicalEntity;
                 RectangleF r;
                 RectangleF cover = physicalEntity.CoverRectangle();
@@ -81,7 +89,7 @@ namespace World.Atlas.Layers
 
             foreach (IGameObject o in GameObjects)
             {
-                var gameObject = (GameObject) o;
+                var gameObject = (GameObject)o;
                 if (circle.Include(gameObject.Position))
                 {
                     list.Add(gameObject);
@@ -114,7 +122,7 @@ namespace World.Atlas.Layers
 
         public bool ReplaceWith<T>(GameActorPosition original, T replacement)
         {
-            GameObject item = (GameObject) original.Actor;
+            GameObject item = (GameObject)original.Actor;
             if (item != original.Actor) return false;
 
             GameObjects.Remove(item);

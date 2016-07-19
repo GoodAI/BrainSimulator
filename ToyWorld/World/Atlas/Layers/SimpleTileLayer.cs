@@ -18,6 +18,8 @@ namespace World.Atlas.Layers
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
+        private const float DEFAULT_THICKNESS = 1f;
+
 
         #region Summer/winter stuff
 
@@ -31,6 +33,10 @@ namespace World.Atlas.Layers
 
         #endregion
 
+
+        public float Thickness { get; private set; }
+        public float SpanIntervalFrom { get; private set; }
+        public float SpanIntervalTo { get { return SpanIntervalFrom + Thickness; } }
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -50,11 +56,37 @@ namespace World.Atlas.Layers
 
             m_random = random ?? new Random();
 
-            LayerType = layerType;
-            m_summerCache.Z = m_random.Next();
+            switch (layerType)
+            {
+                case LayerType.Background:
+                    SpanIntervalFrom = 0;
+                    break;
+                case LayerType.OnBackground:
+                    SpanIntervalFrom = DEFAULT_THICKNESS;
+                    Thickness = 0.2f;
+                    break;
+                case LayerType.Area:
+                case LayerType.OnGroundInteractable:
+                case LayerType.ObstacleInteractable:
+                case LayerType.Obstacle:
+                case LayerType.Obstacles:
+                case LayerType.Interactables:
+                    SpanIntervalFrom = DEFAULT_THICKNESS;
+                    Thickness = DEFAULT_THICKNESS;
+                    break;
+                case LayerType.Foreground:
+                    SpanIntervalFrom = DEFAULT_THICKNESS * 2;
+                    break;
+                default:
+                    Thickness = DEFAULT_THICKNESS;
+                    break;
+            }
 
             Height = height;
             Width = width;
+
+            LayerType = layerType;
+            m_summerCache.Z = m_random.Next();
 
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
 
@@ -189,7 +221,8 @@ namespace World.Atlas.Layers
             int y = (int)Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
 
-            if (item != original.Actor) return false;
+            if (item != original.Actor)
+                return false;
 
             Tiles[x][y] = null;
             Tile tileReplacement = replacement as Tile;

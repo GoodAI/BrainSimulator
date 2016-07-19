@@ -11,6 +11,11 @@ namespace World.Atlas.Layers
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
+        int Width { get; set; }
+
+        int Height { get; set; }
+
+
         /// <summary>
         /// Updates any internal states of tiles within the layer.
         /// </summary>
@@ -31,17 +36,16 @@ namespace World.Atlas.Layers
         /// <param name="size"></param>
         /// <param name="tileTypes"></param>
         void GetTileTypesAt(Vector2I pos, Vector2I size, int[] tileTypes);
-
-
-        int Width { get; set; }
-
-        int Height { get; set; }
     }
 
 
     [ContractClassFor(typeof(ITileLayer))]
     internal abstract class TileLayerContracts : ITileLayer
     {
+        public float Thickness { get; private set; }
+        public float SpanIntervalFrom { get; private set; }
+        public float SpanIntervalTo { get; private set; }
+
         public int Width { get; set; }
         public int Height { get; set; }
 
