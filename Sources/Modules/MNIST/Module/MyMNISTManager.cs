@@ -63,13 +63,6 @@ namespace MNIST
             return BitConverter.ToInt32(intAsBytes, 0);
         }
 
-        public void Reset()
-        {
-            initialized = false;
-            m_sequenceIterator = 0;
-            m_lastServedImage = -1;
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -188,6 +181,23 @@ namespace MNIST
             }
         }
 
+        MNISTSetType lastType = MNISTSetType.Training;
+        int[] lastValidNumbers = null;
+        bool lastRandomEnumerate = false;
+        bool lastDefineOrder = false;
+
+        private void CheckIfSomethingChaged(MNISTSetType type, int[] validNumbers, bool randomEnumerate, bool defineOrder) 
+        {
+            if (lastType != type || lastValidNumbers != validNumbers || lastRandomEnumerate != randomEnumerate || lastDefineOrder != defineOrder) 
+            {
+                lastType = type;
+                lastValidNumbers = validNumbers;
+                lastRandomEnumerate = randomEnumerate;
+                lastDefineOrder = defineOrder;
+                initialized = false;
+            }
+        }
+
 
         /// <summary>
         /// Gets the next values
@@ -213,6 +223,8 @@ namespace MNIST
                 enumerator = m_testImagesEnumerator;
                 examplesPerDigitCnt = m_testExamplesPerDigitCnt;
             }
+
+            CheckIfSomethingChaged(setType, validNumbers, RandomEnumerate, m_definedOrder);
 
             if (!initialized)
             {
