@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
@@ -50,8 +49,8 @@ namespace Render.RenderRequests
         protected internal TilesetTexture TilesetTexture;
         protected internal BasicTexture1D TileTypesTexure;
 
-        private ConcurrentBag<Pbo<int>> m_tileTypesBufferPool;
-        readonly List<Pbo<int>> m_usedPbos = new List<Pbo<int>>();
+        private ConcurrentBag<Pbo<ushort>> m_tileTypesBufferPool;
+        readonly List<Pbo<ushort>> m_usedPbos = new List<Pbo<ushort>>();
 
         protected internal CubeGridOffset GridOffset;
         protected internal QuadOffset QuadOffset;
@@ -94,7 +93,7 @@ namespace Render.RenderRequests
 
             foreach (var pbo in m_tileTypesBufferPool)
                 pbo.Dispose();
-            
+
             Effect.Dispose();
 
             TilesetTexture.Dispose();
@@ -273,7 +272,7 @@ namespace Render.RenderRequests
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.DepthFunc(DepthFunction.Less); // Ignores stored depth values, but still writes them
+            GL.DepthFunc(DepthFunction.Less); // Default value?
             //GL.DepthFunc(DepthFunction.Always); // Ignores stored depth values, but still writes them
 
             // Set up framebuffers
@@ -376,9 +375,10 @@ namespace Render.RenderRequests
                 if (TileTypesTexure == null || gridSize.Size() > TileTypesTexure.Size.Size())
                 {
                     // Clearing forces buffer reallocation
-                    foreach (var pbo in m_tileTypesBufferPool)
-                        pbo.Dispose();
-                    m_tileTypesBufferPool = new ConcurrentBag<Pbo<int>>();
+                    if (m_tileTypesBufferPool != null)
+                        foreach (var pbo in m_tileTypesBufferPool)
+                            pbo.Dispose();
+                    m_tileTypesBufferPool = new ConcurrentBag<Pbo<ushort>>();
 
                     if (TileTypesTexure != null)
                         TileTypesTexure.Dispose();
@@ -404,28 +404,29 @@ namespace Render.RenderRequests
             List<ITileLayer> tileLayers = World.Atlas.TileLayers;
             ITileLayer[] toRender = tileLayers.Where(x => x.Render).ToArray();
 
+            // Start data copying
             foreach (var layer in toRender)
             {
-                Pbo<int> buffer;
-
+                Pbo<ushort> buffer;
                 if (!m_tileTypesBufferPool.TryTake(out buffer))
                 {
-                    buffer = new Pbo<int>();
+                    buffer = new Pbo<ushort>(1);
                     buffer.Init(gridView.Size.Size(), hint: BufferUsageHint.StreamDraw);
+                    m_tileTypesBufferPool.Add(buffer);
                 }
 
                 m_usedPbos.Add(buffer);
 
+                int tileCount = gridView.Size.Size();
                 // Store data directly to device memory
-                buffer.Bind(BufferTarget.PixelUnpackBuffer);
-                IntPtr bufferPtr = GL.MapBuffer(BufferTarget.PixelUnpackBuffer, BufferAccess.WriteOnly);
-                layer.GetTileTypesAt(gridView, bufferPtr, gridView.Size.Size());
-                GL.UnmapBuffer(BufferTarget.PixelUnpackBuffer);
-                GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+                buffer.Bind();
+                IntPtr bufferPtr = GL.MapBuffer(buffer.Target, BufferAccess.WriteOnly);
+                layer.GetTileTypesAt(gridView, bufferPtr, tileCount);
+                GL.UnmapBuffer(buffer.Target);
 
                 // Start async copying to the texture
-                buffer.Bind(BufferTarget.PixelPackBuffer);
-                TileTypesTexure.Update(gridView.Size, targetType: PixelType.Int);
+                buffer.Bind(BufferTarget.PixelUnpackBuffer);
+                TileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort);
             }
 
             // Return buffers to the pool (they should not be used elsewhere

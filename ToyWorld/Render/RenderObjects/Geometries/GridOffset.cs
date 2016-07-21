@@ -12,7 +12,7 @@ namespace Render.RenderObjects.Geometries
             : base(dimensions)
         {
             this[VboPosition.TextureOffsets] = new Vbo<Vector4I>(dimensions.Size(), null, 1);
-            EnableAttrib(VboPosition.TextureOffsets);
+            EnableAttribI(VboPosition.TextureOffsets, type: VertexAttribIntegerType.UnsignedShort);
         }
 
 
@@ -21,7 +21,7 @@ namespace Render.RenderObjects.Geometries
             return Dimensions.Size();
         }
 
-        public void GetPaddedTextureOffsets(int[] data, Vector4I[] paddedData)
+        public void GetPaddedTextureOffsets(ushort[] data, Vector4I[] paddedData)
         {
             // We need to send the same offset to every vertex of the quad (size*4)...
             int size = Dimensions.Size();
@@ -29,7 +29,7 @@ namespace Render.RenderObjects.Geometries
             Debug.Assert(size <= paddedData.Length, "Too few data to update the texture offsets.");
 
             for (int i = 0; i < size; i++)
-                paddedData[i] = new Vector4I(data[i]);
+                paddedData[i] = new Vector4I((data[i] << 16) | data[i]);
         }
 
         public void SetTextureOffsets(Vector4I[] data)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
@@ -151,8 +152,6 @@ namespace World.Atlas.Layers
             int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
 
 
-            // TODO : Move to properties
-            int idx = 0;
             int defaultTileOffset = 0;
             if (LayerType == LayerType.Background)
             {
@@ -206,6 +205,7 @@ namespace World.Atlas.Layers
         }
 
         // This is rather slow to compute, but we assume only small portions of grid view will be in sight
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ushort GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
             if (!IsWinter)
@@ -229,6 +229,7 @@ namespace World.Atlas.Layers
             return (ushort)defaultTileOffset;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
         {
             return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)

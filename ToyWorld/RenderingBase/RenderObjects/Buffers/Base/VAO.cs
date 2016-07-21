@@ -88,6 +88,27 @@ namespace RenderingBase.RenderObjects.Buffers
             //VboBase.Unbind();
         }
 
+        public void EnableAttribI(
+            VboPosition id, int attribArrayIdx = -1,
+            VertexAttribIntegerType type = VertexAttribIntegerType.Int,
+            int stride = 0, int offset = 0)
+        {
+            if (attribArrayIdx < 0)
+                attribArrayIdx = (int)id;
+
+
+            VboBase vboBase = this[id];
+
+            GL.BindVertexArray(Handle);
+            vboBase.Bind();
+
+            GL.EnableVertexAttribArray(attribArrayIdx);
+            GL.VertexAttribIPointer(attribArrayIdx, vboBase.ElementSize, type, stride, new IntPtr(offset));
+
+            //GL.BindVertexArray(0);
+            //VboBase.Unbind();
+        }
+
         //public void DisableAttrib(string id, int attribArrayIdx)
         //{
         //    GL.BindVertexArray(Handle);

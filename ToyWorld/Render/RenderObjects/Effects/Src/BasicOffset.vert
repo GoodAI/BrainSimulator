@@ -18,7 +18,6 @@ uniform mat4 mvp = mat4(1);
 
 
 layout(location = 0) in vec3	v_position;
-layout(location = 1) in unsigned short		v_texOffset;
 
 smooth out	vec2	f_texCoods;
 flat out	int		f_samplerIdx;
@@ -70,16 +69,16 @@ vec2 GetTexCoods(int tileOffset)
 
 void main()
 {
-	int tileType = int(v_texOffset);// int(texelFetch(tileTypesTexture, gl_VertexID / 8, 0).r);
+	int tileType = int(texelFetch(tileTypesTexture, gl_VertexID / 8, 0).r);
 	int tileOffset = tileType & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
 
-	//if (tileOffset <= 1) // Tiles are indexed from 1......
-	//{
-	//	// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
-	//	gl_Position = vec4(0, 0, 2000, 0);
-	//	f_samplerIdx = 64;
-	//	return;
-	//}
+	if (tileOffset <= 1) // Tiles are indexed from 1......
+	{
+		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
+		gl_Position = vec4(0, 0, 2000, 0);
+		f_samplerIdx = 64;
+		return;
+	}
 
 	f_texCoods = GetTexCoods(tileOffset);
 	f_samplerIdx = tileType >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
