@@ -40,7 +40,7 @@ namespace RenderingBase.RenderObjects.Buffers
 
         public void Bind(BufferTarget target)
         {
-            GL.BindBuffer(Target, Handle);
+            GL.BindBuffer(target, Handle);
         }
 
         //public void Unbind()

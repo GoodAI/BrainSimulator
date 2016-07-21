@@ -48,7 +48,7 @@ namespace Render.RenderRequests
         protected internal NoEffectOffset Effect;
 
         protected internal TilesetTexture TilesetTexture;
-        protected internal BasicTexture TileTypesTexure;
+        protected internal BasicTexture1D TileTypesTexure;
 
         private ConcurrentBag<Pbo<int>> m_tileTypesBufferPool;
         readonly List<Pbo<int>> m_usedPbos = new List<Pbo<int>>();
@@ -382,7 +382,8 @@ namespace Render.RenderRequests
 
                     if (TileTypesTexure != null)
                         TileTypesTexure.Dispose();
-                    TileTypesTexure = Renderer.TextureManager.Get<BasicTexture>(gridSize);
+                    TileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(gridSize);
+                    TileTypesTexure.DefaultInit();
                 }
             }
 

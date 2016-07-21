@@ -6,8 +6,8 @@ namespace RenderingBase.RenderObjects.Buffers
         : Vbo<T>
         where T : struct
     {
-        public Pbo()
-            : base(target: BufferTarget.PixelPackBuffer)
+        public Pbo(int elementSize = -1)
+            : base(target: BufferTarget.PixelPackBuffer, elementSize: elementSize)
         { }
     }
 }

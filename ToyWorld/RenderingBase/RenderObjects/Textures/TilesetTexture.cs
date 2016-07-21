@@ -61,9 +61,9 @@ namespace RenderingBase.RenderObjects.Textures
 
                         try
                         {
-                            BasicTexture texture = new BasicTexture(bmpTextureWithBorders.Width, bmpTextureWithBorders.Height);
+                            BasicTexture2D texture = new BasicTexture2D(bmpTextureWithBorders.Width, bmpTextureWithBorders.Height);
 
-                            texture.Init(
+                            texture.Init2D(
                                 dataNew.Scan0.ArgbToArgbArray(dataNew.Width * dataNew.Height),
                                 generateMipmap: true);
 
