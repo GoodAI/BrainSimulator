@@ -12,6 +12,7 @@ namespace Render.RenderObjects.Effects
             texSizeCount,
             tileSizeMargin,
             tileBorder,
+            tileVertexCount,
             mvp,
 
             tilesetTexture,
@@ -49,6 +50,11 @@ namespace Render.RenderObjects.Effects
         public void TileBorderUniform(Vector2I val)
         {
             SetUniform2(base[Uniforms.tileBorder], val);
+        }
+
+        public void TileVertexCountUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileVertexCount], val);
         }
 
         public void ModelViewProjectionUniform(ref Matrix val)

@@ -5,8 +5,12 @@ const int MODULO_BITS = 12;
 const int MODULO_MASK = (1 << MODULO_BITS) - 1; // 0x00000FFF
 
 
+// Stores the tileTypes for the layers
 uniform usampler1D	tileTypesTexture;
+// The offset into tileTypesTexture (each layer accesses a different part)
 uniform int			tileTypesIdxOffset = 1024;
+// The amount of vertices of one tile's geometry
+uniform int		tileVertexCount = 8;
 
 // Texture dimensions in px, tiles per row
 uniform ivec3	texSizeCount	= ivec3(256, 256, 16);
@@ -70,7 +74,7 @@ vec2 GetTexCoods(int tileOffset)
 
 void main()
 {
-	int tileType = int(texelFetch(tileTypesTexture, gl_VertexID / 8 + tileTypesIdxOffset, 0).r);
+	int tileType = int(texelFetch(tileTypesTexture, gl_VertexID / tileVertexCount + tileTypesIdxOffset, 0).r);
 	int tileOffset = tileType & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
 
 	if (tileOffset <= 1) // Tiles are indexed from 1......

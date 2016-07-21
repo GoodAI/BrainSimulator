@@ -495,11 +495,12 @@ namespace Render.RenderRequests
                         BlitFramebufferFilter.Nearest);
             }
 
-            // Effects cannot be used with depth testing
+            // Effects should not be used with depth testing
             GL.Disable(EnableCap.DepthTest);
 
             // Draw effects after multisampling to save fragment shader calls
             EffectRenderer.Draw(Renderer, World);
+
             PostprocessRenderer.Draw(Renderer, World);
             OverlayRenderer.Draw(Renderer, World);
 
