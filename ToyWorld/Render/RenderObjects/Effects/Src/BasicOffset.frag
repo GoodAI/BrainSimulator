@@ -3,7 +3,6 @@
 
 uniform sampler2D tilesetTexture;
 uniform sampler2D tilesetTextureWinter;
-uniform sampler2D tileTypesTexture;
 
 // Lighting coefficients
 // Ambient color and coefficient

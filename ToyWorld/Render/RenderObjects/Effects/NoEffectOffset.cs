@@ -7,6 +7,7 @@ namespace Render.RenderObjects.Effects
         private enum Uniforms
         {
             // Names must correspond to names as defined in the shaders
+            tileTypesTexture,
             texSizeCount,
             tileSizeMargin,
             tileBorder,
@@ -14,7 +15,6 @@ namespace Render.RenderObjects.Effects
 
             tilesetTexture,
             tilesetTextureWinter,
-            tileTypesTexture,
             diffuse,
             ambient,
         }
@@ -24,6 +24,11 @@ namespace Render.RenderObjects.Effects
             : base(typeof(Uniforms), "BasicOffset.vert", "BasicOffset.frag")
         { }
 
+
+        public void TileTypesTextureUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileTypesTexture], val);
+        }
 
         public void TexSizeCountUniform(Vector3I val)
         {
@@ -54,11 +59,6 @@ namespace Render.RenderObjects.Effects
         public void TextureWinterUniform(int val)
         {
             SetUniform1(base[Uniforms.tilesetTextureWinter], val);
-        }
-
-        public void TileTypesTextureUniform(int val)
-        {
-            SetUniform1(base[Uniforms.tileTypesTexture], val);
         }
 
         public void AmbientUniform(Vector4 val)
