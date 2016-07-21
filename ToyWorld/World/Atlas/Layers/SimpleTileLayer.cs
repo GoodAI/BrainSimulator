@@ -120,19 +120,19 @@ namespace World.Atlas.Layers
             return GetActorAt(coordinates.X, coordinates.Y);
         }
 
-        public void GetTileTypesAt(Vector2I topLeft, Vector2I size, int[] tileTypes)
+        public void GetTileTypesAt(Vector2I topLeft, Vector2I size, ushort[] tileTypes)
         {
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
             GetTileTypesAt(rectangle, tileTypes);
         }
 
-        public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, ushort[] tileTypes)
         {
             unsafe
             {
-                fixed (int* types = tileTypes)
-                    GetTileTypesAt(rectangle, (IntPtr) types, tileTypes.Length);
+                fixed (ushort* types = tileTypes)
+                    GetTileTypesAt(rectangle, (IntPtr)types, tileTypes.Length);
             }
         }
 
@@ -165,7 +165,7 @@ namespace World.Atlas.Layers
 
             unsafe
             {
-                int* tileTypesPtr = (int*) tileTypes.ToPointer();
+                ushort* tileTypesPtr = (ushort*)tileTypes.ToPointer();
 
                 // Rows before start of map
                 for (int j = rectangle.Top; j < bot; j++)
@@ -206,10 +206,10 @@ namespace World.Atlas.Layers
         }
 
         // This is rather slow to compute, but we assume only small portions of grid view will be in sight
-        private int GetDefaultTileOffset(int x, int y, int defaultTileOffset)
+        private ushort GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
             if (!IsWinter)
-                return defaultTileOffset;
+                return (ushort)defaultTileOffset;
 
             m_summerCache.X = x;
             m_summerCache.Y = y;
@@ -224,9 +224,9 @@ namespace World.Atlas.Layers
             weatherChangeIntensityFactor -= winterOffset; // Makes winter end a little sooner
 
             if (hash < weatherChangeIntensityFactor)
-                return defaultTileOffset + TILESETS_OFFSET;
+                return (ushort)(defaultTileOffset + TILESETS_OFFSET);
 
-            return defaultTileOffset;
+            return (ushort)defaultTileOffset;
         }
 
         private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
