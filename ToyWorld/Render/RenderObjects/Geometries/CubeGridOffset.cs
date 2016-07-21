@@ -18,8 +18,6 @@ namespace Render.RenderObjects.Geometries
             EnableAttribI(VboPosition.TextureOffsets, type: VertexAttribIntegerType.UnsignedShort);
         }
 
-        }
-
 
         public int GetPaddedBufferSize()
         {

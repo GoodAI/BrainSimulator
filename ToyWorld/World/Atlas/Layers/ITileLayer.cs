@@ -35,7 +35,8 @@ namespace World.Atlas.Layers
         /// <param name="rectangle"></param>
         /// <param name="tileTypes"></param>
         /// <param name="bufferSize"></param>
-        void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize);
+        /// <param name="offset"></param>
+        void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0);
 
         /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
@@ -97,7 +98,7 @@ namespace World.Atlas.Layers
             Contract.EndContractBlock();
         }
 
-        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize)
+        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0)
         {
             if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
                 throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");

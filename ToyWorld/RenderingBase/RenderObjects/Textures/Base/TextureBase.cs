@@ -113,23 +113,27 @@ namespace RenderingBase.RenderObjects.Textures
 
         #region Updating
 
-        public void Update1D(int count, int offset = 0, PixelType dataType = PixelType.UnsignedInt)
+        public void Update1D(int count, int offset = 0, PixelType dataType = PixelType.UnsignedInt, int byteDataOffset = 0)
         {
-            Update1D(count, offset, dataType, default(uint[]));
+            Bind();
+            GL.TexSubImage1D(m_target, 0, offset, count, m_internalFormat, dataType, new IntPtr(byteDataOffset));
         }
 
-        public void Update1D<T>(int count, int offset = 0, PixelType dataType = PixelType.UnsignedInt, T[] data = null) where T : struct
+        public void Update1D<T>(int count, int offset = 0, PixelType dataType = PixelType.UnsignedInt, T[] data = null)
+            where T : struct
         {
             Bind();
             GL.TexSubImage1D(m_target, 0, offset, count, m_internalFormat, dataType, data);
         }
 
-        public void Update2D(Vector2I count, Vector2I offset = default(Vector2I), PixelType dataType = PixelType.UnsignedInt)
+        public void Update2D(Vector2I count, Vector2I offset = default(Vector2I), PixelType dataType = PixelType.UnsignedInt, int byteDataOffset = 0)
         {
-            Update2D(count, offset, dataType, default(uint[]));
+            Bind();
+            GL.TexSubImage2D(m_target, 0, offset.X, offset.Y, count.X, count.Y, m_internalFormat, dataType, new IntPtr(byteDataOffset));
         }
 
-        public void Update2D<T>(Vector2I count, Vector2I offset = default(Vector2I), PixelType dataType = PixelType.UnsignedInt, T[] data = null) where T : struct
+        public void Update2D<T>(Vector2I count, Vector2I offset = default(Vector2I), PixelType dataType = PixelType.UnsignedInt, T[] data = null) 
+            where T : struct
         {
             Bind();
             GL.TexSubImage2D(m_target, 0, offset.X, offset.Y, count.X, count.Y, m_internalFormat, dataType, data);
@@ -141,7 +145,8 @@ namespace RenderingBase.RenderObjects.Textures
             Copy2D(targetType, default(uint[]));
         }
 
-        public void Copy2D<T>(PixelType targetType = PixelType.UnsignedInt, T[] targetBuffer = null) where T : struct
+        public void Copy2D<T>(PixelType targetType = PixelType.UnsignedInt, T[] targetBuffer = null) 
+            where T : struct
         {
             Bind();
             GL.GetTexImage(m_target, 0, m_internalFormat, targetType, targetBuffer);

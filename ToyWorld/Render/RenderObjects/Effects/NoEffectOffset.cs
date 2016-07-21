@@ -8,6 +8,7 @@ namespace Render.RenderObjects.Effects
         {
             // Names must correspond to names as defined in the shaders
             tileTypesTexture,
+            tileTypesIdxOffset,
             texSizeCount,
             tileSizeMargin,
             tileBorder,
@@ -28,6 +29,11 @@ namespace Render.RenderObjects.Effects
         public void TileTypesTextureUniform(int val)
         {
             SetUniform1(base[Uniforms.tileTypesTexture], val);
+        }
+
+        public void TileTypesIdxOffsetUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileTypesIdxOffset], val);
         }
 
         public void TexSizeCountUniform(Vector3I val)

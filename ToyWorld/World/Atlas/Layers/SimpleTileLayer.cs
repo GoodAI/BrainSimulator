@@ -137,7 +137,14 @@ namespace World.Atlas.Layers
             }
         }
 
-        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize)
+        /// <summary>
+        /// TileTypes should be an ushort array of count at least bufferSize.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="tileTypes"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="offset"></param>
+        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0)
         {
             // Store the resulting types in the parameter
             Debug.Assert(rectangle.Size.Size() <= bufferSize, "Too little space for the grid tile types!");
@@ -164,7 +171,7 @@ namespace World.Atlas.Layers
 
             unsafe
             {
-                ushort* tileTypesPtr = (ushort*)tileTypes.ToPointer();
+                ushort* tileTypesPtr = (ushort*)tileTypes.ToPointer() + offset;
 
                 // Rows before start of map
                 for (int j = rectangle.Top; j < bot; j++)

@@ -4,6 +4,7 @@ using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
+using Render.RenderObjects.Geometries;
 using RenderingBase.Renderer;
 using RenderingBase.RenderObjects.Textures;
 using TmxMapSerializer.Elements;
@@ -23,6 +24,8 @@ namespace Render.RenderRequests
         protected NoEffectOffset m_overlayEffect;
         protected TilesetTexture m_overlayTexture;
 
+        protected QuadOffset QuadOffset;
+
         #endregion
 
         #region Genesis
@@ -37,6 +40,8 @@ namespace Render.RenderRequests
                 m_overlayEffect.Dispose();
             if (m_overlayTexture != null)
                 m_overlayTexture.Dispose();
+
+            QuadOffset.Dispose();
         }
 
         #endregion
@@ -76,6 +81,8 @@ namespace Render.RenderRequests
             m_overlayEffect.TileBorderUniform(tileBorder);
 
             m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
+
+            QuadOffset = renderer.GeometryManager.Get<QuadOffset>();
         }
 
         #endregion
@@ -116,8 +123,8 @@ namespace Render.RenderRequests
             m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            Owner.QuadOffset.SetTextureOffsets((int)type);
-            Owner.QuadOffset.Draw();
+            QuadOffset.SetTextureOffsets((int)type);
+            QuadOffset.Draw();
 
 
             // Draw the inventory Tool
@@ -130,8 +137,8 @@ namespace Render.RenderRequests
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
                 Owner.Effect.ModelViewProjectionUniform(ref toolTransform);
 
-                Owner.QuadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
-                Owner.QuadOffset.Draw();
+                QuadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
+                QuadOffset.Draw();
             }
         }
 
