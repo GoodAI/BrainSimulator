@@ -35,15 +35,11 @@ namespace Render.Renderer
             // Plain geometries
             GeometryManager.Case<Quad>();
             GeometryManager.Case<QuadTex>();
-            GeometryManager.Case<QuadOffset>();
             GeometryManager.Case<Cube>();
-            GeometryManager.Case<CubeOffset>();
 
             // Parameterized geometries
             GeometryManager.CaseParam<Grid>();
             GeometryManager.CaseParam<CubeGrid>();
-            GeometryManager.CaseParam<GridOffset>();
-            GeometryManager.CaseParam<CubeGridOffset>();
 
 
             //// Effect registration

@@ -81,8 +81,11 @@ namespace World.Atlas.Layers
 
             switch (layerType)
             {
-                case LayerType.OnBackground:
+                case LayerType.OnGroundInteractable:
                     Thickness = 0.2f;
+                    break;
+                case LayerType.OnBackground:
+                    Thickness = 0.1f;
                     break;
                 default:
                     Thickness = DEFAULT_THICKNESS;

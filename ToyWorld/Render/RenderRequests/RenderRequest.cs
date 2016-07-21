@@ -48,11 +48,12 @@ namespace Render.RenderRequests
 
         protected internal TilesetTexture TilesetTexture;
 
-        private BasicTexture1D m_tileTypesTexure;
+        protected internal BasicTexture1D TileTypesTexure;
         private Pbo<ushort> m_tileTypesBuffer;
+        internal readonly ushort[] LocalTileTypesBuffer = new ushort[1];
 
-        protected internal CubeGridOffset GridOffset;
-        protected internal CubeOffset CubeOffset;
+        protected internal CubeGrid Grid;
+        protected internal Cube Cube;
         protected internal Quad Quad;
 
         protected internal Matrix ProjMatrix;
@@ -92,12 +93,12 @@ namespace Render.RenderRequests
             Effect.Dispose();
 
             TilesetTexture.Dispose();
-            m_tileTypesTexure.Dispose();
+            TileTypesTexure.Dispose();
             m_tileTypesBuffer.Dispose();
 
-            if (GridOffset != null) // It is initialized during Draw
-                GridOffset.Dispose();
-            CubeOffset.Dispose();
+            if (Grid != null) // It is initialized during Draw
+                Grid.Dispose();
+            Cube.Dispose();
             Quad.Dispose();
 
             EffectRenderer.Dispose();
@@ -339,7 +340,7 @@ namespace Render.RenderRequests
 
             // Set up geometry
             Quad = Renderer.GeometryManager.Get<Quad>();
-            CubeOffset = Renderer.GeometryManager.Get<CubeOffset>();
+            Cube = Renderer.GeometryManager.Get<Cube>();
 
             EffectRenderer.Init(Renderer, World, Effects);
             PostprocessRenderer.Init(Renderer, World, Postprocessing);
@@ -353,7 +354,7 @@ namespace Render.RenderRequests
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                GridOffset = Renderer.GeometryManager.Get<CubeGridOffset>(GridView.Size);
+                Grid = Renderer.GeometryManager.Get<CubeGrid>(GridView.Size);
 
                 ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
                 //ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
@@ -389,7 +390,7 @@ namespace Render.RenderRequests
             int totalTileCount = tileCount * toRender.Length;
             Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
 
-            if (m_tileTypesTexure == null || totalTileCount > m_tileTypesTexure.Size.Size())
+            if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
             {
                 // Init buffer
                 if (m_tileTypesBuffer != null)
@@ -398,10 +399,10 @@ namespace Render.RenderRequests
                 m_tileTypesBuffer.Init(totalTileCount, hint: BufferUsageHint.StreamDraw);
 
                 // Init texture
-                if (m_tileTypesTexure != null)
-                    m_tileTypesTexure.Dispose();
-                m_tileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(new Vector2I(totalTileCount, 1));
-                m_tileTypesTexure.DefaultInit();
+                if (TileTypesTexure != null)
+                    TileTypesTexure.Dispose();
+                TileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(new Vector2I(totalTileCount, 1));
+                TileTypesTexure.DefaultInit();
             }
 
             // Start data copying
@@ -415,7 +416,7 @@ namespace Render.RenderRequests
 
                 // Start async copying to the texture
                 m_tileTypesBuffer.Bind(BufferTarget.PixelUnpackBuffer);
-                m_tileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort, offset: i * tileCount, byteDataOffset: i * tileCount * sizeof(ushort));
+                TileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort, offset: i * tileCount, byteDataOffset: i * tileCount * sizeof(ushort));
             }
 
 
@@ -465,7 +466,7 @@ namespace Render.RenderRequests
             // Bind stuff to GL
             Renderer.TextureManager.Bind(TilesetTexture[0]);
             Renderer.TextureManager.Bind(TilesetTexture[1], TextureUnit.Texture1);
-            Renderer.TextureManager.Bind(m_tileTypesTexure, TextureUnit.Texture4);
+            Renderer.TextureManager.Bind(TileTypesTexure, TextureUnit.Texture4);
             Renderer.EffectManager.Use(Effect);
             Effect.TextureUniform(0);
             Effect.TextureWinterUniform(1);
@@ -525,14 +526,14 @@ namespace Render.RenderRequests
             {
                 // World transform -- move center to view center
                 Matrix t = transform * Matrix.CreateScale(1, 1, tileLayer.Thickness / 2);
-                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));
+                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom + tileLayer.Thickness / 2));
                 // View and projection transforms
                 t *= ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref t);
                 Effect.TileTypesIdxOffsetUniform(i++ * tileCount);
 
                 // Using the tileTypes texture should block until the data is fully copied from the pbos (onPreDraw)
-                GridOffset.Draw();
+                Grid.Draw();
             }
         }
 
@@ -540,7 +541,6 @@ namespace Render.RenderRequests
         {
             Effect.TileTypesIdxOffsetUniform(0);
             GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-            ushort[] tileTypesBuffer = new ushort[1];
 
             // Draw objects
             foreach (var objectLayer in World.Atlas.ObjectLayers)
@@ -564,9 +564,9 @@ namespace Render.RenderRequests
                     Effect.ModelViewProjectionUniform(ref transform);
 
                     // Setup dynamic data
-                    tileTypesBuffer[0] = (ushort)gameObject.TilesetId;
-                    m_tileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: tileTypesBuffer);
-                    CubeOffset.Draw();
+                    LocalTileTypesBuffer[0] = (ushort)gameObject.TilesetId;
+                    TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: LocalTileTypesBuffer);
+                    Cube.Draw();
                 }
             }
         }

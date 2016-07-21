@@ -4,8 +4,8 @@ using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
-using Render.RenderObjects.Geometries;
 using RenderingBase.Renderer;
+using RenderingBase.RenderObjects.Geometries;
 using RenderingBase.RenderObjects.Textures;
 using TmxMapSerializer.Elements;
 using VRageMath;
@@ -24,7 +24,7 @@ namespace Render.RenderRequests
         protected NoEffectOffset m_overlayEffect;
         protected TilesetTexture m_overlayTexture;
 
-        protected QuadOffset QuadOffset;
+        protected Quad QuadOffset;
 
         #endregion
 
@@ -82,7 +82,7 @@ namespace Render.RenderRequests
 
             m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
 
-            QuadOffset = renderer.GeometryManager.Get<QuadOffset>();
+            QuadOffset = renderer.GeometryManager.Get<Quad>();
         }
 
         #endregion
@@ -123,7 +123,8 @@ namespace Render.RenderRequests
             m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            QuadOffset.SetTextureOffsets((int)type);
+            Owner.LocalTileTypesBuffer[0] = (ushort)type;
+            Owner.TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
             QuadOffset.Draw();
 
 
@@ -137,7 +138,8 @@ namespace Render.RenderRequests
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
                 Owner.Effect.ModelViewProjectionUniform(ref toolTransform);
 
-                QuadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
+                Owner.LocalTileTypesBuffer[0] = (ushort)avatar.Tool.TilesetId;
+                Owner.TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
                 QuadOffset.Draw();
             }
         }

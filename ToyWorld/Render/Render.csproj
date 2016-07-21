@@ -73,10 +73,6 @@
     <Compile Include="RenderObjects\Effects\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Effects\PointLightEffect.cs" />
     <Compile Include="RenderObjects\Effects\SmokeEffect.cs" />
-    <Compile Include="RenderObjects\Geometries\CubeGridOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\GridOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\CubeOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\QuadOffset.cs" />
     <Compile Include="RenderObjects\Geometries\QuadTex.cs" />
     <Compile Include="Renderer\ToyWorldRenderer.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\ToolAvatarRR.cs" />
