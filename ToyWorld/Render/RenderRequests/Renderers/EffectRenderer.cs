@@ -76,16 +76,8 @@ namespace Render.RenderRequests
             if (Settings.EnabledEffects == RenderRequestEffect.None)
                 return;
 
+            GL.Enable(EnableCap.Blend);
             Owner.FrontFbo.Bind();
-
-            // Set up transformation to world and screen space for noise effect
-            Matrix mw = Matrix.Identity;
-            // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-            mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
-            // World transform -- move center to view center
-            mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1f));
-            // View and projection transforms
-            Matrix mvp = mw * Owner.ViewProjectionMatrix;
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
             {
@@ -94,14 +86,25 @@ namespace Render.RenderRequests
 
                 // TODO: draw a smaller quad around the light source to minimize the number of framgent shader calls
                 renderer.EffectManager.Use(m_pointLightEffect);
-                m_pointLightEffect.ModelWorldUniform(ref mw);
-                m_pointLightEffect.ModelViewProjectionUniform(ref mvp);
 
                 foreach (var character in world.Atlas.Characters)
                 {
                     m_pointLightEffect.ColorIntensityUniform(new Vector4(0.85f));
-                    m_pointLightEffect.IntensityDecayUniform(new Vector2(1, character.ForwardSpeed));
+                    float lightDecay = character.ForwardSpeed;
+                    m_pointLightEffect.IntensityDecayUniform(new Vector2(1, lightDecay));
                     m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
+
+                    // Set up transformation to world and screen space for noise effect
+                    Matrix mw = Matrix.Identity;
+                    // Model transform -- scale from (-1,1) to viewSize/2, center on origin
+                    const float minIntensity = 0.01f;
+                    const float intensityScale = (1 / minIntensity - 1) / 30;
+                    mw *= Matrix.CreateScale(intensityScale / lightDecay / 2);
+                    // World transform -- move center to view center
+                    mw *= Matrix.CreateTranslation(new Vector3(character.Position, 1));
+                    m_pointLightEffect.ModelWorldUniform(ref mw);
+                    Matrix mvp = mw * Owner.ViewProjectionMatrix;
+                    m_pointLightEffect.ModelViewProjectionUniform(ref mvp);
 
                     Owner.Quad.Draw();
                 }
@@ -112,6 +115,16 @@ namespace Render.RenderRequests
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
                 renderer.EffectManager.Use(m_smokeEffect);
+
+                // Set up transformation to world and screen space for noise effect
+                Matrix mw = Matrix.Identity;
+                // Model transform -- scale from (-1,1) to viewSize/2, center on origin
+                mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
+                // World transform -- move center to view center
+                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1f));
+                // View and projection transforms
+                Matrix mvp = mw * Owner.ViewProjectionMatrix;
+
                 m_smokeEffect.ModelWorldUniform(ref mw);
                 m_smokeEffect.ModelViewProjectionUniform(ref mvp);
 
