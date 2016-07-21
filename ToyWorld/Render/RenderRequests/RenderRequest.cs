@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
@@ -386,10 +387,13 @@ namespace Render.RenderRequests
 
             // Reallocate stuff if needed -- texture holds tileTypes for all the layers
             int totalTileCount = tileCount * toRender.Length;
+            Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
 
             if (m_tileTypesTexure == null || totalTileCount > m_tileTypesTexure.Size.Size())
             {
                 // Init buffer
+                if (m_tileTypesBuffer != null)
+                    m_tileTypesBuffer.Dispose();
                 m_tileTypesBuffer = new Pbo<ushort>(1);
                 m_tileTypesBuffer.Init(totalTileCount, hint: BufferUsageHint.StreamDraw);
 
