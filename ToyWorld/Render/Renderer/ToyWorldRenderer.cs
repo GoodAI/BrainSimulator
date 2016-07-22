@@ -40,6 +40,7 @@ namespace Render.Renderer
             // Parameterized geometries
             GeometryManager.CaseParam<DuplicatedGrid>();
             GeometryManager.CaseParam<CubeGrid>();
+            GeometryManager.CaseParam<DuplicatedCubeGrid>();
 
 
             //// Effect registration

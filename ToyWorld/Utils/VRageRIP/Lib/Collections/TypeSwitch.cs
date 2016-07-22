@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Utils.VRageRIP.Lib.Collections
 {
@@ -32,7 +30,7 @@ namespace Utils.VRageRIP.Lib.Collections
 
             if (!Matches.TryGetValue(typeof(TKey), out res))
             {
-                // log
+                Debug.Fail(string.Format("Type {0} not present in switch {1}", typeof(TKey), GetType().Name));
                 return null;
             }
 
@@ -40,7 +38,8 @@ namespace Utils.VRageRIP.Lib.Collections
         }
     }
 
-    public sealed class TypeSwitch<TKeyBase> : TypeSwitchBase<TKeyBase, Func<TKeyBase>>
+    public sealed class TypeSwitch<TKeyBase>
+        : TypeSwitchBase<TKeyBase, Func<TKeyBase>>
     {
         public TRet Switch<TRet>()
             where TRet : class, TKeyBase
@@ -54,7 +53,8 @@ namespace Utils.VRageRIP.Lib.Collections
         }
     }
 
-    public sealed class TypeSwitchParam<TKeyBase, TParam> : TypeSwitchBase<TKeyBase, Func<TParam, TKeyBase>>
+    public sealed class TypeSwitchParam<TKeyBase, TParam>
+        : TypeSwitchBase<TKeyBase, Func<TParam, TKeyBase>>
     {
         public TRet Switch<TRet>(TParam par)
             where TRet : class, TKeyBase
@@ -68,7 +68,8 @@ namespace Utils.VRageRIP.Lib.Collections
         }
     }
 
-    public sealed class TypeSwitchParam<TKeyBase, TParam1, TParam2> : TypeSwitchBase<TKeyBase, Func<TParam1, TParam2, TKeyBase>>
+    public sealed class TypeSwitchParam<TKeyBase, TParam1, TParam2>
+        : TypeSwitchBase<TKeyBase, Func<TParam1, TParam2, TKeyBase>>
     {
         public TRet Switch<TRet>(TParam1 par1, TParam2 par2)
             where TRet : class, TKeyBase

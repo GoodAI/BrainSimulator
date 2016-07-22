@@ -101,6 +101,19 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
         }
 
+        private static HalfVector4[] GenerateRawCubeElements()
+        {
+            return new[]
+            {
+               new HalfVector4(3, 2, 1, 0), // Back
+               new HalfVector4(4, 5, 6, 7), // Front
+               new HalfVector4(1, 5, 4, 0), // Left
+               new HalfVector4(3, 7, 6, 2), // Right
+               new HalfVector4(2, 6, 5, 1), // Up
+               new HalfVector4(0, 4, 7, 3), // Down
+            };
+        }
+
         private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GetCubeElements);
         private static VboBase GetCubeElements()
         {
@@ -109,22 +122,11 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<HalfVector4>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
         }
 
-        private static HalfVector4[] GenerateRawCubeElements()
-        {
-            return new[]
-            {
-               new HalfVector4(3, 2, 1, 0), // Back
-               new HalfVector4(4, 5, 6, 7), // Front
-               new HalfVector4(4, 5, 1, 0), // Left
-               new HalfVector4(7, 6, 2, 3), // Right
-               new HalfVector4(5, 1, 2, 6), // Up
-               new HalfVector4(7, 3, 0, 4), // Down
-            };
-        }
-
         #endregion
 
         #region Grid
+
+        #region Helpers
 
         private static TFirst FirstFactoryHelper<TFirst, TSecond, TKey>(
             Func<TFirst> firstInitializer,
@@ -175,6 +177,8 @@ namespace RenderingBase.RenderObjects.Buffers
             return res.Item2;
 
         }
+
+        #endregion
 
         #region Quad
 
@@ -244,8 +248,10 @@ namespace RenderingBase.RenderObjects.Buffers
                     for (int i = 0; i < gridSize.X; i++)
                     {
                         // Bottom face
-                        for (int k = 0; k < 4; k++)
-                            vertices[idx] = new Vector3(rawGridVertices[idx++]);
+                        int startIdx = idx >> 1;
+
+                        for (int k = startIdx; k < startIdx + 4; k++)
+                            vertices[idx++] = new Vector3(rawGridVertices[k]);
 
                         // Top face
                         for (int k = 0; k < 4; k++)

@@ -336,7 +336,6 @@ namespace Render.RenderRequests
                 Effect.TileBorderUniform(World.TilesetTable.TileBorder);
 
                 Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
-                Effect.TileVertexCountUniform(Grid.FaceCount * 4);
             }
 
             // Set up geometry
@@ -473,6 +472,8 @@ namespace Render.RenderRequests
             Effect.TextureWinterUniform(1);
             Effect.TileTypesTextureUniform(4);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
+            Effect.TileVertexCountUniform(Grid.FaceCount * 4);
+
 
             // Draw the scene
             DrawTileLayers();
