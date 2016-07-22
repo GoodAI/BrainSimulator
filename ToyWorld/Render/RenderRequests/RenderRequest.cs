@@ -53,7 +53,7 @@ namespace Render.RenderRequests
         internal readonly ushort[] LocalTileTypesBuffer = new ushort[1];
 
         protected internal DuplicatedCubeGrid Grid;
-        protected internal Cube Cube;
+        protected internal DuplicatedCube Cube;
         protected internal Quad Quad;
 
         protected internal Matrix ProjMatrix;
@@ -340,7 +340,7 @@ namespace Render.RenderRequests
 
             // Set up geometry
             Quad = Renderer.GeometryManager.Get<Quad>();
-            Cube = Renderer.GeometryManager.Get<Cube>();
+            Cube = Renderer.GeometryManager.Get<DuplicatedCube>();
 
             EffectRenderer.Init(Renderer, World, Effects);
             PostprocessRenderer.Init(Renderer, World, Postprocessing);
@@ -503,7 +503,6 @@ namespace Render.RenderRequests
 
             // Draw effects after multisampling to save fragment shader calls
             EffectRenderer.Draw(Renderer, World);
-
             PostprocessRenderer.Draw(Renderer, World);
             OverlayRenderer.Draw(Renderer, World);
 
@@ -544,8 +543,6 @@ namespace Render.RenderRequests
             // Draw objects
             foreach (var objectLayer in World.Atlas.ObjectLayers)
             {
-                Matrix layerTransform = Matrix.CreateTranslation(0, 0, objectLayer.SpanIntervalFrom);
-
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(GridView)))
                 {
                     // Set up transformation to screen space for the gameObject
@@ -556,8 +553,7 @@ namespace Render.RenderRequests
                         transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
                     transform *= Matrix.CreateScale(new Vector3(gameObject.Size, objectLayer.Thickness) * 0.5f); // from (-1,1) to (-size,size)/2
                     // World transform
-                    transform *= Matrix.CreateTranslation(gameObject.Position);
-                    transform *= layerTransform;
+                    transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, objectLayer.SpanIntervalFrom + objectLayer.Thickness / 2));
                     // View and projection transforms
                     transform *= ViewProjectionMatrix;
                     Effect.ModelViewProjectionUniform(ref transform);

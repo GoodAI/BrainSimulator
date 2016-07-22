@@ -19,6 +19,7 @@ namespace RenderingBase.RenderObjects.Buffers
         public static VboBase QuadVertices { get { return _quadVertices.Value; } }
         public static VboBase CubeVertices { get { return _cubeVertices.Value; } }
         public static VboBase CubeElements { get { return _cubeElements.Value; } }
+        public static VboBase DuplicatedCubeVertices { get { return _duplicatedCubeVertices.Value; } }
         public static VboBase QuadColors { get { return _quadColors.Value; } }
 
         public static VboBase GetDuplicatedGridVertices(Vector2I gridSize) { return GenerateDuplicatedGridVertices(gridSize); }
@@ -37,8 +38,10 @@ namespace RenderingBase.RenderObjects.Buffers
         {
             _quadVertices = null;
             _quadColors = null;
+
             _cubeVertices = null;
             _cubeElements = null;
+            _duplicatedCubeVertices = null;
 
             DuplicatedGridVertices.Clear();
             CubeGridVertices.Clear();
@@ -83,10 +86,14 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Cube
 
-        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GetCubeVertices);
-        private static VboBase GetCubeVertices()
+        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
+        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
+        private static Lazy<VboBase> _duplicatedCubeVertices = new Lazy<VboBase>(GenerateDuplicatedCubeVertices);
+
+
+        private static Vector3[] GenerateRawCubeVertices()
         {
-            Vector3[] cubeVertices =
+            return new[]
             {
                new Vector3(-1,-1,-1),
                new Vector3(-1, 1,-1),
@@ -97,9 +104,14 @@ namespace RenderingBase.RenderObjects.Buffers
                new Vector3( 1, 1, 1),
                new Vector3( 1,-1, 1),
             };
+        }
 
+        private static VboBase GenerateCubeVertices()
+        {
+            Vector3[] cubeVertices = GenerateRawCubeVertices();
             return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
         }
+
 
         private static HalfVector4[] GenerateRawCubeElements()
         {
@@ -114,12 +126,30 @@ namespace RenderingBase.RenderObjects.Buffers
             };
         }
 
-        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GetCubeElements);
-        private static VboBase GetCubeElements()
+        private static VboBase GenerateCubeElements()
         {
             HalfVector4[] cubeElements = GenerateRawCubeElements();
-
             return new StaticVbo<HalfVector4>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
+        }
+
+
+        private static VboBase GenerateDuplicatedCubeVertices()
+        {
+            Vector3[] cubeVertices = new Vector3[6 * 4];
+            Vector3[] rawCubeVertices = GenerateRawCubeVertices();
+            HalfVector4[] rawCubeElements = GenerateRawCubeElements();
+
+            int idx = 0;
+
+            for (int i = 0; i < rawCubeElements.Length; i++)
+            {
+                cubeVertices[idx++] = rawCubeVertices[rawCubeElements[i].X];
+                cubeVertices[idx++] = rawCubeVertices[rawCubeElements[i].Y];
+                cubeVertices[idx++] = rawCubeVertices[rawCubeElements[i].Z];
+                cubeVertices[idx++] = rawCubeVertices[rawCubeElements[i].W];
+            }
+
+            return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
         }
 
         #endregion

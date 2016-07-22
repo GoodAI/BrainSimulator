@@ -36,6 +36,7 @@ namespace Render.Renderer
             GeometryManager.Case<Quad>();
             GeometryManager.Case<QuadTex>();
             GeometryManager.Case<Cube>();
+            GeometryManager.Case<DuplicatedCube>();
 
             // Parameterized geometries
             GeometryManager.CaseParam<DuplicatedGrid>();
