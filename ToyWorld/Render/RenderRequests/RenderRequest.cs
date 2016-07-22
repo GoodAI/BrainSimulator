@@ -33,6 +33,16 @@ namespace Render.RenderRequests
             Size = 1,
         }
 
+        internal enum TextureBindPosition
+        {
+            SummerTileset = 0,
+            WinterTileset = 1,
+
+            TileTypes = 4,
+
+            Ui = 6,
+        }
+
 
         #region Fields
 
@@ -50,7 +60,7 @@ namespace Render.RenderRequests
 
         protected internal BasicTexture1D TileTypesTexure;
         private Pbo<ushort> m_tileTypesBuffer;
-        internal readonly ushort[] LocalTileTypesBuffer = new ushort[1];
+        internal readonly ushort[] LocalTileTypesBuffer = new ushort[15];
 
         protected internal DuplicatedCubeGrid Grid;
         protected internal DuplicatedCube Cube;
@@ -256,6 +266,11 @@ namespace Render.RenderRequests
             Matrix viewMatrix = Matrix.CreateLookAt(cameraPos - cameraDirection.Value * 10, cameraPos, cross);
 
             return viewMatrix;
+        }
+
+        internal TextureUnit GetTextureUnit(TextureBindPosition bindPosition)
+        {
+            return TextureUnit.Texture0 + (int)bindPosition;
         }
 
         #endregion
@@ -464,13 +479,13 @@ namespace Render.RenderRequests
             GL.Enable(EnableCap.DepthTest);
 
             // Bind stuff to GL
-            Renderer.TextureManager.Bind(TilesetTexture[0]);
-            Renderer.TextureManager.Bind(TilesetTexture[1], TextureUnit.Texture1);
-            Renderer.TextureManager.Bind(TileTypesTexure, TextureUnit.Texture4);
+            Renderer.TextureManager.Bind(TilesetTexture[0], GetTextureUnit(TextureBindPosition.SummerTileset));
+            Renderer.TextureManager.Bind(TilesetTexture[1], GetTextureUnit(TextureBindPosition.WinterTileset));
+            Renderer.TextureManager.Bind(TileTypesTexure, GetTextureUnit(TextureBindPosition.TileTypes));
             Renderer.EffectManager.Use(Effect);
-            Effect.TextureUniform(0);
-            Effect.TextureWinterUniform(1);
-            Effect.TileTypesTextureUniform(4);
+            Effect.TextureUniform((int)TextureBindPosition.SummerTileset);
+            Effect.TextureWinterUniform((int)TextureBindPosition.WinterTileset);
+            Effect.TileTypesTextureUniform((int)TextureBindPosition.TileTypes);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
             Effect.TileVertexCountUniform(Grid.FaceCount * 4);
 

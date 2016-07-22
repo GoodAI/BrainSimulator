@@ -8,7 +8,7 @@ const int MODULO_MASK = (1 << MODULO_BITS) - 1; // 0x00000FFF
 // Stores the tileTypes for the layers
 uniform usampler1D	tileTypesTexture;
 // The offset into tileTypesTexture (each layer accesses a different part)
-uniform int			tileTypesIdxOffset = 1024;
+uniform int			tileTypesIdxOffset = 0;
 // The amount of vertices of one tile's geometry
 uniform int		tileVertexCount = 8;
 

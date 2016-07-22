@@ -19,8 +19,6 @@ namespace Render.RenderRequests
     {
         #region Fields
 
-        protected const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
-
         protected NoEffectOffset m_overlayEffect;
         protected TilesetTexture m_overlayTexture;
 
@@ -63,7 +61,6 @@ namespace Render.RenderRequests
                 .ToArray();
 
             m_overlayTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
 
             // Set up overlay shader
             m_overlayEffect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -107,6 +104,8 @@ namespace Render.RenderRequests
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
+            GL.Enable(EnableCap.Blend);
+
             if (Owner.FlipYAxis)
             {
                 size.Y = -size.Y;
@@ -118,13 +117,18 @@ namespace Render.RenderRequests
 
 
             // Draw the inventory background
-            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+            renderer.TextureManager.Bind(m_overlayTexture, Owner.GetTextureUnit(RenderRequest.TextureBindPosition.Ui));
             renderer.EffectManager.Use(m_overlayEffect);
-            m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
+            m_overlayEffect.TextureUniform((int)RenderRequest.TextureBindPosition.Ui);
+            m_overlayEffect.TileTypesTextureUniform((int)RenderRequest.TextureBindPosition.TileTypes);
+            Owner.Effect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
             Owner.LocalTileTypesBuffer[0] = (ushort)type;
-            Owner.TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
+            if (avatar.Tool != null)
+                Owner.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
+
+            Owner.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
             QuadOffset.Draw();
 
 
@@ -134,12 +138,11 @@ namespace Render.RenderRequests
                 renderer.TextureManager.Bind(Owner.TilesetTexture);
                 renderer.EffectManager.Use(Owner.Effect);
                 Owner.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+                Owner.Effect.TileTypesIdxOffsetUniform(1);
 
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
                 Owner.Effect.ModelViewProjectionUniform(ref toolTransform);
 
-                Owner.LocalTileTypesBuffer[0] = (ushort)avatar.Tool.TilesetId;
-                Owner.TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
                 QuadOffset.Draw();
             }
         }

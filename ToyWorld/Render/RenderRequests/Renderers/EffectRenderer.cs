@@ -52,18 +52,18 @@ namespace Render.RenderRequests
         {
             Settings = settings;
 
+            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
+            {
+                if (m_pointLightEffect == null)
+                    m_pointLightEffect = new PointLightEffect();
+            }
+
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
                 if (m_smokeEffect == null)
                     m_smokeEffect = renderer.EffectManager.Get<SmokeEffect>();
                 renderer.EffectManager.Use(m_smokeEffect); // Need to use the effect to set uniforms
                 m_smokeEffect.SmokeColorUniform(new Vector4(Settings.SmokeColor.R, Settings.SmokeColor.G, Settings.SmokeColor.B, Settings.SmokeColor.A) / 255f);
-            }
-
-            if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
-            {
-                if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights) && m_pointLightEffect == null)
-                    m_pointLightEffect = new PointLightEffect();
             }
         }
 
@@ -84,7 +84,6 @@ namespace Render.RenderRequests
                 //GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.SrcAlpha); // Fades non-lit stuff to black
                 GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.DstAlpha);
 
-                // TODO: draw a smaller quad around the light source to minimize the number of framgent shader calls
                 renderer.EffectManager.Use(m_pointLightEffect);
 
                 foreach (var character in world.Atlas.Characters)

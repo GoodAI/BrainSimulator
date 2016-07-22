@@ -58,6 +58,9 @@ namespace Render.RenderRequests
             if (Settings.EnabledPostprocessing == RenderRequestPostprocessing.None)
                 return;
 
+
+            GL.Disable(EnableCap.Blend);
+
             // Always draw post-processing from the front to the back buffer
             Owner.BackFbo.Bind();
 
