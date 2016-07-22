@@ -516,22 +516,19 @@ namespace Render.RenderRequests
             Rectangle gridView = GridView;
             int tileCount = gridView.Size.Size();
 
-            // Set up transformation to screen space for tiles
-            Matrix transform = Matrix.Identity;
-            // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-            transform *= Matrix.CreateScale((Vector2)gridView.Size / 2);
-
             // Draw tile layers
             int i = 0;
 
             foreach (var tileLayer in GetTileLayersToRender())
             {
+                // Set up transformation to screen space for tiles
+                // Model transform -- scale from (-1,1) to viewSize/2, center on origin
+                Matrix transform = Matrix.CreateScale(new Vector3(gridView.Size, tileLayer.Thickness) * 0.5f);
                 // World transform -- move center to view center
-                Matrix t = transform * Matrix.CreateScale(1, 1, tileLayer.Thickness / 2);
-                t *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom + tileLayer.Thickness / 2));
+                transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));// + tileLayer.Thickness / 2));
                 // View and projection transforms
-                t *= ViewProjectionMatrix;
-                Effect.ModelViewProjectionUniform(ref t);
+                transform *= ViewProjectionMatrix;
+                Effect.ModelViewProjectionUniform(ref transform);
                 Effect.TileTypesIdxOffsetUniform(i++ * tileCount);
 
                 // Using the tileTypes texture should block until the data is fully copied from the pbos (onPreDraw)
