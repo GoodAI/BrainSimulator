@@ -8,9 +8,10 @@ namespace RenderingBase.RenderObjects.Buffers
 {
     internal static class StaticVboFactory
     {
-        private static readonly Dictionary<Vector2I, VboBase> GridVertices = new Dictionary<Vector2I, VboBase>();
-        private static readonly Dictionary<Vector2I, VboBase> CubeGridVertices = new Dictionary<Vector2I, VboBase>();
-        private static readonly Dictionary<Vector2I, VboBase> CubeGridElements = new Dictionary<Vector2I, VboBase>();
+        private static readonly Dictionary<Vector2I, Tuple<Vector2[], VboBase>> DuplicatedGridVertices = new Dictionary<Vector2I, Tuple<Vector2[], VboBase>>();
+        private static readonly Dictionary<Vector2I, Tuple<Vector3[], VboBase>> CubeGridVertices = new Dictionary<Vector2I, Tuple<Vector3[], VboBase>>();
+        private static readonly Dictionary<Vector2I, Tuple<HalfVector4[], VboBase>> CubeGridElements = new Dictionary<Vector2I, Tuple<HalfVector4[], VboBase>>();
+        private static readonly Dictionary<Vector2I, Tuple<Vector3[], VboBase>> DuplicatedCubeGridVertices = new Dictionary<Vector2I, Tuple<Vector3[], VboBase>>();
 
 
         #region Public getters
@@ -20,9 +21,10 @@ namespace RenderingBase.RenderObjects.Buffers
         public static VboBase CubeElements { get { return _cubeElements.Value; } }
         public static VboBase QuadColors { get { return _quadColors.Value; } }
 
-        public static VboBase GetGridVertices(Vector2I gridSize) { return GetGridVerticesInternal(gridSize); }
-        public static VboBase GetCubeGridVertices(Vector2I gridSize) { return GetCubeGridVerticesInternal(gridSize); }
-        public static VboBase GetCubeGridElements(Vector2I gridSize) { return GetCubeGridElementsInternal(gridSize); }
+        public static VboBase GetDuplicatedGridVertices(Vector2I gridSize) { return GenerateDuplicatedGridVertices(gridSize); }
+        public static VboBase GetCubeGridVertices(Vector2I gridSize) { return GenerateCubeGridVertices(gridSize); }
+        public static VboBase GetCubeGridElements(Vector2I gridSize) { return GenerateCubeGridElements(gridSize); }
+        public static VboBase GetDuplicatedCubeGridVertices(Vector2I gridSize) { return GenerateDuplicatedCubeGridVertices(gridSize); }
 
         #endregion
 
@@ -38,7 +40,9 @@ namespace RenderingBase.RenderObjects.Buffers
             _cubeVertices = null;
             _cubeElements = null;
 
-            GridVertices.Clear();
+            DuplicatedGridVertices.Clear();
+            CubeGridVertices.Clear();
+            CubeGridElements.Clear();
         }
 
         #endregion
@@ -79,8 +83,8 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Cube
 
-        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
-        private static VboBase GenerateCubeVertices()
+        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GetCubeVertices);
+        private static VboBase GetCubeVertices()
         {
             Vector3[] cubeVertices =
             {
@@ -97,15 +101,15 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<Vector3>(cubeVertices.Length, cubeVertices, 3, hint: BufferUsageHint.StaticDraw);
         }
 
-        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
-        private static VboBase GenerateCubeElements()
+        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GetCubeElements);
+        private static VboBase GetCubeElements()
         {
-            HalfVector4[] cubeElements = GetCubeElements();
+            HalfVector4[] cubeElements = GenerateRawCubeElements();
 
             return new StaticVbo<HalfVector4>(cubeElements.Length, cubeElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
         }
 
-        private static HalfVector4[] GetCubeElements()
+        private static HalfVector4[] GenerateRawCubeElements()
         {
             return new[]
             {
@@ -122,111 +126,214 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Grid
 
-        private static VboBase GetGridVerticesInternal(Vector2I gridSize)
+        private static TFirst FirstFactoryHelper<TFirst, TSecond, TKey>(
+            Func<TFirst> firstInitializer,
+            Dictionary<TKey, Tuple<TFirst, TSecond>> dict,
+            TKey key)
+            where TSecond : class
         {
-            VboBase grid;
+            Tuple<TFirst, TSecond> res;
 
-            if (GridVertices.TryGetValue(gridSize, out grid))
-                return grid;
+            if (dict.TryGetValue(key, out res))
+                return res.Item1;
 
+            TFirst val = firstInitializer();
 
-            Vector2[] vertices = new Vector2[gridSize.Size() * 4];
+            res = new Tuple<TFirst, TSecond>(val, null);
+            dict[key] = res;
+            return res.Item1;
+        }
 
-            Vector2I xStep = new Vector2I(2, 0);
-            Vector2I yStep = new Vector2I(0, 2);
-            Vector2I xyStep = xStep + yStep;
-            Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
+        private static TSecond SecondFactoryHelper<TFirst, TSecond, TKey>(
+            Func<TFirst> firstInitializer,
+            Func<TFirst, TSecond> secondInitializer,
+            Dictionary<TKey, Tuple<TFirst, TSecond>> dict,
+            TKey key)
+            where TSecond : class
+        {
+            Tuple<TFirst, TSecond> res;
+            TFirst first;
 
-            // Generate tiles from bot-left corner row-wise, centered on origin
-            Vector2I botLeft = new Vector2I(-gridSize.X, -gridSize.Y);
-
-            int idx = 0;
-
-            for (int j = 0; j < gridSize.Y; j++)
+            if (dict.TryGetValue(key, out res))
             {
-                for (int i = 0; i < gridSize.X; i++)
+                if (res.Item2 == null)
                 {
-                    // Start top-left, continue clock-wise
-                    vertices[idx++] = (Vector2)botLeft * gridSizeInv;
-                    vertices[idx++] = (Vector2)(botLeft + yStep) * gridSizeInv;
-                    vertices[idx++] = (Vector2)(botLeft + xyStep) * gridSizeInv;
-                    vertices[idx++] = (Vector2)(botLeft + xStep) * gridSizeInv;
-
-                    botLeft += xStep;
+                    first = res.Item1;
+                    goto addToCache;
                 }
 
-                botLeft += yStep;
-                botLeft.X = -gridSize.X;
+                return res.Item2;
             }
 
-            grid = new StaticVbo<Vector2>(vertices.Length, vertices, 2, hint: BufferUsageHint.StaticDraw);
-            GridVertices.Add(gridSize, grid);
-            return grid;
+
+            first = firstInitializer();
+
+        addToCache:
+            TSecond second = secondInitializer(first);
+            res = new Tuple<TFirst, TSecond>(first, second);
+            dict[key] = res;
+            return res.Item2;
+
         }
 
-        private static VboBase GetCubeGridVerticesInternal(Vector2I gridSize)
+        #region Quad
+
+        private static Vector2[] GenerateRawDuplicatedGridVertices(Vector2I gridSize)
         {
-            VboBase grid;
-
-            if (CubeGridVertices.TryGetValue(gridSize, out grid))
-                return grid;
-
-
-            Vector3[] vertices = new Vector3[gridSize.Size() * 4 * 2];
-
-            Vector3I xStep = new Vector3I(2, 0, 0);
-            Vector3I yStep = new Vector3I(0, 2, 0);
-            Vector3I zStep = new Vector3I(0, 0, 2);
-            Vector3I xyStep = xStep + yStep;
-            Vector3 gridSizeInv = new Vector3(1 / new Vector2(gridSize.X, gridSize.Y), 1);
-
-            // Generate tiles from bot-left corner row-wise, centered on origin
-            Vector3I botLeft = new Vector3I(-gridSize.X, -gridSize.Y, -1);
-
-            int idx = 0;
-
-            for (int j = 0; j < gridSize.Y; j++)
+            Func<Vector2[]> initializer = () =>
             {
-                for (int i = 0; i < gridSize.X; i++)
+                Vector2[] vertices = new Vector2[gridSize.Size() * 4];
+
+                Vector2I xStep = new Vector2I(2, 0);
+                Vector2I yStep = new Vector2I(0, 2);
+                Vector2I xyStep = xStep + yStep;
+                Vector2 gridSizeInv = 1 / new Vector2(gridSize.X, gridSize.Y);
+
+                // Generate tiles from bot-left corner row-wise, centered on origin
+                Vector2I botLeft = new Vector2I(-gridSize.X, -gridSize.Y);
+
+                int idx = 0;
+
+                for (int j = 0; j < gridSize.Y; j++)
                 {
-                    // Start top-left, continue clock-wise
-                    vertices[idx++] = (Vector3)botLeft * gridSizeInv;
-                    vertices[idx++] = (Vector3)(botLeft + yStep) * gridSizeInv;
-                    vertices[idx++] = (Vector3)(botLeft + xyStep) * gridSizeInv;
-                    vertices[idx++] = (Vector3)(botLeft + xStep) * gridSizeInv;
+                    for (int i = 0; i < gridSize.X; i++)
+                    {
+                        // Start top-left, continue clock-wise
+                        vertices[idx++] = (Vector2)botLeft * gridSizeInv;
+                        vertices[idx++] = (Vector2)(botLeft + yStep) * gridSizeInv;
+                        vertices[idx++] = (Vector2)(botLeft + xyStep) * gridSizeInv;
+                        vertices[idx++] = (Vector2)(botLeft + xStep) * gridSizeInv;
 
-                    // The other face
-                    for (int k = 0; k < 4; k++)
-                        vertices[idx++] = vertices[idx - 5] + zStep;
+                        botLeft += xStep;
+                    }
 
-                    botLeft += xStep;
+                    botLeft += yStep;
+                    botLeft.X = -gridSize.X;
                 }
 
-                botLeft += yStep;
-                botLeft.X = -gridSize.X;
-            }
+                return vertices;
+            };
 
-            grid = new StaticVbo<Vector3>(vertices.Length, vertices, 3, hint: BufferUsageHint.StaticDraw);
-            CubeGridVertices.Add(gridSize, grid);
-            return grid;
+            return FirstFactoryHelper(initializer, DuplicatedGridVertices, gridSize);
         }
 
-        private static VboBase GetCubeGridElementsInternal(Vector2I gridSize)
+        private static VboBase GenerateDuplicatedGridVertices(Vector2I gridSize)
         {
-            HalfVector4[] cubeElements = GetCubeElements();
-            HalfVector4[] gridElements = new HalfVector4[gridSize.Size() * cubeElements.Length];
+            Func<Vector2[]> firstInitializer = () => GenerateRawDuplicatedGridVertices(gridSize);
+            Func<Vector2[], StaticVbo<Vector2>> secondInitializer = first => new StaticVbo<Vector2>(first.Length, first, 2, hint: BufferUsageHint.StaticDraw);
 
-            for (int i = 0; i < gridSize.Size(); i++)
-            {
-                int baseIdx = i * cubeElements.Length;
-                ushort offset = (ushort)(i * 8);
-
-                for (int j = 0; j < cubeElements.Length; j++)
-                    gridElements[baseIdx + j] = cubeElements[j] + offset;
-            }
-
-            return new StaticVbo<HalfVector4>(gridElements.Length, gridElements, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
+            return SecondFactoryHelper(firstInitializer, secondInitializer, DuplicatedGridVertices, gridSize);
         }
+
+        #endregion
+
+        #region Cube
+
+        private static Vector3[] GenerateRawCubeGridVertices(Vector2I gridSize)
+        {
+            Func<Vector3[]> initializer = () =>
+            {
+                Vector3[] vertices = new Vector3[gridSize.Size() * 4 * 2];
+                Vector2[] rawGridVertices = GenerateRawDuplicatedGridVertices(gridSize);
+
+                Vector3 zStep = new Vector3(0, 0, 2);
+                int idx = 0;
+
+                for (int j = 0; j < gridSize.Y; j++)
+                {
+                    for (int i = 0; i < gridSize.X; i++)
+                    {
+                        // Bottom face
+                        for (int k = 0; k < 4; k++)
+                            vertices[idx] = new Vector3(rawGridVertices[idx++]);
+
+                        // Top face
+                        for (int k = 0; k < 4; k++)
+                            vertices[idx++] = vertices[idx - 5] + zStep;
+                    }
+                }
+
+                return vertices;
+            };
+
+            return FirstFactoryHelper(initializer, CubeGridVertices, gridSize);
+        }
+
+        private static VboBase GenerateCubeGridVertices(Vector2I gridSize)
+        {
+            Func<Vector3[]> firstInitializer = () => GenerateRawCubeGridVertices(gridSize);
+            Func<Vector3[], StaticVbo<Vector3>> secondInitializer = first => new StaticVbo<Vector3>(first.Length, first, 3, hint: BufferUsageHint.StaticDraw);
+
+            return SecondFactoryHelper(firstInitializer, secondInitializer, CubeGridVertices, gridSize);
+        }
+
+        private static HalfVector4[] GenerateRawCubeGridElements(Vector2I gridSize)
+        {
+            Func<HalfVector4[]> initializer = () =>
+            {
+                HalfVector4[] cubeElements = GenerateRawCubeElements();
+                HalfVector4[] gridElements = new HalfVector4[gridSize.Size() * cubeElements.Length];
+
+                for (int i = 0; i < gridSize.Size(); i++)
+                {
+                    int baseIdx = i * cubeElements.Length;
+                    ushort offset = (ushort)(i * 8);
+
+                    for (int j = 0; j < cubeElements.Length; j++)
+                        gridElements[baseIdx + j] = cubeElements[j] + offset;
+                }
+
+                return gridElements;
+            };
+
+            return FirstFactoryHelper(initializer, CubeGridElements, gridSize);
+        }
+
+        private static VboBase GenerateCubeGridElements(Vector2I gridSize)
+        {
+            Func<HalfVector4[]> firstInitializer = () => GenerateRawCubeGridElements(gridSize);
+            Func<HalfVector4[], StaticVbo<HalfVector4>> secondInitializer = first => new StaticVbo<HalfVector4>(first.Length, first, 1, hint: BufferUsageHint.StaticDraw, target: BufferTarget.ElementArrayBuffer);
+
+            return SecondFactoryHelper(firstInitializer, secondInitializer, CubeGridElements, gridSize);
+        }
+
+        #endregion
+
+        #region Duplicated Cube
+
+        private static Vector3[] GenerateRawDuplicatedCubeGridVertices(Vector2I gridSize)
+        {
+            Func<Vector3[]> initializer = () =>
+            {
+                Vector3[] vertices = new Vector3[gridSize.Size() * 4 * 6];
+                Vector3[] rawCubeGridVertices = GenerateRawCubeGridVertices(gridSize);
+                HalfVector4[] rawCubeGridElements = GenerateRawCubeGridElements(gridSize);
+
+                int idx = 0;
+
+                for (int i = 0; i < rawCubeGridElements.Length; i++)
+                {
+                    vertices[idx++] = rawCubeGridVertices[rawCubeGridElements[i].X];
+                    vertices[idx++] = rawCubeGridVertices[rawCubeGridElements[i].Y];
+                    vertices[idx++] = rawCubeGridVertices[rawCubeGridElements[i].Z];
+                    vertices[idx++] = rawCubeGridVertices[rawCubeGridElements[i].W];
+                }
+
+                return vertices;
+            };
+
+            return FirstFactoryHelper(initializer, DuplicatedCubeGridVertices, gridSize);
+        }
+
+        private static VboBase GenerateDuplicatedCubeGridVertices(Vector2I gridSize)
+        {
+            Func<Vector3[]> firstInitializer = () => GenerateRawDuplicatedCubeGridVertices(gridSize);
+            Func<Vector3[], StaticVbo<Vector3>> secondInitializer = first => new StaticVbo<Vector3>(first.Length, first, 3, hint: BufferUsageHint.StaticDraw);
+
+            return SecondFactoryHelper(firstInitializer, secondInitializer, DuplicatedCubeGridVertices, gridSize);
+        }
+
+        #endregion
 
         #endregion
 

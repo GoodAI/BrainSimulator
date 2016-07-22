@@ -14,7 +14,7 @@ namespace RenderingBase.RenderObjects.Geometries
         {
             Dimensions = dimensions;
 
-            this[VboPosition.Vertices] = StaticVboFactory.GetGridVertices(dimensions);
+            this[VboPosition.Vertices] = StaticVboFactory.GetDuplicatedGridVertices(dimensions);
             EnableAttrib(VboPosition.Vertices);
         }
 
