@@ -38,7 +38,7 @@ namespace Render.Renderer
             GeometryManager.Case<Cube>();
 
             // Parameterized geometries
-            GeometryManager.CaseParam<Grid>();
+            GeometryManager.CaseParam<DuplicatedGrid>();
             GeometryManager.CaseParam<CubeGrid>();
 
 

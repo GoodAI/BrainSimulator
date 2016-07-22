@@ -5,12 +5,12 @@ using VRageMath;
 
 namespace RenderingBase.RenderObjects.Geometries
 {
-    public class Grid : GeometryBase
+    public class DuplicatedGrid : GeometryBase
     {
         public Vector2I Dimensions { get; private set; }
 
 
-        public Grid(Vector2I dimensions)
+        public DuplicatedGrid(Vector2I dimensions)
         {
             Dimensions = dimensions;
 

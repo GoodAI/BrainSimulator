@@ -52,7 +52,7 @@ namespace Render.RenderRequests
         private Pbo<ushort> m_tileTypesBuffer;
         internal readonly ushort[] LocalTileTypesBuffer = new ushort[1];
 
-        protected internal CubeGrid Grid;
+        protected internal DuplicatedCubeGrid Grid;
         protected internal Cube Cube;
         protected internal Quad Quad;
 
@@ -336,6 +336,7 @@ namespace Render.RenderRequests
                 Effect.TileBorderUniform(World.TilesetTable.TileBorder);
 
                 Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
+                Effect.TileVertexCountUniform(Grid.FaceCount * 4);
             }
 
             // Set up geometry
@@ -354,7 +355,7 @@ namespace Render.RenderRequests
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                Grid = Renderer.GeometryManager.Get<CubeGrid>(GridView.Size);
+                Grid = Renderer.GeometryManager.Get<DuplicatedCubeGrid>(GridView.Size);
 
                 ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
                 //ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);

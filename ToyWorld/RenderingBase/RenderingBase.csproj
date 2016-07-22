@@ -61,8 +61,9 @@
     <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
+    <Compile Include="RenderObjects\Geometries\DuplicatedCubeGrid.cs" />
     <Compile Include="RenderObjects\Geometries\CubeGrid.cs" />
-    <Compile Include="RenderObjects\Geometries\Grid.cs" />
+    <Compile Include="RenderObjects\Geometries\DuplicatedGrid.cs" />
     <Compile Include="RenderObjects\Geometries\Cube.cs" />
     <Compile Include="RenderObjects\Geometries\Quad.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
