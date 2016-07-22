@@ -82,7 +82,7 @@ namespace Render.RenderRequests
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            PositionCenterV = new Vector3(0, 0, 5);
+            PositionCenterV = new Vector3(0, 0, 2);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
 
@@ -255,15 +255,13 @@ namespace Render.RenderRequests
 
         protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            //cameraDirection = Vector3.Forward;
-            cameraDirection = cameraDirection ?? new Vector3(0, 5f, -1);
-            //up = up ?? Vector3.Up;
+            cameraDirection = cameraDirection ?? new Vector3(0, 3f, -1);
             up = up ?? Vector3.Backward;
 
             Vector3 cross = Vector3.Cross(cameraDirection.Value, up.Value); // Perpendicular to both
             cross = Vector3.Cross(cross, cameraDirection.Value); // Up vector closest to the original up
 
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos - cameraDirection.Value * 10, cameraPos, cross);
+            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value * 10, cross);
 
             return viewMatrix;
         }
@@ -371,7 +369,7 @@ namespace Render.RenderRequests
             {
                 Grid = Renderer.GeometryManager.Get<DuplicatedCubeGrid>(GridView.Size);
 
-                ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 1f, 500);
+                ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 0.1f, 500);
                 //ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
 
                 // Flip the image to have its origin in the top-left corner

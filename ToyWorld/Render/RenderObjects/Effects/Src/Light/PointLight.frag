@@ -20,7 +20,11 @@ void main()
 	vec3 dist = lightPos - f_worldPos;
 
 	float intensity = 1 / (1 + dot(dist, dist) * 30 / intensityDecay.y);
+	intensity = 255 * 0.3f * intensity * intensityDecay.x;
 
-	out_color = color * 255 * 0.3f * intensity * intensityDecay.x;
+	if (intensity < 0.05f)
+		discard;
+
+	out_color = color * intensity;
 	out_color.xyz *= out_color.w; // Pre-multiply by alpha
 }

@@ -129,8 +129,8 @@ namespace Render.RenderRequests
             {
                 var avatar = World.GetAvatar(AvatarID);
                 //Vector3 dir = Vector3.Up;
-                Vector3 dir = new Vector3(0, 3f, -1);
-                dir.RotateX(avatar.Rotation);
+                Vector3 dir = new Vector3(0, 5f, -1);
+                dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
