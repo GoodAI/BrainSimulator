@@ -105,20 +105,14 @@ namespace Render.RenderRequests
         #endregion
 
 
-        protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        protected override Matrix Get2DViewMatrix(Vector3 cameraPos, Vector3? up = null)
         {
-            return base.GetViewMatrix(cameraPos, RotateMap ? m_avatarDirection : cameraDirection, up);
+            return base.Get2DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : up);
         }
 
-
-        public override void Init()
+        protected override Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            base.Init();
-        }
-
-        public override void Update()
-        {
-            base.Update();
+            return base.Get3DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : cameraDirection, Vector3.Backward);
         }
 
         public override void Draw()

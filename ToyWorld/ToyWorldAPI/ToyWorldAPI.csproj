@@ -110,6 +110,7 @@
     <Compile Include="Control\AvatarAction.cs" />
     <Compile Include="Control\AvatarControls.cs" />
     <Compile Include="MessageEvent.cs" />
+    <Compile Include="Render\Settings\GameObjectSettings.cs" />
     <Compile Include="Render\Settings\OverlaySettings.cs" />
     <Compile Include="Render\Settings\PostprocessingSettings.cs" />
     <Compile Include="Render\Settings\EffectSettings.cs" />

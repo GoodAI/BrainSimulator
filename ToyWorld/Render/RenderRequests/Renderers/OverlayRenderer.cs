@@ -93,18 +93,21 @@ namespace Render.RenderRequests
 
             Owner.FrontFbo.Bind();
 
-            // Bind stuff to GL
-            renderer.TextureManager.Bind(Owner.TilesetTexture);
-            renderer.EffectManager.Use(Owner.Effect);
-            Owner.Effect.TextureUniform(0);
-
 
             // some stuffs
         }
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
+            GameObjectRenderer goRenderer = Owner.GameObjectRenderer;
+
             GL.Enable(EnableCap.Blend);
+
+            // Bind stuff to GL (used in overrides)
+            renderer.TextureManager.Bind(goRenderer.TilesetTexture);
+            renderer.EffectManager.Use(goRenderer.Effect);
+            goRenderer.Effect.TextureUniform(0);
+
 
             if (Owner.FlipYAxis)
             {
@@ -124,25 +127,25 @@ namespace Render.RenderRequests
             m_overlayEffect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            Owner.LocalTileTypesBuffer[0] = (ushort)type;
+            goRenderer.LocalTileTypesBuffer[0] = (ushort)type;
             if (avatar.Tool != null)
-                Owner.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
+                goRenderer.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
 
             GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-            Owner.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
+            goRenderer.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: goRenderer.LocalTileTypesBuffer);
             QuadOffset.Draw();
 
 
             // Draw the inventory Tool
             if (avatar.Tool != null)
             {
-                renderer.TextureManager.Bind(Owner.TilesetTexture);
-                renderer.EffectManager.Use(Owner.Effect);
-                Owner.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
-                Owner.Effect.TileTypesIdxOffsetUniform(1);
+                renderer.TextureManager.Bind(goRenderer.TilesetTexture);
+                renderer.EffectManager.Use(goRenderer.Effect);
+                goRenderer.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+                goRenderer.Effect.TileTypesIdxOffsetUniform(1);
 
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
-                Owner.Effect.ModelViewProjectionUniform(ref toolTransform);
+                goRenderer.Effect.ModelViewProjectionUniform(ref toolTransform);
 
                 QuadOffset.Draw();
             }

@@ -27,7 +27,7 @@ namespace Render.RenderRequests
         : IRenderRequestBaseInternal<ToyWorld>
     {
         [Flags]
-        protected internal enum DirtyParam
+        internal enum DirtyParam
         {
             None = 0,
             Size = 1,
@@ -46,6 +46,7 @@ namespace Render.RenderRequests
 
         #region Fields
 
+        internal GameObjectRenderer GameObjectRenderer;
         internal EffectRenderer EffectRenderer;
         internal PostprocessRenderer PostprocessRenderer;
         internal OverlayRenderer OverlayRenderer;
@@ -54,24 +55,12 @@ namespace Render.RenderRequests
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
 
-        protected internal NoEffectOffset Effect;
-
-        protected internal TilesetTexture TilesetTexture;
-
-        protected internal BasicTexture1D TileTypesTexure;
-        private Pbo<ushort> m_tileTypesBuffer;
-        internal readonly ushort[] LocalTileTypesBuffer = new ushort[15];
-
-        protected internal DuplicatedCubeGrid Grid;
-        protected internal DuplicatedCube Cube;
         protected internal Quad Quad;
 
         protected internal Matrix ProjMatrix;
         protected internal Matrix ViewProjectionMatrix;
 
-        public ITileLayer[] ToRender;
-
-        protected internal DirtyParam DirtyParams;
+        internal DirtyParam DirtyParams;
 
         #endregion
 
@@ -79,12 +68,12 @@ namespace Render.RenderRequests
 
         protected RenderRequest()
         {
+            GameObjectRenderer = new GameObjectRenderer(this);
             EffectRenderer = new EffectRenderer(this);
             PostprocessRenderer = new PostprocessRenderer(this);
             OverlayRenderer = new OverlayRenderer(this);
             ImageRenderer = new ImageRenderer(this);
 
-            PositionCenterV = new Vector3(0, 0, 2);
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
 
@@ -102,17 +91,9 @@ namespace Render.RenderRequests
             if (FboMs != null)
                 FboMs.Dispose();
 
-            Effect.Dispose();
-
-            TilesetTexture.Dispose();
-            TileTypesTexure.Dispose();
-            m_tileTypesBuffer.Dispose();
-
-            if (Grid != null) // It is initialized during Draw
-                Grid.Dispose();
-            Cube.Dispose();
             Quad.Dispose();
 
+            GameObjectRenderer.Dispose();
             EffectRenderer.Dispose();
             PostprocessRenderer.Dispose();
             OverlayRenderer.Dispose();
@@ -146,7 +127,7 @@ namespace Render.RenderRequests
 
         protected internal virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
-        private Rectangle GridView
+        internal Rectangle GridView
         {
             get
             {
@@ -231,6 +212,7 @@ namespace Render.RenderRequests
 
         #region Settings
 
+        public GameObjectSettings GameObjects { get; set; }
         public EffectSettings Effects { get; set; }
         public PostprocessingSettings Postprocessing { get; set; }
         public OverlaySettings Overlay { get; set; }
@@ -255,17 +237,20 @@ namespace Render.RenderRequests
             GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.OneMinusSrcAlpha);
         }
 
-        protected virtual Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        protected virtual Matrix Get2DViewMatrix(Vector3 cameraPos, Vector3? up = null)
         {
-            cameraDirection = cameraDirection ?? new Vector3(0, 3f, -1);
-            up = up ?? Vector3.Backward;
+            return Matrix.CreateLookAt(cameraPos, cameraPos + Vector3.Forward, up ?? Vector3.Up);
+        }
+
+        protected virtual Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            cameraDirection = cameraDirection ?? Vector3.Forward;
+            up = up ?? Vector3.Up;
 
             Vector3 cross = Vector3.Cross(cameraDirection.Value, up.Value); // Perpendicular to both
             cross = Vector3.Cross(cross, cameraDirection.Value); // Up vector closest to the original up
 
-            Matrix viewMatrix = Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value * 10, cross);
-
-            return viewMatrix;
+            return Matrix.CreateLookAt(cameraPos, cameraPos + cameraDirection.Value, cross);
         }
 
         internal TextureUnit GetTextureUnit(TextureBindPosition bindPosition)
@@ -279,12 +264,12 @@ namespace Render.RenderRequests
 
         public virtual void Init()
         {
+            PositionCenterV = new Vector3(PositionCenterV2, GameObjects.Use3D ? 2 : 5);
+
             // Set up color and blending
             const int baseIntensity = 50;
             GL.ClearColor(System.Drawing.Color.FromArgb(baseIntensity, baseIntensity, baseIntensity));
             GL.BlendEquation(BlendEquationMode.FuncAdd);
-            GL.DepthFunc(DepthFunction.Less); // Default value?
-            //GL.DepthFunc(DepthFunction.Always); // Ignores stored depth values, but still writes them
 
             // Set up framebuffers
             {
@@ -322,42 +307,11 @@ namespace Render.RenderRequests
                 }
             }
 
-            // Tileset textures
-            {
-                // Set up tileset textures
-                IEnumerable<Tileset> tilesets = World.TilesetTable.GetTilesetImages();
-                TilesetImage[] tilesetImages = tilesets.Select(
-                    t =>
-                        new TilesetImage(
-                            t.Image.Source,
-                            new Vector2I(t.Tilewidth, t.Tileheight),
-                            new Vector2I(t.Spacing),
-                            World.TilesetTable.TileBorder))
-                    .ToArray();
-
-                TilesetTexture = Renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-            }
-
-            // Set up tile grid shader
-            {
-                Effect = Renderer.EffectManager.Get<NoEffectOffset>();
-                Renderer.EffectManager.Use(Effect); // Need to use the effect to set uniforms
-
-                // Set up static uniforms
-                Vector2I fullTileSize = World.TilesetTable.TileSize + World.TilesetTable.TileMargins +
-                                        World.TilesetTable.TileBorder * 2; // twice the border, on each side once
-                Vector2 tileCount = (Vector2)TilesetTexture.Size / (Vector2)fullTileSize;
-                Effect.TexSizeCountUniform(new Vector3I(TilesetTexture.Size.X, TilesetTexture.Size.Y, (int)tileCount.X));
-                Effect.TileSizeMarginUniform(new Vector4I(World.TilesetTable.TileSize, World.TilesetTable.TileMargins));
-                Effect.TileBorderUniform(World.TilesetTable.TileBorder);
-
-                Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
-            }
-
-            // Set up geometry
+            // Setup geometry
             Quad = Renderer.GeometryManager.Get<Quad>();
-            Cube = Renderer.GeometryManager.Get<DuplicatedCube>();
 
+
+            GameObjectRenderer.Init(Renderer, World, GameObjects);
             EffectRenderer.Init(Renderer, World, Effects);
             PostprocessRenderer.Init(Renderer, World, Postprocessing);
             OverlayRenderer.Init(Renderer, World, Overlay);
@@ -366,41 +320,22 @@ namespace Render.RenderRequests
 
         protected virtual void CheckDirtyParams()
         {
-            // Get currently rendered layers
-            ToRender = GetTileLayersToRender().ToArray();
+            // Update renderers
+            GameObjectRenderer.CheckDirtyParams(Renderer, World);
 
 
             // Only setup these things when their dependency has changed (property setters enable these)
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
             {
-                Grid = Renderer.GeometryManager.Get<DuplicatedCubeGrid>(GridView.Size);
-
-                ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 0.1f, 500);
-                //ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 10);
+                if (!GameObjects.Use3D)
+                    ProjMatrix = Matrix.CreateOrthographic(SizeV.X, SizeV.Y, -1, 100);
+                else
+                    ProjMatrix = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, 1, 0.1f, 500);
 
                 // Flip the image to have its origin in the top-left corner
                 if (FlipYAxis)
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);
-
-                // Reallocate stuff if needed -- texture holds tileTypes for all the layers
-                int totalTileCount = GridView.Size.Size() * ToRender.Length;
-                Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
-
-                if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
-                {
-                    // Init buffer
-                    if (m_tileTypesBuffer != null)
-                        m_tileTypesBuffer.Dispose();
-                    m_tileTypesBuffer = new Pbo<ushort>(1);
-                    m_tileTypesBuffer.Init(totalTileCount, hint: BufferUsageHint.StreamDraw);
-
-                    // Init texture
-                    if (TileTypesTexure != null)
-                        TileTypesTexure.Dispose();
-                    TileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(new Vector2I(totalTileCount, 1));
-                    TileTypesTexure.DefaultInit();
-                }
             }
 
 
@@ -411,17 +346,12 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        protected virtual IEnumerable<ITileLayer> GetTileLayersToRender()
-        {
-            return World.Atlas.TileLayers.Where(l => l.Render);
-        }
-
         public virtual void Update()
         {
             CheckDirtyParams();
 
             // View and proj transforms
-            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
+            ViewProjectionMatrix = !GameObjects.Use3D ? Get2DViewMatrix(PositionCenterV) : Get3DViewMatrix(PositionCenterV);
             ViewProjectionMatrix *= ProjMatrix;
         }
 
@@ -430,23 +360,8 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            // Start asynchronous copying of tile types
-            Rectangle gridView = GridView;
-            int tileCount = gridView.Size.Size();
-
-            for (int i = 0; i < ToRender.Length; i++)
-            {
-                // Store data directly to device memory
-                m_tileTypesBuffer.Bind();
-                IntPtr bufferPtr = GL.MapBuffer(m_tileTypesBuffer.Target, BufferAccess.WriteOnly);
-                ToRender[i].GetTileTypesAt(gridView, bufferPtr, tileCount, i * tileCount);
-                GL.UnmapBuffer(m_tileTypesBuffer.Target);
-
-                // Start async copying to the texture
-                m_tileTypesBuffer.Bind(BufferTarget.PixelUnpackBuffer);
-                TileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort, offset: i * tileCount, byteDataOffset: i * tileCount * sizeof(ushort));
-            }
-
+            if (GameObjectRenderer != null)
+                GameObjectRenderer.OnPreDraw();
 
             if (ImageRenderer != null)
                 ImageRenderer.OnPreDraw();
@@ -458,6 +373,8 @@ namespace Render.RenderRequests
             if (ImageRenderer != null)
                 ImageRenderer.Draw(Renderer, World);
 
+            if (GameObjectRenderer != null)
+                GameObjectRenderer.OnPostDraw();
 
             if (ImageRenderer != null)
                 ImageRenderer.OnPostDraw();
@@ -477,26 +394,9 @@ namespace Render.RenderRequests
 
             // Setup stuff
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            //GL.Enable(EnableCap.Blend);
-            GL.Disable(EnableCap.Blend);
-            SetDefaultBlending();
-            GL.Enable(EnableCap.DepthTest);
-
-            // Bind stuff to GL
-            Renderer.TextureManager.Bind(TilesetTexture[0], GetTextureUnit(TextureBindPosition.SummerTileset));
-            Renderer.TextureManager.Bind(TilesetTexture[1], GetTextureUnit(TextureBindPosition.WinterTileset));
-            Renderer.TextureManager.Bind(TileTypesTexure, GetTextureUnit(TextureBindPosition.TileTypes));
-            Renderer.EffectManager.Use(Effect);
-            Effect.TextureUniform((int)TextureBindPosition.SummerTileset);
-            Effect.TextureWinterUniform((int)TextureBindPosition.WinterTileset);
-            Effect.TileTypesTextureUniform((int)TextureBindPosition.TileTypes);
-            Effect.DiffuseUniform(new Vector4(1, 1, 1, EffectRenderer.GetGlobalDiffuseComponent(World)));
-            Effect.TileVertexCountUniform(Grid.FaceCount * 4);
-
 
             // Draw the scene
-            DrawTileLayers();
-            DrawObjectLayers();
+            GameObjectRenderer.Draw(Renderer, World);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -527,62 +427,6 @@ namespace Render.RenderRequests
 
             // Tell OpenGL driver to submit any unissued commands to the GPU
             GL.Flush();
-        }
-
-        protected virtual void DrawTileLayers()
-        {
-            Rectangle gridView = GridView;
-            int tileCount = gridView.Size.Size();
-
-            // Draw tile layers
-            int i = 0;
-
-            foreach (var tileLayer in GetTileLayersToRender())
-            {
-                // Set up transformation to screen space for tiles
-                // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-                Matrix transform = Matrix.CreateScale(new Vector3(gridView.Size, tileLayer.Thickness) * 0.5f);
-                // World transform -- move center to view center
-                transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));// + tileLayer.Thickness / 2));
-                // View and projection transforms
-                transform *= ViewProjectionMatrix;
-                Effect.ModelViewProjectionUniform(ref transform);
-                Effect.TileTypesIdxOffsetUniform(i++ * tileCount);
-
-                // Using the tileTypes texture should block until the data is fully copied from the pbos (onPreDraw)
-                Grid.Draw();
-            }
-        }
-
-        protected virtual void DrawObjectLayers()
-        {
-            Effect.TileTypesIdxOffsetUniform(0);
-            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-
-            // Draw objects
-            foreach (var objectLayer in World.Atlas.ObjectLayers)
-            {
-                foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(GridView)))
-                {
-                    // Set up transformation to screen space for the gameObject
-                    Matrix transform = Matrix.Identity;
-                    // Model transform
-                    IRotatable rotatableObject = gameObject as IRotatable;
-                    if (rotatableObject != null)
-                        transform *= Matrix.CreateRotationZ(rotatableObject.Rotation);
-                    transform *= Matrix.CreateScale(new Vector3(gameObject.Size, objectLayer.Thickness) * 0.5f); // from (-1,1) to (-size,size)/2
-                    // World transform
-                    transform *= Matrix.CreateTranslation(new Vector3(gameObject.Position, objectLayer.SpanIntervalFrom + objectLayer.Thickness / 2));
-                    // View and projection transforms
-                    transform *= ViewProjectionMatrix;
-                    Effect.ModelViewProjectionUniform(ref transform);
-
-                    // Setup dynamic data
-                    LocalTileTypesBuffer[0] = (ushort)gameObject.TilesetId;
-                    TileTypesTexure.Update1D(1, dataType: PixelType.UnsignedShort, data: LocalTileTypesBuffer);
-                    Cube.Draw();
-                }
-            }
         }
 
         #endregion

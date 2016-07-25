@@ -68,6 +68,8 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region Draw
+
         #region Callbacks
 
         public virtual void OnPreDraw()
@@ -90,8 +92,6 @@ namespace Render.RenderRequests
         }
 
         #endregion
-
-        #region Draw
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {

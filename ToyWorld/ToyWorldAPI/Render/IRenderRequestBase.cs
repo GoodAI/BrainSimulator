@@ -57,26 +57,28 @@ namespace GoodAI.ToyWorld.Control
 
 
         /// <summary>
-        /// Contains the desired settings of rendered image copying.
+        /// Contains the desired settings for rendering game objects.
         /// </summary>
-        ImageSettings Image { get; set; }
-
+        GameObjectSettings GameObjects { get; set; }
 
         /// <summary>
         /// Contains the desired settings of scene effects.
         /// </summary>
         EffectSettings Effects { get; set; }
 
-
         /// <summary>
         /// Contains the desired settings for scene postprocessing.
         /// </summary>
         PostprocessingSettings Postprocessing { get; set; }
 
-
         /// <summary>
         /// Contains the desired settings for scene overlays.
         /// </summary>
         OverlaySettings Overlay { get; set; }
+
+        /// <summary>
+        /// Contains the desired settings of rendered image copying.
+        /// </summary>
+        ImageSettings Image { get; set; }
     }
 }
