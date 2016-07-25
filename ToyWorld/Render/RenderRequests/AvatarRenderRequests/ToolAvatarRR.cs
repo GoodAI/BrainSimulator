@@ -1,11 +1,7 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
-using RenderingBase.Renderer;
 using VRageMath;
-using World.Atlas.Layers;
-using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
@@ -61,12 +57,6 @@ namespace Render.RenderRequests
         protected override Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             return Matrix.Identity;
-        }
-
-        public override void OnPreDraw()
-        {
-            if (ImageRenderer != null)
-                ImageRenderer.OnPreDraw();
         }
 
         #endregion

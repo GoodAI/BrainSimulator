@@ -102,6 +102,7 @@ namespace Render.RenderRequests
             GameObjectRenderer goRenderer = Owner.GameObjectRenderer;
 
             GL.Enable(EnableCap.Blend);
+            Owner.SetDefaultBlending();
 
             // Bind stuff to GL (used in overrides)
             renderer.TextureManager.Bind(goRenderer.TilesetTexture);
