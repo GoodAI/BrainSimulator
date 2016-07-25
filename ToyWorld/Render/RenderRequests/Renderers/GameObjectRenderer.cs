@@ -115,7 +115,7 @@ namespace Render.RenderRequests
 
                 // Reallocate stuff if needed -- texture holds tileTypes for all the layers
                 int totalTileCount = Owner.GridView.Size.Size() * m_toRender.Length;
-                Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
+                Debug.Assert(totalTileCount < 1 << 14, "TileTypesTexture will overflow!");
 
                 if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
                 {

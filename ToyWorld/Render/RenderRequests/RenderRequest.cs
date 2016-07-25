@@ -113,6 +113,8 @@ namespace Render.RenderRequests
         /// </summary>
         protected Vector2 PositionCenterV2 { get { return new Vector2(PositionCenterV); } set { PositionCenterV = new Vector3(value, PositionCenterV.Z); } }
 
+        protected float PositionZ { get { return PositionCenterV.Z; } set { PositionCenterV = new Vector3(PositionCenterV2, value); } }
+
         private Vector2 m_sizeV;
         protected Vector2 SizeV
         {
@@ -120,7 +122,8 @@ namespace Render.RenderRequests
             set
             {
                 const float minSize = 0.01f;
-                m_sizeV = new Vector2(Math.Max(minSize, value.X), Math.Max(minSize, value.Y));
+                const float maxSize = 50; // Texture max size is (1 << 14) / 8, (8 is max layer count), sqrt of that is max size of one side
+                m_sizeV = new Vector2(Math.Min(maxSize, Math.Max(minSize, value.X)), Math.Min(maxSize, Math.Max(minSize, value.Y)));
                 DirtyParams |= DirtyParam.Size;
             }
         }

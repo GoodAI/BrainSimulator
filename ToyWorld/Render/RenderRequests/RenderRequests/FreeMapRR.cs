@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using RenderingBase.Renderer;
 using VRageMath;
@@ -35,8 +36,8 @@ namespace Render.RenderRequests
 
         public override void Update()
         {
-            // TODO: setup camera
-
+            float sideSize = SizeV.X - 1;
+            PositionZ = (float)Math.Sqrt(sideSize * sideSize * 7 / 4);
             base.Update();
         }
 
