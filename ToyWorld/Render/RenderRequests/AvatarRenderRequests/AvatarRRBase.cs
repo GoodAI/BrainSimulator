@@ -127,28 +127,28 @@ namespace Render.RenderRequests
         {
             PositionCenterV2 += RelativePositionV;
 
-            base.Update();
+            var avatar = World.GetAvatar(AvatarID);
 
             if (RotateMap)
             {
-                var avatar = World.GetAvatar(AvatarID);
                 //Vector3 dir = Vector3.Up;
-                Vector3 dir = new Vector3(0, 5f, -1);
+                Vector3 dir = new Vector3(0, 5.5f, -1);
                 dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
+            base.Update(); // Sets up view projection -- we need to change grid position AFTER that
+
+            // Apply grid offset to increase view distance
             if (GameObjects.Use3D && m_avatarDirection.HasValue)
             {
                 Vector2 gridOffsetDir = new Vector2(m_avatarDirection.Value);
                 gridOffsetDir.Normalize();
                 PositionCenterV2 += gridOffsetDir * (Math.Min(SizeV.X, SizeV.Y) - 5);
             }
-        }
 
-        public override void Draw()
-        {
-            base.Draw();
+            if (GameObjects.Use3D)
+                GameObjectRenderer.IgnoredGameObjects.Add(avatar);
         }
     }
 }

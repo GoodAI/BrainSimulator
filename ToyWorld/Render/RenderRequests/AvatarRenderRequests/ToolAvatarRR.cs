@@ -26,7 +26,7 @@ namespace Render.RenderRequests
         {
             var objects = GameObjects;
             objects.Use3D = false;
-            objects.EnabledEffects = RenderRequestGameObject.None;
+            objects.EnabledGameObjects = RenderRequestGameObject.None;
             GameObjects = objects;
 
             var effects = Effects;

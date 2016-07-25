@@ -12,6 +12,7 @@ using RenderingBase.RenderObjects.Textures;
 using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas.Layers;
+using World.GameActors.GameObjects;
 using World.Physics;
 using World.ToyWorldCore;
 
@@ -36,6 +37,7 @@ namespace Render.RenderRequests
 
         private ITileLayer[] m_toRender;
         private Rectangle m_gridView;
+        public HashSet<IGameObject> IgnoredGameObjects = new HashSet<IGameObject>();
 
         #endregion
 
@@ -107,6 +109,8 @@ namespace Render.RenderRequests
                 Cube = renderer.GeometryManager.Get<DuplicatedCube>();
             else
                 Cube = renderer.GeometryManager.Get<Quad>();
+
+            IgnoredGameObjects.Clear();
         }
 
         public void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
@@ -158,12 +162,12 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            if (Settings.EnabledEffects == RenderRequestGameObject.None)
+            if (Settings.EnabledGameObjects == RenderRequestGameObject.None)
                 return;
 
             m_gridView = Owner.GridView; // The value might have changed
 
-            if (Settings.EnabledEffects.HasFlag(RenderRequestGameObject.TileLayers))
+            if (Settings.EnabledGameObjects.HasFlag(RenderRequestGameObject.TileLayers))
             {
                 // Start asynchronous copying of tile types
                 int tileCount = m_gridView.Size.Size();
@@ -190,7 +194,7 @@ namespace Render.RenderRequests
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            if (Settings.EnabledEffects == RenderRequestGameObject.None)
+            if (Settings.EnabledGameObjects == RenderRequestGameObject.None)
                 return;
 
             m_gridView = Owner.GridView; // The value might have changed
@@ -216,9 +220,9 @@ namespace Render.RenderRequests
             Effect.DiffuseUniform(new Vector4(1, 1, 1, Owner.EffectRenderer.GetGlobalDiffuseComponent(world)));
             Effect.TileVertexCountUniform(Settings.Use3D ? DuplicatedCubeGrid.FaceCount * 4 : 4);
 
-            if (Settings.EnabledEffects.HasFlag(RenderRequestGameObject.TileLayers))
+            if (Settings.EnabledGameObjects.HasFlag(RenderRequestGameObject.TileLayers))
                 DrawTileLayers(renderer, world);
-            if (Settings.EnabledEffects.HasFlag(RenderRequestGameObject.ObjectLayers))
+            if (Settings.EnabledGameObjects.HasFlag(RenderRequestGameObject.ObjectLayers))
                 DrawObjectLayers(renderer, world);
         }
 
@@ -256,6 +260,9 @@ namespace Render.RenderRequests
             {
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(m_gridView)))
                 {
+                    if (IgnoredGameObjects.Contains(gameObject))
+                        continue;
+
                     // Set up transformation to screen space for the gameObject
                     Matrix transform = Matrix.Identity;
                     // Model transform

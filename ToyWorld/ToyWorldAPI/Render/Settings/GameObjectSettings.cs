@@ -26,7 +26,7 @@ namespace GoodAI.ToyWorld.Control
         /// <summary>
         /// Specifies which effects should be used.
         /// </summary>
-        public RenderRequestGameObject EnabledEffects { get; set; }
+        public RenderRequestGameObject EnabledGameObjects { get; set; }
 
 
         /// <summary>
@@ -40,10 +40,10 @@ namespace GoodAI.ToyWorld.Control
         #endregion
 
 
-        public GameObjectSettings(RenderRequestGameObject enabledEffects)
+        public GameObjectSettings(RenderRequestGameObject enabledGameObjects)
             : this()
         {
-            EnabledEffects = enabledEffects;
+            EnabledGameObjects = enabledGameObjects;
         }
     }
 }
