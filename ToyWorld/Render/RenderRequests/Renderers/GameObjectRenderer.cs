@@ -158,6 +158,8 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
+            m_gridView = Owner.GridView; // The value might have changed
+
             // Start asynchronous copying of tile types
             int tileCount = m_gridView.Size.Size();
 
@@ -184,6 +186,8 @@ namespace Render.RenderRequests
         {
             if (Settings.EnabledEffects == RenderRequestGameObject.None)
                 return;
+
+            m_gridView = Owner.GridView; // The value might have changed
 
             if (!Settings.Use3D)
             {

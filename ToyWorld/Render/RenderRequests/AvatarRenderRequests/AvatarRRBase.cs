@@ -105,6 +105,14 @@ namespace Render.RenderRequests
         #endregion
 
 
+        public override void Init()
+        {
+            // Must use rotateMap when using 3D
+            RotateMap = GameObjects.Use3D || RotateMap;
+
+            base.Init();
+        }
+
         protected override Matrix Get2DViewMatrix(Vector3 cameraPos, Vector3? up = null)
         {
             return base.Get2DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : up);
@@ -115,9 +123,11 @@ namespace Render.RenderRequests
             return base.Get3DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : cameraDirection, Vector3.Backward);
         }
 
-        public override void Draw()
+        public override void Update()
         {
             PositionCenterV2 += RelativePositionV;
+
+            base.Update();
 
             if (RotateMap)
             {
@@ -128,6 +138,16 @@ namespace Render.RenderRequests
                 m_avatarDirection = dir;
             }
 
+            if (GameObjects.Use3D && m_avatarDirection.HasValue)
+            {
+                Vector2 gridOffsetDir = new Vector2(m_avatarDirection.Value);
+                gridOffsetDir.Normalize();
+                PositionCenterV2 += gridOffsetDir * (Math.Min(SizeV.X, SizeV.Y) - 5);
+            }
+        }
+
+        public override void Draw()
+        {
             base.Draw();
         }
     }
