@@ -32,20 +32,47 @@ namespace RenderingBase.RenderObjects.Buffers
         #region Genesis
 
         public static void Init()
-        { }
+        {
+            _quadVertices = new Lazy<VboBase>(GenerateSquareVertices);
+            _quadColors = new Lazy<VboBase>(GenerateSquareColors);
+
+            _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
+            _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
+            _duplicatedCubeVertices = new Lazy<VboBase>(GenerateDuplicatedCubeVertices);
+        }
 
         public static void Clear()
         {
-            _quadVertices = null;
-            _quadColors = null;
+            ClearLazyHelper(ref _quadVertices);
+            ClearLazyHelper(ref _quadColors);
 
-            _cubeVertices = null;
-            _cubeElements = null;
-            _duplicatedCubeVertices = null;
+            ClearLazyHelper(ref _cubeVertices);
+            ClearLazyHelper(ref _cubeElements);
+            ClearLazyHelper(ref _duplicatedCubeVertices);
 
-            DuplicatedGridVertices.Clear();
-            CubeGridVertices.Clear();
-            CubeGridElements.Clear();
+            ClearDictHelper(DuplicatedGridVertices);
+            ClearDictHelper(CubeGridVertices);
+            ClearDictHelper(CubeGridElements);
+            ClearDictHelper(DuplicatedCubeGridVertices);
+        }
+
+        private static void ClearDictHelper<TDictKey, TTupleKey, TTupleValue>(this Dictionary<TDictKey, Tuple<TTupleKey, TTupleValue>> dict)
+            where TTupleValue : IDisposable
+        {
+            foreach (var value in dict.Values)
+                if (value.Item2 != null)
+                    value.Item2.Dispose();
+
+            dict.Clear();
+        }
+
+        private static void ClearLazyHelper<TLazyValue>(ref Lazy<TLazyValue> lazy)
+            where TLazyValue : IDisposable
+        {
+            if (lazy.IsValueCreated)
+                lazy.Value.Dispose();
+
+            lazy = null;
         }
 
         #endregion
@@ -54,7 +81,9 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Square
 
-        private static Lazy<VboBase> _quadVertices = new Lazy<VboBase>(GenerateSquareVertices);
+        private static Lazy<VboBase> _quadVertices;
+        private static Lazy<VboBase> _quadColors;
+
         private static VboBase GenerateSquareVertices()
         {
             Vector2[] squareVertices =
@@ -68,7 +97,6 @@ namespace RenderingBase.RenderObjects.Buffers
             return new StaticVbo<Vector2>(squareVertices.Length, squareVertices, 2, hint: BufferUsageHint.StaticDraw);
         }
 
-        private static Lazy<VboBase> _quadColors = new Lazy<VboBase>(GenerateSquareColors);
         private static VboBase GenerateSquareColors()
         {
             float[] buf =
@@ -86,9 +114,9 @@ namespace RenderingBase.RenderObjects.Buffers
 
         #region Cube
 
-        private static Lazy<VboBase> _cubeVertices = new Lazy<VboBase>(GenerateCubeVertices);
-        private static Lazy<VboBase> _cubeElements = new Lazy<VboBase>(GenerateCubeElements);
-        private static Lazy<VboBase> _duplicatedCubeVertices = new Lazy<VboBase>(GenerateDuplicatedCubeVertices);
+        private static Lazy<VboBase> _cubeVertices;
+        private static Lazy<VboBase> _cubeElements;
+        private static Lazy<VboBase> _duplicatedCubeVertices;
 
 
         private static Vector3[] GenerateRawCubeVertices()

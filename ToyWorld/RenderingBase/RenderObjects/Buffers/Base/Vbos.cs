@@ -5,7 +5,8 @@ using OpenTK.Graphics.OpenGL;
 
 namespace RenderingBase.RenderObjects.Buffers
 {
-    public abstract class VboBase : IDisposable
+    public abstract class VboBase 
+        : IDisposable
     {
         public uint Handle { get; private set; }
 
