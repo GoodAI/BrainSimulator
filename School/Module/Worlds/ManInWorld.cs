@@ -985,6 +985,11 @@ namespace GoodAI.Modules.School.Worlds
                     MyLog.INFO.WriteLine(
                         "{0}: CUDA-OpenGL interop error while itializing texture (using fallback): {1}",
                         GetType().Name, e.Message);
+
+                    Owner.VisualPOW.FreeDevice();
+                    Owner.VisualPOW.Unmanaged = false;
+                    Owner.VisualPOW.AllocateDevice();
+                    m_renderResource = null;
                 }
 
                 // Clean up
@@ -1142,26 +1147,43 @@ namespace GoodAI.Modules.School.Worlds
 
             void CopyPixelsPow()
             {
-                // Prepare the results for CUDA
-                // deinit CUDA interop to enable copying
-                if (m_renderResource.IsMapped)
-                    m_renderResource.UnMap();
+                if (m_renderResource == null)
+                {
+                    // CUDA-GL interop is not valid on this machine -- use CPU instead
+                    // bind pixel buffer object
+                    GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                    // bind buffer from which data will be read
+                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                    // read data to PBO (IntPtr.Zero means offset is 0)
+                    GL.ReadPixels(0, 0, Owner.Pow.Width, Owner.Pow.Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra,
+                        PixelType.UnsignedInt8888Reversed, Owner.VisualPOW.Host);
+                    GL.ReadBuffer(ReadBufferMode.None);
 
-                // bind pixel buffer object
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
-                // bind buffer from which data will be read
-                GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
-                // read data to PBO (IntPtr.Zero means offset is 0)
-                GL.ReadPixels(0, 0, Owner.Pow.Width, Owner.Pow.Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, IntPtr.Zero);
-                GL.ReadBuffer(ReadBufferMode.None);
+                    Owner.VisualPOW.SafeCopyToDevice();
+                }
+                else
+                {
+                    // Prepare the results for CUDA
+                    // deinit CUDA interop to enable copying
+                    if (m_renderResource.IsMapped)
+                        m_renderResource.UnMap();
 
-                GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+                    // bind pixel buffer object
+                    GL.BindBuffer(BufferTarget.PixelPackBuffer, m_sharedBufferHandle);
+                    // bind buffer from which data will be read
+                    GL.ReadBuffer(ReadBufferMode.ColorAttachment0);
+                    // read data to PBO (IntPtr.Zero means offset is 0)
+                    GL.ReadPixels(0, 0, Owner.Pow.Width, Owner.Pow.Height, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedInt8888Reversed, default(IntPtr));
+                    GL.ReadBuffer(ReadBufferMode.None);
 
-                // Update the pointer for other usage in BS
-                m_renderResource.Map();
-                Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
-                Owner.VisualPOW.FreeDevice();
-                Owner.VisualPOW.AllocateDevice();
+                    GL.BindBuffer(BufferTarget.PixelPackBuffer, 0);
+
+                    // Update the pointer for other usage in BS
+                    m_renderResource.Map();
+                    Owner.VisualPOW.ExternalPointer = m_renderResource.GetMappedPointer<uint>().DevicePointer.Pointer;
+                    Owner.VisualPOW.FreeDevice();
+                    Owner.VisualPOW.AllocateDevice();
+                }
 
                 // add noise over POW
                 if (Owner.IsImageNoise)
