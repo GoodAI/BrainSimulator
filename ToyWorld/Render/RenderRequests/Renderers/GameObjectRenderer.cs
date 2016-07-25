@@ -30,8 +30,9 @@ namespace Render.RenderRequests
         private Pbo<ushort> m_tileTypesBuffer;
         internal readonly ushort[] LocalTileTypesBuffer = new ushort[15];
 
-        protected internal DuplicatedCubeGrid Grid;
-        protected internal DuplicatedCube Cube;
+        protected internal GeometryBase Grid;
+        protected internal GeometryBase Cube;
+
 
         private ITileLayer[] m_toRender;
         private Rectangle m_gridView;
@@ -54,7 +55,8 @@ namespace Render.RenderRequests
 
             if (Grid != null) // It is initialized during Draw
                 Grid.Dispose();
-            Cube.Dispose();
+            if (Cube != null)
+                Cube.Dispose();
         }
 
         #endregion
@@ -101,20 +103,29 @@ namespace Render.RenderRequests
             }
 
             // Set up geometry
-            Cube = renderer.GeometryManager.Get<DuplicatedCube>();
+            if (settings.Use3D)
+                Cube = renderer.GeometryManager.Get<DuplicatedCube>();
+            else
+                Cube = renderer.GeometryManager.Get<Quad>();
         }
 
         public void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            m_gridView = Owner.GridView;
+
+
             // Get currently rendered layers
             m_toRender = GetTileLayersToRender().ToArray();
 
             if (Owner.DirtyParams.HasFlag(RenderRequest.DirtyParam.Size))
             {
-                Grid = renderer.GeometryManager.Get<DuplicatedCubeGrid>(Owner.GridView.Size);
+                if (Settings.Use3D)
+                    Grid = renderer.GeometryManager.Get<DuplicatedCubeGrid>(m_gridView.Size);
+                else
+                    Grid = renderer.GeometryManager.Get<DuplicatedGrid>(m_gridView.Size);
 
                 // Reallocate stuff if needed -- texture holds tileTypes for all the layers
-                int totalTileCount = Owner.GridView.Size.Size() * m_toRender.Length;
+                int totalTileCount = m_gridView.Size.Size() * m_toRender.Length;
                 Debug.Assert(totalTileCount < 1 << 14, "TileTypesTexture will overflow!");
 
                 if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
@@ -147,9 +158,6 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            m_gridView = Owner.GridView;
-
-
             // Start asynchronous copying of tile types
             int tileCount = m_gridView.Size.Size();
 
@@ -177,8 +185,14 @@ namespace Render.RenderRequests
             if (Settings.EnabledEffects == RenderRequestGameObject.None)
                 return;
 
-            GL.Disable(EnableCap.Blend);
-            Owner.SetDefaultBlending();
+            if (!Settings.Use3D)
+            {
+                GL.Enable(EnableCap.Blend);
+                Owner.SetDefaultBlending();
+            }
+            else
+                GL.Disable(EnableCap.Blend);
+
             GL.Enable(EnableCap.DepthTest);
 
             // Bind stuff to GL
@@ -190,7 +204,7 @@ namespace Render.RenderRequests
             Effect.TextureWinterUniform((int)RenderRequest.TextureBindPosition.WinterTileset);
             Effect.TileTypesTextureUniform((int)RenderRequest.TextureBindPosition.TileTypes);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, Owner.EffectRenderer.GetGlobalDiffuseComponent(world)));
-            Effect.TileVertexCountUniform(Grid.FaceCount * 4);
+            Effect.TileVertexCountUniform(Settings.Use3D ? DuplicatedCubeGrid.FaceCount * 4 : 4);
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestGameObject.TileLayers))
                 DrawTileLayers(renderer, world);

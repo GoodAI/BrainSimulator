@@ -7,7 +7,8 @@ namespace RenderingBase.RenderObjects.Geometries
 {
     public class DuplicatedCubeGrid : GeometryBase
     {
-        public int FaceCount { get { return 6; } }
+        public const int FaceCount = 6;
+        public int PrimitiveFaceCount { get { return 6; } }
 
         public Vector2I Dimensions { get; private set; }
 
