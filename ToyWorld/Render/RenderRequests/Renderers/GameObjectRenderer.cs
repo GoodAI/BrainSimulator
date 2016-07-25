@@ -158,22 +158,28 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
+            if (Settings.EnabledEffects == RenderRequestGameObject.None)
+                return;
+
             m_gridView = Owner.GridView; // The value might have changed
 
-            // Start asynchronous copying of tile types
-            int tileCount = m_gridView.Size.Size();
-
-            for (int i = 0; i < m_toRender.Length; i++)
+            if (Settings.EnabledEffects.HasFlag(RenderRequestGameObject.TileLayers))
             {
-                // Store data directly to device memory
-                m_tileTypesBuffer.Bind();
-                IntPtr bufferPtr = GL.MapBuffer(m_tileTypesBuffer.Target, BufferAccess.WriteOnly);
-                m_toRender[i].GetTileTypesAt(m_gridView, bufferPtr, tileCount, i * tileCount);
-                GL.UnmapBuffer(m_tileTypesBuffer.Target);
+                // Start asynchronous copying of tile types
+                int tileCount = m_gridView.Size.Size();
 
-                // Start async copying to the texture
-                m_tileTypesBuffer.Bind(BufferTarget.PixelUnpackBuffer);
-                TileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort, offset: i * tileCount, byteDataOffset: i * tileCount * sizeof(ushort));
+                for (int i = 0; i < m_toRender.Length; i++)
+                {
+                    // Store data directly to device memory
+                    m_tileTypesBuffer.Bind();
+                    IntPtr bufferPtr = GL.MapBuffer(m_tileTypesBuffer.Target, BufferAccess.WriteOnly);
+                    m_toRender[i].GetTileTypesAt(m_gridView, bufferPtr, tileCount, i * tileCount);
+                    GL.UnmapBuffer(m_tileTypesBuffer.Target);
+
+                    // Start async copying to the texture
+                    m_tileTypesBuffer.Bind(BufferTarget.PixelUnpackBuffer);
+                    TileTypesTexure.Update1D(tileCount, dataType: PixelType.UnsignedShort, offset: i * tileCount, byteDataOffset: i * tileCount * sizeof(ushort));
+                }
             }
         }
 
