@@ -69,6 +69,8 @@ namespace Render.RenderRequests
         protected internal Matrix ProjMatrix;
         protected internal Matrix ViewProjectionMatrix;
 
+        public ITileLayer[] ToRender;
+
         protected internal DirtyParam DirtyParams;
 
         #endregion
@@ -324,7 +326,8 @@ namespace Render.RenderRequests
             {
                 // Set up tileset textures
                 IEnumerable<Tileset> tilesets = World.TilesetTable.GetTilesetImages();
-                TilesetImage[] tilesetImages = tilesets.Select(t =>
+                TilesetImage[] tilesetImages = tilesets.Select(
+                    t =>
                         new TilesetImage(
                             t.Image.Source,
                             new Vector2I(t.Tilewidth, t.Tileheight),
@@ -363,6 +366,10 @@ namespace Render.RenderRequests
 
         protected virtual void CheckDirtyParams()
         {
+            // Get currently rendered layers
+            ToRender = GetTileLayersToRender().ToArray();
+
+
             // Only setup these things when their dependency has changed (property setters enable these)
 
             if (DirtyParams.HasFlag(DirtyParam.Size))
@@ -375,7 +382,27 @@ namespace Render.RenderRequests
                 // Flip the image to have its origin in the top-left corner
                 if (FlipYAxis)
                     ProjMatrix *= Matrix.CreateScale(1, -1, 1);
+
+                // Reallocate stuff if needed -- texture holds tileTypes for all the layers
+                int totalTileCount = GridView.Size.Size() * ToRender.Length;
+                Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
+
+                if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
+                {
+                    // Init buffer
+                    if (m_tileTypesBuffer != null)
+                        m_tileTypesBuffer.Dispose();
+                    m_tileTypesBuffer = new Pbo<ushort>(1);
+                    m_tileTypesBuffer.Init(totalTileCount, hint: BufferUsageHint.StreamDraw);
+
+                    // Init texture
+                    if (TileTypesTexure != null)
+                        TileTypesTexure.Dispose();
+                    TileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(new Vector2I(totalTileCount, 1));
+                    TileTypesTexure.DefaultInit();
+                }
             }
+
 
             DirtyParams = DirtyParam.None;
         }
@@ -384,10 +411,20 @@ namespace Render.RenderRequests
 
         #region Draw
 
-        protected IEnumerable<ITileLayer> GetTileLayersToRender()
+        protected virtual IEnumerable<ITileLayer> GetTileLayersToRender()
         {
             return World.Atlas.TileLayers.Where(l => l.Render);
         }
+
+        public virtual void Update()
+        {
+            CheckDirtyParams();
+
+            // View and proj transforms
+            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
+            ViewProjectionMatrix *= ProjMatrix;
+        }
+
 
         #region Events
 
@@ -397,34 +434,12 @@ namespace Render.RenderRequests
             Rectangle gridView = GridView;
             int tileCount = gridView.Size.Size();
 
-            ITileLayer[] toRender = GetTileLayersToRender().ToArray();
-
-            // Reallocate stuff if needed -- texture holds tileTypes for all the layers
-            int totalTileCount = tileCount * toRender.Length;
-            Debug.Assert(totalTileCount < 2 << 13, "TileTypesTexture will overflow!");
-
-            if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
-            {
-                // Init buffer
-                if (m_tileTypesBuffer != null)
-                    m_tileTypesBuffer.Dispose();
-                m_tileTypesBuffer = new Pbo<ushort>(1);
-                m_tileTypesBuffer.Init(totalTileCount, hint: BufferUsageHint.StreamDraw);
-
-                // Init texture
-                if (TileTypesTexure != null)
-                    TileTypesTexure.Dispose();
-                TileTypesTexure = Renderer.TextureManager.Get<BasicTexture1D>(new Vector2I(totalTileCount, 1));
-                TileTypesTexure.DefaultInit();
-            }
-
-            // Start data copying
-            for (int i = 0; i < toRender.Length; i++)
+            for (int i = 0; i < ToRender.Length; i++)
             {
                 // Store data directly to device memory
                 m_tileTypesBuffer.Bind();
                 IntPtr bufferPtr = GL.MapBuffer(m_tileTypesBuffer.Target, BufferAccess.WriteOnly);
-                toRender[i].GetTileTypesAt(gridView, bufferPtr, tileCount, i * tileCount);
+                ToRender[i].GetTileTypesAt(gridView, bufferPtr, tileCount, i * tileCount);
                 GL.UnmapBuffer(m_tileTypesBuffer.Target);
 
                 // Start async copying to the texture
@@ -450,15 +465,6 @@ namespace Render.RenderRequests
 
         #endregion
 
-
-        public virtual void Update()
-        {
-            CheckDirtyParams();
-
-            // View and proj transforms
-            ViewProjectionMatrix = GetViewMatrix(PositionCenterV);
-            ViewProjectionMatrix *= ProjMatrix;
-        }
 
         public virtual void Draw()
         {

@@ -121,13 +121,14 @@ namespace Render.RenderRequests
             renderer.EffectManager.Use(m_overlayEffect);
             m_overlayEffect.TextureUniform((int)RenderRequest.TextureBindPosition.Ui);
             m_overlayEffect.TileTypesTextureUniform((int)RenderRequest.TextureBindPosition.TileTypes);
-            Owner.Effect.TileTypesIdxOffsetUniform(0);
+            m_overlayEffect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
             Owner.LocalTileTypesBuffer[0] = (ushort)type;
             if (avatar.Tool != null)
                 Owner.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
 
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
             Owner.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: Owner.LocalTileTypesBuffer);
             QuadOffset.Draw();
 

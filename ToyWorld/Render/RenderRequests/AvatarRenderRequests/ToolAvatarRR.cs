@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using VRageMath;
+using World.Atlas.Layers;
 using World.ToyWorldCore;
 
 namespace Render.RenderRequests
@@ -48,6 +50,11 @@ namespace Render.RenderRequests
         protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             return Matrix.Identity;
+        }
+
+        protected override IEnumerable<ITileLayer> GetTileLayersToRender()
+        {
+            yield return null;
         }
 
         public override void OnPreDraw()
