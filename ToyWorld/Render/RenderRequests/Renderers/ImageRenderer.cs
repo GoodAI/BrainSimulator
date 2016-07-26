@@ -120,7 +120,7 @@ namespace Render.RenderRequests
                     if (Settings.CopyDepth)
                     {
                         DepthPbo.Bind();
-                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(); // This is twice as fast as ReadPixels for depth texture
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.Float); // This is twice as fast as ReadPixels for depth texture
                         //GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.UnsignedInt, default(IntPtr));
                     }
                     break;
@@ -130,7 +130,7 @@ namespace Render.RenderRequests
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, RenderedScene);
 
                     if (Settings.CopyDepth)
-                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.UnsignedInt, RenderedSceneDepth);
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.Float, RenderedSceneDepth);
                     break;
             }
         }

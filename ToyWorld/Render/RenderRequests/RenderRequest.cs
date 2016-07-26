@@ -257,7 +257,7 @@ namespace Render.RenderRequests
 
         public virtual void Init()
         {
-            PositionCenterV = new Vector3(PositionCenterV2, GameObjects.Use3D ? 2 : 5);
+            PositionCenterV = new Vector3(PositionCenterV2, !GameObjects.Use3D ? 2 : 2.4f);
 
             // Set up color and blending
             const int baseIntensity = 50;

@@ -132,7 +132,7 @@ namespace Render.RenderRequests
             if (RotateMap)
             {
                 //Vector3 dir = Vector3.Up;
-                Vector3 dir = new Vector3(0, 5.5f, -1);
+                Vector3 dir = new Vector3(0, 3f, -1);
                 dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }

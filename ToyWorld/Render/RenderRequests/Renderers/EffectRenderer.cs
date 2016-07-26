@@ -113,6 +113,8 @@ namespace Render.RenderRequests
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
+                GL.Enable(EnableCap.DepthTest);
+
                 renderer.EffectManager.Use(m_smokeEffect);
 
                 // Set up transformation to world and screen space for noise effect
@@ -120,7 +122,7 @@ namespace Render.RenderRequests
                 // Model transform -- scale from (-1,1) to viewSize/2, center on origin
                 mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
                 // World transform -- move center to view center
-                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1f));
+                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1.5f));
                 // View and projection transforms
                 Matrix mvp = mw * Owner.ViewProjectionMatrix;
 
@@ -136,6 +138,7 @@ namespace Render.RenderRequests
                 m_smokeEffect.MeanScaleUniform(new Vector2(Settings.SmokeIntensityCoefficient, Settings.SmokeScaleCoefficient));
 
                 Owner.Quad.Draw();
+                GL.Disable(EnableCap.DepthTest);
             }
 
             // more stufffs
