@@ -77,7 +77,12 @@ namespace Render.RenderRequests
                 return;
 
             GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(true);
+
             Owner.FrontFbo.Bind();
+
+            const float effectHeight = 1.5f;
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Lights))
             {
@@ -88,10 +93,10 @@ namespace Render.RenderRequests
 
                 foreach (var character in world.Atlas.Characters)
                 {
-                    m_pointLightEffect.ColorIntensityUniform(new Vector4(0.85f));
+                    m_pointLightEffect.ColorUniform(new Vector4(0.85f));
                     float lightDecay = character.ForwardSpeed;
                     m_pointLightEffect.IntensityDecayUniform(new Vector2(1, lightDecay));
-                    m_pointLightEffect.LightPosUniform(new Vector3(character.Position));
+                    m_pointLightEffect.LightPosUniform(new Vector3(character.Position, effectHeight));
 
                     // Set up transformation to world and screen space for noise effect
                     Matrix mw = Matrix.Identity;
@@ -100,7 +105,7 @@ namespace Render.RenderRequests
                     const float intensityScale = (1 / minIntensity - 1) / 30;
                     mw *= Matrix.CreateScale(intensityScale / lightDecay / 2);
                     // World transform -- move center to view center
-                    mw *= Matrix.CreateTranslation(new Vector3(character.Position, 1));
+                    mw *= Matrix.CreateTranslation(new Vector3(character.Position, effectHeight));
                     m_pointLightEffect.ModelWorldUniform(ref mw);
                     Matrix mvp = mw * Owner.ViewProjectionMatrix;
                     m_pointLightEffect.ModelViewProjectionUniform(ref mvp);
@@ -113,8 +118,6 @@ namespace Render.RenderRequests
 
             if (Settings.EnabledEffects.HasFlag(RenderRequestEffect.Smoke))
             {
-                GL.Enable(EnableCap.DepthTest);
-
                 renderer.EffectManager.Use(m_smokeEffect);
 
                 // Set up transformation to world and screen space for noise effect
@@ -122,7 +125,7 @@ namespace Render.RenderRequests
                 // Model transform -- scale from (-1,1) to viewSize/2, center on origin
                 mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
                 // World transform -- move center to view center
-                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, 1.5f));
+                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, effectHeight));
                 // View and projection transforms
                 Matrix mvp = mw * Owner.ViewProjectionMatrix;
 
@@ -138,7 +141,6 @@ namespace Render.RenderRequests
                 m_smokeEffect.MeanScaleUniform(new Vector2(Settings.SmokeIntensityCoefficient, Settings.SmokeScaleCoefficient));
 
                 Owner.Quad.Draw();
-                GL.Disable(EnableCap.DepthTest);
             }
 
             // more stufffs

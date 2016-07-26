@@ -208,6 +208,7 @@ namespace Render.RenderRequests
                 GL.Disable(EnableCap.Blend);
 
             GL.Enable(EnableCap.DepthTest);
+            GL.DepthMask(true);
 
             // Bind stuff to GL
             renderer.TextureManager.Bind(TilesetTexture[0], Owner.GetTextureUnit(RenderRequest.TextureBindPosition.SummerTileset));

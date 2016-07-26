@@ -19,8 +19,8 @@ void main()
 {
 	vec3 dist = lightPos - f_worldPos;
 
-	float intensity = 1 / (1 + dot(dist, dist) * 30 / intensityDecay.y);
-	intensity = 255 * 0.3f * intensity * intensityDecay.x;
+	float intensity = 1 / (1 + dot(dist, dist) / 5 / intensityDecay.y);
+	intensity = 255 * 0.003f * intensity * intensityDecay.x;
 
 	if (intensity < 0.05f)
 		discard;

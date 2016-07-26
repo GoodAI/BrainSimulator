@@ -118,6 +118,8 @@ namespace ToyWorldTests.Render
                             break;
                         case Key.Number8:
                             controls.PickUp = true;
+                            controls.Interact = true;
+                            controls.Use = true;
                             break;
                         case Key.Number9:
                         case Key.Number0:
