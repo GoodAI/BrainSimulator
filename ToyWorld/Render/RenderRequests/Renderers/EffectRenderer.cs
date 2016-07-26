@@ -78,7 +78,7 @@ namespace Render.RenderRequests
 
             GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.DepthTest);
-            GL.DepthMask(true);
+            GL.DepthMask(false);
 
             Owner.FrontFbo.Bind();
 
@@ -125,7 +125,7 @@ namespace Render.RenderRequests
                 // Model transform -- scale from (-1,1) to viewSize/2, center on origin
                 mw *= Matrix.CreateScale(Owner.ViewV.Size / 2);
                 // World transform -- move center to view center
-                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, effectHeight));
+                mw *= Matrix.CreateTranslation(new Vector3(Owner.ViewV.Center, effectHeight + 0.05f));
                 // View and projection transforms
                 Matrix mvp = mw * Owner.ViewProjectionMatrix;
 

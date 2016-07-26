@@ -31,6 +31,8 @@ namespace Render.RenderRequests
             TileTypes = 4,
 
             Ui = 6,
+
+            PostEffectTextureBindPosition = 8,
         }
 
 
