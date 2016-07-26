@@ -19,7 +19,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class GameObjectRenderer
-        : RRRendererBase<GameObjectSettings, RenderRequest>, IDisposable
+        : RRRendererBase<GameObjectSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -43,7 +43,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public GameObjectRenderer(RenderRequest owner)
+        public GameObjectRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -121,7 +121,7 @@ namespace Render.RenderRequests
             // Get currently rendered layers
             m_toRender = GetTileLayersToRender().ToArray();
 
-            if (Owner.DirtyParams.HasFlag(RenderRequest.DirtyParam.Size))
+            if (Owner.DirtyParams.HasFlag(RenderRequestBase.DirtyParam.Size))
             {
                 if (Settings.Use3D)
                     Grid = renderer.GeometryManager.Get<DuplicatedCubeGrid>(m_gridView.Size);
@@ -211,13 +211,13 @@ namespace Render.RenderRequests
             GL.DepthMask(true);
 
             // Bind stuff to GL
-            renderer.TextureManager.Bind(TilesetTexture[0], Owner.GetTextureUnit(RenderRequest.TextureBindPosition.SummerTileset));
-            renderer.TextureManager.Bind(TilesetTexture[1], Owner.GetTextureUnit(RenderRequest.TextureBindPosition.WinterTileset));
-            renderer.TextureManager.Bind(TileTypesTexure, Owner.GetTextureUnit(RenderRequest.TextureBindPosition.TileTypes));
+            renderer.TextureManager.Bind(TilesetTexture[0], Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.SummerTileset));
+            renderer.TextureManager.Bind(TilesetTexture[1], Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.WinterTileset));
+            renderer.TextureManager.Bind(TileTypesTexure, Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.TileTypes));
             renderer.EffectManager.Use(Effect);
-            Effect.TextureUniform((int)RenderRequest.TextureBindPosition.SummerTileset);
-            Effect.TextureWinterUniform((int)RenderRequest.TextureBindPosition.WinterTileset);
-            Effect.TileTypesTextureUniform((int)RenderRequest.TextureBindPosition.TileTypes);
+            Effect.TextureUniform((int)RenderRequestBase.TextureBindPosition.SummerTileset);
+            Effect.TextureWinterUniform((int)RenderRequestBase.TextureBindPosition.WinterTileset);
+            Effect.TileTypesTextureUniform((int)RenderRequestBase.TextureBindPosition.TileTypes);
             Effect.DiffuseUniform(new Vector4(1, 1, 1, Owner.EffectRenderer.GetGlobalDiffuseComponent(world)));
             Effect.TileVertexCountUniform(Settings.Use3D ? DuplicatedCubeGrid.FaceCount * 4 : 4);
 

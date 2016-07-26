@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class ImageRenderer
-        : RRRendererBase<ImageSettings, RenderRequest>, IDisposable
+        : RRRendererBase<ImageSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -22,7 +22,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public ImageRenderer(RenderRequest owner)
+        public ImageRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 

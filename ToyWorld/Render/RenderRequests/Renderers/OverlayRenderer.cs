@@ -15,7 +15,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class OverlayRenderer
-        : RRRendererBase<OverlaySettings, RenderRequest>, IDisposable
+        : RRRendererBase<OverlaySettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -28,7 +28,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public OverlayRenderer(RenderRequest owner)
+        public OverlayRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -121,10 +121,10 @@ namespace Render.RenderRequests
 
 
             // Draw the inventory background
-            renderer.TextureManager.Bind(m_overlayTexture, Owner.GetTextureUnit(RenderRequest.TextureBindPosition.Ui));
+            renderer.TextureManager.Bind(m_overlayTexture, Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.Ui));
             renderer.EffectManager.Use(m_overlayEffect);
-            m_overlayEffect.TextureUniform((int)RenderRequest.TextureBindPosition.Ui);
-            m_overlayEffect.TileTypesTextureUniform((int)RenderRequest.TextureBindPosition.TileTypes);
+            m_overlayEffect.TextureUniform((int)RenderRequestBase.TextureBindPosition.Ui);
+            m_overlayEffect.TileTypesTextureUniform((int)RenderRequestBase.TextureBindPosition.TileTypes);
             m_overlayEffect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 

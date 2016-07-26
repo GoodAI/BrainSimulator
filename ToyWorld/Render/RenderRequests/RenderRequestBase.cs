@@ -13,7 +13,7 @@ using TupleType = System.Tuple<World.Atlas.Layers.ITileLayer, int[], VRageMath.V
 
 namespace Render.RenderRequests
 {
-    public abstract class RenderRequest
+    public abstract class RenderRequestBase
         : IRenderRequestBaseInternal<ToyWorld>
     {
         [Flags]
@@ -58,7 +58,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        protected RenderRequest()
+        protected RenderRequestBase()
         {
             GameObjectRenderer = new GameObjectRenderer(this);
             EffectRenderer = new EffectRenderer(this);

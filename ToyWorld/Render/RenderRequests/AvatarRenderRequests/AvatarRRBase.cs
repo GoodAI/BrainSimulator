@@ -7,7 +7,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     public abstract class AvatarRRBase
-        : RenderRequest, IAvatarRenderRequest
+        : RenderRequestBase, IAvatarRenderRequest
     {
         #region Internal overlay class
 
@@ -17,7 +17,7 @@ namespace Render.RenderRequests
         {
             internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
 
-            public ARROverlayRenderer(RenderRequest owner)
+            public ARROverlayRenderer(RenderRequestBase owner)
                 : base(owner)
             { }
 
