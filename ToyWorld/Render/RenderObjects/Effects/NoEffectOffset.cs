@@ -1,5 +1,4 @@
-﻿using RenderingBase.RenderObjects.Effects;
-using VRageMath;
+﻿using VRageMath;
 
 namespace Render.RenderObjects.Effects
 {
@@ -8,9 +7,12 @@ namespace Render.RenderObjects.Effects
         private enum Uniforms
         {
             // Names must correspond to names as defined in the shaders
+            tileTypesTexture,
+            tileTypesIdxOffset,
             texSizeCount,
             tileSizeMargin,
             tileBorder,
+            tileVertexCount,
             mvp,
 
             tilesetTexture,
@@ -25,6 +27,16 @@ namespace Render.RenderObjects.Effects
         { }
 
 
+        public void TileTypesTextureUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileTypesTexture], val);
+        }
+
+        public void TileTypesIdxOffsetUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileTypesIdxOffset], val);
+        }
+
         public void TexSizeCountUniform(Vector3I val)
         {
             SetUniform3(base[Uniforms.texSizeCount], val);
@@ -38,6 +50,11 @@ namespace Render.RenderObjects.Effects
         public void TileBorderUniform(Vector2I val)
         {
             SetUniform2(base[Uniforms.tileBorder], val);
+        }
+
+        public void TileVertexCountUniform(int val)
+        {
+            SetUniform1(base[Uniforms.tileVertexCount], val);
         }
 
         public void ModelViewProjectionUniform(ref Matrix val)

@@ -38,7 +38,7 @@ namespace RenderingBase.Renderer
 
         private readonly List<IRenderRequestBaseInternal<TWorld>> m_renderRequestQueue = new List<IRenderRequestBaseInternal<TWorld>>();
         private readonly List<IRenderRequestBaseInternal<TWorld>> m_dirtyRenderRequestQueue = new List<IRenderRequestBaseInternal<TWorld>>();
-        private RenderRequestComparer m_renderRequestComparer = new RenderRequestComparer();
+        private readonly RenderRequestComparer m_renderRequestComparer = new RenderRequestComparer();
 
         public readonly GeometryManager GeometryManager = new GeometryManager();
         public readonly EffectManager EffectManager = new EffectManager();

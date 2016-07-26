@@ -139,6 +139,10 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = false)]
         public bool RotateMap { get; set; }
 
+        [MyBrowsable, Category("Effects - General"), DisplayName("Use 3D")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool Use3D { get; set; }
+
 
         [MyBrowsable, Category("Effects - Noise"), DisplayName("Draw noise")]
         [YAXSerializableField(DefaultValue = false)]
@@ -284,7 +288,7 @@ namespace GoodAI.ToyWorld
         private IToolAvatarRR ToolRR { get; set; }
 
         private int SignalCount { get; set; }
-
+        
         private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
 
         public ToyWorld()

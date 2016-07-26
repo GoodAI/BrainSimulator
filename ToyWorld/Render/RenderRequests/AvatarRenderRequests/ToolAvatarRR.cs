@@ -2,7 +2,6 @@ using System.Diagnostics;
 using System.Drawing;
 using GoodAI.ToyWorld.Control;
 using VRageMath;
-using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
@@ -25,6 +24,11 @@ namespace Render.RenderRequests
 
         public override void Init()
         {
+            var objects = GameObjects;
+            objects.Use3D = false;
+            objects.EnabledGameObjects = RenderRequestGameObject.None;
+            GameObjects = objects;
+
             var effects = Effects;
             effects.EnabledEffects = RenderRequestEffect.None;
             Effects = effects;
@@ -45,23 +49,16 @@ namespace Render.RenderRequests
             base.Init();
         }
 
-        protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        protected override Matrix Get2DViewMatrix(Vector3 cameraPos, Vector3? up = null)
         {
             return Matrix.Identity;
         }
 
-        public override void OnPreDraw()
+        protected override Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
-            if (ImageRenderer != null)
-                ImageRenderer.OnPreDraw();
+            return Matrix.Identity;
         }
-
-        protected override void DrawTileLayers()
-        { }
-
-        protected override void DrawObjectLayers()
-        { }
-
+        
         #endregion
     }
 }

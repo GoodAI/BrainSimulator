@@ -73,12 +73,11 @@
     <Compile Include="RenderObjects\Effects\NoiseEffect.cs" />
     <Compile Include="RenderObjects\Effects\PointLightEffect.cs" />
     <Compile Include="RenderObjects\Effects\SmokeEffect.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGridOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenQuadOffset.cs" />
-    <Compile Include="RenderObjects\Geometries\FullscreenQuadTex.cs" />
+    <Compile Include="RenderObjects\Geometries\QuadTex.cs" />
     <Compile Include="Renderer\ToyWorldRenderer.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\ToolAvatarRR.cs" />
     <Compile Include="RenderRequests\AvatarRenderRequests\FovAvatarRR.cs" />
+    <Compile Include="RenderRequests\Renderers\GameObjectRenderer.cs" />
     <Compile Include="RenderRequests\Renderers\EffectRenderer.cs" />
     <Compile Include="RenderRequests\Renderers\ImageRenderer.cs" />
     <Compile Include="RenderRequests\Renderers\PostprocessRenderer.cs" />
@@ -89,7 +88,7 @@
     <Compile Include="RenderRequests\AvatarRenderRequests\AvatarRRBase.cs" />
     <Compile Include="RenderRequests\RenderRequests\RRBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderRequests\RenderRequest.cs" />
+    <Compile Include="RenderRequests\RenderRequestBase.cs" />
     <Compile Include="RenderRequests\RRRendererBase.cs" />
   </ItemGroup>
   <ItemGroup>

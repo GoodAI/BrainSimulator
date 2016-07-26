@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using System.Runtime.CompilerServices;
 using Utils.VRageRIP.Lib.Extensions;
 using VRageMath;
 using World.GameActors;
@@ -18,6 +19,8 @@ namespace World.Atlas.Layers
         private const int BACKGROUND_TILE_NUMBER = 6;
         private const int OBSTACLE_TILE_NUMBER = 7;
 
+        private const float DEFAULT_THICKNESS = 1.15f;
+
 
         #region Summer/winter stuff
 
@@ -31,6 +34,10 @@ namespace World.Atlas.Layers
 
         #endregion
 
+
+        public float Thickness { get; private set; }
+        public float SpanIntervalFrom { get; private set; }
+        public float SpanIntervalTo { get { return SpanIntervalFrom + Thickness; } }
 
         public int Width { get; set; }
         public int Height { get; set; }
@@ -50,11 +57,46 @@ namespace World.Atlas.Layers
 
             m_random = random ?? new Random();
 
-            LayerType = layerType;
-            m_summerCache.Z = m_random.Next();
+            switch (layerType)
+            {
+                case LayerType.Background:
+                    SpanIntervalFrom = 0;
+                    break;
+                case LayerType.OnBackground:
+                case LayerType.Area:
+                case LayerType.OnGroundInteractable:
+                case LayerType.ObstacleInteractable:
+                case LayerType.Obstacle:
+                case LayerType.Obstacles:
+                case LayerType.Interactables:
+                    SpanIntervalFrom = DEFAULT_THICKNESS;
+                    break;
+                case LayerType.Foreground:
+                    SpanIntervalFrom = DEFAULT_THICKNESS * 2;
+                    break;
+                default:
+                    SpanIntervalFrom = DEFAULT_THICKNESS;
+                    break;
+            }
+
+            switch (layerType)
+            {
+                case LayerType.OnGroundInteractable:
+                    Thickness = 0.2f;
+                    break;
+                case LayerType.OnBackground:
+                    Thickness = 0.1f;
+                    break;
+                default:
+                    Thickness = DEFAULT_THICKNESS;
+                    break;
+            }
 
             Height = height;
             Width = width;
+
+            LayerType = layerType;
+            m_summerCache.Z = m_random.Next();
 
             Tiles = ArrayCreator.CreateJaggedArray<Tile[][]>(width, height);
 
@@ -82,17 +124,33 @@ namespace World.Atlas.Layers
             return GetActorAt(coordinates.X, coordinates.Y);
         }
 
-        public void GetTileTypesAt(Vector2I topLeft, Vector2I size, int[] tileTypes)
+        public void GetTileTypesAt(Vector2I topLeft, Vector2I size, ushort[] tileTypes)
         {
             Vector2I intBotRight = topLeft + size;
             Rectangle rectangle = new Rectangle(topLeft, intBotRight - topLeft);
             GetTileTypesAt(rectangle, tileTypes);
         }
 
-        public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, ushort[] tileTypes)
+        {
+            unsafe
+            {
+                fixed (ushort* types = tileTypes)
+                    GetTileTypesAt(rectangle, (IntPtr)types, tileTypes.Length);
+            }
+        }
+
+        /// <summary>
+        /// TileTypes should be an ushort array of count at least bufferSize.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="tileTypes"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="offset"></param>
+        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0)
         {
             // Store the resulting types in the parameter
-            Debug.Assert(rectangle.Size.Size() <= tileTypes.Length, "Too little space for the grid tile types!");
+            Debug.Assert(rectangle.Size.Size() <= bufferSize, "Too little space for the grid tile types!");
 
             // Use cached getter value
             int viewRight = rectangle.Right;
@@ -104,8 +162,6 @@ namespace World.Atlas.Layers
             int top = Math.Min(rectangle.Bottom, Math.Max(Tiles[0].Length, rectangle.Bottom - rectangle.Height));
 
 
-            // TODO : Move to properties
-            int idx = 0;
             int defaultTileOffset = 0;
             if (LayerType == LayerType.Background)
             {
@@ -116,48 +172,54 @@ namespace World.Atlas.Layers
                 defaultTileOffset = OBSTACLE_TILE_NUMBER;
             }
 
-            // Rows before start of map
-            for (int j = rectangle.Top; j < bot; j++)
+            unsafe
             {
-                for (int i = rectangle.Left; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-            }
+                ushort* tileTypesPtr = (ushort*)tileTypes.ToPointer() + offset;
 
-            // Rows inside of map
-            for (var j = bot; j < top; j++)
-            {
-                // Tiles before start of map
-                for (int i = rectangle.Left; i < left; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-
-                // Tiles inside of map
-                for (var i = left; i < right; i++)
+                // Rows before start of map
+                for (int j = rectangle.Top; j < bot; j++)
                 {
-                    var tile = Tiles[i][j];
-                    if (tile != null)
-                        tileTypes[idx++] = GetDefaultTileOffset(i, j, tile.TilesetId);
-                    else
-                        tileTypes[idx++] = 0; // inside map: must be always 0
+                    for (int i = rectangle.Left; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
                 }
 
-                // Tiles after end of map
-                for (int i = right; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
-            }
+                // Rows inside of map
+                for (var j = bot; j < top; j++)
+                {
+                    // Tiles before start of map
+                    for (int i = rectangle.Left; i < left; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
 
-            // Rows after end of map
-            for (int j = top; j < rectangle.Bottom; j++)
-            {
-                for (int i = rectangle.Left; i < viewRight; i++)
-                    tileTypes[idx++] = GetDefaultTileOffset(i, j, defaultTileOffset);
+                    // Tiles inside of map
+                    for (var i = left; i < right; i++)
+                    {
+                        var tile = Tiles[i][j];
+                        if (tile != null)
+                            *tileTypesPtr++ = GetDefaultTileOffset(i, j, tile.TilesetId);
+                        else
+                            *tileTypesPtr++ = 0; // inside map: must be always 0
+                    }
+
+                    // Tiles after end of map
+                    for (int i = right; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
+                }
+
+                // Rows after end of map
+                for (int j = top; j < rectangle.Bottom; j++)
+                {
+                    for (int i = rectangle.Left; i < viewRight; i++)
+                        *tileTypesPtr++ = GetDefaultTileOffset(i, j, defaultTileOffset);
+                }
             }
         }
 
         // This is rather slow to compute, but we assume only small portions of grid view will be in sight
-        private int GetDefaultTileOffset(int x, int y, int defaultTileOffset)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private ushort GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
             if (!IsWinter)
-                return defaultTileOffset;
+                return (ushort)defaultTileOffset;
 
             m_summerCache.X = x;
             m_summerCache.Y = y;
@@ -172,11 +234,12 @@ namespace World.Atlas.Layers
             weatherChangeIntensityFactor -= winterOffset; // Makes winter end a little sooner
 
             if (hash < weatherChangeIntensityFactor)
-                return defaultTileOffset + TILESETS_OFFSET;
+                return (ushort)(defaultTileOffset + TILESETS_OFFSET);
 
-            return defaultTileOffset;
+            return (ushort)defaultTileOffset;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private float GetModifiedWinterIntensityFactor(float winterChangeIntensity)
         {
             return (float)Math.Sin(winterChangeIntensity * MathHelper.PiOver2); // Rises higher than y=x for x in (0,1)
@@ -189,7 +252,8 @@ namespace World.Atlas.Layers
             int y = (int)Math.Floor(original.Position.Y);
             Tile item = GetActorAt(x, y);
 
-            if (item != original.Actor) return false;
+            if (item != original.Actor)
+                return false;
 
             Tiles[x][y] = null;
             Tile tileReplacement = replacement as Tile;

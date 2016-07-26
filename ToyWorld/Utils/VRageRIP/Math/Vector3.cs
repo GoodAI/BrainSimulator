@@ -1806,6 +1806,17 @@ namespace VRageMath
             X = X * (float)Math.Cos(angle) - Y * (float)Math.Sin(angle);
             Y = tmpX * (float)Math.Sin(angle) + Y * (float)Math.Cos(angle);
         }
+
+        /// <summary>
+        /// Rotates vector by given angle
+        /// </summary>
+        /// <param name="angle">Angle in radians</param>
+        public void RotateX(double angle)
+        {
+            float tmpY = Y;
+            Y = Y * (float)Math.Cos(angle) - Z * (float)Math.Sin(angle);
+            Z = tmpY * (float)Math.Sin(angle) + Z * (float)Math.Cos(angle);
+        }
     }
 
     public static class NullableVector3Extensions
@@ -1821,5 +1832,4 @@ namespace VRageMath
             Debug.Assert(value.IsValid());
         }
     }
-
 }

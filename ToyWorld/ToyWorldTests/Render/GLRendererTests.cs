@@ -56,6 +56,7 @@ namespace ToyWorldTests.Render
             //rr.FovAvatarRenderRequest = rr1;
             rr.RotateMap = true;
 
+            rr.GameObjects = new GameObjectSettings(RenderRequestGameObject.TileLayers | RenderRequestGameObject.ObjectLayers) { Use3D = true, };
             rr.Effects = new EffectSettings(RenderRequestEffect.None);
             rr.Postprocessing = new PostprocessingSettings(RenderRequestPostprocessing.None);
             rr.Overlay = new OverlaySettings(RenderRequestOverlay.InventoryTool) { ToolBackground = ToolBackgroundType.BrownBorder };
@@ -117,6 +118,8 @@ namespace ToyWorldTests.Render
                             break;
                         case Key.Number8:
                             controls.PickUp = true;
+                            controls.Interact = true;
+                            controls.Use = true;
                             break;
                         case Key.Number9:
                         case Key.Number0:

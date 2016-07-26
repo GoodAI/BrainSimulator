@@ -51,7 +51,7 @@
     <Compile Include="Renderer\RendererBase.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Fbo.cs" />
     <Compile Include="RenderObjects\Buffers\Base\RenderTargetManager.cs" />
-    <Compile Include="RenderObjects\Buffers\Base\StaticVBOFactory.cs" />
+    <Compile Include="RenderObjects\Buffers\Base\StaticVboFactory.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vao.cs" />
     <Compile Include="RenderObjects\Buffers\Base\Vbos.cs" />
     <Compile Include="RenderObjects\Buffers\BasicFbo.cs" />
@@ -61,11 +61,15 @@
     <Compile Include="RenderObjects\Effects\Base\EffectManager.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryBase.cs" />
     <Compile Include="RenderObjects\Geometries\Base\GeometryManager.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenGrid.cs" />
-    <Compile Include="RenderObjects\Geometries\FullScreenQuad.cs" />
+    <Compile Include="RenderObjects\Geometries\DuplicatedCube.cs" />
+    <Compile Include="RenderObjects\Geometries\DuplicatedCubeGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\CubeGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\DuplicatedGrid.cs" />
+    <Compile Include="RenderObjects\Geometries\Cube.cs" />
+    <Compile Include="RenderObjects\Geometries\Quad.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureBase.cs" />
     <Compile Include="RenderObjects\Textures\Base\TextureManager.cs" />
-    <Compile Include="RenderObjects\Textures\BasicTexture.cs" />
+    <Compile Include="RenderObjects\Textures\BasicTextures.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTextures.cs" />
     <Compile Include="RenderObjects\Textures\RenderTargetTexturesMultisample.cs" />
     <Compile Include="RenderObjects\Textures\TilesetImage.cs" />

@@ -5,6 +5,7 @@ using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
 using RenderingBase.Renderer;
+using RenderingBase.RenderObjects.Geometries;
 using RenderingBase.RenderObjects.Textures;
 using TmxMapSerializer.Elements;
 using VRageMath;
@@ -14,20 +15,20 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class OverlayRenderer
-        : RRRendererBase<OverlaySettings, RenderRequest>, IDisposable
+        : RRRendererBase<OverlaySettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
-        protected const TextureUnit UIOverlayTextureBindPosition = TextureUnit.Texture5;
-
         protected NoEffectOffset m_overlayEffect;
         protected TilesetTexture m_overlayTexture;
+
+        protected Quad QuadOffset;
 
         #endregion
 
         #region Genesis
 
-        public OverlayRenderer(RenderRequest owner)
+        public OverlayRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -37,6 +38,8 @@ namespace Render.RenderRequests
                 m_overlayEffect.Dispose();
             if (m_overlayTexture != null)
                 m_overlayTexture.Dispose();
+
+            QuadOffset.Dispose();
         }
 
         #endregion
@@ -58,7 +61,6 @@ namespace Render.RenderRequests
                 .ToArray();
 
             m_overlayTexture = renderer.TextureManager.Get<TilesetTexture>(tilesetImages);
-            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
 
             // Set up overlay shader
             m_overlayEffect = renderer.EffectManager.Get<NoEffectOffset>();
@@ -76,6 +78,8 @@ namespace Render.RenderRequests
             m_overlayEffect.TileBorderUniform(tileBorder);
 
             m_overlayEffect.AmbientUniform(new Vector4(1, 1, 1, 1));
+
+            QuadOffset = renderer.GeometryManager.Get<Quad>();
         }
 
         #endregion
@@ -89,17 +93,23 @@ namespace Render.RenderRequests
 
             Owner.FrontFbo.Bind();
 
-            // Bind stuff to GL
-            renderer.TextureManager.Bind(Owner.TilesetTexture);
-            renderer.EffectManager.Use(Owner.Effect);
-            Owner.Effect.TextureUniform(0);
-
 
             // some stuffs
         }
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
+            GameObjectRenderer goRenderer = Owner.GameObjectRenderer;
+
+            GL.Enable(EnableCap.Blend);
+            Owner.SetDefaultBlending();
+
+            // Bind stuff to GL (used in overrides)
+            renderer.TextureManager.Bind(goRenderer.TilesetTexture);
+            renderer.EffectManager.Use(goRenderer.Effect);
+            goRenderer.Effect.TextureUniform(0);
+
+
             if (Owner.FlipYAxis)
             {
                 size.Y = -size.Y;
@@ -111,27 +121,34 @@ namespace Render.RenderRequests
 
 
             // Draw the inventory background
-            renderer.TextureManager.Bind(m_overlayTexture, UIOverlayTextureBindPosition);
+            renderer.TextureManager.Bind(m_overlayTexture, Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.Ui));
             renderer.EffectManager.Use(m_overlayEffect);
-            m_overlayEffect.TextureUniform((int)UIOverlayTextureBindPosition - (int)TextureUnit.Texture0);
+            m_overlayEffect.TextureUniform((int)RenderRequestBase.TextureBindPosition.Ui);
+            m_overlayEffect.TileTypesTextureUniform((int)RenderRequestBase.TextureBindPosition.TileTypes);
+            m_overlayEffect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            Owner.QuadOffset.SetTextureOffsets((int)type);
-            Owner.QuadOffset.Draw();
+            goRenderer.LocalTileTypesBuffer[0] = (ushort)type;
+            if (avatar.Tool != null)
+                goRenderer.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
+
+            GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
+            goRenderer.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: goRenderer.LocalTileTypesBuffer);
+            QuadOffset.Draw();
 
 
             // Draw the inventory Tool
             if (avatar.Tool != null)
             {
-                renderer.TextureManager.Bind(Owner.TilesetTexture);
-                renderer.EffectManager.Use(Owner.Effect);
-                Owner.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+                renderer.TextureManager.Bind(goRenderer.TilesetTexture);
+                renderer.EffectManager.Use(goRenderer.Effect);
+                goRenderer.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+                goRenderer.Effect.TileTypesIdxOffsetUniform(1);
 
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
-                Owner.Effect.ModelViewProjectionUniform(ref toolTransform);
+                goRenderer.Effect.ModelViewProjectionUniform(ref toolTransform);
 
-                Owner.QuadOffset.SetTextureOffsets(avatar.Tool.TilesetId);
-                Owner.QuadOffset.Draw();
+                QuadOffset.Draw();
             }
         }
 

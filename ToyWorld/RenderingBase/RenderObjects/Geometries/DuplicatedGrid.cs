@@ -5,16 +5,16 @@ using VRageMath;
 
 namespace RenderingBase.RenderObjects.Geometries
 {
-    public class FullScreenGrid : GeometryBase
+    public class DuplicatedGrid : GeometryBase
     {
         public Vector2I Dimensions { get; private set; }
 
 
-        public FullScreenGrid(Vector2I dimensions)
+        public DuplicatedGrid(Vector2I dimensions)
         {
             Dimensions = dimensions;
 
-            this[VboPosition.Vertices] = StaticVboFactory.GetGridVertices(dimensions);
+            this[VboPosition.Vertices] = StaticVboFactory.GetDuplicatedGridVertices(dimensions);
             EnableAttrib(VboPosition.Vertices);
         }
 

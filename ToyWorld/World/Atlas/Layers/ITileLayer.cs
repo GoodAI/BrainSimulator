@@ -11,6 +11,11 @@ namespace World.Atlas.Layers
     [ContractClass(typeof(TileLayerContracts))]
     public interface ITileLayer : ILayer<Tile>
     {
+        int Width { get; set; }
+
+        int Height { get; set; }
+
+
         /// <summary>
         /// Updates any internal states of tiles within the layer.
         /// </summary>
@@ -22,7 +27,16 @@ namespace World.Atlas.Layers
         /// </summary>
         /// <param name="rectangle"></param>
         /// <param name="tileTypes"></param>
-        void GetTileTypesAt(Rectangle rectangle, int[] tileTypes);
+        void GetTileTypesAt(Rectangle rectangle, ushort[] tileTypes);
+
+        /// <summary>
+        /// Returns Tiles in given region, where extremes are included.
+        /// </summary>
+        /// <param name="rectangle"></param>
+        /// <param name="tileTypes"></param>
+        /// <param name="bufferSize"></param>
+        /// <param name="offset"></param>
+        void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0);
 
         /// <summary>
         /// Returns Tiles in given region, where x1 &lt; x2, y1 &lt; y2. x2 and y2 included.
@@ -30,18 +44,17 @@ namespace World.Atlas.Layers
         /// <param name="pos"></param>
         /// <param name="size"></param>
         /// <param name="tileTypes"></param>
-        void GetTileTypesAt(Vector2I pos, Vector2I size, int[] tileTypes);
-
-
-        int Width { get; set; }
-
-        int Height { get; set; }
+        void GetTileTypesAt(Vector2I pos, Vector2I size, ushort[] tileTypes);
     }
 
 
     [ContractClassFor(typeof(ITileLayer))]
     internal abstract class TileLayerContracts : ITileLayer
     {
+        public float Thickness { get; private set; }
+        public float SpanIntervalFrom { get; private set; }
+        public float SpanIntervalTo { get; private set; }
+
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -78,14 +91,21 @@ namespace World.Atlas.Layers
         public void UpdateTileStates(Atlas atlas)
         { }
 
-        public void GetTileTypesAt(Rectangle rectangle, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, ushort[] tileTypes)
         {
             if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
                 throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");
             Contract.EndContractBlock();
         }
 
-        public void GetTileTypesAt(Vector2I pos, Vector2I size, int[] tileTypes)
+        public void GetTileTypesAt(Rectangle rectangle, IntPtr tileTypes, int bufferSize, int offset = 0)
+        {
+            if (rectangle.Size.X <= 0 && rectangle.Size.Y <= 0)
+                throw new ArgumentOutOfRangeException("rectangle", "values doesn't form a valid rectangle");
+            Contract.EndContractBlock();
+        }
+
+        public void GetTileTypesAt(Vector2I pos, Vector2I size, ushort[] tileTypes)
         {
             if (size.X <= 0 && size.Y <= 0)
                 throw new ArgumentOutOfRangeException("size", "size values doesn't form a valid rectangle");

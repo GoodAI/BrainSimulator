@@ -2,18 +2,28 @@
 using System.Collections.Generic;
 using OpenTK.Graphics.OpenGL;
 using Utils.VRageRIP.Lib.Collections;
+using VRageMath;
 
 namespace RenderingBase.RenderObjects.Textures
 {
     public class TextureManager
     {
-        private readonly TypeSwitchParam<TextureBase, TilesetImage[]> m_textures = new TypeSwitchParam<TextureBase, TilesetImage[]>();
+        private readonly TypeSwitchParam<TextureBase, TilesetImage[]> m_tileTextures = new TypeSwitchParam<TextureBase, TilesetImage[]>();
+        private readonly TypeSwitchParam<TextureBase, Vector2I> m_textures = new TypeSwitchParam<TextureBase, Vector2I>();
         private readonly Dictionary<int, TextureBase> m_currentTextures = new Dictionary<int, TextureBase>();
 
 
         public TextureManager()
         {
-            CaseInternal<TilesetTexture>();
+            CaseInternal<BasicTexture1D>();
+            CaseInternal<BasicTexture2D>();
+            TileCaseInternal<TilesetTexture>();
+        }
+
+        private void TileCaseInternal<T>()
+            where T : TextureBase
+        {
+            m_tileTextures.Case<T>(i => (T)Activator.CreateInstance(typeof(T), i));
         }
 
         private void CaseInternal<T>()
@@ -30,7 +40,13 @@ namespace RenderingBase.RenderObjects.Textures
         public T Get<T>(params TilesetImage[] images)
             where T : TextureBase
         {
-            return m_textures.Switch<T>(images);
+            return m_tileTextures.Switch<T>(images);
+        }
+
+        public T Get<T>(Vector2I dimensions)
+            where T : TextureBase
+        {
+            return m_textures.Switch<T>(dimensions);
         }
 
 

@@ -5,21 +5,27 @@ const int MODULO_BITS = 12;
 const int MODULO_MASK = (1 << MODULO_BITS) - 1; // 0x00000FFF
 
 
+// Stores the tileTypes for the layers
+uniform usampler1D	tileTypesTexture;
+// The offset into tileTypesTexture (each layer accesses a different part)
+uniform int			tileTypesIdxOffset = 0;
+// The amount of vertices of one tile's geometry
+uniform int		tileVertexCount = 8;
+
 // Texture dimensions in px, tiles per row
-uniform ivec3	texSizeCount = ivec3(256, 256, 16);
+uniform ivec3	texSizeCount	= ivec3(256, 256, 16);
 // Tile size, tile margin in px
-uniform ivec4	tileSizeMargin = ivec4(16, 16, 0, 0);
+uniform ivec4	tileSizeMargin	= ivec4(16, 16, 0, 0);
 // Tile border size increase after tileset preprocessing
-uniform ivec2   tileBorder = ivec2(2, 2);
+uniform ivec2   tileBorder		= ivec2(2, 2);
 
 uniform mat4 mvp = mat4(1);
 
 
-layout(location = 0) in vec2	v_position;
-layout(location = 1) in int		v_texOffset;
+layout(location = 0) in vec3 v_position;
 
-smooth out vec2 f_texCoods;
-flat out int f_samplerIdx;
+smooth out	vec2	f_texCoods;
+flat out	int		f_samplerIdx;
 
 
 vec2 GetTexCoods(int tileOffset)
@@ -68,17 +74,18 @@ vec2 GetTexCoods(int tileOffset)
 
 void main()
 {
-	int tileOffset = v_texOffset & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
+	int tileType = int(texelFetch(tileTypesTexture, gl_VertexID / tileVertexCount + tileTypesIdxOffset, 0).r);
+	int tileOffset = tileType & MODULO_MASK; // It's the same as v_texOffset % (MODULO_MASK + 1)
 
 	if (tileOffset <= 1) // Tiles are indexed from 1......
 	{
 		// If this vertex is a part of a quad that does not contain any tile to display, set it to a default position to discard it
 		gl_Position = vec4(0, 0, 2000, 0);
-		f_texCoods = vec2(0, 0);
+		f_samplerIdx = 64;
 		return;
 	}
 
 	f_texCoods = GetTexCoods(tileOffset);
-	f_samplerIdx = v_texOffset >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
-	gl_Position = mvp * vec4(v_position, 0, 1);
+	f_samplerIdx = tileType >> MODULO_BITS; // It's the same as v_texOffset / (MODULO_MASK + 1)
+	gl_Position = mvp * vec4(v_position, 1);
 }

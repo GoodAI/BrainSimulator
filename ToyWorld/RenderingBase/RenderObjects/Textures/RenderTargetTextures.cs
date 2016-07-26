@@ -8,7 +8,7 @@ namespace RenderingBase.RenderObjects.Textures
         protected RenderTargetTexture(Vector2I size)
             : base(size.X, size.Y) // Use default pixel format)
         {
-            Init(null);
+            Init2D();
             SetParameters(
                    TextureMinFilter.Nearest,
                    TextureMagFilter.Nearest,
@@ -18,7 +18,7 @@ namespace RenderingBase.RenderObjects.Textures
         protected RenderTargetTexture(Vector2I size, PixelFormat pixelFormat, PixelInternalFormat internalFormat)
             : base(size.X, size.Y)
         {
-            Init(null, pixelFormat, internalFormat);
+            Init2D(pixelFormat, internalFormat);
             SetParameters(
                    TextureMinFilter.Nearest,
                    TextureMagFilter.Nearest,
@@ -36,7 +36,7 @@ namespace RenderingBase.RenderObjects.Textures
     internal class RenderTargetDepthTexture : RenderTargetTexture
     {
         public RenderTargetDepthTexture(Vector2I size)
-            : base(size, PixelFormat.DepthComponent, PixelInternalFormat.DepthComponent32)
+            : base(size, PixelFormat.DepthComponent, PixelInternalFormat.DepthComponent32f)
         { }
     }
 

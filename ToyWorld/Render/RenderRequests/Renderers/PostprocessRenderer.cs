@@ -9,11 +9,9 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class PostprocessRenderer
-        : RRRendererBase<PostprocessingSettings, RenderRequest>, IDisposable
+        : RRRendererBase<PostprocessingSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
-
-        protected const TextureUnit PostEffectTextureBindPosition = TextureUnit.Texture6;
 
         protected NoiseEffect m_noiseEffect;
 
@@ -21,7 +19,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public PostprocessRenderer(RenderRequest owner)
+        public PostprocessRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -45,7 +43,7 @@ namespace Render.RenderRequests
                     m_noiseEffect = renderer.EffectManager.Get<NoiseEffect>();
                 renderer.EffectManager.Use(m_noiseEffect); // Need to use the effect to set uniforms
                 m_noiseEffect.ViewportSizeUniform((Vector2I)Owner.Resolution);
-                m_noiseEffect.SceneTextureUniform((int)PostEffectTextureBindPosition - (int)TextureUnit.Texture0);
+                m_noiseEffect.SceneTextureUniform((int)RenderRequestBase.TextureBindPosition.PostEffectTextureBindPosition);
             }
         }
 
@@ -58,13 +56,18 @@ namespace Render.RenderRequests
             if (Settings.EnabledPostprocessing == RenderRequestPostprocessing.None)
                 return;
 
+
+            GL.Disable(EnableCap.Blend);
+
             // Always draw post-processing from the front to the back buffer
             Owner.BackFbo.Bind();
 
             if (Settings.EnabledPostprocessing.HasFlag(RenderRequestPostprocessing.Noise))
             {
                 renderer.EffectManager.Use(m_noiseEffect);
-                renderer.TextureManager.Bind(Owner.FrontFbo[FramebufferAttachment.ColorAttachment0], PostEffectTextureBindPosition); // Use data from front Fbo
+                renderer.TextureManager.Bind(
+                    Owner.FrontFbo[FramebufferAttachment.ColorAttachment0], // Use data from front Fbo
+                    Owner.GetTextureUnit(RenderRequestBase.TextureBindPosition.PostEffectTextureBindPosition));
 
                 // Advance noise time by a visually pleasing step; wrap around if we run for waaaaay too long.
                 double step = 0.005d;

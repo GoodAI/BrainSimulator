@@ -7,7 +7,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     public abstract class AvatarRRBase
-        : RenderRequest, IAvatarRenderRequest
+        : RenderRequestBase, IAvatarRenderRequest
     {
         #region Internal overlay class
 
@@ -17,7 +17,7 @@ namespace Render.RenderRequests
         {
             internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
 
-            public ARROverlayRenderer(RenderRequest owner)
+            public ARROverlayRenderer(RenderRequestBase owner)
                 : base(owner)
             { }
 
@@ -105,35 +105,50 @@ namespace Render.RenderRequests
         #endregion
 
 
-        protected override Matrix GetViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
-        {
-            return base.GetViewMatrix(cameraPos, cameraDirection, RotateMap ? m_avatarDirection : null);
-        }
-
-
         public override void Init()
         {
+            // Must use rotateMap when using 3D
+            RotateMap = GameObjects.Use3D || RotateMap;
+
             base.Init();
+        }
+
+        protected override Matrix Get2DViewMatrix(Vector3 cameraPos, Vector3? up = null)
+        {
+            return base.Get2DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : up);
+        }
+
+        protected override Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            return base.Get3DViewMatrix(cameraPos, RotateMap ? m_avatarDirection : cameraDirection, Vector3.Backward);
         }
 
         public override void Update()
         {
-            base.Update();
-        }
-
-        public override void Draw()
-        {
             PositionCenterV2 += RelativePositionV;
+
+            var avatar = World.GetAvatar(AvatarID);
 
             if (RotateMap)
             {
-                var avatar = World.GetAvatar(AvatarID);
-                Vector3 dir = Vector3.Up;
+                //Vector3 dir = Vector3.Up;
+                Vector3 dir = new Vector3(0, 3f, -1);
                 dir.RotateZ(avatar.Rotation);
                 m_avatarDirection = dir;
             }
 
-            base.Draw();
+            base.Update(); // Sets up view projection -- we need to change grid position AFTER that
+
+            // Apply grid offset to increase view distance
+            if (GameObjects.Use3D && m_avatarDirection.HasValue)
+            {
+                Vector2 gridOffsetDir = new Vector2(m_avatarDirection.Value);
+                gridOffsetDir.Normalize();
+                PositionCenterV2 += gridOffsetDir * (Math.Min(SizeV.X, SizeV.Y) - 5);
+            }
+
+            if (GameObjects.Use3D)
+                GameObjectRenderer.IgnoredGameObjects.Add(avatar);
         }
     }
 }

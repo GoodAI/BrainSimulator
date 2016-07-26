@@ -25,10 +25,10 @@ namespace VRageMath
             Y = y;
         }
 
-        public Vector2I(int width)
+        public Vector2I(int size)
         {
-            X = width;
-            Y = width;
+            X = size;
+            Y = size;
         }
 
         public Vector2I(Vector2 vec)

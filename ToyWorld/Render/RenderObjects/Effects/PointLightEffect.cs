@@ -35,7 +35,7 @@ namespace Render.RenderObjects.Effects
         }
 
 
-        public void ColorIntensityUniform(Vector4 val)
+        public void ColorUniform(Vector4 val)
         {
             SetUniform4(base[Uniforms.color], val);
         }

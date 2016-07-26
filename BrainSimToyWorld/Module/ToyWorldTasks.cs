@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using GoodAI.Core;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.ToyWorld.Control;
-using GoodAI.ToyWorld.Language;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
@@ -35,12 +33,17 @@ namespace GoodAI.ToyWorld
                 int myAvatarId = avatarIds[0];
                 Owner.AvatarCtrl = Owner.GameCtrl.GetAvatarController(myAvatarId);
 
-                // Setup render requests
 
+                // Setup render requests
+                GameObjectSettings gameObjects = new GameObjectSettings(RenderRequestGameObject.TileLayers | RenderRequestGameObject.ObjectLayers)
+                {
+                    Use3D = Owner.Use3D
+                };
                 EffectSettings? effects = null;
                 PostprocessingSettings? post = null;
                 // Overlays are not used for now (no BrainSim property to switch them on) because there is a separate renderrequest for inventory Tool
 
+                // Setup effects
                 RenderRequestEffect enabledEffects = RenderRequestEffect.None;
 
                 if (Owner.EnableDayAndNightCycle)
@@ -58,6 +61,7 @@ namespace GoodAI.ToyWorld
                         SmokeTransformationSpeedCoefficient = Owner.SmokeTransformationSpeed,
                     };
 
+                // Setup postprocessing
                 RenderRequestPostprocessing enabledPostprocessing = RenderRequestPostprocessing.None;
 
                 if (Owner.DrawNoise)
@@ -70,6 +74,7 @@ namespace GoodAI.ToyWorld
                     };
 
 
+                // Get and setup RRs
                 Owner.FovRR = ObtainRR<IFovAvatarRR>(Owner.VisualFov, Owner.VisualFovDepth, myAvatarId,
                     rr =>
                     {
@@ -77,6 +82,7 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoVResWidth, Owner.FoVResHeight);
                         rr.MultisampleLevel = Owner.FoVMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
+                        rr.GameObjects = gameObjects;
                         rr.Effects = effects ?? new EffectSettings(RenderRequestEffect.None);
                         rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
@@ -89,6 +95,7 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.FoFResWidth, Owner.FoFResHeight);
                         rr.MultisampleLevel = Owner.FoFMultisampleLevel;
                         rr.RotateMap = Owner.RotateMap;
+                        rr.GameObjects = gameObjects;
                         rr.Effects = effects ?? new EffectSettings(RenderRequestEffect.None);
                         rr.Postprocessing = post ?? new PostprocessingSettings(RenderRequestPostprocessing.None);
                     });
@@ -100,6 +107,7 @@ namespace GoodAI.ToyWorld
                         rr.Resolution = new Size(Owner.ResolutionWidth, Owner.ResolutionHeight);
                         rr.MultisampleLevel = Owner.FreeViewMultisampleLevel;
                         rr.SetPositionCenter(Owner.CenterX, Owner.CenterY);
+                        rr.GameObjects = gameObjects;
                         // no noise, smoke, postprocessing or overlays -- this view is for the researcher
                     });
 
@@ -114,6 +122,7 @@ namespace GoodAI.ToyWorld
                         };
                         // None of the other settings have any effect
                     });
+
 
                 Owner.WorldInitialized(this, EventArgs.Empty);
             }

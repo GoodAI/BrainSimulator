@@ -9,7 +9,7 @@ using World.ToyWorldCore;
 namespace Render.RenderRequests
 {
     internal class ImageRenderer
-        : RRRendererBase<ImageSettings, RenderRequest>, IDisposable
+        : RRRendererBase<ImageSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -22,7 +22,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public ImageRenderer(RenderRequest owner)
+        public ImageRenderer(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -68,6 +68,8 @@ namespace Render.RenderRequests
 
         #endregion
 
+        #region Draw
+
         #region Callbacks
 
         public virtual void OnPreDraw()
@@ -90,8 +92,6 @@ namespace Render.RenderRequests
         }
 
         #endregion
-
-        #region Draw
 
         public override void Draw(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
@@ -120,7 +120,7 @@ namespace Render.RenderRequests
                     if (Settings.CopyDepth)
                     {
                         DepthPbo.Bind();
-                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(); // This is twice as fast as ReadPixels for depth texture
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.Float); // This is twice as fast as ReadPixels for depth texture
                         //GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.DepthComponent, PixelType.UnsignedInt, default(IntPtr));
                     }
                     break;
@@ -130,7 +130,7 @@ namespace Render.RenderRequests
                     GL.ReadPixels(0, 0, Owner.Resolution.Width, Owner.Resolution.Height, PixelFormat.Bgra, PixelType.UnsignedByte, RenderedScene);
 
                     if (Settings.CopyDepth)
-                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.UnsignedInt, RenderedSceneDepth);
+                        Owner.FrontFbo[FramebufferAttachment.DepthAttachment].Copy2D(PixelType.Float, RenderedSceneDepth);
                     break;
             }
         }
