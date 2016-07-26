@@ -36,8 +36,23 @@ namespace Render.RenderRequests
 
 
         private ITileLayer[] m_toRender;
-        private Rectangle m_gridView;
         public HashSet<IGameObject> IgnoredGameObjects = new HashSet<IGameObject>();
+
+
+        internal Rectangle GridView
+        {
+            get
+            {
+                var view = Owner.ViewV;
+                var positionOffset = new Vector2(view.Width % 2, view.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
+                var rect = new RectangleF(Vector2.Zero, view.Size + 2 + positionOffset) { Center = view.Center - positionOffset };
+                return new Rectangle(
+                    new Vector2I(
+                        (int)Math.Ceiling(rect.Position.X),
+                        (int)Math.Ceiling(rect.Position.Y)),
+                    new Vector2I(rect.Size));
+            }
+        }
 
         #endregion
 
@@ -115,7 +130,7 @@ namespace Render.RenderRequests
 
         public void CheckDirtyParams(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            m_gridView = Owner.GridView;
+            var gridView = GridView;
 
 
             // Get currently rendered layers
@@ -124,12 +139,12 @@ namespace Render.RenderRequests
             if (Owner.DirtyParams.HasFlag(RenderRequestBase.DirtyParam.Size))
             {
                 if (Settings.Use3D)
-                    Grid = renderer.GeometryManager.Get<DuplicatedCubeGrid>(m_gridView.Size);
+                    Grid = renderer.GeometryManager.Get<DuplicatedCubeGrid>(gridView.Size);
                 else
-                    Grid = renderer.GeometryManager.Get<DuplicatedGrid>(m_gridView.Size);
+                    Grid = renderer.GeometryManager.Get<DuplicatedGrid>(gridView.Size);
 
                 // Reallocate stuff if needed -- texture holds tileTypes for all the layers
-                int totalTileCount = m_gridView.Size.Size() * m_toRender.Length;
+                int totalTileCount = gridView.Size.Size() * m_toRender.Length;
                 Debug.Assert(totalTileCount < 1 << 14, "TileTypesTexture will overflow!");
 
                 if (TileTypesTexure == null || totalTileCount > TileTypesTexure.Size.Size())
@@ -165,19 +180,19 @@ namespace Render.RenderRequests
             if (Settings.EnabledGameObjects == RenderRequestGameObject.None)
                 return;
 
-            m_gridView = Owner.GridView; // The value might have changed
+            var gridView = GridView; // The value might have changed
 
             if (Settings.EnabledGameObjects.HasFlag(RenderRequestGameObject.TileLayers))
             {
                 // Start asynchronous copying of tile types
-                int tileCount = m_gridView.Size.Size();
+                int tileCount = gridView.Size.Size();
 
                 for (int i = 0; i < m_toRender.Length; i++)
                 {
                     // Store data directly to device memory
                     m_tileTypesBuffer.Bind();
                     IntPtr bufferPtr = GL.MapBuffer(m_tileTypesBuffer.Target, BufferAccess.WriteOnly);
-                    m_toRender[i].GetTileTypesAt(m_gridView, bufferPtr, tileCount, i * tileCount);
+                    m_toRender[i].GetTileTypesAt(gridView, bufferPtr, tileCount, i * tileCount);
                     GL.UnmapBuffer(m_tileTypesBuffer.Target);
 
                     // Start async copying to the texture
@@ -196,8 +211,6 @@ namespace Render.RenderRequests
         {
             if (Settings.EnabledGameObjects == RenderRequestGameObject.None)
                 return;
-
-            m_gridView = Owner.GridView; // The value might have changed
 
             if (!Settings.Use3D)
             {
@@ -229,7 +242,8 @@ namespace Render.RenderRequests
 
         protected virtual void DrawTileLayers(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
-            int tileCount = m_gridView.Size.Size();
+            var gridView = GridView;
+            int tileCount = gridView.Size.Size();
 
             // Draw tile layers
             int i = 0;
@@ -238,9 +252,9 @@ namespace Render.RenderRequests
             {
                 // Set up transformation to screen space for tiles
                 // Model transform -- scale from (-1,1) to viewSize/2, center on origin
-                Matrix transform = Matrix.CreateScale(new Vector3(m_gridView.Size, tileLayer.Thickness) * 0.5f);
+                Matrix transform = Matrix.CreateScale(new Vector3(gridView.Size, tileLayer.Thickness) * 0.5f);
                 // World transform -- move center to view center
-                transform *= Matrix.CreateTranslation(new Vector3(m_gridView.Center, tileLayer.SpanIntervalFrom));// + tileLayer.Thickness / 2));
+                transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));// + tileLayer.Thickness / 2));
                 // View and projection transforms
                 transform *= Owner.ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref transform);
@@ -253,13 +267,15 @@ namespace Render.RenderRequests
 
         protected virtual void DrawObjectLayers(RendererBase<ToyWorld> renderer, ToyWorld world)
         {
+            var gridView = GridView;
+
             Effect.TileTypesIdxOffsetUniform(0);
             GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
 
             // Draw objects
             foreach (var objectLayer in world.Atlas.ObjectLayers)
             {
-                foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(m_gridView)))
+                foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(gridView)))
                 {
                     if (IgnoredGameObjects.Contains(gameObject))
                         continue;

@@ -122,21 +122,6 @@ namespace Render.RenderRequests
 
         protected internal virtual RectangleF ViewV { get { return new RectangleF(Vector2.Zero, SizeV) { Center = new Vector2(PositionCenterV) }; } }
 
-        internal Rectangle GridView
-        {
-            get
-            {
-                var view = ViewV;
-                var positionOffset = new Vector2(view.Width % 2, view.Height % 2); // Always use a grid with even-sized sides to have it correctly centered
-                var rect = new RectangleF(Vector2.Zero, view.Size + 2 + positionOffset) { Center = view.Center - positionOffset };
-                return new Rectangle(
-                    new Vector2I(
-                        (int)Math.Ceiling(rect.Position.X),
-                        (int)Math.Ceiling(rect.Position.Y)),
-                    new Vector2I(rect.Size));
-            }
-        }
-
         #endregion
 
         #region IRenderRequestBase overrides
