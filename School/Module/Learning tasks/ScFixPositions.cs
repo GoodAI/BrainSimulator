@@ -16,6 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 new PointF(0.0f,1.0f),
                 new PointF(0.0f,2.0f),
                 new PointF(1.0f,0.0f),
+                new PointF(1.0f,1.0f),
                 new PointF(1.0f,2.0f),
                 new PointF(2.0f,0.0f),
                 new PointF(2.0f,1.0f),
