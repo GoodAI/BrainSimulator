@@ -44,8 +44,14 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public Color GetRandomColor(Random rnd)
         {
-            int r = rnd.Next(Colors.Count);
-            var c = Colors[r];
+            int index;
+            return GetRandomColor(rnd, out index);
+        }
+
+        public Color GetRandomColor(Random rnd, out int index)
+        {
+            index = rnd.Next(Colors.Count);
+            var c = Colors[index];
             return c;
         }
     }
