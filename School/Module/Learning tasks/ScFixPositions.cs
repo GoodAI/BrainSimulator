@@ -6,36 +6,36 @@ namespace GoodAI.Modules.School.LearningTasks
 {
     public class ScFixPositions
     {
-        public List<float[]> Positions;
+        public List<PointF> Positions;
 
         public ScFixPositions(RectangleF powGeometry)
         {
-            Positions = new List<float[]>
+            Positions = new List<PointF>
             {
-                new[] {0.0f, 0.0f},
-                new[] {0.0f, 1.0f},
-                new[] {0.0f, 2.0f},
-                new[] {1.0f, 0.0f},
-                new[] {1.0f, 2.0f},
-                new[] {2.0f, 0.0f},
-                new[] {2.0f, 1.0f},
-                new[] {2.0f, 2.0f}
+                new PointF(0.0f,0.0f),
+                new PointF(0.0f,1.0f),
+                new PointF(0.0f,2.0f),
+                new PointF(1.0f,0.0f),
+                new PointF(1.0f,2.0f),
+                new PointF(2.0f,0.0f),
+                new PointF(2.0f,1.0f),
+                new PointF(2.0f,2.0f)
             };
 
-            foreach (float[] position in Positions)
+            for (int i = 0; i < Positions.Count; i++)
             {
                 float marginX = powGeometry.Width / 16;
                 float marginY = powGeometry.Height / 16;
-                position[0] = marginX + position[0] * ((powGeometry.Width - marginX) / 3) + powGeometry.X;
-                position[1] = marginY + position[1] * ((powGeometry.Height - marginY) / 3) + powGeometry.Y;
+                PointF position = Positions[i];
+                position.X = marginX + position.X * ((powGeometry.Width - marginX) / 3) + powGeometry.X;
+                position.Y = marginY + position.Y * ((powGeometry.Height - marginY) / 3) + powGeometry.Y;
+                Positions[i] = position;
             }
         }
 
         public PointF GetRandomPosition(Random rnd)
         {
-            int r = rnd.Next(Positions.Count);
-            var p = Positions[r];
-            return new PointF(p[0],p[1]);
+            return Positions[rnd.Next(Positions.Count)];
         }
     }
 }
