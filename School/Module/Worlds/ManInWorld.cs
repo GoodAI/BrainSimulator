@@ -149,7 +149,7 @@ namespace GoodAI.Modules.School.Worlds
             Scene = Fow = new Size(1024, 1024);
             Viewport = Pow = new Size(256, 256);
 
-            BackgroundColor = Color.FromArgb(77, 174, 255);
+            BackgroundColor = Color.Black;
             m_bitmapTable = new Dictionary<string, Tuple<Bitmap, int>>();
 
             GameObjects = new List<GameObject>();
