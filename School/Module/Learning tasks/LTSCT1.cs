@@ -12,6 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
         private readonly Random m_rndGen = new Random();
         private GameObject m_target;
         private ScFixPositions positions;
+        private ScFixColors colors;
 
         public Ltsct1() : this(null) { }
 
@@ -20,16 +21,18 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.IMAGE_NOISE, 0 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 }
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
+                { TSHintAttributes.IMAGE_NOISE, 1}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 0);
         }
 
         public override void PresentNewTrainingUnit()
         {
+            colors = new ScFixColors(4, WrappedWorld.BackgroundColor);
+
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 WrappedWorld.CreateNonVisibleAgent();
@@ -56,7 +59,8 @@ namespace GoodAI.Modules.School.LearningTasks
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
             PointF location = positions.GetRandomPosition(m_rndGen);
-            m_target = WrappedWorld.CreateShape(Shape.GetRandomShape(m_rndGen, 8), Color.White, location, size);
+            Color color = colors.GetRandomColor(m_rndGen);
+            m_target = WrappedWorld.CreateShape(Shape.GetRandomShape(m_rndGen, 8), color, location, size);
             // Plumber:
             //m_target.X = m_rndGen.Next(0, World.Scene.Width - m_target.Width + 1);
             //m_target.Y = World.Scene.Height - m_target.Height;
