@@ -115,6 +115,7 @@
     <Compile Include="Learning tasks\LTSimpleSize.cs" />
     <Compile Include="Learning tasks\LTTetrisFull.cs" />
     <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
+    <Compile Include="Learning tasks\ScFixColors.cs" />
     <Compile Include="Learning tasks\ScFixPositions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
