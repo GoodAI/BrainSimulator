@@ -3,6 +3,8 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq;
+using GoodAI.Core.Utils;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -10,9 +12,9 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
         private readonly Random m_rndGen = new Random();
-        private GameObject m_target;
-        private ScFixPositions positions;
-        private ScFixColors colors;
+        bool[][] generationsCheckTable = new bool[8][];
+        private ScFixPositions m_positions;
+        private ScFixColors m_colors;
 
         public Ltsct1() : this(null) { }
 
@@ -20,53 +22,60 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
                 { TSHintAttributes.IMAGE_NOISE, 1}
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 0);
+
+            for (int i = 0; i < generationsCheckTable.Length; i++)
+            {
+                generationsCheckTable[i] = new bool[8];
+            }
         }
 
+        private bool m_init = true;
         public override void PresentNewTrainingUnit()
         {
-            colors = new ScFixColors(4, WrappedWorld.BackgroundColor);
-
-            if (LearningTaskHelpers.FlipCoin(m_rndGen))
+            if (m_init)
             {
-                WrappedWorld.CreateNonVisibleAgent();
-                CreateTarget();
-            }
-            else
-            {
-                m_target = null;
+                m_positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
+                m_colors = new ScFixColors(4, WrappedWorld.BackgroundColor);
+                m_init = false;
             }
 
-            positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
+            if (!LearningTaskHelpers.FlipCoin(m_rndGen)) return;
+
+            WrappedWorld.CreateNonVisibleAgent();
+            CreateTarget();
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            bool wasTargetDetected = Math.Abs(SchoolWorld.ActionInput.Host[0]) > 0.001f;
-            bool isTargetPresent = m_target != null;
-            wasUnitSuccessful = (wasTargetDetected == isTargetPresent);
+            wasUnitSuccessful = false;
+
+            if (!generationsCheckTable.Any(b => b.Any(b1 => b1 == false)))
+            {
+                MyLog.INFO.WriteLine("Set Is Complete!");
+                wasUnitSuccessful = true;
+            }
+
             return true;
         }
 
+        
         protected void CreateTarget()
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = positions.GetRandomPosition(m_rndGen);
-            Color color = colors.GetRandomColor(m_rndGen);
-            m_target = WrappedWorld.CreateShape(Shape.GetRandomShape(m_rndGen, 8), color, location, size);
-            // Plumber:
-            //m_target.X = m_rndGen.Next(0, World.Scene.Width - m_target.Width + 1);
-            //m_target.Y = World.Scene.Height - m_target.Height;
-            // Roguelike:
-            //m_target.X = m_rndGen.Next(0, WrappedWorld.Viewport.Width - m_target.Width + 1);
-            //m_target.Y = m_rndGen.Next(0, WrappedWorld.Viewport.Height - m_target.Height + 1);
+            int randomLocationIdx = m_rndGen.Next(m_positions.Positions.Count);
+            Color color = m_colors.GetRandomColor(m_rndGen);
+            PointF location = m_positions.Positions[randomLocationIdx];
+            int randomShapeIdx = m_rndGen.Next(8);
+            Shape.Shapes randomShape = (Shape.Shapes) randomShapeIdx;
+            WrappedWorld.CreateShape(randomShape, color, location, size);
+
+            generationsCheckTable[randomLocationIdx][randomShapeIdx] = true;
         }
     }
 }
