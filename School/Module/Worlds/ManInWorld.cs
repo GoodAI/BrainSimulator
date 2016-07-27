@@ -29,6 +29,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using GoodAI.Modules.School.LearningTasks;
 using YAXLib;
 using NativeWindow = OpenTK.NativeWindow;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
@@ -481,6 +482,58 @@ namespace GoodAI.Modules.School.Worlds
             };
             AddGameObject(rmk);
             return rmk;
+        }
+
+        public Shape CreateRandomFood(PointF position, SizeF size, Random random)
+        {
+            List<Tuple<Shape.Shapes,Color>> food = new List<Tuple<Shape.Shapes, Color>>();
+            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Circle, scFixColors.Colors[0]));
+            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[1]));
+            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[2]));
+            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Pentagon, scFixColors.Colors[3]));
+
+            Tuple<Shape.Shapes, Color> winner = food[random.Next(food.Count)];
+            return CreateShape(winner.Item1, winner.Item2, position, size);
+        }
+
+        public Shape CreateRandomVeryGoodFood(PointF position, SizeF size, Random random)
+        {
+            List<Tuple<Shape.Shapes,Color>> veryGoodFood = new List<Tuple<Shape.Shapes, Color>>();
+            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[0]));
+            veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[1]));
+            veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[2]));
+            veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Star, scFixColors.Colors[3]));
+
+            Tuple<Shape.Shapes, Color> winner = veryGoodFood[random.Next(veryGoodFood.Count)];
+            return CreateShape(winner.Item1, winner.Item2, position, size);
+        }
+
+        public Shape CreateRandomEnemy(PointF position, SizeF size, Random random)
+        {
+            List<Tuple<Shape.Shapes, Color>> enemy = new List<Tuple<Shape.Shapes, Color>>();
+            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[0]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[1]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Star, scFixColors.Colors[2]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Square, scFixColors.Colors[3]));
+
+            Tuple<Shape.Shapes, Color> winner = enemy[random.Next(enemy.Count)];
+            return CreateShape(winner.Item1, winner.Item2, position, size);
+        }
+
+        public Shape CreateRandomStone(PointF position, SizeF size, Random random)
+        {
+            List<Tuple<Shape.Shapes, Color>> enemy = new List<Tuple<Shape.Shapes, Color>>();
+            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[0]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Star, scFixColors.Colors[1]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Square, scFixColors.Colors[2]));
+            enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.T, scFixColors.Colors[3]));
+
+            Tuple<Shape.Shapes, Color> winner = enemy[random.Next(enemy.Count)];
+            return CreateShape(winner.Item1, winner.Item2, position, size);
         }
 
         private int LoadAndGetBitmapSize(string path)

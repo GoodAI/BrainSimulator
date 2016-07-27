@@ -12,7 +12,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
         private readonly Random m_rndGen = new Random();
-        bool[][] generationsCheckTable = new bool[8][];
+        bool[][] generationsCheckTable = new bool[9][];
         private ScFixPositions m_positions;
         private ScFixColors m_colors;
 
@@ -44,7 +44,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 m_init = false;
             }
 
-            if (!LearningTaskHelpers.FlipCoin(m_rndGen)) return;
+            if (m_rndGen.Next(8) == 1) return;
 
             WrappedWorld.CreateNonVisibleAgent();
             CreateTarget();
@@ -57,7 +57,7 @@ namespace GoodAI.Modules.School.LearningTasks
             if (!generationsCheckTable.Any(b => b.Any(b1 => b1 == false)))
             {
                 MyLog.INFO.WriteLine("Set Is Complete!");
-                wasUnitSuccessful = true;
+                //wasUnitSuccessful = true;
             }
 
             return true;
@@ -68,11 +68,14 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            int randomLocationIdx = m_rndGen.Next(m_positions.Positions.Count);
             Color color = m_colors.GetRandomColor(m_rndGen);
+
+            int randomLocationIdx = m_rndGen.Next(m_positions.Positions.Count);
             PointF location = m_positions.Positions[randomLocationIdx];
+
             int randomShapeIdx = m_rndGen.Next(8);
             Shape.Shapes randomShape = (Shape.Shapes) randomShapeIdx;
+
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
             generationsCheckTable[randomLocationIdx][randomShapeIdx] = true;
