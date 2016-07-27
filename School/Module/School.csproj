@@ -82,6 +82,9 @@
     <Compile Include="Common\StandardConflictResolver.cs" />
     <Compile Include="Common\TrainingSetHints.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\Ltsct8.cs" />
+    <Compile Include="Learning tasks\Ltsct7.cs" />
+    <Compile Include="Learning tasks\Ltsct6.cs" />
     <Compile Include="Learning tasks\Ltsct5.cs" />
     <Compile Include="Learning tasks\Ltsct4.cs" />
     <Compile Include="Learning tasks\Ltsct1.cs" />
