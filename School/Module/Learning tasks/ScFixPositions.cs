@@ -38,5 +38,10 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             return Positions[rnd.Next(Positions.Count)];
         }
+
+        public PointF Center()
+        {
+            return Positions[4];
+        }
     }
 }
