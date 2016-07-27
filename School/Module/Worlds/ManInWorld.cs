@@ -491,7 +491,7 @@ namespace GoodAI.Modules.School.Worlds
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Circle, scFixColors.Colors[0]));
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[1]));
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[2]));
-            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Pentagon, scFixColors.Colors[3]));
+            food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[3]));
 
             Tuple<Shape.Shapes, Color> winner = food[random.Next(food.Count)];
             return CreateShape(winner.Item1, winner.Item2, position, size);
