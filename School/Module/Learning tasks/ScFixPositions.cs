@@ -8,6 +8,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ScFixPositions
     {
         public List<PointF> Positions;
+        public List<PointF> PositionsWithoutCenter;
         private RectangleF m_powGeometry;
         private Random m_rndGen;
 
@@ -40,6 +41,9 @@ namespace GoodAI.Modules.School.LearningTasks
                 position.Y = marginY + position.Y * ((powGeometry.Height - marginY) / 3) + powGeometry.Y;
                 Positions[i] = position;
             }
+
+            PositionsWithoutCenter = Positions.GetRange(0, Positions.Count);
+            PositionsWithoutCenter.RemoveAt(4);
         }
 
         public PointF GetRandomFreePosition()
@@ -55,6 +59,11 @@ namespace GoodAI.Modules.School.LearningTasks
         public PointF GetRandomPosition(Random rnd)
         {
             return Positions[rnd.Next(Positions.Count)];
+        }
+
+        public PointF GetRandomPositionWithoutCenter(Random rnd)
+        {
+            return PositionsWithoutCenter[rnd.Next(PositionsWithoutCenter.Count)];
         }
 
         public PointF Center()

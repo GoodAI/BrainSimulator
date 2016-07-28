@@ -2,6 +2,7 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
+using GoodAI.Core.Utils;
 using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -32,7 +33,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
-            AvatarsActions actions = new AvatarsActions();
+            Actions = new AvatarsActions();
 
             int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
 
@@ -41,7 +42,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 AddShape(randomLocationIdx);
             }
 
-            actions.Shapes[ShapeIndex] = true;
+            Actions.Shapes[ShapeIndex] = true;
 
             int nextRandomLocationIdx = m_rndGen.Next(randomLocationIdx + 1, randomLocationIdx + ScConstants.numPositions);
             nextRandomLocationIdx %= ScConstants.numPositions;
@@ -51,9 +52,9 @@ namespace GoodAI.Modules.School.LearningTasks
                 AddShape(nextRandomLocationIdx);
             }
 
-            actions.Shapes[ShapeIndex] = true;
+            Actions.Shapes[ShapeIndex] = true;
 
-            actions.WriteActions(StreamWriter);
+            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
     }
 }

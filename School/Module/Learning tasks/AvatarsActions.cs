@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using GoodAI.Modules.School.LearningTasks;
 
 namespace GoodAI.School.Learning_tasks
@@ -30,6 +28,16 @@ namespace GoodAI.School.Learning_tasks
         private string BoolArrayToString(bool[] ba)
         {
             return string.Join(",", ba.Select(b => b ? "1" : "0"));
+        }
+
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(BoolArrayToString(Shapes)).Append(",");
+            stringBuilder.Append(BoolArrayToString(Colors)).Append(",");
+            stringBuilder.Append(BoolArrayToString(Movement)).Append(",");
+            stringBuilder.Append(Eat ? "1" : "0");
+            return stringBuilder.ToString();
         }
     }
 }
