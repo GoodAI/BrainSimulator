@@ -66,7 +66,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
             else
             {
-                wasUnitSuccessful = false;
+                wasUnitSuccessful = true;
                 WrappedWorld.Reward.Host[0] = 1 - Math.Abs(m_scale - WrappedWorld.Controls.Host[0]);
             }
             MyLog.Writer.WriteLine(MyLogLevel.INFO, "Unit ended. Result: " + wasUnitSuccessful);

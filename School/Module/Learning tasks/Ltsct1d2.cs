@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct1d2 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
-        public virtual string Path { get { return @"D:\summerCampSamples\D2\SCT1\"; } }
+        public override string Path { get { return @"D:\summerCampSamples\D2\SCT1\"; } }
 
         public Ltsct1d2() : this(null) { }
 
@@ -24,11 +24,9 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
-        public virtual string Path { get { return @"D:\summerCampSamples\D2\SCT1\"; } }
-
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            wasUnitSuccessful = false;
+            wasUnitSuccessful = true;
 
             return true;
         }

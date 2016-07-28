@@ -23,18 +23,11 @@ namespace GoodAI.Modules.School.LearningTasks
         public Ltsct5(SchoolWorld w)
             : base(w)
         {
-            TSHints = new TrainingSetHints {
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
-                { TSHintAttributes.IMAGE_NOISE, 1},
-                { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
-            };
-
-            TSProgression.Add(TSHints.Clone());
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
-            wasUnitSuccessful = false;
+            wasUnitSuccessful = true;
 
             return true;
         }
