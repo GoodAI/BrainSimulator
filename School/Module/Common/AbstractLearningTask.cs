@@ -50,7 +50,7 @@ namespace GoodAI.Modules.School.Common
         string GetTypeName();
 
         void Init();
-        void Finalize();
+        void Fini();
 
         bool Solve(bool successfully);
     }
@@ -256,7 +256,7 @@ namespace GoodAI.Modules.School.Common
             IsInitialized = true;
         }
 
-        public virtual void Finalize()
+        public virtual void Fini()
         {
             
         }

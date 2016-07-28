@@ -54,6 +54,11 @@ namespace GoodAI.Modules.School.LearningTasks
             OpenFileStream();
         }
 
+        public override void Fini()
+        {
+            
+        }
+
         private void OpenFileStream()
         {
             var path = Path;
