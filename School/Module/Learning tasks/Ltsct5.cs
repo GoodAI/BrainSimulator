@@ -11,8 +11,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D1 LT5 - eat food")]
     public class Ltsct5 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
-
         public override string Path
         {
             get { return @"D:\summerCampSamples\D1\SCT5\"; }
@@ -37,25 +35,25 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions(false,false,true,true);
 
-            if (m_rndGen.Next(10) > 0)
+            if (RndGen.Next(10) > 0)
             {
                 SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
                 PointF location = Positions.Center();
 
-                if (LearningTaskHelpers.FlipCoin(m_rndGen))
+                if (LearningTaskHelpers.FlipCoin(RndGen))
                 {
-                    WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                    WrappedWorld.CreateRandomFood(location, size, RndGen);
                     Actions.Eat = true;
                 }
                 else
                 {
-                    WrappedWorld.CreateRandomStone(location, size, m_rndGen);
+                    WrappedWorld.CreateRandomStone(location, size, RndGen);
                 }
-                if (LearningTaskHelpers.FlipCoin(m_rndGen))
+                if (LearningTaskHelpers.FlipCoin(RndGen))
                 {
-                    PointF location2 = Positions.GetRandomPositionWithoutCenter(m_rndGen);
-                    WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
+                    PointF location2 = Positions.GetRandomPositionWithoutCenter(RndGen);
+                    WrappedWorld.CreateRandomStone(location2, size, RndGen);
                 }
             }
 

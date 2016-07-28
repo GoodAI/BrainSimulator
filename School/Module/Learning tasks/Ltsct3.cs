@@ -17,8 +17,6 @@ namespace GoodAI.Modules.School.LearningTasks
             get { return @"D:\summerCampSamples\D1\SCT3\"; }
         }
 
-        private readonly Random m_rndGen = new Random();
-
         public Ltsct3() : this(null) { }
 
         public Ltsct3(SchoolWorld w)
@@ -40,9 +38,9 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions(false,true,false,false);
 
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
-                int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
+                int randomLocationIdx = RndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
                 Actions.Colors[ColorIndex] = true;
             }
@@ -54,11 +52,11 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-            Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
+            Color color = Colors.GetRandomColor(RndGen, out ColorIndex);
 
             PointF location = Positions.Positions[randomLocationIndex];
 
-            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            ShapeIndex = RndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);

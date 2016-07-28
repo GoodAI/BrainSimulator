@@ -11,8 +11,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D2 LT6 - avoid enemy")]
     public class Ltsct6d2 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
-
         public override string Path
         {
             get { return @"D:\summerCampSamples\D2\SCT6\"; }
@@ -39,19 +37,19 @@ namespace GoodAI.Modules.School.LearningTasks
 
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
 
-            Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location, size, m_rndGen);
+            Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location, size, RndGen);
             Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
 
-            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
-            if (LearningTaskHelpers.FlipCoin(m_rndGen))
+            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
+            if (LearningTaskHelpers.FlipCoin(RndGen))
             {
-                WrappedWorld.CreateRandomFood(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomFood(location2, size, RndGen);
             }
             else
             {
-                WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomStone(location2, size, RndGen);
             }
 
             WriteActions();

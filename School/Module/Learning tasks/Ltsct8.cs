@@ -11,8 +11,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D1 LT8 - eat very good food")]
     public class Ltsct8 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
-
         public override string Path
         {
             get { return @"D:\summerCampSamples\D1\SCT8\"; }
@@ -43,25 +41,25 @@ namespace GoodAI.Modules.School.LearningTasks
             const int randomLocationIdx = 4;
             PointF location = Positions.Positions[randomLocationIdx];
 
-            int randomLocationIdx2 = (m_rndGen.Next(positionsCount - 1) + randomLocationIdx + 1) % positionsCount;
+            int randomLocationIdx2 = (RndGen.Next(positionsCount - 1) + randomLocationIdx + 1) % positionsCount;
             PointF location2 = Positions.Positions[randomLocationIdx2];
 
-            WrappedWorld.CreateRandomVeryGoodFood(location, size, m_rndGen);
+            WrappedWorld.CreateRandomVeryGoodFood(location, size, RndGen);
             Actions.Eat = true;
 
-            if (m_rndGen.Next(3) > 0)
+            if (RndGen.Next(3) > 0)
             {
-                Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, m_rndGen);
+                Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, RndGen);
                 Actions.Eat = false;
                 Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
             }
-            else if (m_rndGen.Next(3) > 0)
+            else if (RndGen.Next(3) > 0)
             {
-                WrappedWorld.CreateRandomFood(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomFood(location2, size, RndGen);
             }
-            else if (m_rndGen.Next(3) > 0)
+            else if (RndGen.Next(3) > 0)
             {
-                WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomStone(location2, size, RndGen);
             }
 
             WriteActions();

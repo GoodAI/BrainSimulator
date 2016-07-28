@@ -10,7 +10,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D2 LT2 - 2 shapes")]
     public class Ltsct2d2 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
 
         public override string Path
         {
@@ -28,13 +27,13 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions(true,false,false,false);
 
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape();
                 Actions.Shapes[ShapeIndex] = true;
             }
 
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape();
                 Actions.Shapes[ShapeIndex] = true;
