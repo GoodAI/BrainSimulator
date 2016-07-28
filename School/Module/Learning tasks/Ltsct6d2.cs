@@ -41,11 +41,10 @@ namespace GoodAI.Modules.School.LearningTasks
 
             PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
 
-            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
-
             Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location, size, m_rndGen);
             Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
 
+            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {
                 WrappedWorld.CreateRandomFood(location2, size, m_rndGen);
