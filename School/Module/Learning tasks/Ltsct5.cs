@@ -35,7 +35,7 @@ namespace GoodAI.Modules.School.LearningTasks
         
         protected override void CreateScene()
         {
-            Actions = new AvatarsActions();
+            Actions = new AvatarsActions(false,false,true,true);
 
             if (m_rndGen.Next(10) > 0)
             {
