@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using GoodAI.Core.Utils;
 using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -41,7 +42,7 @@ namespace GoodAI.Modules.School.LearningTasks
         
         protected override void CreateScene()
         {
-            AvatarsActions actions = new AvatarsActions();
+            Actions = new AvatarsActions();
 
             if (m_rndGen.Next(3) <= 0)
             {
@@ -52,7 +53,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 if (LearningTaskHelpers.FlipCoin(m_rndGen))
                 {
                     WrappedWorld.CreateRandomFood(location, size, m_rndGen);
-                    actions.Eat = true;
+                    Actions.Eat = true;
                 }
                 else
                 {
@@ -60,7 +61,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
 
-            actions.WriteActions(StreamWriter);
+            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
     }
 }

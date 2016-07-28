@@ -54,7 +54,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             actions.Colors[ColorIndex] = true;
-            actions.WriteActions(StreamWriter);
+            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
 
         /*protected override void AddShape(int randomLocationIndex)
