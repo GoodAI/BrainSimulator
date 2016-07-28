@@ -14,6 +14,11 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         private readonly Random m_rndGen = new Random();
 
+        protected override string Path
+        {
+            get { return @"D:\summerCampSamples\SCT2.csv"; }
+        }
+
         public Ltsct2() : this(null) { }
 
         public Ltsct2(SchoolWorld w)
