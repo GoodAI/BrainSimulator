@@ -926,7 +926,7 @@ namespace GoodAI.Modules.TetrisWorld
                     MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
                     m_addRgbNoiseKernel.SetupExecution(Owner.VisualWidth * Owner.VisualHeight);
-                    m_addRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp);
+                    m_addRgbNoiseKernel.Run(Owner.VisualOutput, Owner.VisualWidth, Owner.VisualHeight, Owner.AgentVisualTemp, 0);
                 }
             }
 

@@ -58,7 +58,7 @@ extern "C"
 	Adds noise into a 3-component image.
 	inputWidth & inputHeight: map dimensions in pixels
 	*/
-	__global__ void AddRgbNoiseKernel(float *target, int inputWidth, int inputHeight, float *randoms)
+	__global__ void AddRgbNoiseKernel(float *target, int inputWidth, int inputHeight, float *randoms, int isBlackAndWhiteNoise)
 	{
 		int id = blockDim.x * blockIdx.y * gridDim.x
 			+ blockDim.x * blockIdx.x
@@ -70,18 +70,20 @@ extern "C"
 		{
 			unsigned int tg = *((unsigned int*)(&target[id]));
 
+			int random = randoms[id];
+
 			int blue = (tg >> 0) & (0xFF);
-			blue += (int)(randoms[id]);
+			blue += random;
 			blue = blue < 255 ? blue : 255;
 			blue = blue > 0 ? blue : 0;
 
 			int green = ((tg >> 8) & (0xFF));
-			green += (int)(randoms[id + imagePixels]);
+			green += (isBlackAndWhiteNoise ? random : (int)(randoms[id + imagePixels]));
 			green = green < 255 ? green : 255;
 			green = green > 0 ? green : 0;
 
 			int red = ((tg >> 16) & (0xFF));
-			red += (int)(randoms[id + imagePixels * 2]);
+			red += (isBlackAndWhiteNoise ? random : (int)(randoms[id + imagePixels * 2]));
 			red = red < 255 ? red : 255;
 			red = red > 0 ? red : 0;
 
