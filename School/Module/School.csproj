@@ -84,8 +84,15 @@
     <Compile Include="Learning tasks\AvatarsActions.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
     <Compile Include="Learning tasks\Ltsct1d2.cs" />
+    <Compile Include="Learning tasks\Ltsct2d2.cs" />
+    <Compile Include="Learning tasks\Ltsct3d2.cs" />
     <Compile Include="Learning tasks\Ltsct3.cs" />
     <Compile Include="Learning tasks\Ltsct2.cs" />
+    <Compile Include="Learning tasks\Ltsct4d2.cs" />
+    <Compile Include="Learning tasks\Ltsct5d2.cs" />
+    <Compile Include="Learning tasks\Ltsct6d2.cs" />
+    <Compile Include="Learning tasks\Ltsct7d2.cs" />
+    <Compile Include="Learning tasks\Ltsct8d2.cs" />
     <Compile Include="Learning tasks\Ltsct8.cs" />
     <Compile Include="Learning tasks\Ltsct7.cs" />
     <Compile Include="Learning tasks\Ltsct6.cs" />
