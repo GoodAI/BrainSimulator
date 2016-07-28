@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
+using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -40,6 +41,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
+            AvatarsActions actions = new AvatarsActions();
+
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
             int positionsCount = Positions.Positions.Count;
@@ -51,12 +54,15 @@ namespace GoodAI.Modules.School.LearningTasks
 
             if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
             {
-                WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                Shape randomFood = WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                actions.Movement = DirectionToTarget(randomFood.Center());
             }
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
             }
+            
+            actions.WriteActions(StreamWriter);
         }
     }
 }

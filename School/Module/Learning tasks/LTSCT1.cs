@@ -57,7 +57,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void Fini()
         {
-            
+            StreamWriter.Dispose();
         }
 
         private void OpenFileStream()
@@ -124,28 +124,48 @@ namespace GoodAI.Modules.School.LearningTasks
                 int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
 
-                Actions.Shapes[m_shapeIndex] = true;   
+                Actions.Shapes[ShapeIndex] = true;   
             }
 
             Actions.WriteActions(StreamWriter);
         }
 
-        protected int m_shapeIndex;
+        protected int ShapeIndex;
+        protected int ColorIndex;
 
-        protected virtual void AddShape(int randomLocationIndex)
+        protected void AddShape(int randomLocationIndex)
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-            Color color = Colors.GetRandomColor(m_rndGen);
+            Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
 
             PointF location = Positions.Positions[randomLocationIndex];
 
-            m_shapeIndex = m_rndGen.Next(ScConstants.numShapes);
-            Shape.Shapes randomShape = (Shape.Shapes)m_shapeIndex;
+            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
-            GenerationsCheckTable[randomLocationIndex][m_shapeIndex] = true;
+            GenerationsCheckTable[randomLocationIndex][ShapeIndex] = true;
+        }
+
+        protected bool[] DirectionToTarget(PointF locationCenter, PointF center)
+        {
+            bool[] moveActions = new bool[4];
+
+            float step = WrappedWorld.GetPowGeometry().Width/16;
+            PointF c = locationCenter - new SizeF(center);
+            if (c.X < -step) moveActions[2] = true;
+            if (step < c.X) moveActions[3] = true;
+            if (c.Y < -step) moveActions[0] = true;
+            if (step < c.Y) moveActions[1] = true;
+
+            return moveActions;
+        }
+
+        protected bool[] DirectionToTarget(PointF locationCenter)
+        {
+            return DirectionToTarget(locationCenter, WrappedWorld.GetPowCenter());
         }
     }
 }

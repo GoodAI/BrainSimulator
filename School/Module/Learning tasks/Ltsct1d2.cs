@@ -38,7 +38,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 AddShape();
 
-                Actions.Shapes[m_shapeIndex] = true;
+                Actions.Shapes[ShapeIndex] = true;
             }
 
             Actions.WriteActions(StreamWriter);
@@ -52,8 +52,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
             PointF location = Positions.GetRandomFreePosition();
 
-            m_shapeIndex = m_rndGen.Next(ScConstants.numShapes);
-            Shape.Shapes randomShape = (Shape.Shapes)m_shapeIndex;
+            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
         }
