@@ -83,6 +83,7 @@
     <Compile Include="Common\TrainingSetHints.cs" />
     <Compile Include="Learning tasks\AvatarsActions.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\Ltsct1d2.cs" />
     <Compile Include="Learning tasks\Ltsct3.cs" />
     <Compile Include="Learning tasks\Ltsct2.cs" />
     <Compile Include="Learning tasks\Ltsct8.cs" />

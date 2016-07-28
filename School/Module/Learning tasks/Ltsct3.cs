@@ -8,7 +8,7 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("LTSCT3 - 1 color")]
+    [DisplayName("SC D1 LT3 - 1 color")]
     public class Ltsct3 : Ltsct1
     {
         protected override string Path

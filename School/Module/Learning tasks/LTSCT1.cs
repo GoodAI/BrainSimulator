@@ -10,7 +10,7 @@ using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("LTSCT1 - 1 shape")]
+    [DisplayName("SC D1 LT1 - 1 shape")]
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
         private readonly Random m_rndGen = new Random();
@@ -104,25 +104,24 @@ namespace GoodAI.Modules.School.LearningTasks
             return !GenerationsCheckTable.Any(b => b.Any(b1 => b1 == false));
         }
 
-        public AvatarsActions Actions { get; private set; }
+        public AvatarsActions Actions { get; protected set; }
 
         protected virtual void CreateScene()
         {
             Actions = new AvatarsActions();
-            if (m_rndGen.Next(ScConstants.numShapes + 1) == 0)
-            {
-                return; // no shape, no target
-            }
 
-            int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
-            AddShape(randomLocationIdx);
-            
-            Actions.Shapes[m_shapeIndex] = true;
+            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            {
+                int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
+                AddShape(randomLocationIdx);
+
+                Actions.Shapes[m_shapeIndex] = true;   
+            }
 
             Actions.WriteActions(StreamWriter);
         }
 
-        private int m_shapeIndex;
+        protected int m_shapeIndex;
 
         protected virtual void AddShape(int randomLocationIndex)
         {

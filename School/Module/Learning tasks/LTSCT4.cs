@@ -7,7 +7,7 @@ using System.IO;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("LTSCT4")]
+    [DisplayName("SC D1 LT4 - approach food")]
     public class Ltsct4 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();

@@ -9,7 +9,7 @@ using GoodAI.Core.Utils;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("LTSCT2 - 2 shapes")]
+    [DisplayName("SC D1 LT2 - 2 shapes")]
     public class Ltsct2 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
