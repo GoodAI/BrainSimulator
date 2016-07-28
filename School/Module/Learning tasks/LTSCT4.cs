@@ -28,7 +28,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
-            Actions = new AvatarsActions();
+            Actions = new AvatarsActions(false,false,true,true);
 
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 

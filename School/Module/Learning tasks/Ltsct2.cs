@@ -26,7 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
-            Actions = new AvatarsActions();
+            Actions = new AvatarsActions(true,false,false,false);
 
             int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
 

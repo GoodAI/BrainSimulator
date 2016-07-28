@@ -132,7 +132,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected virtual void CreateScene()
         {
-            Actions = new AvatarsActions();
+            Actions = new AvatarsActions(true,false,false,false);
 
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
