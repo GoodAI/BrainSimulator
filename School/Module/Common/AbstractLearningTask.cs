@@ -50,6 +50,7 @@ namespace GoodAI.Modules.School.Common
         string GetTypeName();
 
         void Init();
+        void Finalize();
 
         bool Solve(bool successfully);
     }
@@ -253,6 +254,11 @@ namespace GoodAI.Modules.School.Common
             SetHints(TSHints);
 
             IsInitialized = true;
+        }
+
+        public virtual void Finalize()
+        {
+            
         }
 
         public virtual bool Solve(bool successfully)
