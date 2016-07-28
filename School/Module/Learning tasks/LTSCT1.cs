@@ -149,7 +149,7 @@ namespace GoodAI.Modules.School.LearningTasks
             GenerationsCheckTable[randomLocationIndex][ShapeIndex] = true;
         }
 
-        protected bool[] DirectionToTarget(PointF locationCenter, PointF center)
+        protected bool[] MoveActionsToTarget(PointF locationCenter, PointF center)
         {
             bool[] moveActions = new bool[4];
 
@@ -163,9 +163,23 @@ namespace GoodAI.Modules.School.LearningTasks
             return moveActions;
         }
 
-        protected bool[] DirectionToTarget(PointF locationCenter)
+        protected bool[] MoveActionsToTarget(PointF locationCenter)
         {
-            return DirectionToTarget(locationCenter, WrappedWorld.GetPowCenter());
+            return MoveActionsToTarget(locationCenter, WrappedWorld.GetPowCenter());
+        }
+
+        protected static bool[] NegateMoveActions(bool[] actions)
+        {
+            bool[] actionsN = new bool[4];
+            if (actions[0]) actionsN[1] = true;
+
+            if (actions[1]) actionsN[0] = true;
+
+            if (actions[2]) actionsN[3] = true;
+
+            if (actions[3]) actionsN[2] = true;
+           
+            return actionsN;
         }
     }
 }

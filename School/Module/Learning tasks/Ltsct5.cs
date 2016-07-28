@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -40,18 +41,26 @@ namespace GoodAI.Modules.School.LearningTasks
         
         protected override void CreateScene()
         {
-            SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
+            AvatarsActions actions = new AvatarsActions();
 
-            PointF location = Positions.Center();
+            if (m_rndGen.Next(3) <= 0)
+            {
+                SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-            if (LearningTaskHelpers.FlipCoin(m_rndGen))
-            {
-                WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                PointF location = Positions.Center();
+
+                if (LearningTaskHelpers.FlipCoin(m_rndGen))
+                {
+                    WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                    actions.Eat = true;
+                }
+                else
+                {
+                    WrappedWorld.CreateRandomStone(location, size, m_rndGen);
+                }
             }
-            else
-            {
-                WrappedWorld.CreateRandomStone(location, size, m_rndGen);
-            }
+
+            actions.WriteActions(StreamWriter);
         }
     }
 }
