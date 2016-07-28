@@ -37,7 +37,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = m_positions.Center();
+            PointF location = Positions.Center();
 
             if (LearningTaskHelpers.FlipCoin(m_rndGen))
             {

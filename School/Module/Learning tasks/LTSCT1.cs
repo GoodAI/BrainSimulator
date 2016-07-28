@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using GoodAI.Core.Utils;
+using GoodAI.School.Learning_tasks;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -13,10 +14,10 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
         private readonly Random m_rndGen = new Random();
-        protected bool[][] generationsCheckTable;
-        protected ScFixPositions m_positions;
-        protected ScFixColors m_colors;
-        private FileStream m_fs;
+        protected bool[][] GenerationsCheckTable;
+        protected ScFixPositions Positions;
+        protected ScFixColors Colors;
+        protected FileStream FileStream;
 
         public Ltsct1() : this(null) { }
 
@@ -30,26 +31,33 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
+
+            
         }
 
         public virtual void InitCheckTable()
         {
-            generationsCheckTable = new bool[ScConstants.numPositions][];
-            for (int i = 0; i < generationsCheckTable.Length; i++)
+            GenerationsCheckTable = new bool[ScConstants.numPositions][];
+            for (int i = 0; i < GenerationsCheckTable.Length; i++)
             {
-                generationsCheckTable[i] = new bool[ScConstants.numShapes];
+                GenerationsCheckTable[i] = new bool[ScConstants.numShapes];
             }
-
-            m_fs = new FileStream(@"D:\summerCampSamples\SCT1.csv", FileMode.Append);
         }
 
         public override void Init()
         {
             base.Init();
             InitCheckTable();
-            m_positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
-            m_colors = new ScFixColors(ScConstants.numColors, WrappedWorld.BackgroundColor);
+            Positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
+            Colors = new ScFixColors(ScConstants.numColors, WrappedWorld.BackgroundColor);
             WrappedWorld.ImageNoiseStandardDeviation = 256.0f / ScConstants.numColors / 2;
+
+            OpenFileStream();
+        }
+
+        protected virtual void OpenFileStream()
+        {
+            FileStream = new FileStream(@"D:\summerCampSamples\SCT1.csv", FileMode.Truncate);
         }
 
         public override void PresentNewTrainingUnit()
@@ -71,35 +79,45 @@ namespace GoodAI.Modules.School.LearningTasks
             return true;
         }
 
-        private int m_shapeIndex;
         protected virtual bool CheckTableFull()
         {
-            return !generationsCheckTable.Any(b => b.Any(b1 => b1 == false));
+            return !GenerationsCheckTable.Any(b => b.Any(b1 => b1 == false));
         }
 
+        protected AvatarsActions Actions;
         protected virtual void CreateScene()
         {
+            Actions = new AvatarsActions();
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
+            {
+                return; // no shape, no target
+            }
                 int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
             }
+            Actions.Shapes[m_shapeIndex] = true;
+            
+            Actions.WriteActions(FileStream);
+            
         }
+
+        private int m_shapeIndex;
 
         protected virtual void AddShape(int randomLocationIndex)
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-            Color color = m_colors.GetRandomColor(m_rndGen);
+            Color color = Colors.GetRandomColor(m_rndGen);
 
-            PointF location = m_positions.Positions[randomLocationIndex];
+            PointF location = Positions.Positions[randomLocationIndex];
 
             m_shapeIndex = m_rndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)m_shapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
-            generationsCheckTable[randomLocationIndex][m_shapeIndex] = true;
+            GenerationsCheckTable[randomLocationIndex][m_shapeIndex] = true;
         }
     }
 }
