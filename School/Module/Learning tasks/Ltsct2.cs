@@ -33,11 +33,6 @@ namespace GoodAI.Modules.School.LearningTasks
             TSProgression.Add(TSHints.Clone());
         }
 
-        protected override void OpenFileStream()
-        {
-            FileStream = new FileStream(@"D:\summerCampSamples\SCT2.csv", FileMode.Truncate);
-        }
-
         protected override void CreateScene()
         {
             int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);

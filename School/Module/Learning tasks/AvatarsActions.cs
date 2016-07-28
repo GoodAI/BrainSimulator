@@ -15,7 +15,7 @@ namespace GoodAI.School.Learning_tasks
         public bool[] Movement = new bool[4];
         public bool Eat;
 
-        public void WriteActions(FileStream fileStream)
+        public void WriteActions(StreamWriter streamWriter)
         {
             StringBuilder stringBuilder = new StringBuilder();
 
@@ -24,9 +24,7 @@ namespace GoodAI.School.Learning_tasks
             stringBuilder.Append(BoolArrayToString(Movement)).Append(",");
             stringBuilder.Append(Eat ? "1" : "0").AppendLine();
 
-            StreamWriter streamWriter = new StreamWriter(fileStream);
             streamWriter.Write(stringBuilder);
-            streamWriter.Flush();
         }
 
         private string BoolArrayToString(bool[] ba)

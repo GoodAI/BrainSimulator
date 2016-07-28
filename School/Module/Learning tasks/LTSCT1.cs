@@ -17,7 +17,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected bool[][] GenerationsCheckTable;
         protected ScFixPositions Positions;
         protected ScFixColors Colors;
-        protected FileStream FileStream;
+        protected StreamWriter StreamWriter;
 
         public Ltsct1() : this(null) { }
         protected virtual string Path { get { return @"D:\summerCampSamples\SCT1.csv";} }
@@ -32,8 +32,6 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-
-            
         }
 
         public virtual void InitCheckTable()
@@ -56,18 +54,22 @@ namespace GoodAI.Modules.School.LearningTasks
             OpenFileStream();
         }
 
-        protected virtual void OpenFileStream()
+        private void OpenFileStream()
         {
             var path = Path;
             if (!File.Exists(path))
             {
                 File.Create(path);
             }
-            if (FileStream != null)
+            if (StreamWriter != null)
             {
-                FileStream.Dispose();
+                StreamWriter.Dispose();
+                StreamWriter = new StreamWriter(path, true);
             }
-            FileStream = new FileStream(path, FileMode.Truncate);
+            else
+            {
+                StreamWriter = new StreamWriter(path, false);
+            }
         }
 
 
@@ -79,6 +81,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
+            
+
             wasUnitSuccessful = false;
 
             if (CheckTableFull())
@@ -95,22 +99,22 @@ namespace GoodAI.Modules.School.LearningTasks
             return !GenerationsCheckTable.Any(b => b.Any(b1 => b1 == false));
         }
 
-        protected AvatarsActions Actions;
+        public AvatarsActions Actions { get; private set; }
+
         protected virtual void CreateScene()
         {
             Actions = new AvatarsActions();
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
-            {
+            if (m_rndGen.Next(ScConstants.numShapes + 1) == 0)
             {
                 return; // no shape, no target
             }
-                int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
-                AddShape(randomLocationIdx);
-            }
+
+            int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
+            AddShape(randomLocationIdx);
+            
             Actions.Shapes[m_shapeIndex] = true;
-            
-            Actions.WriteActions(FileStream);
-            
+
+            Actions.WriteActions(StreamWriter);
         }
 
         private int m_shapeIndex;

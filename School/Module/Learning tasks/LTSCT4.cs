@@ -38,12 +38,6 @@ namespace GoodAI.Modules.School.LearningTasks
             return true;
         }
 
-        protected override void OpenFileStream()
-        {
-            FileStream = new FileStream(@"D:\summerCampSamples\SCT4.csv", FileMode.Truncate);
-        }
-
-
         protected override void CreateScene()
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
