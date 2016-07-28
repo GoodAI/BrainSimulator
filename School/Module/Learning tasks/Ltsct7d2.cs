@@ -11,8 +11,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D2 LT7 - approach very good food")]
     public class Ltsct7d2 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
-
         public override string Path
         {
             get { return @"D:\summerCampSamples\D2\SCT7\"; }
@@ -39,24 +37,24 @@ namespace GoodAI.Modules.School.LearningTasks
 
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
 
-            Shape randomVeryGoodFood = WrappedWorld.CreateRandomVeryGoodFood(location, size, m_rndGen);
+            Shape randomVeryGoodFood = WrappedWorld.CreateRandomVeryGoodFood(location, size, RndGen);
             Actions.Movement = MoveActionsToTarget(randomVeryGoodFood.Center());
 
-            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
-            if (m_rndGen.Next(3) > 0)
+            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
+            if (RndGen.Next(3) > 0)
             {
-                Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, m_rndGen);
+                Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, RndGen);
                 Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
             }
-            else if (m_rndGen.Next(3) > 0)
+            else if (RndGen.Next(3) > 0)
             {
-                WrappedWorld.CreateRandomFood(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomFood(location2, size, RndGen);
             }
-            else if (m_rndGen.Next(3) > 0)
+            else if (RndGen.Next(3) > 0)
             {
-                WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomStone(location2, size, RndGen);
             }
 
             WriteActions();

@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D1 LT1 - 1 shape")]
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
-        private readonly Random m_rndGen = new Random();
+        protected readonly Random RndGen = new Random();
         protected bool[][] GenerationsCheckTable;
         protected ScFixPositions Positions;
         protected ScFixColors Colors;
@@ -25,7 +25,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public bool LtWritten = false;
 
-        public const int NUM_SAMPLES = 100 + 1;
+        public const int NUM_SAMPLES = 5000 + 1;
 
         public Ltsct1(SchoolWorld w)
             : base(w)
@@ -134,9 +134,9 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions(true,false,false,false);
 
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
-                int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
+                int randomLocationIdx = RndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
 
                 Actions.Shapes[ShapeIndex] = true;   
@@ -164,11 +164,11 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-            Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
+            Color color = Colors.GetRandomColor(RndGen, out ColorIndex);
 
             PointF location = Positions.Positions[randomLocationIndex];
 
-            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            ShapeIndex = RndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
@@ -180,11 +180,11 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
+            Color color = Colors.GetRandomColor(RndGen, out ColorIndex);
 
-            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
 
-            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            ShapeIndex = RndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);

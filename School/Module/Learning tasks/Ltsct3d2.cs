@@ -17,8 +17,6 @@ namespace GoodAI.Modules.School.LearningTasks
             get { return @"D:\summerCampSamples\D2\SCT3\"; }
         }
 
-        private readonly Random m_rndGen = new Random();
-
         public Ltsct3d2() : this(null) { }
 
         public Ltsct3d2(SchoolWorld w)
@@ -40,7 +38,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions(false,true,false,false);
 
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape();
                 Actions.Colors[ColorIndex] = true;

@@ -12,8 +12,6 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D2 LT4 - approach food")]
     public class Ltsct4d2 : Ltsct1
     {
-        private readonly Random m_rndGen = new Random();
-
         public override string Path
         {
             get { return @"D:\summerCampSamples\D2\SCT4\"; }
@@ -32,17 +30,17 @@ namespace GoodAI.Modules.School.LearningTasks
 
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
 
-            if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
+            if (RndGen.Next(ScConstants.numShapes+1) > 0)
             {
-                Shape randomFood = WrappedWorld.CreateRandomFood(location, size, m_rndGen);
+                Shape randomFood = WrappedWorld.CreateRandomFood(location, size, RndGen);
                 Actions.Movement = MoveActionsToTarget(randomFood.Center());
             }
-            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
-            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
+            if (RndGen.Next(ScConstants.numShapes + 1) > 0)
             {
-                WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
+                WrappedWorld.CreateRandomStone(location2, size, RndGen);
             }
 
             WriteActions();
