@@ -82,6 +82,8 @@
     <Compile Include="Common\StandardConflictResolver.cs" />
     <Compile Include="Common\TrainingSetHints.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\Ltsct3.cs" />
+    <Compile Include="Learning tasks\Ltsct2.cs" />
     <Compile Include="Learning tasks\Ltsct8.cs" />
     <Compile Include="Learning tasks\Ltsct7.cs" />
     <Compile Include="Learning tasks\Ltsct6.cs" />
@@ -120,6 +122,7 @@
     <Compile Include="Learning tasks\LTSimpleSize.cs" />
     <Compile Include="Learning tasks\LTTetrisFull.cs" />
     <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
+    <Compile Include="Learning tasks\ScConstants.cs" />
     <Compile Include="Learning tasks\ScFixColors.cs" />
     <Compile Include="Learning tasks\ScFixPositions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

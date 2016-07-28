@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
@@ -22,6 +23,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 new PointF(2.0f,1.0f),
                 new PointF(2.0f,2.0f)
             };
+
+            Debug.Assert(Positions.Count == ScConstants.numPositions);
 
             for (int i = 0; i < Positions.Count; i++)
             {

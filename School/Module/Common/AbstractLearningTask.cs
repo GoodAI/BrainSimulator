@@ -243,7 +243,7 @@ namespace GoodAI.Modules.School.Common
         public abstract void PresentNewTrainingUnit();
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
 
-        public void Init()
+        public virtual void Init()
         {
             CurrentNumberOfAttempts = 0;
             CurrentNumberOfSuccesses = 0;
