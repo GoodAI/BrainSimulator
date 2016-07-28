@@ -11,6 +11,11 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("LTSCT3 - 1 color")]
     public class Ltsct3 : Ltsct1
     {
+        protected override string Path
+        {
+            get { return @"D:\summerCampSamples\SCT3.csv"; }
+        }
+
         private readonly Random m_rndGen = new Random();
 
         public Ltsct3() : this(null) { }

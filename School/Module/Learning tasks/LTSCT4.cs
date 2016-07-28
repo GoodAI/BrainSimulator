@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
@@ -10,6 +11,11 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct4 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
+
+        protected override string Path
+        {
+            get { return @"D:\summerCampSamples\SCT4.csv"; }
+        }
 
         public Ltsct4() : this(null) { }
 
@@ -30,6 +36,11 @@ namespace GoodAI.Modules.School.LearningTasks
             wasUnitSuccessful = false;
 
             return true;
+        }
+
+        protected override void OpenFileStream()
+        {
+            FileStream = new FileStream(@"D:\summerCampSamples\SCT4.csv", FileMode.Truncate);
         }
 
 

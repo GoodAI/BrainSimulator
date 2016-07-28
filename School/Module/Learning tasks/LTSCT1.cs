@@ -20,6 +20,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected FileStream FileStream;
 
         public Ltsct1() : this(null) { }
+        protected virtual string Path { get { return @"D:\summerCampSamples\SCT1.csv";} }
 
         public Ltsct1(SchoolWorld w)
             : base(w)
@@ -57,8 +58,18 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected virtual void OpenFileStream()
         {
-            FileStream = new FileStream(@"D:\summerCampSamples\SCT1.csv", FileMode.Truncate);
+            var path = Path;
+            if (!File.Exists(path))
+            {
+                File.Create(path);
+            }
+            if (FileStream != null)
+            {
+                FileStream.Dispose();
+            }
+            FileStream = new FileStream(path, FileMode.Truncate);
         }
+
 
         public override void PresentNewTrainingUnit()
         {
