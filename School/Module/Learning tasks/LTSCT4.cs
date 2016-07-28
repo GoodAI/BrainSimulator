@@ -55,7 +55,7 @@ namespace GoodAI.Modules.School.LearningTasks
             if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
             {
                 Shape randomFood = WrappedWorld.CreateRandomFood(location, size, m_rndGen);
-                actions.Movement = DirectionToTarget(randomFood.Center());
+                actions.Movement = MoveActionsToTarget(randomFood.Center());
             }
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
