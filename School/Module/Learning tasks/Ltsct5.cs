@@ -59,7 +59,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 }
             }
 
-            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
+            WriteActions();
         }
     }
 }

@@ -307,7 +307,8 @@ namespace GoodAI.Modules.School.Worlds
         private void LearningTaskFinishedFunction(object sender, SchoolEventArgs e)
         {
             ILearningTask lt = e.Task;
-            lt.Fini();
+            if(lt != null)
+                lt.Fini();
         }
 
         public override void Validate(MyValidator validator)

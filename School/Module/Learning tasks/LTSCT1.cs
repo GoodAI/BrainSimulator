@@ -25,7 +25,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public bool LtWritten = false;
 
-        public const int NUM_SAMPLES = 101;
+        public const int NUM_SAMPLES = 100 + 1;
 
         public Ltsct1(SchoolWorld w)
             : base(w)
@@ -81,6 +81,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 StreamWriter.Close();
                 StreamWriter.Dispose();
                 LtWritten = true;
+                string lastFilename = Path + string.Format("{0:0000000}", (NUM_SAMPLES - 1)) + ".bmp";
+                File.Delete(lastFilename);
             }
         }
 
@@ -126,6 +128,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public AvatarsActions Actions { get; protected set; }
 
+        public bool FirstAction = true;
+
         protected virtual void CreateScene()
         {
             Actions = new AvatarsActions();
@@ -138,7 +142,18 @@ namespace GoodAI.Modules.School.LearningTasks
                 Actions.Shapes[ShapeIndex] = true;   
             }
 
-            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
+            WriteActions();
+        }
+
+        public void WriteActions()
+        {
+            if (FirstAction)
+            {
+                FirstAction = false;
+                return;
+            }
+
+            Actions.WriteActions(StreamWriter); string joinedActions = Actions.ToString(); MyLog.INFO.WriteLine(joinedActions);
             MyLog.INFO.WriteLine(joinedActions);
         }
 

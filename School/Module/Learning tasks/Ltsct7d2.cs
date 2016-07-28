@@ -59,7 +59,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
             }
 
-            Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
+            WriteActions();
         }
     }
 }
