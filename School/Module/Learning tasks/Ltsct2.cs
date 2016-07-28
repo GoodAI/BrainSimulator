@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using GoodAI.Core.Utils;
 
@@ -25,6 +26,11 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
+        }
+
+        protected override void OpenFileStream()
+        {
+            FileStream = new FileStream(@"D:\summerCampSamples\SCT2.csv", FileMode.Truncate);
         }
 
         protected override void CreateScene()

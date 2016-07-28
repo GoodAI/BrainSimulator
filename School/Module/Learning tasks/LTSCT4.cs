@@ -37,12 +37,12 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            int positionsCount = m_positions.Positions.Count;
+            int positionsCount = Positions.Positions.Count;
             int randomLocationIdx = m_rndGen.Next(positionsCount);
-            PointF location = m_positions.Positions[randomLocationIdx];
+            PointF location = Positions.Positions[randomLocationIdx];
 
             int randomLocationIdx2 = (m_rndGen.Next(positionsCount - 1) + randomLocationIdx + 1) % positionsCount;
-            PointF location2 = m_positions.Positions[randomLocationIdx2];
+            PointF location2 = Positions.Positions[randomLocationIdx2];
 
             if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
             {

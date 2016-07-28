@@ -29,11 +29,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void InitCheckTable()
         {
-            generationsCheckTable = new bool[ScConstants.numPositions + 1][];
+            GenerationsCheckTable = new bool[ScConstants.numPositions + 1][];
 
-            for (int i = 0; i < generationsCheckTable.Length; i++)
+            for (int i = 0; i < GenerationsCheckTable.Length; i++)
             {
-                generationsCheckTable[i] = new bool[ScConstants.numColors];
+                GenerationsCheckTable[i] = new bool[ScConstants.numColors];
             }
         }
 
@@ -51,16 +51,16 @@ namespace GoodAI.Modules.School.LearningTasks
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
             int randomColorIndex;
-            Color color = m_colors.GetRandomColor(m_rndGen, out randomColorIndex);
+            Color color = Colors.GetRandomColor(m_rndGen, out randomColorIndex);
 
-            PointF location = m_positions.Positions[randomLocationIndex];
+            PointF location = Positions.Positions[randomLocationIndex];
 
             int randomShapeIdx = m_rndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)randomShapeIdx;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
-            generationsCheckTable[randomLocationIndex][randomColorIndex] = true;
+            GenerationsCheckTable[randomLocationIndex][randomColorIndex] = true;
         }
     }
 }
