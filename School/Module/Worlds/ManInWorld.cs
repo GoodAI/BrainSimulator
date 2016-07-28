@@ -1270,6 +1270,8 @@ namespace GoodAI.Modules.School.Worlds
                     m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp, Owner.IsBlackAndWhiteNoise ? 1 : 0);
                 }
 
+                Ltsct1 currentLearningTask = (Ltsct1) Owner.School.CurrentLearningTask;
+                string path = currentLearningTask.Path;
 
                 // save to gray-scale bitmap
                 m_transformToGreyscale.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
@@ -1289,7 +1291,7 @@ namespace GoodAI.Modules.School.Worlds
                         }
                     }
 
-                    string filename = @"D:\summerCampSamples\" + string.Format("{0:000000000}", m_imageCounter++) + ".bmp";
+                    string filename = path + string.Format("{0:0000000}", m_imageCounter++) + ".bmp";
                     bmp.Save(filename, ImageFormat.Bmp);
                 }
             }

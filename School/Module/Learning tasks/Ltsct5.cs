@@ -11,9 +11,9 @@ namespace GoodAI.Modules.School.LearningTasks
     {
         private readonly Random m_rndGen = new Random();
 
-        protected override string Path
+        public override string Path
         {
-            get { return @"D:\summerCampSamples\SCT2.csv"; }
+            get { return @"D:\summerCampSamples\SCT2\"; }
         }
 
         public Ltsct5() : this(null) { }

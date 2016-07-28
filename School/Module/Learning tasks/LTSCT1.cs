@@ -2,6 +2,7 @@
 using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected StreamWriter StreamWriter;
 
         public Ltsct1() : this(null) { }
-        protected virtual string Path { get { return @"D:\summerCampSamples\SCT1.csv";} }
+        public virtual string Path { get { return @"D:\summerCampSamples\SCT1\"; } }
 
         public Ltsct1(SchoolWorld w)
             : base(w)
@@ -61,9 +62,17 @@ namespace GoodAI.Modules.School.LearningTasks
 
         private void OpenFileStream()
         {
-            var path = Path;
+            var path = Path + "labels.csv";
             if (!File.Exists(path))
             {
+                FileInfo fileInfo = new FileInfo(path);
+
+                if (!fileInfo.Exists)
+                {
+                    Debug.Assert(fileInfo.Directory != null, "fileInfo.Directory != null");
+                    Directory.CreateDirectory(fileInfo.Directory.FullName);
+                }
+
                 File.Create(path);
             }
             if (StreamWriter != null)
