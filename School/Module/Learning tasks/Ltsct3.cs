@@ -24,13 +24,6 @@ namespace GoodAI.Modules.School.LearningTasks
         public Ltsct3(SchoolWorld w)
             : base(w)
         {
-            TSHints = new TrainingSetHints {
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
-                { TSHintAttributes.IMAGE_NOISE, 1},
-                { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
-            };
-
-            TSProgression.Add(TSHints.Clone());
         }
 
         public override void InitCheckTable()
@@ -45,32 +38,32 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
-            AvatarsActions actions = new AvatarsActions();
+            Actions = new AvatarsActions();
 
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
-                actions.Colors[ColorIndex] = true;
+                Actions.Colors[ColorIndex] = true;
             }
 
             Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
 
-        /*protected override void AddShape(int randomLocationIndex)
+        protected override void AddShape(int randomLocationIndex)
         {
-            SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
+            SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
             Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
 
             PointF location = Positions.Positions[randomLocationIndex];
 
-            int randomShapeIdx = m_rndGen.Next(ScConstants.numShapes);
-            Shape.Shapes randomShape = (Shape.Shapes)randomShapeIdx;
+            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
             GenerationsCheckTable[randomLocationIndex][ColorIndex] = true;
-        }*/
+        }
     }
 }

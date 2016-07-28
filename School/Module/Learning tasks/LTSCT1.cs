@@ -25,16 +25,23 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public bool LtWritten = false;
 
+        public const int NUM_SAMPLES = 101;
+
         public Ltsct1(SchoolWorld w)
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000000 },
                 { TSHintAttributes.IMAGE_NOISE, 1},
                 { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
             };
 
             TSProgression.Add(TSHints.Clone());
+        }
+
+        public override int NumberOfSuccessesRequired
+        {
+            get { return NUM_SAMPLES; }  // default value
         }
 
         public virtual void InitCheckTable()
@@ -101,7 +108,7 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             
 
-            wasUnitSuccessful = false;
+            wasUnitSuccessful = true;
 
             if (CheckTableFull())
             {
@@ -138,7 +145,7 @@ namespace GoodAI.Modules.School.LearningTasks
         protected int ShapeIndex;
         protected int ColorIndex;
 
-        protected void AddShape(int randomLocationIndex)
+        protected virtual void AddShape(int randomLocationIndex)
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
@@ -154,7 +161,7 @@ namespace GoodAI.Modules.School.LearningTasks
             GenerationsCheckTable[randomLocationIndex][ShapeIndex] = true;
         }
 
-        protected void AddShape()
+        protected virtual void AddShape()
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 

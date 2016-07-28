@@ -24,13 +24,6 @@ namespace GoodAI.Modules.School.LearningTasks
         public Ltsct3d2(SchoolWorld w)
             : base(w)
         {
-            TSHints = new TrainingSetHints {
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
-                { TSHintAttributes.IMAGE_NOISE, 1},
-                { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
-            };
-
-            TSProgression.Add(TSHints.Clone());
         }
 
         public override void InitCheckTable()
@@ -45,12 +38,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected override void CreateScene()
         {
-            AvatarsActions actions = new AvatarsActions();
+            Actions = new AvatarsActions();
 
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape();
-                actions.Colors[ColorIndex] = true;
+                Actions.Colors[ColorIndex] = true;
             }
 
             Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);

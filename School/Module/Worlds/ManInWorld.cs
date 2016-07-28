@@ -1271,15 +1271,16 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Ltsct1 currentLearningTask = (Ltsct1) Owner.School.CurrentLearningTask;
-                string path = currentLearningTask.Path;
 
                 // save to gray-scale bitmap
                 m_transformToGreyscale.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
                 m_transformToGreyscale.Run(Owner.VisualPOW, Owner.GreyscalePow, Owner.Pow.Width*Owner.Pow.Height);
                 Owner.GreyscalePow.SafeCopyToHost();
 
-                if (!currentLearningTask.LtWritten)
+                if (currentLearningTask != null && !currentLearningTask.LtWritten)
                 {
+                    string path = currentLearningTask.Path;
+
                     using (Bitmap bmp = new Bitmap(Owner.Pow.Width, Owner.Pow.Height))
                     {
                         var grayScale = Owner.GreyscalePow.Host;
