@@ -3,6 +3,7 @@ using GoodAI.Modules.School.Worlds;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using GoodAI.Core.Utils;
 
@@ -15,6 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
         bool[][] generationsCheckTable = new bool[9][];
         private ScFixPositions m_positions;
         private ScFixColors m_colors;
+        private FileStream m_fs;
 
         public Ltsct1() : this(null) { }
 
@@ -32,6 +34,8 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 generationsCheckTable[i] = new bool[8];
             }
+
+            m_fs = new FileStream(@"D:\summerCampSamples\SCT1.csv", FileMode.Append);
         }
 
         private bool m_init = true;
@@ -63,7 +67,7 @@ namespace GoodAI.Modules.School.LearningTasks
             return true;
         }
 
-        
+        private int shapeIdx;
         protected void CreateTarget()
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
@@ -73,12 +77,12 @@ namespace GoodAI.Modules.School.LearningTasks
             int randomLocationIdx = m_rndGen.Next(m_positions.Positions.Count);
             PointF location = m_positions.Positions[randomLocationIdx];
 
-            int randomShapeIdx = m_rndGen.Next(8);
-            Shape.Shapes randomShape = (Shape.Shapes) randomShapeIdx;
+            shapeIdx = m_rndGen.Next(8);
+            Shape.Shapes randomShape = (Shape.Shapes)shapeIdx;
 
             WrappedWorld.CreateShape(randomShape, color, location, size);
 
-            generationsCheckTable[randomLocationIdx][randomShapeIdx] = true;
+            generationsCheckTable[randomLocationIdx][shapeIdx] = true;
         }
     }
 }
