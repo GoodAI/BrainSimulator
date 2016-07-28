@@ -8,9 +8,14 @@ namespace GoodAI.Modules.School.LearningTasks
     public class ScFixPositions
     {
         public List<PointF> Positions;
+        private RectangleF m_powGeometry;
+        private Random m_rndGen;
 
         public ScFixPositions(RectangleF powGeometry)
         {
+            m_powGeometry = powGeometry;
+            m_rndGen = new Random();
+
             Positions = new List<PointF>
             {
                 new PointF(0.0f,0.0f),
@@ -35,6 +40,16 @@ namespace GoodAI.Modules.School.LearningTasks
                 position.Y = marginY + position.Y * ((powGeometry.Height - marginY) / 3) + powGeometry.Y;
                 Positions[i] = position;
             }
+        }
+
+        public PointF GetRandomFreePosition()
+        {
+            float marginX = m_powGeometry.Width / 16;
+            float marginY = m_powGeometry.Height / 16;
+            PointF res = new PointF();
+            res.X = marginX + (float)m_rndGen.NextDouble() * (m_powGeometry.Width - marginX) + m_powGeometry.X;
+            res.Y = marginY + (float)m_rndGen.NextDouble() * (m_powGeometry.Height - marginY) + m_powGeometry.Y;
+            return res;
         }
 
         public PointF GetRandomPosition(Random rnd)

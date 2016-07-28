@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.LearningTasks
 {
-    [DisplayName("LTSCT6")]
+    [DisplayName("SC D1 LT6 - avoid enemy")]
     public class Ltsct6 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
