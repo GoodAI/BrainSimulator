@@ -14,6 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     public class Ltsct1d2 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
+        public virtual string Path { get { return @"D:\summerCampSamples\D2\SCT1\"; } }
 
         public Ltsct1d2() : this(null) { }
 
@@ -50,7 +51,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             Color color = Colors.GetRandomColor(m_rndGen);
 
-            PointF location = Positions.GetRandomFreePosition();
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
 
             ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
             Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;

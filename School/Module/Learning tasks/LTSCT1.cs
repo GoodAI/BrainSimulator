@@ -150,6 +150,20 @@ namespace GoodAI.Modules.School.LearningTasks
             GenerationsCheckTable[randomLocationIndex][ShapeIndex] = true;
         }
 
+        protected void AddShape()
+        {
+            SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
+
+            Color color = Colors.GetRandomColor(m_rndGen, out ColorIndex);
+
+            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+
+            ShapeIndex = m_rndGen.Next(ScConstants.numShapes);
+            Shape.Shapes randomShape = (Shape.Shapes)ShapeIndex;
+
+            WrappedWorld.CreateShape(randomShape, color, location, size);
+        }
+
         protected bool[] MoveActionsToTarget(PointF locationCenter, PointF center)
         {
             bool[] moveActions = new bool[4];
