@@ -21,7 +21,9 @@ namespace GoodAI.Modules.School.LearningTasks
         protected StreamWriter StreamWriter;
 
         public Ltsct1() : this(null) { }
-        public virtual string Path { get { return @"D:\summerCampSamples\SCT1\"; } }
+        public virtual string Path { get { return @"D:\summerCampSamples\D1\SCT1\"; } }
+
+        public bool LtWritten = false;
 
         public Ltsct1(SchoolWorld w)
             : base(w)
@@ -52,36 +54,38 @@ namespace GoodAI.Modules.School.LearningTasks
             Colors = new ScFixColors(ScConstants.numColors, WrappedWorld.BackgroundColor);
             WrappedWorld.ImageNoiseStandardDeviation = 256.0f / ScConstants.numColors / 2;
 
-            OpenFileStream();
+            if (Directory.Exists(Path))
+            {
+                LtWritten = true;
+            }
+            else
+            {
+                Directory.CreateDirectory(Path);
+                var path = Path + "labels.csv";
+                File.Create(path).Close();
+                OpenFileStream();
+            }
         }
 
         public override void Fini()
         {
-            StreamWriter.Dispose();
+            if (!LtWritten)
+            {
+                StreamWriter.Close();
+                StreamWriter.Dispose();
+                LtWritten = true;
+            }
         }
 
         private void OpenFileStream()
         {
-            var path = Path + "labels.csv";
-            if (!File.Exists(path))
+            if (LtWritten)
             {
-                FileInfo fileInfo = new FileInfo(path);
-
-                if (!fileInfo.Exists)
-                {
-                    Debug.Assert(fileInfo.Directory != null, "fileInfo.Directory != null");
-                    Directory.CreateDirectory(fileInfo.Directory.FullName);
-                }
-
-                File.Create(path);
-            }
-            if (StreamWriter != null)
-            {
-                StreamWriter.Dispose();
-                StreamWriter = new StreamWriter(path, true);
+                // nothing
             }
             else
             {
+                var path = Path + "labels.csv";
                 StreamWriter = new StreamWriter(path, false);
             }
         }

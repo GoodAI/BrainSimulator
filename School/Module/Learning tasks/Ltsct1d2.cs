@@ -24,6 +24,8 @@ namespace GoodAI.Modules.School.LearningTasks
 
         }
 
+        public virtual string Path { get { return @"D:\summerCampSamples\D2\SCT1\"; } }
+
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
         {
             wasUnitSuccessful = false;
