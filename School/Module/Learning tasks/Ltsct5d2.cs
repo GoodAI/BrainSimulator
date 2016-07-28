@@ -37,11 +37,11 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             Actions = new AvatarsActions();
 
-            if (m_rndGen.Next(3) <= 0)
+            if (m_rndGen.Next(9) > 0)
             {
                 SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width/4, WrappedWorld.GetPowGeometry().Height/4);
 
-                PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+                PointF location = Positions.Center();
 
                 if (LearningTaskHelpers.FlipCoin(m_rndGen))
                 {
@@ -51,6 +51,12 @@ namespace GoodAI.Modules.School.LearningTasks
                 else
                 {
                     WrappedWorld.CreateRandomStone(location, size, m_rndGen);
+                }
+
+                if (LearningTaskHelpers.FlipCoin(m_rndGen))
+                {
+                    PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
+                    WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
                 }
             }
 

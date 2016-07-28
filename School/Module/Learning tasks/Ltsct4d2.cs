@@ -34,13 +34,12 @@ namespace GoodAI.Modules.School.LearningTasks
 
             PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
 
-            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
-
             if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
             {
                 Shape randomFood = WrappedWorld.CreateRandomFood(location, size, m_rndGen);
                 Actions.Movement = MoveActionsToTarget(randomFood.Center());
             }
+            PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(m_rndGen, size);
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
