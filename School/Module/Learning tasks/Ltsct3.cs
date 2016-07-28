@@ -51,9 +51,9 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
                 AddShape(randomLocationIdx);
+                actions.Colors[ColorIndex] = true;
             }
 
-            actions.Colors[ColorIndex] = true;
             Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
 
