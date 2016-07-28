@@ -40,9 +40,9 @@ namespace GoodAI.Modules.School.LearningTasks
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape(randomLocationIdx);
+                Actions.Shapes[ShapeIndex] = true;
             }
 
-            Actions.Shapes[ShapeIndex] = true;
 
             int nextRandomLocationIdx = m_rndGen.Next(randomLocationIdx + 1, randomLocationIdx + ScConstants.numPositions);
             nextRandomLocationIdx %= ScConstants.numPositions;
@@ -50,9 +50,9 @@ namespace GoodAI.Modules.School.LearningTasks
             if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 AddShape(nextRandomLocationIdx);
+                Actions.Shapes[ShapeIndex] = true;
             }
 
-            Actions.Shapes[ShapeIndex] = true;
 
             Actions.WriteActions(StreamWriter);string joinedActions = Actions.ToString();MyLog.INFO.WriteLine(joinedActions);
         }
