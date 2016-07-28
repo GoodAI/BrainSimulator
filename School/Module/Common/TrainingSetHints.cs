@@ -43,6 +43,12 @@ namespace GoodAI.Modules.School.Common
             typeof(bool),
             0, 1);
 
+        public static readonly TSHintAttribute IMAGE_NOISE_BLACK_AND_WHITE = new TSHintAttribute(
+            "Image noise color",
+            "Image noise is black and white if on",
+            typeof(bool),
+            0, 1);
+
         public static readonly TSHintAttribute IMAGE_TEXTURE_BACKGROUND = new TSHintAttribute(
             "Image background",
             "Adding texture to the background of the world.",

@@ -25,7 +25,8 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
-                { TSHintAttributes.IMAGE_NOISE, 1}
+                { TSHintAttributes.IMAGE_NOISE, 1},
+                { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
             };
 
             TSProgression.Add(TSHints.Clone());
@@ -48,6 +49,7 @@ namespace GoodAI.Modules.School.LearningTasks
             InitCheckTable();
             m_positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
             m_colors = new ScFixColors(ScConstants.numColors, WrappedWorld.BackgroundColor);
+            WrappedWorld.ImageNoiseStandardDeviation = 256.0f / ScConstants.numColors / 2;
         }
 
         public override void PresentNewTrainingUnit()
@@ -77,11 +79,11 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected virtual void CreateScene()
         {
-            if (m_rndGen.Next(ScConstants.numShapes + 1) == 1) return; // no shape, no target
-
-            int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
-
-            AddShape(randomLocationIdx);
+            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
+            {
+                int randomLocationIdx = m_rndGen.Next(ScConstants.numPositions);
+                AddShape(randomLocationIdx);
+            }
         }
 
         protected virtual void AddShape(int randomLocationIndex)
