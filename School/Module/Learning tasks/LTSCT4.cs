@@ -7,11 +7,9 @@ using System.Drawing;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("LTSCT4")]
-    public class Ltsct4 : AbstractLearningTask<RoguelikeWorld>
+    public class Ltsct4 : Ltsct1
     {
         private readonly Random m_rndGen = new Random();
-        private ScFixPositions m_positions;
-        private ScFixColors m_colors;
 
         public Ltsct4() : this(null) { }
 
@@ -20,26 +18,11 @@ namespace GoodAI.Modules.School.LearningTasks
         {
             TSHints = new TrainingSetHints {
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 1000000 },
-                { TSHintAttributes.IMAGE_NOISE, 1}
+                { TSHintAttributes.IMAGE_NOISE, 1},
+                { TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE, 1}
             };
 
             TSProgression.Add(TSHints.Clone());
-        }
-
-        private bool m_init = true;
-        public override void PresentNewTrainingUnit()
-        {
-            if (m_init)
-            {
-                m_positions = new ScFixPositions(WrappedWorld.GetPowGeometry());
-                m_colors = new ScFixColors(4, WrappedWorld.BackgroundColor);
-                m_init = false;
-            }
-
-            if (m_rndGen.Next(9) == 0) return;
-
-            WrappedWorld.CreateNonVisibleAgent();
-            CreateTarget();
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
@@ -49,8 +32,8 @@ namespace GoodAI.Modules.School.LearningTasks
             return true;
         }
 
-        
-        protected void CreateTarget()
+
+        protected override void CreateScene()
         {
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
@@ -61,11 +44,11 @@ namespace GoodAI.Modules.School.LearningTasks
             int randomLocationIdx2 = (m_rndGen.Next(positionsCount - 1) + randomLocationIdx + 1) % positionsCount;
             PointF location2 = m_positions.Positions[randomLocationIdx2];
 
-            if (m_rndGen.Next(8) > 0)
+            if (m_rndGen.Next(ScConstants.numShapes+1) > 0)
             {
                 WrappedWorld.CreateRandomFood(location, size, m_rndGen);
             }
-            if (m_rndGen.Next(8) > 0)
+            if (m_rndGen.Next(ScConstants.numShapes + 1) > 0)
             {
                 WrappedWorld.CreateRandomStone(location2, size, m_rndGen);
             }

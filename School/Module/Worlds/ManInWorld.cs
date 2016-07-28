@@ -119,6 +119,7 @@ namespace GoodAI.Modules.School.Worlds
         public float ImageNoiseStandardDeviation = 20.0f; // the noise follows a normal distribution (maybe can be simpler?)
         public float ImageNoiseMean = 0; // the average value that is added to each pixel in the image
         public bool IsImageNoise { get; set; }
+        public bool IsBlackAndWhiteNoise { get; set; }
 
         #endregion
 
@@ -291,6 +292,7 @@ namespace GoodAI.Modules.School.Worlds
             GameObjects.Clear();
             Objects.Count = 0;
             IsImageNoise = false;
+            IsBlackAndWhiteNoise = false;
             IsWorldFrozen = false;
             DegreesOfFreedom = 2;
         }
@@ -300,6 +302,10 @@ namespace GoodAI.Modules.School.Worlds
             if (attr == TSHintAttributes.IMAGE_NOISE)
             {
                 IsImageNoise = value > 0;
+            }
+            if (attr == TSHintAttributes.IMAGE_NOISE_BLACK_AND_WHITE)
+            {
+                IsBlackAndWhiteNoise = value > 0;
             }
             else if (attr == TSHintAttributes.DEGREES_OF_FREEDOM)
             {
@@ -487,7 +493,7 @@ namespace GoodAI.Modules.School.Worlds
         public Shape CreateRandomFood(PointF position, SizeF size, Random random)
         {
             List<Tuple<Shape.Shapes,Color>> food = new List<Tuple<Shape.Shapes, Color>>();
-            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Circle, scFixColors.Colors[0]));
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[1]));
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[2]));
@@ -500,7 +506,7 @@ namespace GoodAI.Modules.School.Worlds
         public Shape CreateRandomVeryGoodFood(PointF position, SizeF size, Random random)
         {
             List<Tuple<Shape.Shapes,Color>> veryGoodFood = new List<Tuple<Shape.Shapes, Color>>();
-            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[0]));
             veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[1]));
             veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[2]));
@@ -513,7 +519,7 @@ namespace GoodAI.Modules.School.Worlds
         public Shape CreateRandomEnemy(PointF position, SizeF size, Random random)
         {
             List<Tuple<Shape.Shapes, Color>> enemy = new List<Tuple<Shape.Shapes, Color>>();
-            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[0]));
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[1]));
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Star, scFixColors.Colors[2]));
@@ -526,7 +532,7 @@ namespace GoodAI.Modules.School.Worlds
         public Shape CreateRandomStone(PointF position, SizeF size, Random random)
         {
             List<Tuple<Shape.Shapes, Color>> enemy = new List<Tuple<Shape.Shapes, Color>>();
-            ScFixColors scFixColors = new ScFixColors(4, Color.Black);
+            ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Rhombus, scFixColors.Colors[0]));
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Star, scFixColors.Colors[1]));
             enemy.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Square, scFixColors.Colors[2]));
@@ -1261,7 +1267,7 @@ namespace GoodAI.Modules.School.Worlds
                     MyKernelFactory.Instance.GetRandDevice(Owner).GenerateNormal32(Owner.AgentVisualTemp.GetDevice(Owner).DevicePointer, Owner.AgentVisualTemp.Count, Owner.ImageNoiseMean, Owner.ImageNoiseStandardDeviation);
 
                     m_addRgbNoiseKernel.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
-                    m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp);
+                    m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp, Owner.IsBlackAndWhiteNoise ? 1 : 0);
                 }
 
 
