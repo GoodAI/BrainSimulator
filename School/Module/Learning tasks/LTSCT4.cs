@@ -16,7 +16,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override string Path
         {
-            get { return @"D:\summerCampSamples\SCT4\"; }
+            get { return @"D:\summerCampSamples\D1\SCT4\"; }
         }
 
         public Ltsct4() : this(null) { }

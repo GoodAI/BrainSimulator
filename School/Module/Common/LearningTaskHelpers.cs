@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System.Linq;
+using System.IO;
 
 namespace GoodAI.Modules.School.Common
 {
@@ -109,6 +110,26 @@ namespace GoodAI.Modules.School.Common
 
     public static class LearningTaskHelpers
     {
+        // http://stackoverflow.com/questions/329355/cannot-delete-directory-with-directory-deletepath-true
+        public static void DeleteDirectory(string target_dir)
+        {
+            string[] files = Directory.GetFiles(target_dir);
+            string[] dirs = Directory.GetDirectories(target_dir);
+
+            foreach (string file in files)
+            {
+                File.SetAttributes(file, FileAttributes.Normal);
+                File.Delete(file);
+            }
+
+            foreach (string dir in dirs)
+            {
+                DeleteDirectory(dir);
+            }
+
+            Directory.Delete(target_dir, false);
+        }
+
         // Return true or false with equal probability
         public static bool FlipCoin(Random rndGen)
         {

@@ -1278,21 +1278,24 @@ namespace GoodAI.Modules.School.Worlds
                 m_transformToGreyscale.Run(Owner.VisualPOW, Owner.GreyscalePow, Owner.Pow.Width*Owner.Pow.Height);
                 Owner.GreyscalePow.SafeCopyToHost();
 
-                using (Bitmap bmp = new Bitmap(Owner.Pow.Width, Owner.Pow.Height))
+                if (!currentLearningTask.LtWritten)
                 {
-                    var grayScale = Owner.GreyscalePow.Host;
-                    for (int j = 0; j < Owner.Pow.Height; j++)
+                    using (Bitmap bmp = new Bitmap(Owner.Pow.Width, Owner.Pow.Height))
                     {
-                        for (int i = 0; i < Owner.Pow.Width; i++)
+                        var grayScale = Owner.GreyscalePow.Host;
+                        for (int j = 0; j < Owner.Pow.Height; j++)
                         {
-                            int val = (int)(grayScale[i + j*Owner.Pow.Width] * 255);
-                            Color newColor = Color.FromArgb(val, val, val);
-                            bmp.SetPixel(i, j, newColor);
+                            for (int i = 0; i < Owner.Pow.Width; i++)
+                            {
+                                int val = (int) (grayScale[i + j*Owner.Pow.Width]*255);
+                                Color newColor = Color.FromArgb(val, val, val);
+                                bmp.SetPixel(i, j, newColor);
+                            }
                         }
-                    }
 
-                    string filename = path + string.Format("{0:0000000}", m_imageCounter++) + ".bmp";
-                    bmp.Save(filename, ImageFormat.Bmp);
+                        string filename = path + string.Format("{0:0000000}", m_imageCounter++) + ".bmp";
+                        bmp.Save(filename, ImageFormat.Bmp);
+                    }
                 }
             }
 
