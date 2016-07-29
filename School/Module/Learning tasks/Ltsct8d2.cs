@@ -37,7 +37,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
             SizeF size = new SizeF(WrappedWorld.GetPowGeometry().Width / 4, WrappedWorld.GetPowGeometry().Height / 4);
 
-            PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
+            PointF location = Positions.Center();
 
             WrappedWorld.CreateRandomVeryGoodFood(location, size, RndGen);
             Actions.Eat = true;

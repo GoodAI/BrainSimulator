@@ -22,6 +22,7 @@ namespace GoodAI.Modules.School.LearningTasks
         public Ltsct3(SchoolWorld w)
             : base(w)
         {
+            RndGen = new Random(3); // to avoid generating same data as in case of the first task
         }
 
         public override void InitCheckTable()
