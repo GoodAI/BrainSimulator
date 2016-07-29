@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.LearningTasks
     [DisplayName("SC D1 LT1 - 1 shape")]
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
-        protected readonly Random RndGen = new Random(1);
+        protected Random RndGen = new Random(1);
         protected bool[][] GenerationsCheckTable;
         protected ScFixPositions Positions;
         protected ScFixColors Colors;
