@@ -309,7 +309,7 @@ namespace GoodAI.School.GUI
 
         private void UpdateTaskData(ILearningTask runningTask)
         {
-            if (CurrentTask == null)
+            if (CurrentTask == null || runningTask == null)
                 return;
             CurrentTask.Steps = (int)m_mainForm.SimulationHandler.SimulationStep - m_stepOffset;
             CurrentTask.Progress = (int)runningTask.Progress;
