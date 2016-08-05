@@ -145,6 +145,7 @@
     <Compile Include="Memory\TensorDimensionsBase.cs" />
     <Compile Include="Nodes\DeviceInput.cs" />
     <Compile Include="Nodes\IModelChanger.cs" />
+    <Compile Include="Nodes\IMyVariableBranchViewWithNamesNode.cs" />
     <Compile Include="Nodes\MyScriptableNode.cs" />
     <Compile Include="Nodes\MyConditionalGroup.cs" />
     <Compile Include="Nodes\MyDataGate.cs" />
