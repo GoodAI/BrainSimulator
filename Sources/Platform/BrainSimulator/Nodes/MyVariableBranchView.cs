@@ -12,7 +12,7 @@ namespace GoodAI.BrainSimulator.NodeView
 {
     internal class MyVariableBranchView : MyNodeView
     {
-        private bool isUpdatingBranches = false;
+        private bool m_isUpdatingBranches = false;
 
         public MyVariableBranchView(MyNodeConfig nodeInfo, GraphControl owner) : base(nodeInfo, owner) { }
 
@@ -150,11 +150,11 @@ namespace GoodAI.BrainSimulator.NodeView
 
         public void UpdateBranches()
         {
-            if (isUpdatingBranches) // prevent nested calls when disconnecting inputs
+            if (m_isUpdatingBranches) // prevent nested calls when disconnecting inputs
             {
                 return;
             }
-            isUpdatingBranches = true;
+            m_isUpdatingBranches = true;
             int inputChange = m_inputBranches.Count - Node.InputBranches;
 
             for (int i = 0; i < inputChange; i++)
@@ -193,7 +193,7 @@ namespace GoodAI.BrainSimulator.NodeView
                     ((NodeLabelItem)m_outputBranches[i]).Text = node.GetOutputBranchName(i);
                 }
             }
-            isUpdatingBranches = false;
+            m_isUpdatingBranches = false;
         }
 
         public override void UpdateView()
