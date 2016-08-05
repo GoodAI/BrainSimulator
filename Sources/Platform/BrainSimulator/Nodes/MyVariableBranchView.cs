@@ -4,6 +4,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Signals;
 using Graph;
 using Graph.Items;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -11,11 +12,24 @@ namespace GoodAI.BrainSimulator.NodeView
 {
     internal class MyVariableBranchView : MyNodeView
     {
+        private bool m_isUpdatingBranches = false;
+
         public MyVariableBranchView(MyNodeConfig nodeInfo, GraphControl owner) : base(nodeInfo, owner) { }
 
         protected virtual void AddInputBranch()
         {
-            NodeLabelItem branch = new NodeLabelItem("Input " + (m_inputBranches.Count + 1), true, false)
+            string name = null;
+
+            if (Node is IMyVariableBranchViewWithNamesNode)
+            {
+                name = ((IMyVariableBranchViewWithNamesNode)Node).GetInputBranchName(m_inputBranches.Count);
+            }
+            if (name == null)
+            {
+                name = "Input " + (m_inputBranches.Count + 1);
+            }
+
+            NodeLabelItem branch = new NodeLabelItem(name, true, false)
             {
                 Tag = m_inputBranches.Count,
                 IsPassive = true
@@ -43,14 +57,48 @@ namespace GoodAI.BrainSimulator.NodeView
 
         protected virtual void AddOutputBranch()
         {
-            NodeLabelItem branch = new NodeLabelItem("Output " + (m_outputBranches.Count + 1), false, true)
+            string name = null;
+
+            if (Node is IMyVariableBranchViewWithNamesNode)
+            {
+                name = ((IMyVariableBranchViewWithNamesNode)Node).GetOutputBranchName(m_outputBranches.Count);
+            }
+            if (name == null)
+            {
+                name = "Output " + (m_outputBranches.Count + 1);
+            }
+
+            NodeLabelItem branch = new NodeLabelItem(name, false, true)
             {
                 Tag = m_outputBranches.Count,
                 IsPassive = true
             };
-
             m_outputBranches.Add(branch);
             AddItem(branch);
+        }
+
+        private string GetOutputBranchName(int index)
+        {
+            string name = ((IMyVariableBranchViewWithNamesNode)Node).GetOutputBranchName(index);
+
+            if (name != null)
+            {
+                return name;
+            }
+            return "Output " + index;
+        }
+
+        private string GetInputBranchName(int index)
+        {
+            string name = null;
+
+            name = ((IMyVariableBranchViewWithNamesNode)Node).GetInputBranchName(index);
+
+            if (name != null)
+            {
+                return name;
+            }
+            return "Input " + index;
         }
 
         protected void RemoveOutputBranch()
@@ -96,12 +144,17 @@ namespace GoodAI.BrainSimulator.NodeView
 
         public void UpdateBranches()
         {
+            if (m_isUpdatingBranches) // prevent nested calls when disconnecting inputs
+            {
+                return;
+            }
+            m_isUpdatingBranches = true;
             int inputChange = m_inputBranches.Count - Node.InputBranches;
 
             for (int i = 0; i < inputChange; i++)
             {
                 RemoveInputBranch();
-            }            
+            }
 
             for (int i = 0; i < -inputChange; i++)
             {
@@ -118,7 +171,23 @@ namespace GoodAI.BrainSimulator.NodeView
             for (int i = 0; i < -outputChange; i++)
             {
                 AddOutputBranch();
-            }    
+            }
+
+            // potentially all branch labels could change
+            if ((inputChange != 0 || outputChange != 0) && Node is IMyVariableBranchViewWithNamesNode)
+            {
+                IMyVariableBranchViewWithNamesNode node = (IMyVariableBranchViewWithNamesNode)Node;
+
+                for (int i = 0; i < m_inputBranches.Count; i++)
+                {
+                    ((NodeLabelItem)m_inputBranches[i]).Text = GetInputBranchName(i);
+                }
+                for (int i = 0; i < m_outputBranches.Count; i++)
+                {
+                    ((NodeLabelItem)m_outputBranches[i]).Text = GetOutputBranchName(i);
+                }
+            }
+            m_isUpdatingBranches = false;
         }
 
         public override void UpdateView()
@@ -136,7 +205,7 @@ namespace GoodAI.BrainSimulator.NodeView
 
         protected override void AddInputBranch()
         {
-            NodeLabelItem branch = new MyNodeLabelItem((Node as MyNodeGroup).GroupInputNodes[m_inputBranches.Count] , true, false);
+            NodeLabelItem branch = new MyNodeLabelItem((Node as MyNodeGroup).GroupInputNodes[m_inputBranches.Count], true, false);
             branch.Tag = m_inputBranches.Count;
             branch.IsPassive = true;
 
