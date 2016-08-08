@@ -330,7 +330,7 @@ namespace GoodAI.Modules.TetrisWorld
 
             VisualOutput.Count = VisualWidth * VisualHeight;
             VisualOutput.ColumnHint = VisualWidth;
-            VisualOutput.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw.ToString();
+            VisualOutput.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
 
             AgentVisualTemp.Count = VisualOutput.Count * 3;   // for each color channel one random number
 
