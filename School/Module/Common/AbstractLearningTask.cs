@@ -177,7 +177,7 @@ namespace GoodAI.Modules.School.Common
         public TrainingResult EvaluateStep()
         {
             // Check for unit completion
-            bool wasUnitSuccessful = true;
+            bool wasUnitSuccessful = false;
             bool inProgress = (SchoolWorld.IsEmulatingUnitCompletion() && !SchoolWorld.EmulateIsTrainingUnitCompleted(out wasUnitSuccessful))
                              || (!SchoolWorld.IsEmulatingUnitCompletion() && !DidTrainingUnitComplete(ref wasUnitSuccessful));
 

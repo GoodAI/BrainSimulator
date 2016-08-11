@@ -28,10 +28,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 using GoodAI.Modules.School.LearningTasks;
 using YAXLib;
-using NativeWindow = OpenTK.NativeWindow;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace GoodAI.Modules.School.Worlds
@@ -80,13 +78,6 @@ namespace GoodAI.Modules.School.Worlds
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
-        }
-
-        [MyOutputBlock(4)]
-        public MyMemoryBlock<float> GreyscalePow
-        {
-            get { return GetOutput(4); }
-            set { SetOutput(4, value); }
         }
 
         [DynamicBlock]
@@ -151,7 +142,7 @@ namespace GoodAI.Modules.School.Worlds
             Scene = Fow = new Size(1024, 1024);
             Viewport = Pow = new Size(256, 256);
 
-            BackgroundColor = Color.Black;
+            BackgroundColor = Color.FromArgb(77, 174, 255);
             m_bitmapTable = new Dictionary<string, Tuple<Bitmap, int>>();
 
             GameObjects = new List<GameObject>();
@@ -193,7 +184,6 @@ namespace GoodAI.Modules.School.Worlds
 
             VisualPOW.Dims = new TensorDimensions(Pow.Width, Pow.Height);
             VisualFOW.Dims = new TensorDimensions(Fow.Width, Fow.Height);
-            GreyscalePow.Dims = new TensorDimensions(Pow.Width, Pow.Height);
 
             AgentVisualTemp.Count = VisualPOW.Count * 3;
             Bitmaps.Count = 0;
@@ -934,7 +924,6 @@ namespace GoodAI.Modules.School.Worlds
         public class RenderGLTask : MyTask<ManInWorld>
         {
             private MyCudaKernel m_addRgbNoiseKernel;
-            private MyCudaKernel m_transformToGreyscale;
 
             INativeWindow m_window;
             IGraphicsContext m_context;
@@ -955,10 +944,6 @@ namespace GoodAI.Modules.School.Worlds
             public override void Init(int nGPU)
             {
                 m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
-
-                // to greyscale
-                m_transformToGreyscale = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing",
-                    "RawToGrayscaleKernel");
 
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
@@ -1219,8 +1204,6 @@ namespace GoodAI.Modules.School.Worlds
                 //GL.PopAttrib(); // restores GL.Viewport() parameters
             }
 
-            private int m_imageCounter = 0;
-
             void CopyPixelsPow()
             {
                 if (m_renderResource == null)
@@ -1270,34 +1253,6 @@ namespace GoodAI.Modules.School.Worlds
                     m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp, Owner.IsBlackAndWhiteNoise ? 1 : 0);
                 }
 
-                Ltsct1 currentLearningTask = (Ltsct1) Owner.School.CurrentLearningTask;
-
-                // save to gray-scale bitmap
-                m_transformToGreyscale.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
-                m_transformToGreyscale.Run(Owner.VisualPOW, Owner.GreyscalePow, Owner.Pow.Width*Owner.Pow.Height);
-                Owner.GreyscalePow.SafeCopyToHost();
-
-                if (currentLearningTask != null && !currentLearningTask.LtWritten)
-                {
-                    string path = currentLearningTask.Path;
-
-                    using (Bitmap bmp = new Bitmap(Owner.Pow.Width, Owner.Pow.Height))
-                    {
-                        var grayScale = Owner.GreyscalePow.Host;
-                        for (int j = 0; j < Owner.Pow.Height; j++)
-                        {
-                            for (int i = 0; i < Owner.Pow.Width; i++)
-                            {
-                                int val = (int) (grayScale[i + j*Owner.Pow.Width]*255);
-                                Color newColor = Color.FromArgb(val, val, val);
-                                bmp.SetPixel(i, j, newColor);
-                            }
-                        }
-
-                        string filename = path + string.Format("{0:0000000}", m_imageCounter++) + ".bmp";
-                        bmp.Save(filename, ImageFormat.Bmp);
-                    }
-                }
             }
 
             void DrawShape(Shape shape)
