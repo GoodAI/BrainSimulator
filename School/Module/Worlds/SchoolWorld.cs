@@ -263,6 +263,7 @@ namespace GoodAI.Modules.School.Worlds
             if (args.NewState == MySimulationHandler.SimulationState.STOPPED)
             {
                 m_shouldShowNewLearningTask = true;
+                LearningTaskFinished(this, new SchoolEventArgs(CurrentLearningTask));
                 CurrentLearningTask = null;
                 Curriculum.Reset();
             }
@@ -270,6 +271,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld()
         {
+            LearningTaskFinished += LearningTaskFinishedFunction;
         }
 
         readonly Random m_rndGen = new Random();
@@ -301,6 +303,13 @@ namespace GoodAI.Modules.School.Worlds
         public event EventHandler CurriculumStarting = delegate { };
         public event EventHandler<SchoolEventArgs> CurriculumFinished = delegate { };
         public event EventHandler<SchoolEventArgs> VisualFormatChanged = delegate { };
+
+        private void LearningTaskFinishedFunction(object sender, SchoolEventArgs e)
+        {
+            ILearningTask lt = e.Task;
+            if(lt != null)
+                lt.Fini();
+        }
 
         public override void Validate(MyValidator validator)
         {

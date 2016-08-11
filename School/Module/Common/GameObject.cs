@@ -201,6 +201,13 @@ namespace GoodAI.Modules.School.Common
             float targetCenterY = target.Position.Y + target.Size.Height / 2;
             return (float)Math.Sqrt(Math.Pow(centerX - targetCenterX, 2) + Math.Pow(centerY - targetCenterY, 2));
         }
+
+        public PointF Center()
+        {
+            float centerX = Position.X + Size.Width / 2;
+            float centerY = Position.Y + Size.Height / 2;
+            return new PointF(centerX, centerY);
+        }
     }
 
     public class MovableGameObject : GameObject

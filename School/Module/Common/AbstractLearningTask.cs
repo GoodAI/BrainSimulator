@@ -50,6 +50,7 @@ namespace GoodAI.Modules.School.Common
         string GetTypeName();
 
         void Init();
+        void Fini();
 
         bool Solve(bool successfully);
     }
@@ -243,7 +244,7 @@ namespace GoodAI.Modules.School.Common
         public abstract void PresentNewTrainingUnit();
         protected abstract bool DidTrainingUnitComplete(ref bool wasUnitSuccessful);
 
-        public void Init()
+        public virtual void Init()
         {
             CurrentNumberOfAttempts = 0;
             CurrentNumberOfSuccesses = 0;
@@ -253,6 +254,11 @@ namespace GoodAI.Modules.School.Common
             SetHints(TSHints);
 
             IsInitialized = true;
+        }
+
+        public virtual void Fini()
+        {
+            
         }
 
         public virtual bool Solve(bool successfully)
