@@ -11,7 +11,9 @@ namespace Render.RenderRequests
 
         public FovAvatarRR(int avatarID)
             : base(avatarID)
-        { }
+        {
+            SizeV = new Vector2(20, 20);
+        }
 
         #endregion
 
@@ -19,13 +21,6 @@ namespace Render.RenderRequests
         #endregion
 
         #region RenderRequestBase overrides
-
-        public override void Init()
-        {
-            SizeV = new Vector2(20, 20);
-
-            base.Init();
-        }
 
         public override void Update()
         {

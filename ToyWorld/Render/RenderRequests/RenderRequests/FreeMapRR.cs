@@ -26,14 +26,6 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
-        public override void Init()
-        {
-            SizeV = (Vector2)World.Size;
-            PositionCenterV2 = SizeV * 0.5f;
-
-            base.Init();
-        }
-
         public override void Update()
         {
             float sideSize = SizeV.X - 1;
