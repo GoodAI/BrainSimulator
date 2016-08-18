@@ -180,10 +180,6 @@ namespace MNIST
                 {
                     m_numsToSend = Array.ConvertAll(SendNumbers.Split(','), int.Parse);
                 }
-                if (Owner != null && Owner.MNISTManager != null)
-                {
-                    Owner.MNISTManager.m_sequenceIterator = 0;
-                }
             }
         }
 
@@ -200,6 +196,7 @@ namespace MNIST
 
         public override void Init(int nGPU)
         {
+
         }
 
         public override void Execute()
