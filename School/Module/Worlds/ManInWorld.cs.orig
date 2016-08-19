@@ -28,8 +28,10 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using GoodAI.Modules.School.LearningTasks;
+<<<<<<< HEAD
+=======
 using System.Windows.Forms;
+>>>>>>> summerCamp
 using GoodAI.Modules.School.LearningTasks;
 using YAXLib;
 using NativeWindow = OpenTK.NativeWindow;
@@ -978,16 +980,19 @@ namespace GoodAI.Modules.School.Worlds
             public override void Init(int nGPU)
             {
 
-                // to greyscale
-                m_transformToGreyscale = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing",
-                    "RawToGrayscaleKernel");
-
+<<<<<<< HEAD
                 m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
                 if (!Owner.CopyDataThroughCPU)
                 {
                     Owner.VisualPOW.ExternalPointer = MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU,
                         () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
                 }
+=======
+                // to greyscale
+                m_transformToGreyscale = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing",
+                    "RawToGrayscaleKernel");
+
+>>>>>>> summerCamp
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
             }
@@ -1294,6 +1299,8 @@ namespace GoodAI.Modules.School.Worlds
 
                     m_addRgbNoiseKernel.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
                     m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp, Owner.IsBlackAndWhiteNoise ? 1 : 0);
+<<<<<<< HEAD
+=======
                 }
 
                 Ltsct1 currentLearningTask = (Ltsct1) Owner.School.CurrentLearningTask;
@@ -1323,6 +1330,7 @@ namespace GoodAI.Modules.School.Worlds
                         string filename = path + string.Format("{0:0000000}", m_imageCounter++) + ".bmp";
                         bmp.Save(filename, ImageFormat.Bmp);
                     }
+>>>>>>> summerCamp
                 }
 
             }
