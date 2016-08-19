@@ -12,6 +12,7 @@ namespace GoodAI.Modules.School.Worlds
     {
         SchoolWorld School { set; }
         MyWorkingNode World { get; }
+        bool CopyDataThroughCPU { get; set; }
 
         // Must be a method; BS would try to instantiate it if it were a property
         MyTask GetWorldRenderTask();

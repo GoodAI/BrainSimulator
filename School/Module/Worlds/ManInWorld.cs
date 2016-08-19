@@ -226,6 +226,28 @@ namespace GoodAI.Modules.School.Worlds
 
         public SchoolWorld School { get; set; }
         public MyWorkingNode World { get { return this; } }
+        private bool m_copyDataThroughCPU = false;
+        public bool CopyDataThroughCPU {
+            get
+            {
+                return m_copyDataThroughCPU;
+            }
+            set
+            {
+                m_copyDataThroughCPU = value;
+                // A hack to prevent BS from crashing after init
+                if (CopyDataThroughCPU)
+                {
+                    VisualPOW.ExternalPointer = 0;
+                    VisualPOW.Unmanaged = false;
+                }
+                else
+                {
+                    VisualPOW.ExternalPointer = 1;
+                    VisualPOW.Unmanaged = true;
+                }
+            } 
+        }
 
         public MyTask GetWorldRenderTask()
         {
@@ -943,14 +965,15 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Init(int nGPU)
             {
-                m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
 
+                m_addRgbNoiseKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "AddRgbNoiseKernel");
+                if (!Owner.CopyDataThroughCPU)
+                {
+                    Owner.VisualPOW.ExternalPointer = MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU,
+                        () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
+                }
                 m_textureHandles = new Dictionary<string, int>();
                 m_glInitialized = false;
-
-                // A hack to prevent BS from crashing after init
-                Owner.VisualPOW.ExternalPointer =
-                    MyMemoryManager.Instance.GetGlobalVariable("HACK_NAME_" + GetHashCode(), Owner.GPU, () => new float[Owner.VisualPOW.Count]).DevicePointer.Pointer;
             }
 
             public override void Execute()
@@ -1045,8 +1068,10 @@ namespace GoodAI.Modules.School.Worlds
                         "{0}: CUDA-OpenGL interop error while itializing texture (using fallback): {1}",
                         GetType().Name, e.Message);
 
+                    // user should avoid hitting this exception by setting CopyDataThroughCPU to true
                     Owner.VisualPOW.FreeDevice();
                     Owner.VisualPOW.Unmanaged = false;
+                    Owner.VisualPOW.ExternalPointer = 0;
                     Owner.VisualPOW.AllocateDevice();
                     m_renderResource = null;
                 }

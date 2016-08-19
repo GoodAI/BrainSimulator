@@ -294,6 +294,10 @@ namespace GoodAI.Modules.School.Worlds
         [YAXSerializableField(DefaultValue = false)]
         public bool ShowBlackscreen { get; set; }
 
+        [MyBrowsable, Category("CUDA"), Description("If true, memory blocks will be initialized with Unmanaged=true.")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool CopyDataThroughCPU { get; set; }
+
         public event EventHandler<SchoolEventArgs> LearningTaskNew = delegate { };
         public event EventHandler<SchoolEventArgs> TrainingUnitFinished = delegate { };
         public event EventHandler<SchoolEventArgs> TrainingUnitUpdated = delegate { };
@@ -362,6 +366,7 @@ namespace GoodAI.Modules.School.Worlds
             LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
 
             CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
+            CurrentWorld.CopyDataThroughCPU = CopyDataThroughCPU;
             CurrentWorld.World.EnableDefaultTasks();
             changes.AddNode(CurrentWorld.World);
             changes.AddNode(this);

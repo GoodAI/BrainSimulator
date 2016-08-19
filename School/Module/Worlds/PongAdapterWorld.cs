@@ -49,6 +49,7 @@ namespace GoodAI.School.Worlds
 
         public SchoolWorld School { get; set; }
         public MyWorkingNode World { get { return this; } }
+        public bool CopyDataThroughCPU { get; set; }
 
         public MyTask GetWorldRenderTask()
         {
