@@ -352,6 +352,7 @@
     <Category Name="Scripting" SmallIcon="scripting.png"></Category>
     <Category Name="Symbolic ML" SmallIcon="book.png"></Category>
     <Category Name="STCB" SmallIcon="STCBGroup.png"></Category>
+    <Category Name="ToyArch" SmallIcon="ToyArch.png"></Category>
     <!--<Category Name="Transformations" SmallIcon="function.png"></Category>-->
     <Category Name="Vision" SmallIcon="observer.png"></Category>
   </Categories>
