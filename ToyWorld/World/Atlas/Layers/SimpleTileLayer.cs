@@ -62,15 +62,6 @@ namespace World.Atlas.Layers
                 case LayerType.Background:
                     SpanIntervalFrom = 0;
                     break;
-                case LayerType.OnBackground:
-                case LayerType.Area:
-                case LayerType.OnGroundInteractable:
-                case LayerType.ObstacleInteractable:
-                case LayerType.Obstacle:
-                case LayerType.Obstacles:
-                case LayerType.Interactables:
-                    SpanIntervalFrom = DEFAULT_THICKNESS;
-                    break;
                 case LayerType.Foreground:
                     SpanIntervalFrom = DEFAULT_THICKNESS * 2;
                     break;

@@ -225,7 +225,7 @@ namespace Render.RenderRequests
         protected virtual Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
         {
             cameraDirection = cameraDirection ?? Vector3.Forward;
-            up = up ?? Vector3.Up;
+            up = up ?? Vector3.Backward;
 
             Vector3 cross = Vector3.Cross(cameraDirection.Value, up.Value); // Perpendicular to both
             cross = Vector3.Cross(cross, cameraDirection.Value); // Up vector closest to the original up
@@ -373,6 +373,8 @@ namespace Render.RenderRequests
                 FrontFbo.Bind();
 
             // Setup stuff
+            GL.DepthMask(true); // enables writing to depth buffer - needed for GL.Clear
+
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // Draw the scene

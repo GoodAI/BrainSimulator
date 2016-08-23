@@ -26,6 +26,11 @@ namespace Render.RenderRequests
 
         #region RenderRequestBase overrides
 
+        protected override Matrix Get3DViewMatrix(Vector3 cameraPos, Vector3? cameraDirection = null, Vector3? up = null)
+        {
+            return base.Get3DViewMatrix(cameraPos, cameraDirection, Vector3.Up);
+        }
+
         public override void Update()
         {
             float sideSize = SizeV.X - 1;

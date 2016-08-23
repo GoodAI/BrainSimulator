@@ -254,7 +254,10 @@ namespace Render.RenderRequests
                 // Model transform -- scale from (-1,1) to viewSize/2, center on origin
                 Matrix transform = Matrix.CreateScale(new Vector3(gridView.Size, tileLayer.Thickness) * 0.5f);
                 // World transform -- move center to view center
-                transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));// + tileLayer.Thickness / 2));
+                if (Settings.Use3D)
+                    transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom));
+                else
+                    transform *= Matrix.CreateTranslation(new Vector3(gridView.Center, tileLayer.SpanIntervalFrom + tileLayer.Thickness / 2));
                 // View and projection transforms
                 transform *= Owner.ViewProjectionMatrix;
                 Effect.ModelViewProjectionUniform(ref transform);
