@@ -238,7 +238,8 @@ namespace GoodAI.Modules.School.Worlds
         public SchoolWorld School { get; set; }
         public MyWorkingNode World { get { return this; } }
         private bool m_copyDataThroughCPU = false;
-        public bool CopyDataThroughCPU {
+        public bool CopyDataThroughCPU
+        {
             get
             {
                 return m_copyDataThroughCPU;
@@ -257,7 +258,7 @@ namespace GoodAI.Modules.School.Worlds
                     VisualPOW.ExternalPointer = 1;
                     VisualPOW.Unmanaged = true;
                 }
-            } 
+            }
         }
 
         public MyTask GetWorldRenderTask()
@@ -283,7 +284,7 @@ namespace GoodAI.Modules.School.Worlds
             if (School.ActionInput.Owner is DeviceInput)
             {
                 School.ActionInput.SafeCopyToDevice();
-                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68]; // D 
+                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68]; // D
                 ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65]; // A
                 ControlsAdapterTemp.Host[2] = School.ActionInput.Host[83]; // S
                 ControlsAdapterTemp.Host[3] = School.ActionInput.Host[87]; // W
@@ -515,7 +516,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public Shape CreateRandomFood(PointF position, SizeF size, Random random)
         {
-            List<Tuple<Shape.Shapes,Color>> food = new List<Tuple<Shape.Shapes, Color>>();
+            List<Tuple<Shape.Shapes, Color>> food = new List<Tuple<Shape.Shapes, Color>>();
             ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Circle, scFixColors.Colors[0]));
             food.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[1]));
@@ -528,7 +529,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public Shape CreateRandomVeryGoodFood(PointF position, SizeF size, Random random)
         {
-            List<Tuple<Shape.Shapes,Color>> veryGoodFood = new List<Tuple<Shape.Shapes, Color>>();
+            List<Tuple<Shape.Shapes, Color>> veryGoodFood = new List<Tuple<Shape.Shapes, Color>>();
             ScFixColors scFixColors = new ScFixColors(ScConstants.numColors, BackgroundColor);
             veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.DoubleRhombus, scFixColors.Colors[0]));
             veryGoodFood.Add(new Tuple<Shape.Shapes, Color>(Shape.Shapes.Mountains, scFixColors.Colors[1]));
@@ -1162,7 +1163,7 @@ namespace GoodAI.Modules.School.Worlds
 
                 GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
-                //GL.ClearColor(Owner.BackgroundColor);                
+                //GL.ClearColor(Owner.BackgroundColor);
 
                 GL.End();
             }
@@ -1296,11 +1297,11 @@ namespace GoodAI.Modules.School.Worlds
                     m_addRgbNoiseKernel.Run(Owner.VisualPOW, Owner.Pow.Width, Owner.Pow.Height, Owner.AgentVisualTemp, Owner.IsBlackAndWhiteNoise ? 1 : 0);
                 }
 
-                Ltsct1 currentLearningTask = (Ltsct1) Owner.School.CurrentLearningTask;
+                Ltsct1 currentLearningTask = (Owner.School.CurrentLearningTask as Ltsct1);
 
                 // save to gray-scale bitmap
                 m_transformToGreyscale.SetupExecution(Owner.Pow.Width * Owner.Pow.Height);
-                m_transformToGreyscale.Run(Owner.VisualPOW, Owner.GreyscalePow, Owner.Pow.Width*Owner.Pow.Height);
+                m_transformToGreyscale.Run(Owner.VisualPOW, Owner.GreyscalePow, Owner.Pow.Width * Owner.Pow.Height);
                 Owner.GreyscalePow.SafeCopyToHost();
 
                 if (currentLearningTask != null && !currentLearningTask.LtWritten)
@@ -1314,7 +1315,7 @@ namespace GoodAI.Modules.School.Worlds
                         {
                             for (int i = 0; i < Owner.Pow.Width; i++)
                             {
-                                int val = (int) (grayScale[i + j*Owner.Pow.Width]*255);
+                                int val = (int)(grayScale[i + j * Owner.Pow.Width] * 255);
                                 Color newColor = Color.FromArgb(val, val, val);
                                 bmp.SetPixel(i, j, newColor);
                             }

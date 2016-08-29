@@ -187,7 +187,8 @@ namespace GoodAI.Modules.School.Worlds
 
         [MyBrowsable, Category("Visual"), DisplayName("\tFormat")]
         [YAXSerializableField(DefaultValue = VisualFormat.Raw)]
-        public VisualFormat Format { 
+        public VisualFormat Format
+        {
             get { return m_format; }
             set
             {
@@ -311,7 +312,7 @@ namespace GoodAI.Modules.School.Worlds
         private void LearningTaskFinishedFunction(object sender, SchoolEventArgs e)
         {
             ILearningTask lt = e.Task;
-            if(lt != null)
+            if (lt != null)
                 lt.Fini();
         }
 
@@ -366,7 +367,8 @@ namespace GoodAI.Modules.School.Worlds
             LearningTaskNew(this, new SchoolEventArgs(CurrentLearningTask));
 
             CurrentWorld = (IWorldAdapter)Owner.CreateNode(CurrentLearningTask.RequiredWorldType);
-            CurrentWorld.CopyDataThroughCPU = CopyDataThroughCPU;
+            if (CurrentWorld.CopyDataThroughCPU != CopyDataThroughCPU)  // to avoid setting the value when simulation is not stopped (which caused assert error in setter)
+                CurrentWorld.CopyDataThroughCPU = CopyDataThroughCPU;
             CurrentWorld.World.EnableDefaultTasks();
             changes.AddNode(CurrentWorld.World);
             changes.AddNode(this);
