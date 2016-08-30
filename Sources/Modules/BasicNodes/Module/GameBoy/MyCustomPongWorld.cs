@@ -34,7 +34,7 @@ namespace GoodAI.Modules.GameBoy
     public class MyCustomPongWorld : MyWorld
     {
         public class GamePauseRequestSignal : MySignal { }
-        public GamePauseRequestSignal GamePauseRequest { get; private set; }
+        public GamePauseRequestSignal GamePauseRequest { get; protected set; }
         private int m_gameStepsMade;
 
         public class MyGameObject
