@@ -705,6 +705,9 @@ namespace GoodAI.Modules.School.Worlds
         /// </summary>
         public class InputAdapterTask : MyTask<SchoolWorld>
         {
+            public float FofX { get; private set; }
+            public float FofY { get; private set; }
+
             public override void Init(int nGPU)
             {
                 if (Owner.CurrentWorld != null)
@@ -713,7 +716,22 @@ namespace GoodAI.Modules.School.Worlds
 
             public override void Execute()
             {
+                // Process FOF controls
+                Owner.ActionInput.SafeCopyToDevice();
+                float fof_up = Owner.ActionInput.Host[73]; // I
+                float fof_left = Owner.ActionInput.Host[76]; // J
+                float fof_down = Owner.ActionInput.Host[75]; // K
+                float fof_right = Owner.ActionInput.Host[74]; // L
+
+                FofX = ConvertBiControlToUniControl(fof_left, fof_right);
+                FofY = ConvertBiControlToUniControl(fof_down, fof_up);
+
                 Owner.CurrentWorld.MapWorldInputs();
+            }
+
+            private static float ConvertBiControlToUniControl(float a, float b)
+            {
+                return a >= b ? a : -b;
             }
         }
 
@@ -782,8 +800,9 @@ namespace GoodAI.Modules.School.Worlds
                 int inputHeight = Owner.VisualDimensionsFov.Height;
                 int outputWidth = Owner.VisualDimensionsFof.Width;
                 int outputHeight = Owner.VisualDimensionsFof.Height;
+                float ratio = (float)Owner.VisualDimensionsFof.Width / Owner.VisualDimensionsFov.Width;
 
-                m_resampleKernel.Run(Owner.VisualFOV, Owner.VisualFOF, 0, 0, 0.5f, 0, inputWidth, inputHeight, outputWidth, outputHeight);
+                m_resampleKernel.Run(Owner.VisualFOV, Owner.VisualFOF, Owner.AdapterInputStep.FofX, Owner.AdapterInputStep.FofY, ratio, 1, inputWidth, inputHeight, outputWidth, outputHeight);
 
                 // visual contains Raw data. We might want RGB data
                 if (Owner.Format == VisualFormat.RGB)

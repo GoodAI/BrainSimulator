@@ -79,8 +79,8 @@ namespace GoodAI.School.Worlds
                 ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // A - Left
                 ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // D - Right
                 ControlsAdapterTemp.Host[3] = School.ActionInput.Host[83];  // S - Down
-                ControlsAdapterTemp.Host[4] = School.ActionInput.Host[75];  // K - rotate left
-                ControlsAdapterTemp.Host[5] = School.ActionInput.Host[76];  // L - rotate right
+                ControlsAdapterTemp.Host[4] = School.ActionInput.Host[81];  // Q - rotate left
+                ControlsAdapterTemp.Host[5] = School.ActionInput.Host[69];  // E - rotate right
 
                 ControlsAdapterTemp.SafeCopyToDevice();
             }
