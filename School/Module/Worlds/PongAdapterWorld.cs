@@ -60,7 +60,7 @@ namespace GoodAI.School.Worlds
         {
             if (School != null)
             {
-                Viewport = new Size(School.VisualDimensions.Width, School.VisualDimensions.Height);
+                Viewport = new Size(School.VisualDimensionsFov.Width, School.VisualDimensionsFov.Height);
             }
 
             base.UpdateMemoryBlocks();
@@ -83,7 +83,7 @@ namespace GoodAI.School.Worlds
                 School.ActionInput.SafeCopyToDevice();
                 ControlsAdapterTemp.Host[0] = School.ActionInput.Host[65];  // D
                 ControlsAdapterTemp.Host[1] = School.ActionInput.Host[87];  // S
-                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // A 
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // A
                 ControlsAdapterTemp.SafeCopyToDevice();
             }
             else
@@ -104,8 +104,8 @@ namespace GoodAI.School.Worlds
         public void MapWorldOutputs()
         {
             // Rescale data from world to wrapper
-            m_kernel.Run(Visual, School.Visual, Scene.Width, Scene.Height, Viewport.Width, Viewport.Height);
-            m_grayscaleKernel.Run(School.Visual, School.Visual, Viewport.Width * Viewport.Height);
+            m_kernel.Run(Visual, School.VisualFOV, Scene.Width, Scene.Height, Viewport.Width, Viewport.Height);
+            m_grayscaleKernel.Run(School.VisualFOV, School.VisualFOV, Viewport.Width * Viewport.Height);
 
             // Copy of structured data
             Event.CopyToMemoryBlock(School.Data, 0, 0, 1);
@@ -115,7 +115,7 @@ namespace GoodAI.School.Worlds
             PaddlePosY.CopyToMemoryBlock(School.Data, 0, 4, 1);
             BinaryEvent.CopyToMemoryBlock(School.Data, 0, 5, 1);
 
-            //schoolWorld.Visual.Dims = VisualPOW.Dims;
+            //schoolWorld.VisualFOV.Dims = VisualFOF.Dims;
             School.DataLength.Fill(6);
         }
 

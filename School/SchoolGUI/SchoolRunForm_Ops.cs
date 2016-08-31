@@ -329,7 +329,7 @@ namespace GoodAI.School.GUI
                     try
                     {
                         MyMemoryBlockObserver observer = new MyMemoryBlockObserver();
-                        observer.Target = m_school.Visual;
+                        observer.Target = m_school.VisualFOV;
 
                         if (observer == null)
                             throw new InvalidOperationException("No observer was initialized");
@@ -356,7 +356,7 @@ namespace GoodAI.School.GUI
                     m_observer.Show();
                     dockPanelObserver.Show();
 
-                    m_observer.Observer.GenericTarget = m_school.Visual;
+                    m_observer.Observer.GenericTarget = m_school.VisualFOV;
                 }
             }
             else
@@ -375,7 +375,7 @@ namespace GoodAI.School.GUI
             highlightStyle.BackColor = Color.PaleGreen;
 
             var focus = GetFocusedControl();
-            
+
             dataGridViewLearningTasks.Rows[m_currentRow].Selected = true;
 
             if (focus != null)

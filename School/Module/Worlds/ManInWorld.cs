@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using GoodAI.Core;
-using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
@@ -15,23 +14,11 @@ using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using ManagedCuda.VectorTypes;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
 using GoodAI.Modules.School.LearningTasks;
-using System.Windows.Forms;
-using GoodAI.Modules.School.LearningTasks;
-using YAXLib;
 using NativeWindow = OpenTK.NativeWindow;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -188,7 +175,7 @@ namespace GoodAI.Modules.School.Worlds
         {
             if (School != null)
             {
-                Pow = new Size(School.VisualDimensions.Width, School.VisualDimensions.Height);
+                Pow = new Size(School.VisualDimensionsFov.Width, School.VisualDimensionsFov.Height);
                 Fow = new Size(Math.Max(Fow.Width, Pow.Width), Math.Max(Fow.Height, Pow.Height)); // TODO: does not really make sense, make it independent
             }
 
@@ -271,7 +258,7 @@ namespace GoodAI.Modules.School.Worlds
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
             ControlsAdapterTemp.Count = 128;
 
-            School.AspectRatio = Viewport.Width / Viewport.Height;
+            School.AspectRatioFov = Viewport.Width / Viewport.Height;
         }
 
 
@@ -302,10 +289,10 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldOutputs()
         {
             // Copy data from world to wrapper
-            VisualPOW.CopyToMemoryBlock(School.Visual, 0, 0, Math.Min(VisualPOW.Count, School.VisualDimensions.Width * School.VisualDimensions.Height));
+            VisualPOW.CopyToMemoryBlock(School.VisualFOV, 0, 0, Math.Min(VisualPOW.Count, School.VisualDimensionsFov.Width * School.VisualDimensionsFov.Height));
             if (Objects.Count > 0)
                 Objects.CopyToMemoryBlock(School.Data, 0, 0, Math.Min(Objects.Count, School.DataSize));
-            //schoolWorld.Visual.Dims = VisualPOW.Dims;
+            //schoolWorld.VisualFOV.Dims = VisualPOW.Dims;
             School.DataLength.Fill(Math.Min(Objects.Count, School.DataSize));
             Reward.CopyToMemoryBlock(School.RewardMB, 0, 0, 1);
         }

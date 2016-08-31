@@ -55,11 +55,11 @@ namespace GoodAI.Modules.School.LearningTasks
             PointF location = WrappedWorld.RandomPositionInsideViewport(m_rndGen, size);
             m_target = WrappedWorld.CreateGameObject(@"White10x10.png", location, size);
             // Plumber:
-            //m_target.X = m_rndGen.Next(0, World.Scene.Width - m_target.Width + 1);
-            //m_target.Y = World.Scene.Height - m_target.Height;
+            //m_target.X = m_rndGen.Next(0, World.Scene.WidthFov - m_target.WidthFov + 1);
+            //m_target.Y = World.Scene.HeightFov - m_target.HeightFov;
             // Roguelike:
-            //m_target.X = m_rndGen.Next(0, WrappedWorld.Viewport.Width - m_target.Width + 1);
-            //m_target.Y = m_rndGen.Next(0, WrappedWorld.Viewport.Height - m_target.Height + 1);
+            //m_target.X = m_rndGen.Next(0, WrappedWorld.Viewport.WidthFov - m_target.WidthFov + 1);
+            //m_target.Y = m_rndGen.Next(0, WrappedWorld.Viewport.HeightFov - m_target.HeightFov + 1);
         }
     }
 }

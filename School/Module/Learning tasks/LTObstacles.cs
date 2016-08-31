@@ -352,8 +352,8 @@ if (level == 1)
     /*
     // Create bouncing block
     m_movingObstacle1 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
-    m_movingObstacle1.Width = 30;
-    m_movingObstacle1.Height = 60;
+    m_movingObstacle1.WidthFov = 30;
+    m_movingObstacle1.HeightFov = 60;
     m_movingObstacle1.GameObjectStyle = GameObjectStyleType.Pinball;
     m_movingObstacle1.IsAffectedByGravity = false;
     m_movingObstacle1.X = 98;
@@ -363,8 +363,8 @@ if (level == 1)
 
     // Create bouncing block
     m_movingObstacle2 = new MovableGameObject(GameObjectType.Obstacle, "Armor_Block.png", 30, 60);
-    m_movingObstacle2.Width = 30;
-    m_movingObstacle2.Height = 60;
+    m_movingObstacle2.WidthFov = 30;
+    m_movingObstacle2.HeightFov = 60;
     m_movingObstacle2.GameObjectStyle = GameObjectStyleType.Pinball;
     m_movingObstacle2.IsAffectedByGravity = false;
     m_movingObstacle2.X = 170;

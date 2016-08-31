@@ -9,10 +9,8 @@ using GoodAI.TypeMapping;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using YAXLib;
-using GoodAI.School.Worlds;
 using System.Windows.Forms;
 using System.Drawing;
 using GoodAI.Core;
@@ -67,38 +65,45 @@ namespace GoodAI.Modules.School.Worlds
         }
 
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Visual
+        public MyMemoryBlock<float> VisualFOV
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Text
+        public MyMemoryBlock<float> VisualFOF
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
         [MyOutputBlock(2)]
-        public MyMemoryBlock<float> Data
+        public MyMemoryBlock<float> Text
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
         [MyOutputBlock(3)]
-        public MyMemoryBlock<float> DataLength
+        public MyMemoryBlock<float> Data
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
         [MyOutputBlock(4)]
-        public MyMemoryBlock<float> RewardMB
+        public MyMemoryBlock<float> DataLength
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
+        }
+
+        [MyOutputBlock(5)]
+        public MyMemoryBlock<float> RewardMB
+        {
+            get { return GetOutput(5); }
+            set { SetOutput(5, value); }
         }
 
         // Memory block informing the agent of changes in learning task,
@@ -107,11 +112,11 @@ namespace GoodAI.Modules.School.Worlds
         // Consists of
         // - flags signifying a new task, level, and unit, respectively
         // - numbers identifying the current task, level, and unit
-        [MyOutputBlock(5)]
+        [MyOutputBlock(6)]
         public MyMemoryBlock<float> LTStatus
         {
-            get { return GetOutput(5); }
-            set { SetOutput(5, value); }
+            get { return GetOutput(6); }
+            set { SetOutput(6, value); }
         }
 
 
@@ -120,52 +125,101 @@ namespace GoodAI.Modules.School.Worlds
 
         #region MemoryBlocks sizes
 
-        private float m_aspectRatio;
-        private int m_width;
-        private int m_height;
+        private float m_aspectRatioFov;
+        private int m_widthFov;
+        private int m_heightFov;
 
-        [MyBrowsable, Category("Visual"), DisplayName("\tAspectRatio"), ReadOnly(true)]
+        private float m_aspectRatioFof;
+        private int m_widthFof;
+        private int m_heightFof;
+
+        [MyBrowsable, Category("VisualFOV"), DisplayName("\tAspectRatio"), ReadOnly(true)]
         [YAXSerializableField(DefaultValue = 1)]
-        public float AspectRatio
+        public float AspectRatioFov
         {
-            get { return m_aspectRatio; }
+            get { return m_aspectRatioFov; }
             set
             {
-                m_aspectRatio = value;
-                int count = Width * Height;
+                m_aspectRatioFov = value;
+                int count = WidthFov * HeightFov;
 
                 // Get sizes that have the same count of pixels but a different aspect ratio -- wh=c & w/h=r
-                m_width = (int)Math.Sqrt(m_aspectRatio * count);
-                if (Width > 0)
-                    m_height = count / Width; // may leave out a few pixels from count due to integer division
+                m_widthFov = (int)Math.Sqrt(m_aspectRatioFov * count);
+                if (WidthFov > 0)
+                    m_heightFov = count / WidthFov; // may leave out a few pixels from count due to integer division
             }
         }
 
-        [MyBrowsable, Category("Visual"), DisplayName("\tWidth")]
+        [MyBrowsable, Category("VisualFOV"), DisplayName("\tWidth")]
         [YAXSerializableField(DefaultValue = 256)]
-        public int Width
+        public int WidthFov
         {
-            get { return m_width; }
+            get { return m_widthFov; }
             set
             {
                 if (value == 0)
                     return;
-                m_width = Math.Max(0, value);
-                m_height = (int)(m_width / AspectRatio);
+                m_widthFov = Math.Max(0, value);
+                m_heightFov = (int)(m_widthFov / AspectRatioFov);
             }
         }
 
-        [MyBrowsable, Category("Visual"), DisplayName("Height")]
+        [MyBrowsable, Category("VisualFOV"), DisplayName("Height")]
         [YAXSerializableField(DefaultValue = 256)]
-        public int Height
+        public int HeightFov
         {
-            get { return m_height; }
+            get { return m_heightFov; }
             set
             {
                 if (value == 0)
                     return;
-                m_height = Math.Max(0, value);
-                m_width = (int)(m_height * AspectRatio);
+                m_heightFov = Math.Max(0, value);
+                m_widthFov = (int)(m_heightFov * AspectRatioFov);
+            }
+        }
+
+        [MyBrowsable, Category("VisualFOF"), DisplayName("\tAspectRatio"), ReadOnly(true)]
+        [YAXSerializableField(DefaultValue = 1)]
+        public float AspectRatioFof
+        {
+            get { return m_aspectRatioFof; }
+            set
+            {
+                m_aspectRatioFof = value;
+                int count = WidthFof * HeightFof;
+
+                // Get sizes that have the same count of pixels but a different aspect ratio -- wh=c & w/h=r
+                m_widthFof = (int)Math.Sqrt(m_aspectRatioFof * count);
+                if (WidthFof > 0)
+                    m_heightFof = count / WidthFof; // may leave out a few pixels from count due to integer division
+            }
+        }
+
+        [MyBrowsable, Category("VisualFOF"), DisplayName("\tWidth")]
+        [YAXSerializableField(DefaultValue = 256)]
+        public int WidthFof
+        {
+            get { return m_widthFof; }
+            set
+            {
+                if (value == 0)
+                    return;
+                m_widthFof = Math.Max(0, value);
+                m_heightFof = (int)(m_widthFof / AspectRatioFof);
+            }
+        }
+
+        [MyBrowsable, Category("VisualFOF"), DisplayName("Height")]
+        [YAXSerializableField(DefaultValue = 256)]
+        public int HeightFof
+        {
+            get { return m_heightFof; }
+            set
+            {
+                if (value == 0)
+                    return;
+                m_heightFof = Math.Max(0, value);
+                m_widthFof = (int)(m_heightFof * AspectRatioFof);
             }
         }
 
@@ -185,7 +239,7 @@ namespace GoodAI.Modules.School.Worlds
 
         private VisualFormat m_format = 0;
 
-        [MyBrowsable, Category("Visual"), DisplayName("\tFormat")]
+        [MyBrowsable, Category("VisualFOV"), DisplayName("\tFormat")]
         [YAXSerializableField(DefaultValue = VisualFormat.Raw)]
         public VisualFormat Format
         {
@@ -199,14 +253,17 @@ namespace GoodAI.Modules.School.Worlds
                     switch (m_format)
                     {
                         case VisualFormat.RGB:
-                            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
-                            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
+                            VisualFOV.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
+                            VisualFOV.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
+                            VisualFOF.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.RGB;
+                            VisualFOF.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = false;
                             FloatsPerPixel = 3;
                             break;
-                        case VisualFormat.Raw:
                         default:
-                            Visual.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
-                            Visual.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
+                            VisualFOV.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+                            VisualFOV.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
+                            VisualFOF.Metadata[MemoryBlockMetadataKeys.RenderingMethod] = RenderingMethod.Raw;
+                            VisualFOF.Metadata[MemoryBlockMetadataKeys.ShowCoordinates] = true;
                             FloatsPerPixel = 1;
                             break;
                     }
@@ -216,17 +273,26 @@ namespace GoodAI.Modules.School.Worlds
 
         public int FloatsPerPixel { get; private set; }
 
-        public Size VisualDimensions
+        public Size VisualDimensionsFov
         {
             get
             {
-                return new Size(Width, Height);
+                return new Size(WidthFov, HeightFov);
+            }
+        }
+
+        public Size VisualDimensionsFof
+        {
+            get
+            {
+                return new Size(WidthFof, HeightFof);
             }
         }
 
         public override void UpdateMemoryBlocks()
         {
-            Visual.Dims = new TensorDimensions(Width, Height * FloatsPerPixel);
+            VisualFOV.Dims = new TensorDimensions(WidthFov, HeightFov * FloatsPerPixel);
+            VisualFOF.Dims = new TensorDimensions(WidthFof, HeightFof * FloatsPerPixel);
             Text.Count = TextSize;
             Data.Count = DataSize;
             DataLength.Count = 1;
@@ -673,6 +739,7 @@ namespace GoodAI.Modules.School.Worlds
         public class OutputAdapterTask : MyTask<SchoolWorld>
         {
             private MyCudaKernel m_extractRawComponentsToRgbKernel;
+            private MyCudaKernel m_resampleKernel;
 
             public override void Init(int nGPU)
             {
@@ -680,6 +747,9 @@ namespace GoodAI.Modules.School.Worlds
                     Owner.CurrentWorld.InitWorldOutputs(nGPU);
 
                 m_extractRawComponentsToRgbKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Drawing\RgbaDrawing", "ExtractRawComponentsToRgbKernel");
+
+                m_resampleKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Transforms\Transform2DKernels", "CutSubImageKernel_SingleParams");
+                m_resampleKernel.SetupExecution(Owner.VisualFOF.Count);
             }
 
             public override void Execute()
@@ -687,7 +757,8 @@ namespace GoodAI.Modules.School.Worlds
                 if (Owner.m_drawBlackscreen)
                 {
                     Owner.m_drawBlackscreen = false;
-                    Owner.Visual.Fill(0);
+                    Owner.VisualFOV.Fill(0);
+                    Owner.VisualFOF.Fill(0);
                     Owner.TaskResult = TrainingResult.TUInProgress;
                     return;
                 }
@@ -707,11 +778,21 @@ namespace GoodAI.Modules.School.Worlds
 
                 Owner.CurrentWorld.MapWorldOutputs();
 
+                int inputWidth = Owner.VisualDimensionsFov.Width;
+                int inputHeight = Owner.VisualDimensionsFov.Height;
+                int outputWidth = Owner.VisualDimensionsFof.Width;
+                int outputHeight = Owner.VisualDimensionsFof.Height;
+
+                m_resampleKernel.Run(Owner.VisualFOV, Owner.VisualFOF, 0, 0, 0.5f, 0, inputWidth, inputHeight, outputWidth, outputHeight);
+
                 // visual contains Raw data. We might want RGB data
                 if (Owner.Format == VisualFormat.RGB)
                 {
-                    m_extractRawComponentsToRgbKernel.SetupExecution(Owner.VisualDimensions.Width * Owner.VisualDimensions.Height);
-                    m_extractRawComponentsToRgbKernel.Run(Owner.Visual, Owner.VisualDimensions.Width, Owner.VisualDimensions.Height);
+                    m_extractRawComponentsToRgbKernel.SetupExecution(Owner.VisualDimensionsFov.Width * Owner.VisualDimensionsFov.Height);
+                    m_extractRawComponentsToRgbKernel.Run(Owner.VisualFOV, Owner.VisualDimensionsFov.Width, Owner.VisualDimensionsFov.Height);
+
+                    //m_extractRawComponentsToRgbKernel.SetupExecution(Owner.VisualDimensionsFof.Width * Owner.VisualDimensionsFof.Height);
+                    //m_extractRawComponentsToRgbKernel.Run(Owner.VisualFOF, Owner.VisualDimensionsFof.Width, Owner.VisualDimensionsFof.Height);
                 }
             }
         }
