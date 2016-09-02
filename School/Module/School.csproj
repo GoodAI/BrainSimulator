@@ -132,6 +132,7 @@
     <Compile Include="Learning tasks\LTSimpleDistance.cs" />
     <Compile Include="Learning tasks\LTSimpleSize.cs" />
     <Compile Include="Learning tasks\LTTetrisFull.cs" />
+    <Compile Include="Learning tasks\LTToyWorld.cs" />
     <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
     <Compile Include="Learning tasks\ScConstants.cs" />
     <Compile Include="Learning tasks\ScFixColors.cs" />
@@ -150,6 +151,7 @@
     <Compile Include="Worlds\RoguelikeWorld.cs" />
     <Compile Include="Worlds\SchoolWorld.cs" />
     <Compile Include="Worlds\TetrisAdapterWorld.cs" />
+    <Compile Include="Worlds\ToyWorldAdapterWorld.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
@@ -167,6 +169,10 @@
     <ProjectReference Include="..\..\..\BasicNodes\Module\BasicNodes.csproj">
       <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
       <Name>BasicNodes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BrainSimToyWorld\Module\BrainSimToyWorld.csproj">
+      <Project>{4B4762C5-D0CC-4F18-9DC4-34698ED536B8}</Project>
+      <Name>BrainSimToyWorld</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

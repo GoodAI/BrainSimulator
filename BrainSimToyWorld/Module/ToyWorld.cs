@@ -19,9 +19,9 @@ namespace GoodAI.ToyWorld
     {
         private readonly int m_controlsCount = 13;
 
-        public TWInitTask InitTask { get; private set; }
-        public TWGetInputTask GetInputTask { get; private set; }
-        public TWUpdateTask UpdateTask { get; private set; }
+        public TWInitTask InitTask { get; protected set; }
+        public TWGetInputTask GetInputTask { get; protected set; }
+        public TWUpdateTask UpdateTask { get; protected set; }
 
         public event EventHandler WorldInitialized = delegate { };
 
@@ -287,8 +287,8 @@ namespace GoodAI.ToyWorld
         private IFreeMapRR FreeRR { get; set; }
         private IToolAvatarRR ToolRR { get; set; }
 
-        private int SignalCount { get; set; }
-        
+        protected int SignalCount { get; set; }
+
         private readonly Dictionary<string, int> m_controlIndexes = new Dictionary<string, int>();
 
         public ToyWorld()
@@ -485,7 +485,9 @@ namespace GoodAI.ToyWorld
         /// <returns></returns>
         public MyMemoryBlock<float> GetSignalMemoryBlock(int index)
         {
-            return GetSignalNode(index).Output;
+            int offset = OutputBranches - SignalCount;
+            return (m_outputs[offset + index] as MyMemoryBlock<float>);
+            //return GetSignalNode(index).Output;
         }
     }
 }

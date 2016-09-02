@@ -33,7 +33,7 @@ namespace GoodAI.Modules.School.Common
         TrainingSetHints TSHints { get; set; }
         TrainingSetProgression TSProgression { get; set; }
         int NumberOfLevels { get; set; }
-        int CurrentLevel { get; set;  }
+        int CurrentLevel { get; set; }
         int NumberOfSuccessesRequired { get; }
         float Progress { get; }
         float Reward { get; set; }
@@ -133,7 +133,7 @@ namespace GoodAI.Modules.School.Common
             if (CurrentLevel >= NumberOfLevels)
             {
                 // this case happens when the task is finished
-                if(CurrentLevel > NumberOfLevels)
+                if (CurrentLevel > NumberOfLevels)
                 {
                     // this case should not happen
                     Debug.Assert(false);
@@ -258,7 +258,7 @@ namespace GoodAI.Modules.School.Common
 
         public virtual void Fini()
         {
-            
+
         }
 
         public virtual bool Solve(bool successfully)
