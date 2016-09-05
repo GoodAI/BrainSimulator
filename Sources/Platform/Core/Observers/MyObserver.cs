@@ -421,7 +421,12 @@ namespace GoodAI.Core.Observers
                 root--;
             }
 
-            return new Size(pixelCount/root, root + 1);
+            if (pixelCount % root == 0)
+            {
+                return new Size(pixelCount / root, root);
+            }
+
+            return new Size(pixelCount / root, root + 1);
         }
 
         #endregion
