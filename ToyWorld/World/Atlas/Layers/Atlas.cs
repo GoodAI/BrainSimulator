@@ -337,8 +337,8 @@ namespace World.Atlas.Layers
             const int logTimeAmount = 365 / 2;  // Logging lasts for two days
             float logInterval = Summer % (1f / logEvery) * logEvery; // A number between 0,1
 
-            if ((int)(logInterval * logTimeAmount) == 0) // Logging happens only in the beggining of the interval
-                Log.Instance.Debug(string.Format("Day: {0} \tYear: {1} \tGradient: {2}", Day, Summer, SummerGradient));
+            //if ((int)(logInterval * logTimeAmount) == 0) // Logging happens only in the beggining of the interval
+            //Log.Instance.Debug(string.Format("Day: {0} \tYear: {1} \tGradient: {2}", Day, Summer, SummerGradient));
 
 
             long day = DayLength.Ticks;
