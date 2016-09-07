@@ -1,7 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
+using GoodAI.Core.Utils;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 
@@ -49,7 +51,22 @@ namespace GoodAI.School.Worlds
 
         public void MapWorldInputs()
         {
-            //throw new NotImplementedException();
+            if (School.ActionInput.Owner is DeviceInput)
+            {
+                School.ActionInput.SafeCopyToDevice();
+                ControlsAdapterTemp.Host[87] = School.ActionInput.Host[87];  // W - Up
+                ControlsAdapterTemp.Host[65] = School.ActionInput.Host[65];  // A - Rotate left
+                ControlsAdapterTemp.Host[68] = School.ActionInput.Host[68];  // D - Rotate right
+                ControlsAdapterTemp.Host[83] = School.ActionInput.Host[83];  // S - Down
+                ControlsAdapterTemp.Host[69] = School.ActionInput.Host[69];  // Q - Strafe left
+                ControlsAdapterTemp.Host[81] = School.ActionInput.Host[81];  // E - Strafe right
+
+                ControlsAdapterTemp.SafeCopyToDevice();
+            }
+            else
+            {
+                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
+            }
         }
 
         public void InitWorldOutputs(int nGPU)
@@ -59,7 +76,7 @@ namespace GoodAI.School.Worlds
 
         public void MapWorldOutputs()
         {
-            //throw new NotImplementedException();
+            VisualFov.CopyToMemoryBlock(School.VisualFOV, 0, 0, Math.Min(VisualFov.Count, School.VisualDimensionsFov.Width * School.VisualDimensionsFov.Height));
         }
 
         public void ClearWorld()

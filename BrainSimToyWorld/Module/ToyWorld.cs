@@ -425,8 +425,8 @@ namespace GoodAI.ToyWorld
                 m_controlIndexes["backward"] = 83; // S
                 m_controlIndexes["rot_left"] = 65; // A
                 m_controlIndexes["rot_right"] = 68; // D
-                m_controlIndexes["left"] = 81; // Q
-                m_controlIndexes["right"] = 69; // E
+                m_controlIndexes["left"] = 69; // Q
+                m_controlIndexes["right"] = 81; // E
 
                 m_controlIndexes["fof_up"] = 73; // I
                 m_controlIndexes["fof_left"] = 76; // J
