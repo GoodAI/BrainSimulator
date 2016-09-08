@@ -10,6 +10,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\..\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School", "Module\School.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B4762C5-D0CC-4F18-9DC4-34698ED536B8} = {4B4762C5-D0CC-4F18-9DC4-34698ED536B8}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
 EndProject
@@ -32,6 +35,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchoolGUI", "SchoolGUI\SchoolGUI.csproj", "{CED75F77-0FA4-48B3-B193-32C07980EDDA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimToyWorld", "..\BrainSimToyWorld\Module\BrainSimToyWorld.csproj", "{4B4762C5-D0CC-4F18-9DC4-34698ED536B8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6} = {F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldFactory", "..\ToyWorld\ToyWorldFactory\ToyWorldFactory.csproj", "{F59C62C1-A4E9-4CE7-B1C8-17375D4491D6}"
 EndProject
@@ -44,6 +50,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game", "..\ToyWorld\Game\Game.csproj", "{C61DB58A-5374-48F3-9457-025A1693C8CC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Render", "..\ToyWorld\Render\Render.csproj", "{C1527127-DD8C-4076-A0A7-39EB2EF23787}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3831266C-24FE-4DD6-A4CC-39D0EF33C299} = {3831266C-24FE-4DD6-A4CC-39D0EF33C299}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "..\ToyWorld\Utils\Utils.csproj", "{772B1188-A00D-45FC-B352-834227ADAE96}"
 EndProject
