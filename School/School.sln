@@ -11,12 +11,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\..\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "School", "Module\School.csproj", "{8C381B5A-3FD7-4311-9C42-F8115587E5FD}"
 	ProjectSection(ProjectDependencies) = postProject
+		{BFCFA346-8A89-4329-994D-AEA04CE62F69} = {BFCFA346-8A89-4329-994D-AEA04CE62F69}
 		{4B4762C5-D0CC-4F18-9DC4-34698ED536B8} = {4B4762C5-D0CC-4F18-9DC4-34698ED536B8}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\..\Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "..\..\BasicNodes\Module\BasicNodes.csproj", "{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
+	ProjectSection(ProjectDependencies) = postProject
+		{72423431-4A15-4E8D-B987-8E684BD730FE} = {72423431-4A15-4E8D-B987-8E684BD730FE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SchoolCuda", "Cuda\NewModuleCuda.vcxproj", "{BFCFA346-8A89-4329-994D-AEA04CE62F69}"
 EndProject
