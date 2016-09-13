@@ -202,8 +202,17 @@ namespace GoodAI.ToyWorld
                             renderResource.Dispose();
 
                         renderTextureHandle = vbo;
-                        renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
-                           image.CopyDepth ? CUGraphicsRegisterFlags.None : CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                        try
+                        {
+                            renderResource = new CudaOpenGLBufferInteropResource(renderTextureHandle,
+                                image.CopyDepth ? CUGraphicsRegisterFlags.None : CUGraphicsRegisterFlags.ReadOnly); // Read only by CUDA
+                        }
+                        catch (Exception e)
+                        {
+                            MyLog.ERROR.WriteLine("calling CudaOpenGLBufferInteropResource returns " + e +
+                                ". Go to World properties and in Runtime section set Copy data through CPU to True");
+                            throw e;
+                        }
                     }
 
                     renderResource.Map();
