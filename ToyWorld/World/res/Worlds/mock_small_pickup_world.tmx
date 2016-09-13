@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" nextobjectid="19">
- <tileset firstgid="1" name="ui" tilewidth="100" tileheight="100" spacing="5" tilecount="25" columns="5">
-  <image source="ui_default.png" trans="ff00ff" width="512" height="512"/>
+ <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
+  <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
  <tileset firstgid="901" name="winter" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
   <image source="roguelike_selection_winter.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
- <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
-  <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
- </tileset>    
+ <tileset firstgid="1801" name="ui" tilewidth="100" tileheight="100" spacing="5" tilecount="16" columns="4">
+  <image source="ui_default.png" trans="ff00ff" width="512" height="512"/>
+ </tileset>
  <layer name="Background" width="3" height="3">
   <data encoding="csv">
 31,31,31,
