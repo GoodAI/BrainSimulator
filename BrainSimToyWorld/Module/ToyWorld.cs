@@ -346,6 +346,13 @@ namespace GoodAI.ToyWorld
                 }
         }
 
+        public override void Dispose()
+        {
+            if (GameCtrl != null)
+                GameCtrl.Dispose(); // Should dispose RRs and controllers too
+            base.Dispose();
+        }
+
         private void TryToyWorld()
         {
             if (GameCtrl != null)
