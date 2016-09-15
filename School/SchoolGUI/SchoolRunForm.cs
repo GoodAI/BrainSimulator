@@ -109,10 +109,10 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
-                if(m_observer != null)
+                if (m_observer != null)
                 {
                     MyMemoryBlockObserver mbObserver = (m_observer.Observer as MyMemoryBlockObserver);
-                    switch(m_school.Format)
+                    switch (m_school.Format)
                     {
                         case SchoolWorld.VisualFormat.Raw:
                             mbObserver.Method = RenderingMethod.Raw;
@@ -155,7 +155,7 @@ namespace GoodAI.School.GUI
                     }
                     (tabControlLevels.SelectedTab.Controls[0] as DataGridView).ClearSelection();
                 }
-             }));
+            }));
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Winapi)]
@@ -301,6 +301,7 @@ namespace GoodAI.School.GUI
                 if (ltNode == null)
                 {
                     tabControlLevels.TabPages.Clear();
+                    prevGridViewSelection = null;
                     return;
                 }
                 // if there is no change, do nothing
@@ -320,12 +321,12 @@ namespace GoodAI.School.GUI
                 string htmlFileName = (ltNode as LearningTaskNode).TaskType.Name + ".html";
                 string fullPath = MyResources.GetMyAssemblyPath() + "\\" + HTML_DIRECTORY + "\\" + htmlFileName;
 
-                
+
                 if (File.Exists(fullPath))
                 {
                     // Create a file to write to.
                     string htmlPage = File.ReadAllText(fullPath);
-                    
+
                     string name = System.Text.RegularExpressions.Regex.Match(htmlPage, "<title>.*</title>").ToString();
                     if (name.Length > 0)
                     {
@@ -337,7 +338,8 @@ namespace GoodAI.School.GUI
 
                     string description = System.Text.RegularExpressions.Regex.Match(htmlPage,
                         "Description(.*?)<td(.*?)</td>", System.Text.RegularExpressions.RegexOptions.Singleline).ToString();
-                    if(description.Length > 0){
+                    if (description.Length > 0)
+                    {
                         description = description.Split('>', '<')[4];
                     }
                     description = description.Replace(System.Environment.NewLine, "");
@@ -487,7 +489,6 @@ namespace GoodAI.School.GUI
             if (!Visible)
                 return;
             SelectSchoolWorld(null, EventArgs.Empty);
-            btnObserver.Checked = Properties.School.Default.ShowVisual;
             splitContainer2.Panel2Collapsed = !Properties.School.Default.ShowVisual;
             m_emulateSuccess = btnEmulateSuccess.Checked;
             SchoolWorld school = m_mainForm.Project.World as SchoolWorld;
@@ -833,6 +834,17 @@ namespace GoodAI.School.GUI
                 return;
             }
             ((sender as TabControl).SelectedTab.Controls[0] as DataGridView).ClearSelection();
+        }
+
+        private void SchoolRunForm_Load(object sender, EventArgs e)
+        {
+            // this line has to be in this event - before the SetObserver is called, otherwise
+            // first time SetObserver runs, m_showObserver is TRUE even if it is actually supposed to be FALSE
+            // because of this, m_observer is set to some invalid stuff AFTER the project loads and m_school world
+            // and its memblocks are changed
+            // what the hell I was thinking when I put this to VisibleChanged??
+            btnObserver.Checked = Properties.School.Default.ShowVisual;
+            // TODO: Maybe other stuff from SchoolRunForm_VisibleChanged should go here?
         }
     }
 }

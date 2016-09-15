@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using GoodAI.School.Worlds;
@@ -35,7 +30,6 @@ namespace GoodAI.School.Learning_tasks
         {
             wasUnitSuccessful = false;
             return false;
-            //throw new NotImplementedException();
         }
     }
 }
