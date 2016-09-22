@@ -120,7 +120,7 @@ namespace World.ToyWorldCore
             m_collisionResolver = new MomentumCollisionResolver(collisionChecker, movementPhysics);
             //*/
 
-            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Loading Successful");
+            //Log.Instance.Debug("World.ToyWorldCore.ToyWorld: Loading Successful");
         }
 
 
@@ -141,13 +141,13 @@ namespace World.ToyWorldCore
             AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             UpdatePhysics();
             UpdateAtmosphere();
-            Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
+            //Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
         }
 
         private void UpdateTime()
         {
             Atlas.IncrementTime(TWConfig.Instance.StepLength);
-            Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
+            //Log.Instance.Debug("ToyWorld time is: " + Atlas.RealTime);
         }
 
         private void UpdateScheduled()

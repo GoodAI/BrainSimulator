@@ -135,7 +135,7 @@ namespace World.GameActors.GameObjects
         {
             var temperatureAround = atlas.Temperature(Position);
 
-            LogAvatarStatus(atlas, temperatureAround);
+            //LogAvatarStatus(atlas, temperatureAround);
 
             float oldEnergy = Energy;
             LoseEnergy();

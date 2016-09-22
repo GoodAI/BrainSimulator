@@ -800,6 +800,7 @@ namespace GoodAI.Modules.School.Worlds
                 int inputHeight = Owner.VisualDimensionsFov.Height;
                 int outputWidth = Owner.VisualDimensionsFof.Width;
                 int outputHeight = Owner.VisualDimensionsFof.Height;
+                // assumes that views are square
                 float ratio = (float)Owner.VisualDimensionsFof.Width / Owner.VisualDimensionsFov.Width;
 
                 m_resampleKernel.Run(Owner.VisualFOV, Owner.VisualFOF, Owner.AdapterInputStep.FofX, Owner.AdapterInputStep.FofY, ratio, 1, inputWidth, inputHeight, outputWidth, outputHeight);

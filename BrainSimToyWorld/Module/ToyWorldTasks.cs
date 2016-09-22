@@ -420,7 +420,8 @@ namespace GoodAI.ToyWorld
             {
                 foreach (var item in Owner.GameCtrl.GetSignals().Select((signal, index) => new { signal, index }))
                 {
-                    if (!m_signalNodesNamed)
+                    // signals were note named yet AND Project's (Owner.Owner) World is equal to ToyWorld (Owner) - only in that case, there are GUI signal nodes
+                    if (!m_signalNodesNamed && Owner.Owner.World == Owner)
                     {
                         Owner.GetSignalNode(item.index).Name = item.signal.Key;
                         Owner.GetSignalNode(item.index).Updated();
