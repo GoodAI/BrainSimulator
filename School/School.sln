@@ -68,6 +68,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderingBase", "..\ToyWorl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapSerializer", "..\ToyWorld\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj", "{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreRunner", "..\..\..\Platform\CoreRunner\CoreRunner.csproj", "{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -208,6 +210,12 @@ Global
 		{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
 		{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
 		{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{18DB0A95-F3A0-4B44-BC90-BB43DE0FDB96}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
