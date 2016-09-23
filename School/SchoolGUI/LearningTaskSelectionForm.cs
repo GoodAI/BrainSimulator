@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
-using GoodAI.BrainSimulator.Forms;
-using GoodAI.Modules.School.Common;
 using GoodAI.Core.Utils;
-using GoodAI.Modules.School.Worlds;
+using GoodAI.School.Common;
 
 namespace GoodAI.School.GUI
 {
@@ -40,14 +35,7 @@ namespace GoodAI.School.GUI
 
         private void PopulateWorldList()
         {
-            var interfaceType = typeof(IWorldAdapter);
-            var types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .Where(p => interfaceType.IsAssignableFrom(p) 
-                    && !p.IsInterface 
-                    && !p.IsAbstract
-                    && IsAdmitted(p));
-            foreach (Type type in types)
+            foreach (Type type in CurriculumManager.GetAvailableWorlds())
             {
                 worldList.Items.Add(new TypeListItem(type));
             }
@@ -55,42 +43,16 @@ namespace GoodAI.School.GUI
                 worldList.SelectedIndex = 0;
         }
 
-        // True if the world should appear in the GUI
-        // Used to suppress worlds that should not be used
-        private bool IsAdmitted(Type p)
-        {
-            return p != typeof(PlumberWorld);
-        }
-
         private void PopulateLearningTaskList()
         {
             learningTaskList.Items.Clear();
             Type selectedWorldType = (worldList.SelectedItem as TypeListItem).Type;
-            foreach (var entry in LearningTaskFactory.KnownLearningTasks)
-            {
-                Type learningTaskType = entry.Key;
-                List<Type> worldTypes = entry.Value;
-                if (ContainsType(worldTypes, selectedWorldType))
-                if (worldTypes.Contains(selectedWorldType))
-                { 
-                    learningTaskList.Items.Add(new LearningTaskListItem(learningTaskType));
-                }
-            }
+
+            foreach (Type entry in CurriculumManager.GetTasksForWorld(selectedWorldType))
+                learningTaskList.Items.Add(new LearningTaskListItem(entry));
 
             if (learningTaskList.Items.Count > 0)
                 learningTaskList.SelectedIndex = 0;
-        }
-
-        private bool ContainsType(List<Type> worldTypes, Type selectedWorldType)
-        {
-            foreach (Type type in worldTypes)
-            {
-                if (selectedWorldType == type || selectedWorldType.IsSubclassOf(type))
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private void okButton_Click(object sender, EventArgs e)
@@ -125,7 +87,7 @@ namespace GoodAI.School.GUI
                 learningTaskDescription.Url = null;
             }
             else
-            { 
+            {
                 const string HTML_DIRECTORY = @"Resources\html";
                 string htmlFileName = (learningTaskList.SelectedItem as LearningTaskListItem).HTMLFileName;
                 string fullPath = MyResources.GetMyAssemblyPath() + "\\" + HTML_DIRECTORY + "\\" + htmlFileName;
@@ -189,12 +151,13 @@ namespace GoodAI.School.GUI
 
     class LearningTaskListItem : TypeListItem
     {
-        public LearningTaskListItem(Type type) : base(type)
+        public LearningTaskListItem(Type type)
+            : base(type)
         {
         }
 
-        public string HTMLFileName 
-        { 
+        public string HTMLFileName
+        {
             get
             {
                 return Type.Name + ".html";
