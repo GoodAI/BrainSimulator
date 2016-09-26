@@ -321,7 +321,7 @@ namespace GoodAI.Core.Observers
                 else
                 {
                     m_kernel.SetupExecution(TextureSize);
-                    m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, TextureSize);
+                    m_kernel.Run(Target.GetDevicePtr(ObserverGPU, 0, TimeStep), (int)Method, (int)Scale, MinValue, MaxValue, VBODevicePointer, Math.Min(TextureSize, Target.Count));
                 }
             }
         }
