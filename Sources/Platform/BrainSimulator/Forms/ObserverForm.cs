@@ -4,6 +4,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Observers;
 using ManagedCuda.VectorTypes;
 using OpenTK;
 using OpenTK.Graphics;
@@ -355,7 +356,26 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected void ShowValueAt(int x, int y)
         {
-            if (Observer is MyMemoryBlockObserver)
+            if (Observer is ICustomPeekLabelProducingObserver)
+            {
+                float2 pixelPos = UnprojectFit2DView(x, y);
+
+                if (pixelPos.x > 0 && pixelPos.x < Observer.TextureWidth && pixelPos.y > 0 && pixelPos.y < Observer.TextureHeight)
+                {
+                    String result = ((ICustomPeekLabelProducingObserver)Observer).GetPeekLabelAt((int)pixelPos.x, (int)pixelPos.y);
+                    if (result != null)
+                    {
+                        peekLabel.Text = result;
+                        peekLabel.Visible = true;
+                    }
+                    else
+                    {
+                        peekLabel.Visible = false;
+                    }
+                }
+                return;
+            }
+            else if (Observer is MyMemoryBlockObserver)
             {                
                 MyMemoryBlockObserver mbObserver = (Observer as MyMemoryBlockObserver);                                               
                 float2 pixelPos = UnprojectFit2DView(x, y);
