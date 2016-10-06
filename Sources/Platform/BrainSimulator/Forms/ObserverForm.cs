@@ -4,6 +4,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Observers;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Observers;
 using ManagedCuda.VectorTypes;
 using OpenTK;
 using OpenTK.Graphics;
@@ -353,77 +354,112 @@ namespace GoodAI.BrainSimulator.Forms
             return m_mainForm.PerformMainMenuClick(keyData);
         }
 
+        private void ProcessCustomPeekLabel(ICustomPeekLabelProducingObserver observer, float2 pixelPos)
+        {
+            String result = observer.GetPeekLabelAt((int)pixelPos.x, (int)pixelPos.y);
+            if (result != null)
+            {
+                peekLabel.Text = result;
+                peekLabel.Visible = true;
+            }
+            else
+            {
+                peekLabel.Visible = false;
+            }
+            return;
+        }
+
+        private int GetPositionInMemoryBlock(MyMemoryBlockObserver mbObserver, int px, int py)
+        {
+            if (mbObserver.ObserveTensors == true)
+            {
+                if (mbObserver.Method == RenderingMethod.RedGreenScale)
+                {
+                    int tw = mbObserver.TileWidth;
+                    int th = mbObserver.TileHeight;
+                    int ta = tw * th;
+                    int tilesInRow = mbObserver.TilesInRow;
+                    if (((px + 1) % (tw + 1) == 0) || ((py + 1) % (th + 1) == 0)) // it is point between tiles
+                    {
+                        return -1;
+                    }
+                    int tile_row = py / (th + 1);                             // in which tile-row it is
+                    int tile_col = px / (tw + 1);                             // in which tile-column it is
+                    int id_tile = tile_col + tile_row * tilesInRow;              // which tile it is
+                    int values_row = py % (th + 1);                        // id int he tile
+                    int values_col = px % (tw + 1);                        // id in the tile
+                    return id_tile * ta + values_col + values_row * tw;
+                }
+                else // RGB here
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return py * Observer.TextureWidth + px; // Normal value if not tensor observ is used (tiles + borders between tiles)
+            }
+        }
+
+        private void ProcessMyMemoryBlockObserverPeekLabel(MyMemoryBlockObserver mbObserver, float2 pixelPos)
+        {
+            int px = (int)pixelPos.x;
+            int py = (int)pixelPos.y;
+
+            int index = GetPositionInMemoryBlock(mbObserver, px, py);
+
+            if (index < 0)
+            {
+                peekLabel.Text = "N/A";
+                return;
+            }
+
+            if (index >= mbObserver.Target.Count)
+                return;
+
+            peekLabel.Visible = true;
+
+            float result = 0;
+            mbObserver.Target.GetValueAt(ref result, index);
+
+            string formattedValue;
+            if (mbObserver.Method == RenderingMethod.Raw)
+            {
+                IEnumerable<string> channels = BitConverter.GetBytes(result).Reverse()  // Get the byte values.
+                    .Select(channel => channel.ToString())
+                    .Select(channel => new String(' ', 3 - channel.Length) + channel);  // Indent with spaces.
+
+                // Zip labels and values, join with a separator.
+                formattedValue = String.Join(", ", "ARGB".Zip(channels, (label, channel) => label + ":" + channel));
+            }
+            else
+            {
+                formattedValue = result.ToString("0.0000");
+            }
+
+            // Show coordinates or index.
+            string formattedIndex = mbObserver.ShowCoordinates ? px + ", " + py : index.ToString();
+
+            peekLabel.Text = mbObserver.Target.Name + @"[" + formattedIndex + @"] = " + formattedValue;
+        }
+
         protected void ShowValueAt(int x, int y)
         {
-            if (Observer is MyMemoryBlockObserver)
-            {                
-                MyMemoryBlockObserver mbObserver = (Observer as MyMemoryBlockObserver);                                               
+            if (Observer is ICustomPeekLabelProducingObserver || Observer is MyMemoryBlockObserver)
+            {
                 float2 pixelPos = UnprojectFit2DView(x, y);
-
                 if (pixelPos.x > 0 && pixelPos.x < Observer.TextureWidth && pixelPos.y > 0 && pixelPos.y < Observer.TextureHeight)
                 {
-                    int px = (int)pixelPos.x;
-                    int py = (int)pixelPos.y;
-                    int index;
-                    if (mbObserver.ObserveTensors == true)
+                    if (Observer is ICustomPeekLabelProducingObserver)
                     {
-                        if (mbObserver.Method == RenderingMethod.RedGreenScale)
-                        {
-                            int tw = mbObserver.TileWidth;
-                            int th = mbObserver.TileHeight;
-                            int ta = tw*th;
-                            int tilesInRow = mbObserver.TilesInRow;
-                            if (((px + 1) % (tw + 1) == 0) || ((py + 1) % (th + 1) == 0)) // it is point between tiles
-                            {
-                                peekLabel.Text = "N/A";
-                                return;
-                            }
-                            int tile_row = py / (th+1);                             // in which tile-row it is
-                            int tile_col = px / (tw+1);                             // in which tile-column it is
-                            int id_tile = tile_col + tile_row * tilesInRow;              // which tile it is
-                            int values_row = py % (th+1);                        // id int he tile
-                            int values_col = px % (tw+1);                        // id in the tile
-                            index = id_tile * ta + values_col + values_row * tw;
-                        }
-                        else // RGB here
-                        {
-                            peekLabel.Text = "N/A";
-                            return;
-                        }
-                    }
-                    else
-                    {
-                         index = py * Observer.TextureWidth + px; // Normal value if not tensor observ is used (tiles + borders between tiles)
-                    }
-                    
-
-                    if (index >= mbObserver.Target.Count)
+                        ProcessCustomPeekLabel(Observer as ICustomPeekLabelProducingObserver, pixelPos);
                         return;
-
-                    peekLabel.Visible = true;
-
-                    float result = 0;
-                    mbObserver.Target.GetValueAt(ref result, index);
-
-                    string formattedValue;
-                    if (mbObserver.Method == RenderingMethod.Raw)
-                    {
-                        IEnumerable<string> channels = BitConverter.GetBytes(result).Reverse()  // Get the byte values.
-                            .Select(channel => channel.ToString())
-                            .Select(channel => new String(' ', 3 - channel.Length) + channel);  // Indent with spaces.
-
-                        // Zip labels and values, join with a separator.
-                        formattedValue = String.Join(", ", "ARGB".Zip(channels, (label, channel) => label + ":" + channel));
                     }
-                    else
+                    else if (Observer is MyMemoryBlockObserver)
                     {
-                        formattedValue = result.ToString("0.0000");
+                        ProcessMyMemoryBlockObserverPeekLabel(Observer as MyMemoryBlockObserver, pixelPos);
+                        return;
                     }
-
-                    // Show coordinates or index.
-                    string formattedIndex = mbObserver.ShowCoordinates ? px + ", " + py : index.ToString();
-
-                    peekLabel.Text = mbObserver.Target.Name + @"[" + formattedIndex + @"] = " + formattedValue;
                 }
             }
         }
