@@ -401,6 +401,48 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        private void ProcessMyMemoryBlockObserverPeekLabel(MyMemoryBlockObserver mbObserver, float2 pixelPos)
+        {
+            int px = (int)pixelPos.x;
+            int py = (int)pixelPos.y;
+
+            int index = GetPositionInMemoryBlock(mbObserver, px, py);
+
+            if (index < 0)
+            {
+                peekLabel.Text = "N/A";
+                return;
+            }
+
+            if (index >= mbObserver.Target.Count)
+                return;
+
+            peekLabel.Visible = true;
+
+            float result = 0;
+            mbObserver.Target.GetValueAt(ref result, index);
+
+            string formattedValue;
+            if (mbObserver.Method == RenderingMethod.Raw)
+            {
+                IEnumerable<string> channels = BitConverter.GetBytes(result).Reverse()  // Get the byte values.
+                    .Select(channel => channel.ToString())
+                    .Select(channel => new String(' ', 3 - channel.Length) + channel);  // Indent with spaces.
+
+                // Zip labels and values, join with a separator.
+                formattedValue = String.Join(", ", "ARGB".Zip(channels, (label, channel) => label + ":" + channel));
+            }
+            else
+            {
+                formattedValue = result.ToString("0.0000");
+            }
+
+            // Show coordinates or index.
+            string formattedIndex = mbObserver.ShowCoordinates ? px + ", " + py : index.ToString();
+
+            peekLabel.Text = mbObserver.Target.Name + @"[" + formattedIndex + @"] = " + formattedValue;
+        }
+
         protected void ShowValueAt(int x, int y)
         {
             if (Observer is ICustomPeekLabelProducingObserver || Observer is MyMemoryBlockObserver)
@@ -415,46 +457,8 @@ namespace GoodAI.BrainSimulator.Forms
                     }
                     else if (Observer is MyMemoryBlockObserver)
                     {
-                        MyMemoryBlockObserver mbObserver = (Observer as MyMemoryBlockObserver);
-
-                        int px = (int)pixelPos.x;
-                        int py = (int)pixelPos.y;
-
-                        int index = GetPositionInMemoryBlock(mbObserver, px, py);
-
-                        if (index < 0)
-                        {
-                            peekLabel.Text = "N/A";
-                            return;
-                        }
-
-                        if (index >= mbObserver.Target.Count)
-                            return;
-
-                        peekLabel.Visible = true;
-
-                        float result = 0;
-                        mbObserver.Target.GetValueAt(ref result, index);
-
-                        string formattedValue;
-                        if (mbObserver.Method == RenderingMethod.Raw)
-                        {
-                            IEnumerable<string> channels = BitConverter.GetBytes(result).Reverse()  // Get the byte values.
-                                .Select(channel => channel.ToString())
-                                .Select(channel => new String(' ', 3 - channel.Length) + channel);  // Indent with spaces.
-
-                            // Zip labels and values, join with a separator.
-                            formattedValue = String.Join(", ", "ARGB".Zip(channels, (label, channel) => label + ":" + channel));
-                        }
-                        else
-                        {
-                            formattedValue = result.ToString("0.0000");
-                        }
-
-                        // Show coordinates or index.
-                        string formattedIndex = mbObserver.ShowCoordinates ? px + ", " + py : index.ToString();
-
-                        peekLabel.Text = mbObserver.Target.Name + @"[" + formattedIndex + @"] = " + formattedValue;
+                        ProcessMyMemoryBlockObserverPeekLabel(Observer as MyMemoryBlockObserver, pixelPos);
+                        return;
                     }
                 }
             }
