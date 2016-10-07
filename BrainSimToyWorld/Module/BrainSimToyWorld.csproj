@@ -80,6 +80,10 @@
       <Project>{f59c62c1-a4e9-4ce7-b1c8-17375d4491d6}</Project>
       <Name>ToyWorldFactory</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ToyWorld\Utils\Utils.csproj">
+      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="post_build.cmd" />

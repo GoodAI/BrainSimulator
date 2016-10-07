@@ -5,6 +5,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using Utils;
 
 namespace GoodAI.School.Worlds
 {
@@ -40,7 +41,7 @@ namespace GoodAI.School.Worlds
         public void InitAdapterMemory()
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-            ControlsAdapterTemp.Count = 128;
+            ControlsAdapterTemp.Count = 13;
         }
 
         public void InitWorldInputs(int nGPU)
@@ -50,15 +51,17 @@ namespace GoodAI.School.Worlds
 
         public void MapWorldInputs()
         {
+            ControlsAdapterTemp.Fill(0);
             if (School.ActionInput.Owner is DeviceInput)
             {
                 School.ActionInput.SafeCopyToDevice();
-                ControlsAdapterTemp.Host[87] = School.ActionInput.Host[87];  // W - Up
-                ControlsAdapterTemp.Host[65] = School.ActionInput.Host[65];  // A - Rotate left
-                ControlsAdapterTemp.Host[68] = School.ActionInput.Host[68];  // D - Rotate right
-                ControlsAdapterTemp.Host[83] = School.ActionInput.Host[83];  // S - Down
-                ControlsAdapterTemp.Host[69] = School.ActionInput.Host[69];  // Q - Strafe left
-                ControlsAdapterTemp.Host[81] = School.ActionInput.Host[81];  // E - Strafe right
+
+                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[ControlMapper.Idx("up")];  // W - Up
+                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[ControlMapper.Idx("down")];  // S - Down
+                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[ControlMapper.Idx("rot_left")];  // A - Rotate left
+                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[ControlMapper.Idx("rot_right")];  // D - Rotate right
+                ControlsAdapterTemp.Host[4] = School.ActionInput.Host[ControlMapper.Idx("left")];  // Q - Strafe left
+                ControlsAdapterTemp.Host[5] = School.ActionInput.Host[ControlMapper.Idx("right")];  // E - Strafe right
 
                 ControlsAdapterTemp.SafeCopyToDevice();
             }

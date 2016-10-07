@@ -14,6 +14,7 @@ using YAXLib;
 using System.Windows.Forms;
 using System.Drawing;
 using GoodAI.Core;
+using Utils;
 
 namespace GoodAI.Modules.School.Worlds
 {
@@ -46,6 +47,8 @@ namespace GoodAI.Modules.School.Worlds
     /// <description>School world provides the environment necessary for running AI School. It creates it's own execution plan according to the learning tasks selected in the School curriculum. Initialization and execution of each learning task is managed by this world as well as the evaluation of agent's performance.</description>
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
+        private readonly int m_controlsCount = 13;
+
         #region Constants
         // Constants defining the memory layout of LTStatus information
         private const int NEW_LT_FLAG = 0;
@@ -389,10 +392,17 @@ namespace GoodAI.Modules.School.Worlds
                 validator.AssertError(false, this, "ActionInput must not be null");
                 MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            else if (ActionInput != null && ActionInput.Count < 87 && ActionInput.Count != m_controlsCount)
+            {
+                validator.AssertError(false, this, "Controls size has to be of size " + m_controlsCount + " or 87+. Use device input node for controls, or provide correct number of inputs");
+                MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             else if (Curriculum == null || Curriculum.TasksCount == 0)
             {
-                validator.AssertError(false, this, "Curriculum must not be empty. Add or enable some learning tasks. Use AI School GUI from menu View->AI School.");
-                MessageBox.Show("Curriculum must not be empty. Add or enable at least one learning task.", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                validator.AssertError(false, this,
+                    "Curriculum must not be empty. Add or enable some learning tasks. Use AI School GUI from menu View->AI School.");
+                MessageBox.Show("Curriculum must not be empty. Add or enable at least one learning task.",
+                    "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -718,10 +728,10 @@ namespace GoodAI.Modules.School.Worlds
             {
                 // Process FOF controls
                 Owner.ActionInput.SafeCopyToDevice();
-                float fof_up = Owner.ActionInput.Host[73]; // I
-                float fof_left = Owner.ActionInput.Host[76]; // J
-                float fof_down = Owner.ActionInput.Host[75]; // K
-                float fof_right = Owner.ActionInput.Host[74]; // L
+                float fof_up = Owner.ActionInput.Host[ControlMapper.Idx("fof_up")]; // I
+                float fof_left = Owner.ActionInput.Host[ControlMapper.Idx("fof_left")]; // J
+                float fof_down = Owner.ActionInput.Host[ControlMapper.Idx("fof_down")]; // K
+                float fof_right = Owner.ActionInput.Host[ControlMapper.Idx("fof_right")]; // L
 
                 FofX = ConvertBiControlToUniControl(fof_left, fof_right);
                 FofY = ConvertBiControlToUniControl(fof_down, fof_up);

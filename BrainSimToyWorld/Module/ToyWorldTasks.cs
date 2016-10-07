@@ -11,6 +11,7 @@ using GoodAI.ToyWorld.Control;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
+using Utils;
 
 namespace GoodAI.ToyWorld
 {
@@ -284,17 +285,17 @@ namespace GoodAI.ToyWorld
 
                 Owner.Controls.SafeCopyToHost();
 
-                float leftSignal = Owner.Controls.Host[Owner.m_controlIndexes["left"]];
-                float rightSignal = Owner.Controls.Host[Owner.m_controlIndexes["right"]];
-                float fwSignal = Owner.Controls.Host[Owner.m_controlIndexes["forward"]];
-                float bwSignal = Owner.Controls.Host[Owner.m_controlIndexes["backward"]];
-                float rotLeftSignal = Owner.Controls.Host[Owner.m_controlIndexes["rot_left"]];
-                float rotRightSignal = Owner.Controls.Host[Owner.m_controlIndexes["rot_right"]];
+                float leftSignal = Owner.Controls.Host[ControlMapper.Idx("left")];
+                float rightSignal = Owner.Controls.Host[ControlMapper.Idx("right")];
+                float fwSignal = Owner.Controls.Host[ControlMapper.Idx("forward")];
+                float bwSignal = Owner.Controls.Host[ControlMapper.Idx("backward")];
+                float rotLeftSignal = Owner.Controls.Host[ControlMapper.Idx("rot_left")];
+                float rotRightSignal = Owner.Controls.Host[ControlMapper.Idx("rot_right")];
 
-                float fof_left = Owner.Controls.Host[Owner.m_controlIndexes["fof_left"]];
-                float fof_right = Owner.Controls.Host[Owner.m_controlIndexes["fof_right"]];
-                float fof_up = Owner.Controls.Host[Owner.m_controlIndexes["fof_up"]];
-                float fof_down = Owner.Controls.Host[Owner.m_controlIndexes["fof_down"]];
+                float fof_left = Owner.Controls.Host[ControlMapper.Idx("fof_left")];
+                float fof_right = Owner.Controls.Host[ControlMapper.Idx("fof_right")];
+                float fof_up = Owner.Controls.Host[ControlMapper.Idx("fof_up")];
+                float fof_down = Owner.Controls.Host[ControlMapper.Idx("fof_down")];
 
                 float rotation = ConvertBiControlToUniControl(rotLeftSignal, rotRightSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
@@ -302,9 +303,9 @@ namespace GoodAI.ToyWorld
                 float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
                 float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
 
-                bool interact = Owner.Controls.Host[Owner.m_controlIndexes["interact"]] > 0.5;
-                bool use = Owner.Controls.Host[Owner.m_controlIndexes["use"]] > 0.5;
-                bool pickup = Owner.Controls.Host[Owner.m_controlIndexes["pickup"]] > 0.5;
+                bool interact = Owner.Controls.Host[ControlMapper.Idx("interact")] > 0.5;
+                bool use = Owner.Controls.Host[ControlMapper.Idx("use")] > 0.5;
+                bool pickup = Owner.Controls.Host[ControlMapper.Idx("pickup")] > 0.5;
 
                 IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup,
                     fof: new PointF(fof_x, fof_y));
@@ -411,7 +412,7 @@ namespace GoodAI.ToyWorld
             {
                 Dictionary<string, float> actions = Owner.AvatarCtrl.GetActions().ToDictionary();
                 foreach (KeyValuePair<string, float> pair in actions)
-                    Owner.ChosenActions.Host[Owner.m_controlIndexes[pair.Key]] = pair.Value;
+                    Owner.ChosenActions.Host[ControlMapper.Idx(pair.Key)] = pair.Value;
 
                 Owner.ChosenActions.SafeCopyToDevice();
             }

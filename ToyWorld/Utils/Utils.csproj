@@ -150,6 +150,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlMapper.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="VRageRIP\Lib\Collections\AsyncBuffer.cs" />
     <Compile Include="VRageRIP\Lib\Collections\CircularList.cs" />
@@ -624,6 +625,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
