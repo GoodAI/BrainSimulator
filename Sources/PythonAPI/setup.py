@@ -22,4 +22,5 @@ setup(
     description='Python API for using GoodAI\'s Brain Simulator',
     long_description=get_long_description(),
     install_requires=get_requirements(),
+    packages=['goodai', 'goodai.brainsim']
 )
