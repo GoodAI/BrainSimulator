@@ -1,4 +1,3 @@
-import sys
 from setuptools import setup
 
 
@@ -15,7 +14,7 @@ def get_requirements(suffix=''):
 
 setup(
     name='GoodAI-BrainSim',
-    version='1.0.0',
+    version='0.1.0',
     url='https://github.com/GoodAI/python-api',
     license='MIT',
     author='vlasy',
