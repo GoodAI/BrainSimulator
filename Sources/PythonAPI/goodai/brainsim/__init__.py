@@ -1,6 +1,7 @@
 
 import clr
 import types
+from _winreg import OpenKey, QueryValueEx, HKEY_LOCAL_MACHINE
 
 
 def _configureContainer():
@@ -57,10 +58,25 @@ def _load_classes():
 
 
 
+def _brainsim_path_from_registry():
+	key = OpenKey(HKEY_LOCAL_MACHINE, "SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\BrainSimulator.exe")
+	val = QueryValueEx(key, "Path")
+	return val[0]
+
 
 def load_brainsim(brainsim_path=None):
 	if not brainsim_path:
+		try:
+			brainsim_path = _brainsim_path_from_registry()
+			print("Using BrainSimulator path from registry: {}".format(brainsim_path))
+		except WindowsError:
+			pass
+	else:
+		print("Using user-specified path to BrainSimulator: {}".format(brainsim_path))
+	if not brainsim_path:
 		brainsim_path = "C:\Program Files\GoodAI\Brain Simulator"
+		print("Using default BrainSimulator path: {}".format(brainsim_path))
+
 	import clr
 
 	clr.AddReference(brainsim_path + '\GoodAI.Platform.Core.dll')
