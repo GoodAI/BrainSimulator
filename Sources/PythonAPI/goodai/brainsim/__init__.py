@@ -33,28 +33,12 @@ def _load_classes():
 	from GoodAI.School.Common import CurriculumManager
 	from GoodAI.School.Worlds import ToyWorldAdapterWorld
 
-	# maybe it could be done dynamically straight with MyProjectRunner but it is not working
-	# right now, so I am postponing it - this is much easier and under control
 	class MyProjectRunner(DefaultProjectRunner):
 
 		# you cannot use number as attrs - therefore this
 		def __getitem__(self, idx):
 			node = self.GetNode(idx)
-
-			class TTT(type(node)):
-				def __init__(self, node):
-					self._node = node
-
-				def __getattr__(self, name):
-					print("Looking for "+name)
-
-			pode = TTT(node)
-
 			return node
-			# any of these 3 work
-			#type(node).__getattr__ = test
-			#setattr(type(node), "__getattr__", types.MethodType(test, self))
-			#type(node).__getattr__ = types.MethodType(test, self)
 
 
 
