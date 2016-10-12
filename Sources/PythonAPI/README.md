@@ -5,11 +5,11 @@ The module itself serves as an interface to Brain Simulator's MyProjectRunner. Y
 
 # Install from source
 
-Install Python for .NET by running `pip install pythonnet`
-
 Go to folder with `setup.py`
 
-Run `python setup.py install`
+Run `pip install .`
+
+Note: `GoodAI-BrainSim` module depends on [Python for .NET](http://pythonnet.github.io/) which cannot be installed using easy_install, therefore you cannot use the usual `python setup.py install`
 
 
 # How to use module
