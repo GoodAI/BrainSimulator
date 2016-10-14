@@ -19,6 +19,7 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using System.ComponentModel;
 using GoodAI.Modules.School.LearningTasks;
+using Utils;
 using NativeWindow = OpenTK.NativeWindow;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
@@ -256,7 +257,7 @@ namespace GoodAI.Modules.School.Worlds
         public void InitAdapterMemory()
         {
             ControlsAdapterTemp = MyMemoryManager.Instance.CreateMemoryBlock<float>(this);
-            ControlsAdapterTemp.Count = 128;
+            ControlsAdapterTemp.Count = 4;
 
             School.AspectRatioFov = Viewport.Width / Viewport.Height;
         }
@@ -268,19 +269,14 @@ namespace GoodAI.Modules.School.Worlds
         public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            if (School.ActionInput.Owner is DeviceInput)
-            {
-                School.ActionInput.SafeCopyToDevice();
-                ControlsAdapterTemp.Host[0] = School.ActionInput.Host[68]; // D
-                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65]; // A
-                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[83]; // S
-                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[87]; // W
-                ControlsAdapterTemp.SafeCopyToDevice();
-            }
-            else
-            {
-                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
-            }
+            School.ActionInput.SafeCopyToHost();
+
+            ControlsAdapterTemp.Host[0] = School.ActionInput.Host[ControlMapper.Idx("right")]; // D
+            ControlsAdapterTemp.Host[1] = School.ActionInput.Host[ControlMapper.Idx("left")]; // A
+            ControlsAdapterTemp.Host[2] = School.ActionInput.Host[ControlMapper.Idx("backward")]; // S
+            ControlsAdapterTemp.Host[3] = School.ActionInput.Host[ControlMapper.Idx("forward")]; // W
+
+            ControlsAdapterTemp.SafeCopyToDevice();
         }
 
         public virtual void InitWorldOutputs(int nGPU)

@@ -8,6 +8,7 @@ using System.ComponentModel;
 using GoodAI.Core.Utils;
 using GoodAI.Core;
 using GoodAI.Core.Task;
+using Utils;
 
 namespace GoodAI.School.Worlds
 {
@@ -73,21 +74,13 @@ namespace GoodAI.School.Worlds
         public virtual void MapWorldInputs()
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
-            if (School.ActionInput.Owner is DeviceInput)
-            {
-                School.ActionInput.SafeCopyToDevice();
-                ControlsAdapterTemp.Host[1] = School.ActionInput.Host[65];  // A - Left
-                ControlsAdapterTemp.Host[2] = School.ActionInput.Host[68];  // D - Right
-                ControlsAdapterTemp.Host[3] = School.ActionInput.Host[83];  // S - Down
-                ControlsAdapterTemp.Host[4] = School.ActionInput.Host[81];  // Q - rotate left
-                ControlsAdapterTemp.Host[5] = School.ActionInput.Host[69];  // E - rotate right
-
-                ControlsAdapterTemp.SafeCopyToDevice();
-            }
-            else
-            {
-                ControlsAdapterTemp.CopyFromMemoryBlock(School.ActionInput, 0, 0, Math.Min(ControlsAdapterTemp.Count, School.ActionInput.Count));
-            }
+            School.ActionInput.SafeCopyToHost();
+            ControlsAdapterTemp.Host[1] = School.ActionInput.Host[ControlMapper.Idx("left")]; // A
+            ControlsAdapterTemp.Host[2] = School.ActionInput.Host[ControlMapper.Idx("right")]; // D
+            ControlsAdapterTemp.Host[3] = School.ActionInput.Host[ControlMapper.Idx("backward")]; // S
+            ControlsAdapterTemp.Host[4] = School.ActionInput.Host[ControlMapper.Idx("rot_left")]; // Q
+            ControlsAdapterTemp.Host[5] = School.ActionInput.Host[ControlMapper.Idx("rot_right")]; // E
+            ControlsAdapterTemp.SafeCopyToDevice();
         }
 
         public virtual void InitWorldOutputs(int nGPU)

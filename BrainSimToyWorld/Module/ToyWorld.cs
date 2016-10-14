@@ -325,8 +325,7 @@ namespace GoodAI.ToyWorld
             validator.AssertError(ToolResWidth > 0, this, "Tool resolution width has to be positive.");
             validator.AssertError(ToolResHeight > 0, this, "Tool resolution height has to be positive.");
 
-            if (Controls != null)
-                validator.AssertError(Controls.Count >= 84 || Controls.Count == m_controlsCount, this, "Controls size has to be of size " + m_controlsCount + " or 84+. Use device input node for controls, or provide correct number of inputs");
+            ControlMapper.CheckControlSize(validator, Controls, this);
 
             TryToyWorld();
 
@@ -398,17 +397,6 @@ namespace GoodAI.ToyWorld
                 return;
 
             ChosenActions.Count = Controls.Count;
-
-            if (Controls.Count == m_controlsCount)
-            {
-                ControlMapper.Mode = ControlMapper.ControlMode.Simple;
-                MyLog.INFO.WriteLine("ToyWorld: Controls set to vector mode.");
-            }
-            else if (Controls.Count >= 84)
-            {
-                ControlMapper.Mode = ControlMapper.ControlMode.KeyboardMouse;
-                MyLog.INFO.WriteLine("ToyWorld: Controls set to keyboard mode.");
-            }
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)

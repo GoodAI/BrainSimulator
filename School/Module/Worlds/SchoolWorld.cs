@@ -274,6 +274,23 @@ namespace GoodAI.Modules.School.Worlds
             }
         }
 
+        private int m_currentTaskId;
+        private readonly Dictionary<Type, int> taskIdMap = new Dictionary<Type, int>();
+
+        [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
+        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Simple)]
+        public ControlMapper.ControlMode ControlMode
+        {
+            get
+            {
+                return ControlMapper.Mode;
+            }
+            set
+            {
+                ControlMapper.Mode = value;
+            }
+        }
+
         public int FloatsPerPixel { get; private set; }
 
         public Size VisualDimensionsFov
@@ -385,16 +402,32 @@ namespace GoodAI.Modules.School.Worlds
                 lt.Fini();
         }
 
+        private void UpdateControls()
+        {
+            taskIdMap.Clear();
+            if (ControlMode == ControlMapper.ControlMode.SimpleTaskSpecific && Curriculum != null)
+            {
+                int lowestFreeTaskId = 0;
+                foreach (ILearningTask learningTask in Curriculum)
+                    if (!taskIdMap.ContainsKey(learningTask.GetType()))
+                    {
+                        taskIdMap[learningTask.GetType()] = lowestFreeTaskId;
+                        ControlMapper.CreateControlsFor(lowestFreeTaskId++);
+                    }
+            }
+        }
+
+        private void CheckNrOfActions(MyValidator validator)
+        {
+            UpdateControls();
+            ControlMapper.CheckControlSize(validator, ActionInput, this);
+        }
+
         public override void Validate(MyValidator validator)
         {
             if (ActionInput == null)
             {
                 validator.AssertError(false, this, "ActionInput must not be null");
-                MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else if (ActionInput != null && ActionInput.Count < 87 && ActionInput.Count != m_controlsCount)
-            {
-                validator.AssertError(false, this, "Controls size has to be of size " + m_controlsCount + " or 87+. Use device input node for controls, or provide correct number of inputs");
                 MessageBox.Show("The simulation cannot start because no inputs are provided to ActionInput", "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (Curriculum == null || Curriculum.TasksCount == 0)
@@ -404,6 +437,7 @@ namespace GoodAI.Modules.School.Worlds
                 MessageBox.Show("Curriculum must not be empty. Add or enable at least one learning task.",
                     "Validation Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            CheckNrOfActions(validator);
         }
 
         public MyNode AffectedNode { get { return this; } }
@@ -591,7 +625,8 @@ namespace GoodAI.Modules.School.Worlds
             MyLog.Writer.WriteLine(MyLogLevel.INFO, "Switching to LearningTask: " + CurrentLearningTask.GetTypeName());
 
             CurrentLearningTask.Init();
-
+            if (ControlMode == ControlMapper.ControlMode.SimpleTaskSpecific)
+                ControlMapper.ControlsID = m_currentTaskId = taskIdMap[CurrentLearningTask.GetType()];
             NotifyNewTrainingUnit();
             NotifyNewLevel();
 
@@ -655,6 +690,8 @@ namespace GoodAI.Modules.School.Worlds
         public void InitializeCurriculum()
         {
             NotifyNewCurriculum();
+            m_currentTaskId = -1;   // so after the first increase, it will be 0
+            ControlMapper.ControlsID = 0;
         }
 
         public void ClearWorld()
@@ -727,7 +764,7 @@ namespace GoodAI.Modules.School.Worlds
             public override void Execute()
             {
                 // Process FOF controls
-                Owner.ActionInput.SafeCopyToDevice();
+                Owner.ActionInput.SafeCopyToHost();
                 float fof_up = Owner.ActionInput.Host[ControlMapper.Idx("fof_up")]; // I
                 float fof_left = Owner.ActionInput.Host[ControlMapper.Idx("fof_left")]; // J
                 float fof_down = Owner.ActionInput.Host[ControlMapper.Idx("fof_down")]; // K
