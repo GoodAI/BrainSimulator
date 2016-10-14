@@ -21,6 +21,7 @@ pages:
     - Image Processing: 'guides/improc.md'
     - Restricted Boltzmann Machine: 'guides/rbm.md'
     - Automated node and brain testing: 'guides/brain_testing.md'
+    - Project Runner: 'guides/projectrunner.md'
 
 - Examples:
     - Worlds: 'examples/worlds.md'

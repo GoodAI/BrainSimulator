@@ -165,14 +165,23 @@ namespace GoodAI.BrainSimulator.Forms
             if (observers != null && observers.Count > 0)
             {
                 foreach (MyObserverConfig oc in observers.Values)
-                {                        
-                    ToolStripMenuItem item = new ToolStripMenuItem(oc.ObserverType.Name.Substring(2));
+                {
+                    ToolStripMenuItem item = new ToolStripMenuItem(GetMenuItemName(oc));
                     item.Tag = oc.ObserverType;
                     item.Click += item_Click;
                     observerDropDownButton.DropDownItems.Add(item);
                 }
                 observerDropDownButton.Enabled = true;
             }            
+        }
+
+        private String GetMenuItemName(MyObserverConfig oc)
+        {
+            if (oc.ObserverType.Name.Substring(0, 2).Equals("My"))
+            {
+                return oc.ObserverType.Name.Substring(2);
+            }
+            return oc.ObserverType.Name;
         }
 
         void item_Click(object sender, EventArgs e)

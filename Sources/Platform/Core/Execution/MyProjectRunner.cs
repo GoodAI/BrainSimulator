@@ -18,7 +18,7 @@ using GoodAI.TypeMapping;
 /*
 # How to use MyProjectRunner
 
-MyProjectRunner is an alternative to BrainSimulator GUI - you can use it to operate with projects without using GUI. 
+MyProjectRunner is an alternative to BrainSimulator GUI - you can use it to operate with projects without using GUI.
 That is especially handy if you want to:
 * Edit 10s or 100s of nodes at once
 * Try multiple values for one parameter and watch how it will affect results
@@ -46,7 +46,7 @@ That is especially handy if you want to:
     runner.Shutdown();
 
 ## More advanced example
-    
+
     // Program tries different combinations of parameters for two nodes, computes average values for multiple runs, log results and saves them to file.
 
     MyProjectRunner runner = new MyProjectRunner(MyLogLevel.WARNING);
@@ -87,6 +87,9 @@ That is especially handy if you want to:
 
 namespace GoodAI.Core.Execution
 {
+    /// <summary>
+    /// Alternative to BrainSimulator GUI used to run brains through scripting
+    /// </summary>
     public class MyProjectRunner : IDisposable
     {
         private MyProject m_project;
