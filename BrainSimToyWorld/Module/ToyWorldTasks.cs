@@ -297,9 +297,9 @@ namespace GoodAI.ToyWorld
                 float fof_up = Owner.Controls.Host[ControlMapper.Idx("fof_up")];
                 float fof_down = Owner.Controls.Host[ControlMapper.Idx("fof_down")];
 
-                float rotation = ConvertBiControlToUniControl(rotLeftSignal, rotRightSignal);
+                float rotation = ConvertBiControlToUniControl(rotRightSignal, rotLeftSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
-                float rightSpeed = ConvertBiControlToUniControl(leftSignal, rightSignal);
+                float rightSpeed = ConvertBiControlToUniControl(rightSignal, leftSignal);
                 float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
                 float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
 

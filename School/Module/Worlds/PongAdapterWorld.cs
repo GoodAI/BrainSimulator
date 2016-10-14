@@ -80,9 +80,9 @@ namespace GoodAI.School.Worlds
         {
             // Copy data from wrapper to world (inputs) - SchoolWorld validation ensures that we have something connected
             School.ActionInput.SafeCopyToHost();
-            ControlsAdapterTemp.Host[0] = School.ActionInput.Host[ControlMapper.Idx("right")]; // D
+            ControlsAdapterTemp.Host[0] = School.ActionInput.Host[ControlMapper.Idx("left")]; // A
             ControlsAdapterTemp.Host[1] = School.ActionInput.Host[ControlMapper.Idx("backward")]; // S
-            ControlsAdapterTemp.Host[2] = School.ActionInput.Host[ControlMapper.Idx("left")]; // A
+            ControlsAdapterTemp.Host[2] = School.ActionInput.Host[ControlMapper.Idx("right")]; // D
             ControlsAdapterTemp.SafeCopyToDevice();
         }
 
