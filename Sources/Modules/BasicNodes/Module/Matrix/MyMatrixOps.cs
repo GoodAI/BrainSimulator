@@ -62,6 +62,7 @@ namespace GoodAI.Modules.Matrix
 
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> B, MyMemoryBlock<float> Result);
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result);
+        public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AcolumnHint);
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A, float value, MyMemoryBlock<float> Result);
         public abstract void Run(MatOperation operation, MyMemoryBlock<float> A); // change A
 

@@ -102,6 +102,29 @@ namespace GoodAI.Modules.Matrix
             }
         }
 
+        /// <summary>
+        /// Enables overriding the dimensions to be applicable on tensors. Result columnHint seems not to be used for any operation so there is no need to override it.
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <param name="A"></param>
+        /// <param name="Result"></param>
+        /// <param name="AColumnHint">sees A as a matrix with this number of columns</param>
+        public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
+        {
+            if ((MyMatrixCublasOps.AvailableOperations() & operation) > 0)
+            {
+                MatCublOps.Run(operation, A, Result, AColumnHint); 
+            }
+            else if ((MyMatrixKernelOps.AvailableOperations() & operation) > 0)
+            {
+                MatKerlOps.Run(operation, A, Result, AColumnHint);
+            }
+            else
+            {
+                MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run undefined MatOps");
+            }
+        }
+
         public override void Run(MatOperation operation, MyMemoryBlock<float> A)
         {
             if ((MyMatrixCublasOps.AvailableOperations() & operation) > 0)

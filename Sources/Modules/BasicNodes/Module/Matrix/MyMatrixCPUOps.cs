@@ -57,6 +57,11 @@ namespace GoodAI.Modules.Matrix
             MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run cpu mat ops. for undefined MatOperation");
         }
 
+        public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
+        {
+            MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run cpu mat ops. for undefined MatOperation");
+        }
+
         public override void Run(MatOperation operation, MyMemoryBlock<float> A)
         {
             MyLog.Writer.WriteLine(MyLogLevel.ERROR, "Trying to run cpu mat ops. for undefined MatOperation");

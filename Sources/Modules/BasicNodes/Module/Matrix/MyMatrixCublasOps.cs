@@ -143,6 +143,11 @@ namespace GoodAI.Modules.Matrix
             }
         }
 
+        public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
+        {
+            Run(operation, A, Result); //the columnhint of A does not have any effect in the operations
+        }
+
 
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result)
         {

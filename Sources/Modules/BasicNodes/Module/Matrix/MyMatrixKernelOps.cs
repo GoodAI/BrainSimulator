@@ -153,6 +153,21 @@ namespace GoodAI.Modules.Matrix
             }
         }
 
+        /// <summary>
+        /// Enables overriding the dimensions to be applicable on tensors
+        /// </summary>
+        /// <param name="operation"></param>
+        /// <param name="A"></param>
+        /// <param name="Result"></param>
+        public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
+        {
+            if (OpersKerlsDictionary.ContainsKey(operation))
+            {
+                OpersKerlsDictionary[operation].SetupExecution(A.Count);
+                OpersKerlsDictionary[operation].Run(A, A.Count, AColumnHint, Result, Result.Count, Result.ColumnHint);
+            }
+        }
+
 
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, float value, MyMemoryBlock<float> Result)
         {
