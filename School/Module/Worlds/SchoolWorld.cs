@@ -509,7 +509,7 @@ namespace GoodAI.Modules.School.Worlds
             blocks.AddRange(defaultInitPhasePlan.Children.Where(x => x != InitSchool));
             MyExecutionBlock initPhasePlanPruned = new MyExecutionBlock(blocks.ToArray());
 
-            return new MyExecutionBlock(initPhasePlanPruned, plan, AdapterInputStep, AdapterOutputStep, LearningStep);
+            return new MyExecutionBlock(initPhasePlanPruned, plan, LearningStep);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
