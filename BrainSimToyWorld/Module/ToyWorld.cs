@@ -133,6 +133,20 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string SaveFile { get; set; }
 
+        [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
+        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Simple)]
+        public ControlMapper.ControlMode ControlMode
+        {
+            get
+            {
+                return ControlMapper.Mode;
+            }
+            set
+            {
+                ControlMapper.Mode = value;
+            }
+        }
+
 
         #region Effects
 
@@ -290,7 +304,6 @@ namespace GoodAI.ToyWorld
 
         protected int SignalCount { get; set; }
 
-
         public ToyWorld()
         {
             if (TilesetTable == null)
@@ -345,10 +358,21 @@ namespace GoodAI.ToyWorld
                 }
         }
 
-        public override void Dispose()
+        private void CleanInternal()
         {
             if (GameCtrl != null)
                 GameCtrl.Dispose(); // Should dispose RRs and controllers too
+        }
+
+        public override void Cleanup()
+        {
+            CleanInternal();
+            base.Cleanup();
+        }
+
+        public override void Dispose()
+        {
+            CleanInternal();
             base.Dispose();
         }
 
