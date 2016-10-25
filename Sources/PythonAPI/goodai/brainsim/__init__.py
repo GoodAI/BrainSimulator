@@ -1,4 +1,4 @@
-
+import os
 import clr
 import types
 from _winreg import OpenKey, QueryValueEx, HKEY_LOCAL_MACHINE
@@ -61,10 +61,18 @@ def load_brainsim(brainsim_path=None):
 		brainsim_path = "C:\Program Files\GoodAI\Brain Simulator"
 		print("Using default BrainSimulator path: {}".format(brainsim_path))
 
-	import clr
 
-	clr.AddReference(brainsim_path + '\GoodAI.Platform.Core.dll')
-	clr.AddReference(brainsim_path + '\GoodAI.School.dll')
+	if not os.path.isdir(brainsim_path):
+		print("Path {} does not exist. Unable to load Brain Simulator.".format(brainsim_path))
+		return False
+
+	for dllName in ["Platform.Core", "School"]:
+		absPath = brainsim_path + '\GoodAI.' + dllName + '.dll'
+		if not os.path.isfile(absPath):
+			print("Unable to find file {}. Did you specify the path to the latest Brain Simulator installation?".format(absPath))
+			return False
+		clr.AddReference(absPath)
 
 	_load_classes()
 	_init(brainsim_path)
+	return True
