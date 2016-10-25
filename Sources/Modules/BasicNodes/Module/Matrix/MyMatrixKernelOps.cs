@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using System;
 using System.Collections.Generic;
 
 
@@ -161,6 +162,11 @@ namespace GoodAI.Modules.Matrix
         /// <param name="Result"></param>
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
         {
+            if (A.Count % AColumnHint != 0)
+            {
+                throw new ArgumentException(string.Format("MyMatrixKernelOps: number of matrix elements ({0}) is not divisible by the desired column hint ({1})", A.Count, AColumnHint));
+            }
+
             if (OpersKerlsDictionary.ContainsKey(operation))
             {
                 OpersKerlsDictionary[operation].SetupExecution(A.Count);

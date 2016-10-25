@@ -111,6 +111,11 @@ namespace GoodAI.Modules.Matrix
         /// <param name="AColumnHint">sees A as a matrix with this number of columns</param>
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
         {
+            if (A.Count % AColumnHint != 0)
+            {
+                throw new ArgumentException(string.Format("MyMatrixAutoOps: number of matrix elements ({0}) is not divisible by the desired column hint ({1})", A.Count, AColumnHint));
+            }
+
             if ((MyMatrixCublasOps.AvailableOperations() & operation) > 0)
             {
                 MatCublOps.Run(operation, A, Result, AColumnHint); 
