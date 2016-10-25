@@ -130,7 +130,16 @@ namespace GoodAI.Core.Execution
 
         public MyProjectRunner(MyLogLevel level = MyLogLevel.DEBUG)
         {
-            MySimulation simulation = TypeMap.GetInstance<MySimulation>();
+            // why not to directly ask for TypeMap.GetInstance<MySimulation> ?
+            // because in Typemap configuration, MySimulation is set to be singleton - this causes problems when MyProjectRunner
+            // is instantiated multiple times - second and following instances obtain an instance of MySimulation from the first
+            // MyProjectRunner instance. If the first MyProjectRunner instance was Shutdown-ed, the MySimulation instance is also
+            // cleared and any following Shutdown on other MyProjectRunner instances will cause freeze/inifnite hang.
+            // This code creates new MySimulation instance for each MyProjectRunner instance.
+            // Other solution could be to not have a MySimulation as a singleton in TypeMap configuration - and it could work just OK,
+            // because in BrainSim, the TypeMap's GetInstance on MySimulation is only on one place in MainForm. However, this may change
+            // in future or the change itself may have other consequences, so for now I pick this solution, as it is safer.
+            MySimulation simulation = new MyLocalSimulation(TypeMap.GetInstance<MyValidator>(), TypeMap.GetInstance<IMyExecutionPlanner>());
             SimulationHandler = new MySimulationHandler(simulation);
             m_resultIdCounter = 0;
 
