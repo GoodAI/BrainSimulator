@@ -143,6 +143,12 @@ namespace GoodAI.Modules.Matrix
             }
         }
 
+        public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result, int AColumnHint)
+        {
+            MyLog.WARNING.WriteLine("MyMatrixCublasOps: Forcing a different columnhint does not have any effect on the perfomed operation - " + operation);
+            Run(operation, A, Result); //the columnhint of A does not have any effect in the operations
+        }
+
 
         public override void Run(MatOperation operation, MyMemoryBlock<float> A, MyMemoryBlock<float> Result)
         {
