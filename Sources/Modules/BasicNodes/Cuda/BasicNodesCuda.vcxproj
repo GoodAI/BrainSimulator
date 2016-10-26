@@ -92,6 +92,7 @@
     <CudaCompile Include="Transforms\EdgeDetectionKernel.cu" />
     <CudaCompile Include="Transforms\IntervalToBinaryVector.cu" />
     <CudaCompile Include="Transforms\InvertValuesKernel.cu" />
+    <CudaCompile Include="Transforms\KernelVector.cu" />
     <CudaCompile Include="Transforms\OpticalFlow.cu" />
     <CudaCompile Include="Transforms\Transform2DKernels.cu" />
     <CudaCompile Include="Transforms\TransformKernels.cu" />

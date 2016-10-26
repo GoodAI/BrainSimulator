@@ -151,7 +151,7 @@ namespace GoodAI.Core
             return m_randDevices[callee.GPU];
         }
 
-        private MyKernelFactory()
+        protected MyKernelFactory()
         {
             ContextsCreate();
             m_ptxModules = new Dictionary<string, CUmodule>[DevCount];
@@ -266,6 +266,12 @@ namespace GoodAI.Core
             int bufferSize = MyParallelKernel<T>.BUFFER_SIZE, bool forceNewInstance = false) where T : struct
         {
             return new MyProductKernel<T>(owner, nGPU, mode, bufferSize);
+        }
+
+        public MyCudaKernel KernelVector(int nGPU, KernelVector kernelName)
+        {
+            //Because the method Kernel is called from this method, it will look (via the Assembly.GetCallingAssembly()) for the kernels in BasicNodesCuda and not in the place from where the method KernelVector is called.
+            return Instance.Kernel(nGPU, @"Transforms\KernelVector", kernelName.ToString()); 
         }
 
         // !!! Warning: This is for testing purposes only.
