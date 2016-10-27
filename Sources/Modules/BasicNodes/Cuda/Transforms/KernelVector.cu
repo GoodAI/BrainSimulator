@@ -11,6 +11,12 @@ extern "C"
 {
 
 	//  DEVICE KERNELS
+	__forceinline__ __device__ int GetId() 
+	{ 
+		return blockDim.x * blockIdx.y * gridDim.x //rows preceeding current row in grid
+			 + blockDim.x * blockIdx.x             //blocks preceeding current block
+			 + threadIdx.x; 
+	}
 
 	// combine two vectors elemetwise with given weight, out = a * weightA + b * weightB
 	__device__ void device_ElementwiseAdd_Weighted(
@@ -22,9 +28,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -43,9 +47,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -62,9 +64,7 @@ extern "C"
 		int count		//length of the input vector
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		int segmentID;
 
@@ -83,9 +83,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -100,9 +98,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -120,9 +116,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -147,9 +141,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -183,9 +175,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -201,9 +191,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		if (id < count)
 		{
@@ -220,9 +208,7 @@ extern "C"
 		int count
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		int idA;
 
@@ -242,9 +228,7 @@ extern "C"
 		int lengthB
 		)
 	{
-		int id = blockDim.x*blockIdx.y*gridDim.x	//rows preceeding current row in grid
-			+ blockDim.x*blockIdx.x					//blocks preceeding current block
-			+ threadIdx.x;
+		int id = GetId();
 
 		int i;
 		int j;
