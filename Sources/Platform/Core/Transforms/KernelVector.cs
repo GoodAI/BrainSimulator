@@ -14,6 +14,7 @@ namespace GoodAI.Modules.Transforms
         ElementwiseAdd_Weighted,
         ElementwiseDiv,
         ElementwiseMult,
+        ElementwiseSub,
         ElementwiseMult_Segmented,
         CrossMult,
         OtherAverage
