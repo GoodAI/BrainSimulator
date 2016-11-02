@@ -75,7 +75,7 @@ extern "C"
 		}
 	}
 
-	// O = scalar * B
+	// O_i = scalar * B_i
 	__global__ void ScalarMult(
 		float * output,
 		float * input,
@@ -88,6 +88,23 @@ extern "C"
 		if (id < count)
 		{
 			output[id] = input[id] * scalar;
+		}
+	}
+
+	// O_i = scalar1 * B_i + scalar2
+	__global__ void ScalarMultThenAdd(
+		float * output,
+		float * input,
+		float scalar1,
+		float scalar2,
+		int count
+		)
+	{
+		int id = GetId();
+
+		if (id < count)
+		{
+			output[id] = input[id] * scalar1 + scalar2;
 		}
 	}
 
