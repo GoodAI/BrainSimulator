@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GoodAI.Core.Utils
 {
-    public enum MyLogLevel 
+    public enum MyLogLevel
     {
         DEBUG = 0,
         INFO = 1,
@@ -41,12 +41,12 @@ namespace GoodAI.Core.Utils
 
             MyLog.Writer = new MyDefaultLogWriter();
             MyLog.Level = MyLogLevel.INFO;
-        }        
-       
-        public static void GrabConsole() 
+        }
+
+        public static void GrabConsole()
         {
             Console.SetOut(MyLog.INFO);
-        }        
+        }
 
         private MyLog(MyLogLevel level)
         {
@@ -133,6 +133,47 @@ namespace GoodAI.Core.Utils
                     case MyLogLevel.ERROR: return ConsoleColor.Red;
                 }
                 return ConsoleColor.White;
+            }
+        }
+
+        public class MyTextLogWriter : MyLogWriter
+        {
+            private StringWriter m_output;
+
+            public MyTextLogWriter()
+            {
+                m_output = new StringWriter();
+            }
+
+
+            #region MyLogWriter overrides
+
+            public void Write(MyLogLevel level, char value)
+            {
+                m_output.WriteLine(value);
+            }
+
+            public void Write(MyLogLevel level, string value)
+            {
+                m_output.Write(value);
+            }
+
+            public void WriteLine(MyLogLevel level, string value)
+            {
+                m_output.WriteLine("[" + level + "] " + value);
+            }
+
+            public void FlushCache()
+            {
+                m_output.Flush();
+            }
+
+            #endregion
+
+
+            public string GetAllLogMessages()
+            {
+                return m_output.ToString();
             }
         }
     }
