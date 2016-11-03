@@ -11,11 +11,11 @@ extern "C"
 {
 
 	//  DEVICE KERNELS
-	__forceinline__ __device__ int GetId() 
-	{ 
+	__forceinline__ __device__ int GetId()
+	{
 		return blockDim.x * blockIdx.y * gridDim.x //rows preceeding current row in grid
-			 + blockDim.x * blockIdx.x             //blocks preceeding current block
-			 + threadIdx.x; 
+			+ blockDim.x * blockIdx.x             //blocks preceeding current block
+			+ threadIdx.x;
 	}
 
 	// combine two vectors elemetwise with given weight, out = a * weightA + b * weightB
@@ -88,6 +88,28 @@ extern "C"
 		if (id < count)
 		{
 			output[id] = input[id] * scalar;
+		}
+	}
+
+
+	__global__ void ElementwiseAbs(
+		float* a,
+		float* result,
+		int count
+		)
+	{
+		int id = GetId();
+
+		if (id < count)
+		{
+			if (a[id] < 0)
+			{
+				result[id] = -a[id];
+			}
+			else
+			{
+				result[id] = a[id];
+			}
 		}
 	}
 
