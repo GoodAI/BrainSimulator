@@ -9,6 +9,7 @@ namespace GoodAI.Modules.Transforms
         ScalarAdd_Segmented,
         ScalarMult,
         ScalarMultThenAdd,
+        ElementwiseAbs,
         ElementwiseAdd,
         ElementwiseAdd_Bounded,
         ElementwiseAdd_BoundedWeighted,
