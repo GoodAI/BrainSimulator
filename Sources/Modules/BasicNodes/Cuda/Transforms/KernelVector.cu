@@ -237,7 +237,7 @@ extern "C"
 		}
 	}
 
-	// elementwise multiplication of probabilities, first vector is (epected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
+	// elementwise multiplication of probabilities, first vector is (expected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
 	__global__ void ElementwiseMult_Segmented(
 		float* a,
 		float* b,
