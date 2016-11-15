@@ -237,21 +237,6 @@ extern "C"
 		}
 	}
 
-	__global__ void ElementwiseSub(
-		float* a,
-		float* b,
-		float* result,
-		int count
-		)
-	{
-		int id = GetId();
-
-		if (id < count)
-		{
-			result[id] = a[id] - b[id];
-		}
-	}
-
 	// elementwise multiplication of probabilities, first vector is (epected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
 	__global__ void ElementwiseMult_Segmented(
 		float* a,
@@ -269,6 +254,21 @@ extern "C"
 		{
 			idA = id % lengthA;
 			out[id] = a[idA] * b[id];
+		}
+	}
+
+	__global__ void ElementwiseSub(
+		float* a,
+		float* b,
+		float* result,
+		int count
+		)
+	{
+		int id = GetId();
+
+		if (id < count)
+		{
+			result[id] = a[id] - b[id];
 		}
 	}
 
