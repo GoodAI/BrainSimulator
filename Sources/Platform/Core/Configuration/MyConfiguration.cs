@@ -26,7 +26,7 @@ namespace GoodAI.Core.Configuration
         public static List<string> ModulesSearchPath { get; private set; }
         public static string OpenOnStartupProjectName { get; private set; }
 
-        public static string GlobalPTXFolder { get; private set; }        
+        public static string GlobalPTXFolder { get; set; }
 
         static MyConfiguration()
         {
@@ -96,6 +96,13 @@ namespace GoodAI.Core.Configuration
 
                 if (!fileInfo.Exists)
                     MyLog.WARNING.WriteLine("Module assembly not found: " + fileInfo);
+
+                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                    if (assembly.ManifestModule.Name == fileInfo.Name)
+                    {
+                        fileInfo = new FileInfo(assembly.ManifestModule.FullyQualifiedName);
+                        break;
+                    }
 
                 moduleList.Add(fileInfo);
             }

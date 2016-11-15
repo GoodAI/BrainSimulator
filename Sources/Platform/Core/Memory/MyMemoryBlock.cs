@@ -46,10 +46,9 @@ namespace GoodAI.Core.Memory
                         isSimStopped = (Owner.Owner.SimulationHandler.State ==
                                              MySimulationHandler.SimulationState.STOPPED);
                     }
-                    // setting an unmanaged value of a memory block during simulation can cause memory leaks and crashes
                     // be sure what you're doing when you set unmanaged to true when the simulation is running
-                    Debug.Assert(isSimStopped); 
-                    
+                    if (!isSimStopped)
+                        MyLog.WARNING.WriteLine("setting an unmanaged value of a memory block during simulation can cause memory leaks and crashes");
                     m_unmanaged = value;
                 }
                 else
