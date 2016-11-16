@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4B4762C5-D0CC-4F18-9DC4-34698ED536B8}</ProjectGuid>
+    <ProjectGuid>{53BAE6D4-7EEF-48E9-90CA-E140F47FA4F6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GoodAI.ToyWorld</RootNamespace>
