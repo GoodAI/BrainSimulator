@@ -826,6 +826,13 @@ namespace GoodAI.School.GUI
 
         private void btnSaveResults_Click(object sender, EventArgs e)
         {
+
+            if (dataGridViewLearningTasks.GetClipboardContent() == null)
+            {
+                MessageBox.Show("There is no data to save, please create at least one task before saving the results", "Nothing to save", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             if (saveResultsDialog.ShowDialog() != DialogResult.OK)
                 return;
 
