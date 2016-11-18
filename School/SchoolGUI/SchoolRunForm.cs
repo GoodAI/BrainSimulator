@@ -729,7 +729,12 @@ namespace GoodAI.School.GUI
                 return;
 
             if (folderBrowserAutosave.ShowDialog() != DialogResult.OK)
+            {
+                (sender as ToolStripButton).CheckState = 0;
+                Properties.School.Default.AutosaveEnabled = false;
+                Properties.School.Default.Save();
                 return;
+            }
 
             Properties.School.Default.AutosaveFolder = folderBrowserAutosave.SelectedPath;
             Properties.School.Default.Save();
