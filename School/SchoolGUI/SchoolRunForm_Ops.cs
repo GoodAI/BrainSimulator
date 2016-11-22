@@ -322,7 +322,7 @@ namespace GoodAI.School.GUI
 
         private void SetObserver()
         {
-            if (m_showObserver)
+            if (m_showObserver && m_school != null)
             {
                 if (m_observer == null)
                 {
