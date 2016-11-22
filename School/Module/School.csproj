@@ -33,31 +33,17 @@
     <DocumentationFile>conf\doc.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CudaBlas">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaBlas.dll</HintPath>
+    <Reference Include="CudaRand">
+      <HintPath>..\..\..\..\packages\ManagedCuda-CURAND.8.0.13\lib\net45\CudaRand.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="CudaFFT">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaFFT.dll</HintPath>
-    </Reference>
-    <Reference Include="CudaRand, Version=7.5.7.0, Culture=neutral, PublicKeyToken=fe981579f4e9a066, processorArchitecture=AMD64">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaRand.dll</HintPath>
-    </Reference>
-    <Reference Include="CudaSolve">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSolve.dll</HintPath>
-    </Reference>
-    <Reference Include="CudaSparse">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\CudaSparse.dll</HintPath>
-    </Reference>
-    <Reference Include="ManagedCuda, Version=7.5.7.0, Culture=neutral, PublicKeyToken=242d898828717aa0, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\ManagedCuda.dll</HintPath>
+    <Reference Include="ManagedCuda">
+      <HintPath>..\..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="NPP">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NPP.dll</HintPath>
-    </Reference>
-    <Reference Include="NVRTC">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\NVRTC.dll</HintPath>
+      <HintPath>..\..\..\..\packages\ManagedCuda-NPP.8.0.13\lib\net45\NPP.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>

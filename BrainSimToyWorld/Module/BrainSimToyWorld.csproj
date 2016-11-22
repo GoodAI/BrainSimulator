@@ -33,7 +33,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ManagedCuda">
-      <HintPath>..\..\..\..\packages\ManagedCuda-75-x64.7.5.7\lib\net45\x64\ManagedCuda.dll</HintPath>
+      <HintPath>..\..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -86,6 +87,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
