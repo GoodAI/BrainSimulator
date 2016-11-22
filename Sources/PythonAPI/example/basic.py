@@ -2,9 +2,13 @@ import pdb
 import random
 import struct
 from goodai.brainsim import load_brainsim
-load_brainsim("C:\Users\michal.vlasak\Desktop\Debug\p")
+load_brainsim('D:/BrainSimInternal/Sources/Platform/BrainSimulator/bin/Debug')
 
-from goodai.brainsim import MyProjectRunner, SchoolCurriculum, CurriculumManager, ToyWorldAdapterWorld, LearningTaskFactory
+from goodai.brainsim import MyProjectRunner
+
+from GoodAI.Modules.School.Common import SchoolCurriculum, LearningTaskFactory
+from GoodAI.School.Common import CurriculumManager
+from GoodAI.School.Worlds import ToyWorldAdapterWorld
 
 # Get Node
 # node = runner.GetNode(22)
@@ -31,27 +35,27 @@ school = runner[22]
 curr = SchoolCurriculum()
 
 for w in CurriculumManager.GetAvailableWorlds():
-	if w.Name == ToyWorldAdapterWorld.__name__:
-		for t in CurriculumManager.GetTasksForWorld(w):
-			it = LearningTaskFactory.CreateLearningTask(t, school)
-			it.RequiredWorldType = w
-			curr.Add(it)
+    if w.Name == ToyWorldAdapterWorld.__name__:
+        for t in CurriculumManager.GetTasksForWorld(w):
+            it = LearningTaskFactory.CreateLearningTask(t, school)
+            it.RequiredWorldType = w
+            curr.Add(it)
 
 school.Curriculum = curr
 
-actions = 13*[0]
+actions = 13 * [0]
 
 runner.RunAndPause(1)
 
 
 for _ in xrange(10):
-	actions[0] = random.random()
-	print(actions)
-	runner.SetValues(24, actions, "Output")
-	runner.RunAndPause(1)
-	tWorld = school.CurrentWorld
-	chosenActions = tWorld.ChosenActions
-	tWorld.ChosenActions.SafeCopyToHost()
-	print(chosenActions.Host[0])
+    actions[0] = random.random()
+    print(actions)
+    runner.SetValues(24, actions, "Output")
+    runner.RunAndPause(1)
+    tWorld = school.CurrentWorld
+    chosenActions = tWorld.ChosenActions
+    tWorld.ChosenActions.SafeCopyToHost()
+    print(chosenActions.Host[0])
 
 runner.Shutdown()
