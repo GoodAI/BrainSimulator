@@ -44,6 +44,13 @@ namespace GoodAI.School.Worlds
 
         public void InitWorldOutputs(int nGPU) { }
 
+        public override void UpdateMemoryBlocks()
+        {
+            FoVResHeight = School.VisualDimensionsFov.Height; // force the school's dimensions
+            FoVResWidth = School.VisualDimensionsFov.Width; // force the school's dimensions
+            base.UpdateMemoryBlocks();
+        }
+
         public void MapWorldOutputs()
         {
             VisualFov.CopyToMemoryBlock(School.VisualFOV, 0, 0, Math.Min(VisualFov.Count, School.VisualDimensionsFov.Width * School.VisualDimensionsFov.Height));
