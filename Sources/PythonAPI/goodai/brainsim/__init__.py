@@ -10,9 +10,15 @@ def _configureContainer():
 
 
 def _configureModulesAndKernels(brainsim_path):
-    for module_name in ["BasicNodes", "InternalNodes", "MNIST", "School", "ToyWorld"]:
-        MyConfiguration.ModulesSearchPath.Add("{}/modules/GoodAI.{}".format(brainsim_path, module_name))
-    MyConfiguration.GlobalPTXFolder = "{}/modules/GoodAI.BasicNodes/ptx/".format(brainsim_path)
+    module_dir = os.path.join(brainsim_path, 'modules')
+    for module_name in os.listdir(module_dir):
+        module_file = os.path.join(module_dir, module_name, module_name + '.dll')
+        MyConfiguration.ModulesSearchPath.Add(module_file)
+        if os.path.isfile(module_file):
+            clr.AddReference(module_file)
+        else:
+            print("Unable to find file {}. Classes from this module will not be available in Python code.".format(absPath))
+    MyConfiguration.GlobalPTXFolder = "{}/GoodAI.BasicNodes/ptx/".format(module_dir)
 
 
 def _init(brainsim_path):
@@ -59,12 +65,11 @@ def load_brainsim(brainsim_path=None):
         print("Path {} does not exist. Unable to load Brain Simulator.".format(brainsim_path))
         return False
 
-    for path in ['\GoodAI.Platform.Core.dll', '\modules\GoodAI.School\GoodAI.School.dll']:
-        absPath = brainsim_path + path
-        if not os.path.isfile(absPath):
-            print("Unable to find file {}. Did you specify the path to the latest Brain Simulator installation?".format(absPath))
-            return False
-        clr.AddReference(absPath)
+    absPath = os.path.join(brainsim_path, 'GoodAI.Platform.Core.dll')
+    if not os.path.isfile(absPath):
+        print("Unable to find file {}. Did you specify the path to the latest Brain Simulator installation?".format(absPath))
+        return False
+    clr.AddReference(absPath)
 
     _load_classes()
     _init(brainsim_path)
