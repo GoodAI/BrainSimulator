@@ -278,8 +278,10 @@ namespace GoodAI.Modules.School.Worlds
         private readonly Dictionary<Type, int> taskIdMap = new Dictionary<Type, int>();
 
         [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
-        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Simple)]
-        public ControlMapper.ControlMode ControlMode
+        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Autodetect)]
+        public ControlMapper.ControlMode ControlModeVisible { get; set; }  // only for the user - do not use otherwise
+
+        public ControlMapper.ControlMode ControlModeHidden // translates autodetect into the appropriate mode in UpdateMemoryBlocks
         {
             get
             {
@@ -311,6 +313,7 @@ namespace GoodAI.Modules.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
+            DetectControlMode();
             VisualFOV.Dims = new TensorDimensions(WidthFov, HeightFov * FloatsPerPixel);
             VisualFOF.Dims = new TensorDimensions(WidthFof, HeightFof * FloatsPerPixel);
             Text.Count = TextSize;
@@ -321,6 +324,30 @@ namespace GoodAI.Modules.School.Worlds
 
             if (CurrentWorld != null)
                 CurrentWorld.UpdateMemoryBlocks();
+        }
+
+        private void DetectControlMode()
+        {
+            if (ControlModeVisible == ControlMapper.ControlMode.Autodetect)
+            {
+                MyNode connectedNode = null;
+                if (InputConnections[0] != null &&
+                    (InputConnections[0].From as MyNetwork) != null &&
+                    (InputConnections[0].From as MyNetwork).GroupOutputNodes[0] != null &&
+                    (InputConnections[0].From as MyNetwork).GroupOutputNodes[0].InputConnections[0] != null)
+                {
+                    connectedNode =
+                        ((MyNetwork) (InputConnections[0].From)).GroupOutputNodes[0].InputConnections[0].From;
+                }
+
+                ControlModeHidden = (connectedNode is DeviceInput)
+                    ? ControlMapper.ControlMode.KeyboardMouse
+                    : ControlMapper.ControlMode.Simple;
+            }
+            else
+            {
+                ControlModeHidden = ControlModeVisible;
+            }
         }
 
         #endregion
@@ -405,7 +432,7 @@ namespace GoodAI.Modules.School.Worlds
         private void UpdateControls()
         {
             taskIdMap.Clear();
-            if (ControlMode == ControlMapper.ControlMode.SimpleTaskSpecific && Curriculum != null)
+            if (ControlModeHidden == ControlMapper.ControlMode.SimpleTaskSpecific && Curriculum != null)
             {
                 int lowestFreeTaskId = 0;
                 foreach (ILearningTask learningTask in Curriculum)
@@ -625,7 +652,7 @@ namespace GoodAI.Modules.School.Worlds
             MyLog.Writer.WriteLine(MyLogLevel.INFO, "Switching to LearningTask: " + CurrentLearningTask.GetTypeName());
 
             CurrentLearningTask.Init();
-            if (ControlMode == ControlMapper.ControlMode.SimpleTaskSpecific)
+            if (ControlModeHidden == ControlMapper.ControlMode.SimpleTaskSpecific)
                 ControlMapper.ControlsID = m_currentTaskId = taskIdMap[CurrentLearningTask.GetType()];
             NotifyNewTrainingUnit();
             NotifyNewLevel();

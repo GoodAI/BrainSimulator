@@ -11,6 +11,7 @@ namespace Utils
     {
         public enum ControlMode
         {
+            Autodetect,
             Simple,
             KeyboardMouse,
             SimpleTaskSpecific

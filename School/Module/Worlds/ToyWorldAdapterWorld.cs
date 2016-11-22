@@ -48,6 +48,8 @@ namespace GoodAI.School.Worlds
         {
             FoVResHeight = School.VisualDimensionsFov.Height; // force the school's dimensions
             FoVResWidth = School.VisualDimensionsFov.Width; // force the school's dimensions
+            CopyDataThroughCPU = School.CopyDataThroughCPU;
+            ControlModeVisible = School.ControlModeHidden;
             base.UpdateMemoryBlocks();
         }
 

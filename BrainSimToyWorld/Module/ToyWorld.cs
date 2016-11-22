@@ -134,8 +134,10 @@ namespace GoodAI.ToyWorld
         public string SaveFile { get; set; }
 
         [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
-        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Simple)]
-        public ControlMapper.ControlMode ControlMode
+        [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Autodetect)]
+        public ControlMapper.ControlMode ControlModeVisible { get; set; } // only for the user - do not use otherwise
+
+        public ControlMapper.ControlMode ControlModeHidden // translates autodetect into the appropriate mode in UpdateMemoryBlocks
         {
             get
             {
@@ -417,10 +419,36 @@ namespace GoodAI.ToyWorld
 
             Text.Count = MaxMessageLength;
 
+            DetectControlMode();
+
             if (Controls == null)
                 return;
 
             ChosenActions.Count = Controls.Count;
+        }
+
+        private void DetectControlMode()
+        {
+            if (ControlModeVisible == ControlMapper.ControlMode.Autodetect)
+            {
+                MyNode connectedNode = null;
+                if (InputConnections[0] != null &&
+                    (InputConnections[0].From as MyNetwork) != null &&
+                    (InputConnections[0].From as MyNetwork).GroupOutputNodes[0] != null &&
+                    (InputConnections[0].From as MyNetwork).GroupOutputNodes[0].InputConnections[0] != null)
+                {
+                    connectedNode =
+                        ((MyNetwork) (InputConnections[0].From)).GroupOutputNodes[0].InputConnections[0].From;
+                }
+
+                ControlModeHidden = (connectedNode is DeviceInput)
+                    ? ControlMapper.ControlMode.KeyboardMouse
+                    : ControlMapper.ControlMode.Simple;
+            }
+            else
+            {
+                ControlModeHidden = ControlModeVisible;
+            }
         }
 
         private void SetDummyOutputs(int howMany, string dummyName, int dummySize)
