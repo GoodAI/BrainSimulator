@@ -391,7 +391,7 @@ namespace Render.RenderRequests
                     0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
-                if (ImageRenderer.Settings.CopyDepth)
+                if (ImageRenderer.Settings.CopyDepth || EffectRenderer.Settings.EnabledEffects != RenderRequestEffect.None)
                     GL.BlitFramebuffer(
                         0, 0, FboMs.Size.X, FboMs.Size.Y,
                         0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
