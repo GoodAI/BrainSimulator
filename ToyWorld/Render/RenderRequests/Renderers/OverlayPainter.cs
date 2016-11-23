@@ -14,8 +14,8 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    internal class OverlayRenderer
-        : RRRendererBase<OverlaySettings, RenderRequestBase>, IDisposable
+    internal class OverlayPainter
+        : PainterBase<OverlaySettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -28,7 +28,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public OverlayRenderer(RenderRequestBase owner)
+        public OverlayPainter(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -99,15 +99,15 @@ namespace Render.RenderRequests
 
         protected void DrawAvatarTool(RendererBase<ToyWorld> renderer, IAvatar avatar, Vector2 size, Vector2 position, ToolBackgroundType type = ToolBackgroundType.BrownBorder)
         {
-            GameObjectRenderer goRenderer = Owner.GameObjectRenderer;
+            GameObjectPainter goPainter = Owner.GameObjectPainter;
 
             GL.Enable(EnableCap.Blend);
             Owner.SetDefaultBlending();
 
             // Bind stuff to GL (used in overrides)
-            renderer.TextureManager.Bind(goRenderer.TilesetTexture);
-            renderer.EffectManager.Use(goRenderer.Effect);
-            goRenderer.Effect.TextureUniform(0);
+            renderer.TextureManager.Bind(goPainter.TilesetTexture);
+            renderer.EffectManager.Use(goPainter.Effect);
+            goPainter.Effect.TextureUniform(0);
 
 
             if (Owner.FlipYAxis)
@@ -128,25 +128,25 @@ namespace Render.RenderRequests
             m_overlayEffect.TileTypesIdxOffsetUniform(0);
             m_overlayEffect.ModelViewProjectionUniform(ref transform);
 
-            goRenderer.LocalTileTypesBuffer[0] = (ushort)type;
+            goPainter.LocalTileTypesBuffer[0] = (ushort)type;
             if (avatar.Tool != null)
-                goRenderer.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
+                goPainter.LocalTileTypesBuffer[1] = (ushort)avatar.Tool.TilesetId;
 
             GL.BindBuffer(BufferTarget.PixelUnpackBuffer, 0);
-            goRenderer.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: goRenderer.LocalTileTypesBuffer);
+            goPainter.TileTypesTexure.Update1D(2, dataType: PixelType.UnsignedShort, data: goPainter.LocalTileTypesBuffer);
             QuadOffset.Draw();
 
 
             // Draw the inventory Tool
             if (avatar.Tool != null)
             {
-                renderer.TextureManager.Bind(goRenderer.TilesetTexture);
-                renderer.EffectManager.Use(goRenderer.Effect);
-                goRenderer.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
-                goRenderer.Effect.TileTypesIdxOffsetUniform(1);
+                renderer.TextureManager.Bind(goPainter.TilesetTexture);
+                renderer.EffectManager.Use(goPainter.Effect);
+                goPainter.Effect.DiffuseUniform(new Vector4(1, 1, 1, 1));
+                goPainter.Effect.TileTypesIdxOffsetUniform(1);
 
                 Matrix toolTransform = Matrix.CreateScale(0.7f) * transform;
-                goRenderer.Effect.ModelViewProjectionUniform(ref toolTransform);
+                goPainter.Effect.ModelViewProjectionUniform(ref toolTransform);
 
                 QuadOffset.Draw();
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -19,8 +19,8 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    internal class GameObjectRenderer
-        : RRRendererBase<GameObjectSettings, RenderRequestBase>, IDisposable
+    internal class GameObjectPainter
+        : PainterBase<GameObjectSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -59,7 +59,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public GameObjectRenderer(RenderRequestBase owner)
+        public GameObjectPainter(RenderRequestBase owner)
             : base(owner)
         { }
 
@@ -121,7 +121,7 @@ namespace Render.RenderRequests
                 Effect.TileSizeMarginUniform(new Vector4I(world.TilesetTable.TileSize, world.TilesetTable.TileMargins));
                 Effect.TileBorderUniform(world.TilesetTable.TileBorder);
 
-                Effect.AmbientUniform(new Vector4(1, 1, 1, EffectRenderer.AmbientTerm));
+                Effect.AmbientUniform(new Vector4(1, 1, 1, EffectPainter.AmbientTerm));
             }
 
             // Set up geometry
@@ -236,7 +236,7 @@ namespace Render.RenderRequests
             Effect.TextureUniform((int)RenderRequestBase.TextureBindPosition.SummerTileset);
             Effect.TextureWinterUniform((int)RenderRequestBase.TextureBindPosition.WinterTileset);
             Effect.TileTypesTextureUniform((int)RenderRequestBase.TextureBindPosition.TileTypes);
-            Effect.DiffuseUniform(new Vector4(1, 1, 1, Owner.EffectRenderer.GetGlobalDiffuseComponent(world)));
+            Effect.DiffuseUniform(new Vector4(1, 1, 1, Owner.EffectPainter.GetGlobalDiffuseComponent(world)));
             Effect.TileVertexCountUniform(Settings.Use3D ? DuplicatedCubeGrid.FaceCount * 4 : 4);
 
             if (Settings.EnabledGameObjects.HasFlag(RenderRequestGameObject.TileLayers))

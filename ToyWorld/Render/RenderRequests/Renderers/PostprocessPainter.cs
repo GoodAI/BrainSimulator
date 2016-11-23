@@ -8,8 +8,8 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    internal class PostprocessRenderer
-        : RRRendererBase<PostprocessingSettings, RenderRequestBase>, IDisposable
+    internal class PostprocessPainter
+        : PainterBase<PostprocessingSettings, RenderRequestBase>, IDisposable
     {
         #region Fields
 
@@ -19,7 +19,7 @@ namespace Render.RenderRequests
 
         #region Genesis
 
-        public PostprocessRenderer(RenderRequestBase owner)
+        public PostprocessPainter(RenderRequestBase owner)
             : base(owner)
         { }
 

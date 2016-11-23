@@ -38,11 +38,11 @@ namespace Render.RenderRequests
 
         #region Fields
 
-        internal GameObjectRenderer GameObjectRenderer;
-        internal EffectRenderer EffectRenderer;
-        internal PostprocessRenderer PostprocessRenderer;
-        internal OverlayRenderer OverlayRenderer;
-        internal ImageRenderer ImageRenderer;
+        internal GameObjectPainter GameObjectPainter;
+        internal EffectPainter EffectPainter;
+        internal PostprocessPainter PostprocessPainter;
+        internal OverlayPainter OverlayPainter;
+        internal ImagePainter ImagePainter;
 
         protected internal BasicFbo FrontFbo, BackFbo;
         protected internal BasicFboMultisample FboMs;
@@ -60,11 +60,11 @@ namespace Render.RenderRequests
 
         protected RenderRequestBase()
         {
-            GameObjectRenderer = new GameObjectRenderer(this);
-            EffectRenderer = new EffectRenderer(this);
-            PostprocessRenderer = new PostprocessRenderer(this);
-            OverlayRenderer = new OverlayRenderer(this);
-            ImageRenderer = new ImageRenderer(this);
+            GameObjectPainter = new GameObjectPainter(this);
+            EffectPainter = new EffectPainter(this);
+            PostprocessPainter = new PostprocessPainter(this);
+            OverlayPainter = new OverlayPainter(this);
+            ImagePainter = new ImagePainter(this);
 
             SizeV = new Vector2(3, 3);
             Resolution = new System.Drawing.Size(1024, 1024);
@@ -85,11 +85,11 @@ namespace Render.RenderRequests
 
             Quad.Dispose();
 
-            GameObjectRenderer.Dispose();
-            EffectRenderer.Dispose();
-            PostprocessRenderer.Dispose();
-            OverlayRenderer.Dispose();
-            ImageRenderer.Dispose();
+            GameObjectPainter.Dispose();
+            EffectPainter.Dispose();
+            PostprocessPainter.Dispose();
+            OverlayPainter.Dispose();
+            ImagePainter.Dispose();
         }
 
         #endregion
@@ -291,17 +291,17 @@ namespace Render.RenderRequests
             Quad = Renderer.GeometryManager.Get<Quad>();
 
 
-            GameObjectRenderer.Init(Renderer, World, GameObjects);
-            EffectRenderer.Init(Renderer, World, Effects);
-            PostprocessRenderer.Init(Renderer, World, Postprocessing);
-            OverlayRenderer.Init(Renderer, World, Overlay);
-            ImageRenderer.Init(Renderer, World, Image);
+            GameObjectPainter.Init(Renderer, World, GameObjects);
+            EffectPainter.Init(Renderer, World, Effects);
+            PostprocessPainter.Init(Renderer, World, Postprocessing);
+            OverlayPainter.Init(Renderer, World, Overlay);
+            ImagePainter.Init(Renderer, World, Image);
         }
 
         protected virtual void CheckDirtyParams()
         {
             // Update renderers
-            GameObjectRenderer.CheckDirtyParams(Renderer, World);
+            GameObjectPainter.CheckDirtyParams(Renderer, World);
 
 
             // Only setup these things when their dependency has changed (property setters enable these)
@@ -340,24 +340,24 @@ namespace Render.RenderRequests
 
         public virtual void OnPreDraw()
         {
-            if (GameObjectRenderer != null)
-                GameObjectRenderer.OnPreDraw();
+            if (GameObjectPainter != null)
+                GameObjectPainter.OnPreDraw();
 
-            if (ImageRenderer != null)
-                ImageRenderer.OnPreDraw();
+            if (ImagePainter != null)
+                ImagePainter.OnPreDraw();
         }
 
         public virtual void OnPostDraw()
         {
             // Copy the rendered scene -- doing this here lets GL time to finish the scene
-            if (ImageRenderer != null)
-                ImageRenderer.Draw(Renderer, World);
+            if (ImagePainter != null)
+                ImagePainter.Draw(Renderer, World);
 
-            if (GameObjectRenderer != null)
-                GameObjectRenderer.OnPostDraw();
+            if (GameObjectPainter != null)
+                GameObjectPainter.OnPostDraw();
 
-            if (ImageRenderer != null)
-                ImageRenderer.OnPostDraw();
+            if (ImagePainter != null)
+                ImagePainter.OnPostDraw();
         }
 
         #endregion
@@ -378,7 +378,7 @@ namespace Render.RenderRequests
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // Draw the scene
-            GameObjectRenderer.Draw(Renderer, World);
+            GameObjectPainter.Draw(Renderer, World);
 
             // Resolve multisampling
             if (MultisampleLevel > 0)
@@ -391,7 +391,7 @@ namespace Render.RenderRequests
                     0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
                     ClearBufferMask.ColorBufferBit,
                     BlitFramebufferFilter.Linear);
-                if (ImageRenderer.Settings.CopyDepth || EffectRenderer.Settings.EnabledEffects != RenderRequestEffect.None)
+                if (ImagePainter.Settings.CopyDepth || EffectPainter.Settings.EnabledEffects != RenderRequestEffect.None)
                     GL.BlitFramebuffer(
                         0, 0, FboMs.Size.X, FboMs.Size.Y,
                         0, 0, FrontFbo.Size.X, FrontFbo.Size.Y,
@@ -400,13 +400,13 @@ namespace Render.RenderRequests
             }
 
             // Draw effects after multisampling to save fragment shader calls
-            EffectRenderer.Draw(Renderer, World);
+            EffectPainter.Draw(Renderer, World);
 
             // Depth testing is useless for these
             GL.Disable(EnableCap.DepthTest);
 
-            PostprocessRenderer.Draw(Renderer, World);
-            OverlayRenderer.Draw(Renderer, World);
+            PostprocessPainter.Draw(Renderer, World);
+            OverlayPainter.Draw(Renderer, World);
 
             // Tell OpenGL driver to submit any unissued commands to the GPU
             GL.Flush();

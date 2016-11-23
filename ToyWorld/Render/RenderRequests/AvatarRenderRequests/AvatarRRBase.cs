@@ -12,12 +12,12 @@ namespace Render.RenderRequests
         #region Internal overlay class
 
         // Internal class that replaces the base renderer, adding new features
-        internal class ARROverlayRenderer
-            : OverlayRenderer
+        internal class ArrOverlayPainter
+            : OverlayPainter
         {
             internal new AvatarRRBase Owner { get { return (AvatarRRBase)base.Owner; } }
 
-            public ARROverlayRenderer(RenderRequestBase owner)
+            public ArrOverlayPainter(RenderRequestBase owner)
                 : base(owner)
             { }
 
@@ -44,10 +44,10 @@ namespace Render.RenderRequests
         #endregion
 
 
-        internal new ARROverlayRenderer OverlayRenderer
+        internal new ArrOverlayPainter OverlayPainter
         {
-            get { return (ARROverlayRenderer)base.OverlayRenderer; }
-            set { base.OverlayRenderer = value; }
+            get { return (ArrOverlayPainter)base.OverlayPainter; }
+            set { base.OverlayPainter = value; }
         }
 
 
@@ -59,7 +59,7 @@ namespace Render.RenderRequests
         protected AvatarRRBase(int avatarID)
         {
             AvatarID = avatarID;
-            OverlayRenderer = new ARROverlayRenderer(this);
+            OverlayPainter = new ArrOverlayPainter(this);
         }
 
 
@@ -148,7 +148,7 @@ namespace Render.RenderRequests
             }
 
             if (GameObjects.Use3D)
-                GameObjectRenderer.IgnoredGameObjects.Add(avatar);
+                GameObjectPainter.IgnoredGameObjects.Add(avatar);
         }
     }
 }

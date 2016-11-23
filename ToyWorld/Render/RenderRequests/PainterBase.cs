@@ -4,7 +4,7 @@ using World.ToyWorldCore;
 
 namespace Render.RenderRequests
 {
-    internal abstract class RRRendererBase<TSettings, TOwner>
+    internal abstract class PainterBase<TSettings, TOwner>
         where TSettings : struct 
         where TOwner : class
     {
@@ -12,7 +12,7 @@ namespace Render.RenderRequests
         protected readonly TOwner Owner;
 
 
-        protected RRRendererBase(TOwner owner)
+        protected PainterBase(TOwner owner)
         {
             Debug.Assert(owner != null);
             Owner = owner;
