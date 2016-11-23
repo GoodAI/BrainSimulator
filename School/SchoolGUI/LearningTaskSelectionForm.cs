@@ -24,11 +24,12 @@ namespace GoodAI.School.GUI
             worldList.DisplayMember = "DisplayName";
         }
 
-        public List<Type> ResultLearningTaskTypes { get; set; }
+        public HashSet<Type> ResultLearningTaskTypes { get; set; }
         public Type ResultWorldType { get; set; }
 
         private void LearningTaskSelectionForm_Load(object sender, EventArgs e)
         {
+            ResultLearningTaskTypes = new HashSet<Type>();
             PopulateWorldList();
             PopulateLearningTaskList();
         }
@@ -48,21 +49,39 @@ namespace GoodAI.School.GUI
             learningTaskList.Items.Clear();
             Type selectedWorldType = (worldList.SelectedItem as TypeListItem).Type;
 
-            foreach (Type entry in CurriculumManager.GetTasksForWorld(selectedWorldType))
-                learningTaskList.Items.Add(new LearningTaskListItem(entry));
+            List<Type> worldTasks = CurriculumManager.GetTasksForWorld(selectedWorldType);
+
+            AuthorizeCheck = true;
+            for (int i = 0; i < worldTasks.Count; i++)
+            {
+                learningTaskList.Items.Add(new LearningTaskListItem(worldTasks[i]));
+                learningTaskList.SetItemChecked(i, ResultLearningTaskTypes.Contains(worldTasks[i]));
+            }
+            AuthorizeCheck = false;
 
             if (learningTaskList.Items.Count > 0)
                 learningTaskList.SelectedIndex = 0;
         }
 
+        private void CollectCheckedLTs()
+        {
+            for (int i = 0; i < learningTaskList.Items.Count; i++)
+            {
+                TypeListItem typeListItem = learningTaskList.Items[i] as TypeListItem;
+                if (typeListItem == null) continue;
+
+                Type ltType = typeListItem.Type;
+                if (learningTaskList.GetItemCheckState(i) == CheckState.Checked)
+                    ResultLearningTaskTypes.Add(ltType);
+                else
+                    ResultLearningTaskTypes.Remove(ltType);
+            }
+        }
+
         private void okButton_Click(object sender, EventArgs e)
         {
+            CollectCheckedLTs();
             DialogResult = DialogResult.OK;
-            ResultLearningTaskTypes = new List<Type>();
-            foreach (var item in learningTaskList.CheckedItems)
-            {
-                ResultLearningTaskTypes.Add((item as TypeListItem).Type);
-            }
             ResultWorldType = (worldList.SelectedItem as TypeListItem).Type;
             Close();
         }
@@ -97,6 +116,7 @@ namespace GoodAI.School.GUI
 
         private void worldList_SelectedIndexChanged(object sender, EventArgs e)
         {
+            CollectCheckedLTs();
             PopulateLearningTaskList();
         }
 
