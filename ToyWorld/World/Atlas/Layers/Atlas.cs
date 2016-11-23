@@ -47,6 +47,8 @@ namespace World.Atlas.Layers
         public Atlas()
         {
             m_timeTicks = new DateTime(2000, 1, 1, 0, 0, 0).Ticks;
+            YearLength = TimeSpan.FromMinutes(2);
+            DayLength = TimeSpan.FromSeconds(10);
             NewAutoupdateables = new List<IAutoupdateableGameActor>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();

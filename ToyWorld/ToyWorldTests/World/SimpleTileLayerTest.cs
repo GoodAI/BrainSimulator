@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Moq;
 using System.Linq;
@@ -49,6 +50,10 @@ namespace ToyWorldTests.World
             {
                 Tiles = m_tileArray
             };
+
+            var atlas = new Atlas();
+            atlas.IncrementTime(new TimeSpan(atlas.YearLength.Ticks / 2)); // Set summer
+            m_simpleTileLayer.UpdateTileStates(atlas);
         }
 
         [Fact]
