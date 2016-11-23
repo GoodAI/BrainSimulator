@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
+using System.ComponentModel;
 
 namespace GoodAI.School.Common
 {
@@ -28,8 +29,17 @@ namespace GoodAI.School.Common
             {
                 Type learningTaskType = entry.Key;
                 List<Type> worldTypes = entry.Value;
-                if (ContainsType(worldTypes, worldType) && worldTypes.Contains(worldType))
+
+                bool isBrowsable = true;
+                object[] browsableAttrs = learningTaskType.GetCustomAttributes(typeof(BrowsableAttribute), true);
+                if (browsableAttrs.Length > 0)
+                    isBrowsable = (browsableAttrs[0] as BrowsableAttribute).Browsable;
+
+
+                if (ContainsType(worldTypes, worldType) && worldTypes.Contains(worldType) && isBrowsable)
                     result.Add(learningTaskType);
+
+
             }
 
             return result;

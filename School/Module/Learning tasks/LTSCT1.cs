@@ -12,6 +12,7 @@ using GoodAI.School.Learning_tasks;
 namespace GoodAI.Modules.School.LearningTasks
 {
     [DisplayName("SC D1 LT1 - 1 shape")]
+    [Browsable(false)]
     public class Ltsct1 : AbstractLearningTask<RoguelikeWorld>
     {
         protected Random RndGen = new Random(1);
