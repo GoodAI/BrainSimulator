@@ -124,6 +124,7 @@ namespace Utils
                 int neededControls = NrOfControls;
                 int providedControls = controls.Count;
                 validator.AssertError(providedControls >= neededControls, sender, String.Format("Wrong number of actions. With current control mode ({0}) you have to provide at least {1} controls. Provide the correct number of controls or change the control mode.", Mode, neededControls));
+                validator.AssertWarning(providedControls != neededControls, sender, String.Format("With current control mode ({0}) you should provide {1} controls but you provided {2} controls. Make sure that this is what you want and you have correct control mode chosen.", Mode, neededControls, providedControls));
             }
         }
     }

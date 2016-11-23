@@ -275,6 +275,8 @@ namespace GoodAI.School.GUI
         {
             if (!Visible)
                 return;
+            if (newWorld == null)
+                Hide();
             if (oldWorld != null)
                 RemoveWorldHandlers(oldWorld as SchoolWorld);
             if (newWorld != null)
