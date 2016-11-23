@@ -659,6 +659,8 @@ namespace GoodAI.School.GUI
             AddTaskView = new LearningTaskSelectionForm();
             AddTaskView.StartPosition = FormStartPosition.CenterParent;
             AddTaskView.ShowDialog(this);
+            if (AddTaskView.ResultLearningTaskTypes == null)
+                return;
 
             List<LearningTaskNode> newLearningTaskNodes = new List<LearningTaskNode>();
             foreach (Type learningTaskType in AddTaskView.ResultLearningTaskTypes)
