@@ -69,6 +69,9 @@ namespace RenderingBase.RenderObjects.Buffers
         private static void ClearLazyHelper<TLazyValue>(ref Lazy<TLazyValue> lazy)
             where TLazyValue : IDisposable
         {
+            if (lazy == null)
+                return;
+
             if (lazy.IsValueCreated)
                 lazy.Value.Dispose();
 

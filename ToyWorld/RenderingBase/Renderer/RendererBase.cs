@@ -60,7 +60,6 @@ namespace RenderingBase.Renderer
             while (m_renderRequestQueue.Count > 0) // Cannot dispose in a foreach cycle (they remove themselves from the queue)
             {
                 var rr = m_renderRequestQueue[m_renderRequestQueue.Count - 1];
-                m_renderRequestQueue.RemoveAt(m_renderRequestQueue.Count - 1);
                 rr.Dispose();
 
                 Debug.Assert(!m_renderRequestQueue.Contains(rr));

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using GoodAI.ToyWorld.Control;
 using OpenTK.Graphics.OpenGL;
 using Render.RenderObjects.Effects;
@@ -67,8 +68,12 @@ namespace Render.RenderRequests
             Effect.Dispose();
 
             TilesetTexture.Dispose();
-            TileTypesTexure.Dispose();
-            m_tileTypesBuffer.Dispose();
+
+            if (TileTypesTexure != null) // If no step was done, this might still be uninitialized
+            {
+                TileTypesTexure.Dispose();
+                m_tileTypesBuffer.Dispose();
+            }
 
             if (Grid != null) // It is initialized during Draw
                 Grid.Dispose();
