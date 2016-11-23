@@ -1,3 +1,27 @@
+### Brain Simulator 0.6.0
+*Early access release* (2016-12-01)
+
+#### School for AI
+
+TODO
+
+#### New features
+
+**Python API** - Added Python interface for MyProjectRunner that allows you to control simulation of a brain project from code. You can also use some classes of the School for AI. 
+
+**Tiling observer for tensors** - The memory block observer can now show the data in tiles according to tensor dimensions. See the new option ObserveTensors. 
+
+#### Improvements and fixes
+* MNIST World now allows to specify random seed
+* Improved Resize2D node, added the possibility to compute exact 1 to N or N to 1 interpolations
+* Observers improvements, e.g. added possibility to produce custom peek label by a custom observer
+* A brain project is now loaded even if some target memory blocks are not found
+
+#### New nodes
+* Added Dynamic Boltzman Machine module (called DyBM).
+* Added SignalToFloatNode that converts communication Signals to data in a memory block
+
+
 ### Brain Simulator 0.5.0
 *Early access release* (2016-04-12)
 
@@ -27,7 +51,7 @@
 * MNIST World improvements - separate tasks for training and testing data, more improvements
 * Improved reduction API
 
-#### Known Bugs
+#### Known bugs
 
 * The CUDA-based Matrix Observer sometimes crashes, please try to replace it with the new CPU-based Matrix Observer (look for an icon with a green dot) 
 
