@@ -35,6 +35,7 @@ pages:
     - Nupic Node: 'examples/nupic.md'
     - Loop group: 'examples/loopgroup.md'
     - Genetic Training World: 'examples/genetic.md'
+    - School for AI: 'examples/school.md'
 
 - Changelog: 'changelog.md'
 markdown_extensions:
