@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlMapper.cs" />
     <Compile Include="Language\Heap.cs" />
     <Compile Include="Language\LabeledVector.cs" />
     <Compile Include="Language\NBestList.cs" />

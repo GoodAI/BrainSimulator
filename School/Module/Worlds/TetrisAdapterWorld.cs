@@ -8,6 +8,7 @@ using System.ComponentModel;
 using GoodAI.Core.Utils;
 using GoodAI.Core;
 using GoodAI.Core.Task;
+using GoodAI.ToyWorld;
 using Utils;
 
 namespace GoodAI.School.Worlds

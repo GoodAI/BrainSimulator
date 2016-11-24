@@ -67,10 +67,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Logger\Logger.csproj">
-      <Project>{49A532A2-2080-4DBE-AFC8-0B34D9B0B210}</Project>
-      <Name>Logger</Name>
-    </ProjectReference>
     <ProjectReference Include="..\RenderingBase\RenderingBase.csproj">
       <Project>{272a6b2f-921a-4ac2-aced-a3e0f487954c}</Project>
       <Name>RenderingBase</Name>
