@@ -20,7 +20,6 @@ using OpenTK.Graphics.OpenGL;
 using System.ComponentModel;
 using GoodAI.Modules.School.LearningTasks;
 using GoodAI.ToyWorld;
-using Utils;
 using NativeWindow = OpenTK.NativeWindow;
 using PixelFormat = System.Drawing.Imaging.PixelFormat;
 

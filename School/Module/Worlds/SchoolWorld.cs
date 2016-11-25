@@ -15,7 +15,6 @@ using System.Windows.Forms;
 using System.Drawing;
 using GoodAI.Core;
 using GoodAI.ToyWorld;
-using Utils;
 
 namespace GoodAI.Modules.School.Worlds
 {

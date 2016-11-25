@@ -161,10 +161,6 @@
       <Project>{4B4762C5-D0CC-4F18-9DC4-34698ED536B8}</Project>
       <Name>BrainSimToyWorld</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ToyWorld\Utils\Utils.csproj">
-      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
