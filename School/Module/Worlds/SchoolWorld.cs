@@ -14,7 +14,7 @@ using YAXLib;
 using System.Windows.Forms;
 using System.Drawing;
 using GoodAI.Core;
-using Utils;
+using GoodAI.ToyWorld;
 
 namespace GoodAI.Modules.School.Worlds
 {

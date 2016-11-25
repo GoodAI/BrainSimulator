@@ -80,6 +80,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldConversation", "Toy
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderingBase", "..\ToyWorld\RenderingBase\RenderingBase.csproj", "{272A6B2F-921A-4AC2-ACED-A3E0F487954C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{046AB23F-D80E-4D6C-A290-1C5B1CDB4475}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimToyWorldUnitTests", "BrainSimToyWorldUnitTests\BrainSimToyWorldUnitTests.csproj", "{43231D78-5B1E-420E-8B8C-B352F68D48CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -252,6 +256,14 @@ Global
 		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{272A6B2F-921A-4AC2-ACED-A3E0F487954C}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -282,5 +294,6 @@ Global
 		{615C5A8C-1D58-4505-8340-C21617AF6DDF} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
 		{99EEE01B-4697-415C-969B-3767139473D3} = {91964B8F-7E88-402F-A6A2-B3DBA05AF1E9}
 		{272A6B2F-921A-4AC2-ACED-A3E0F487954C} = {BB04C4E6-F1E6-4714-A0F6-34C673D71BE1}
+		{43231D78-5B1E-420E-8B8C-B352F68D48CE} = {046AB23F-D80E-4D6C-A290-1C5B1CDB4475}
 	EndGlobalSection
 EndGlobal

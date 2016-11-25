@@ -5,7 +5,7 @@ using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 
-namespace Utils
+namespace GoodAI.ToyWorld
 {
     public static class ControlMapper
     {

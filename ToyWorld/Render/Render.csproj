@@ -101,7 +101,7 @@
       <Name>TmxMapSerializer</Name>
     </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
-      <Project>{527728E6-91BE-4678-912F-45A507D0BC67}</Project>
+      <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
       <Name>ToyWorldAPI</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">

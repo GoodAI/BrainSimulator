@@ -35,7 +35,7 @@ namespace ToyWorldTests.Language
 
             // Load small vocabulary
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "ToyWorldTests.TestFiles.word-vectors.txt";
+            var resourceName = "BrainSimToyWorldUnitTests.TestFiles.word-vectors.txt";
             using (Stream stream = assembly.GetManifestResourceStream(resourceName))
             using (StreamReader reader = new StreamReader(stream))
             {
