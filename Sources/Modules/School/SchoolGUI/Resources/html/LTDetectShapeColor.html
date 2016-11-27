@@ -1,0 +1,878 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 14">
+<link rel=File-List href="LTDetectShapeColor_files/filelist.xml">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+x\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<style id="16550224 16ii31_997_Styles">
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:"\,";}
+.xl6325161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;
+	white-space:nowrap;}
+.xl6425161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:700;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	white-space:nowrap;}
+.xl6525161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	white-space:nowrap;}
+.xl6625161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;
+	white-space:nowrap;}
+.xl6725161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	white-space:normal;}
+.xl6825161
+	{padding:0px;
+	mso-ignore:padding;
+	color:#006100;
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	background:#C6EFCE;
+	mso-pattern:black none;
+	white-space:nowrap;}
+.xl6925161
+	{padding:0px;
+	mso-ignore:padding;
+	color:black;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	background:white;
+	mso-pattern:white none;
+	white-space:nowrap;}
+.xl7025161
+	{padding:0px;
+	mso-ignore:padding;
+	color:#9C0006;
+	font-size:11.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Calibri, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:bottom;
+	background:#FFC7CE;
+	mso-pattern:black none;
+	white-space:nowrap;}
+.xl7125161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:700;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:general;
+	vertical-align:middle;
+	border-top:none;
+	border-right:.5pt solid black;
+	border-bottom:none;
+	border-left:none;
+	background:#D9D9D9;
+	mso-pattern:#D9D9D9 none;
+	white-space:nowrap;}
+.xl7225161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:center;
+	vertical-align:bottom;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	white-space:nowrap;}
+.xl7325161
+	{padding:0px;
+	mso-ignore:padding;
+	color:black;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:center;
+	vertical-align:bottom;
+	background:white;
+	mso-pattern:white none;
+	white-space:nowrap;}
+.xl7425161
+	{padding:0px;
+	mso-ignore:padding;
+	color:windowtext;
+	font-size:10.0pt;
+	font-weight:400;
+	font-style:normal;
+	text-decoration:none;
+	font-family:Arial, sans-serif;
+	mso-font-charset:0;
+	mso-number-format:General;
+	text-align:center;
+	vertical-align:bottom;
+	mso-background-source:auto;
+	mso-pattern:auto;
+	white-space:normal;}
+-->
+</style>
+<title>LTDetectShapeColor</title>
+</head>
+
+<body>
+<!--[if !excel]>&nbsp;&nbsp;<![endif]-->
+<!--The following information was generated by Microsoft Excel's Publish as Web
+Page wizard.-->
+<!--If the same item is republished from Excel, all information between the DIV
+tags will be replaced.-->
+<!----------------------------->
+<!--START OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD -->
+<!----------------------------->
+
+<div id="16550224 16ii31_997" align=center x:publishsource="Excel">
+
+<h1 style='color:black;font-family:Arial;font-size:14.0pt;font-weight:800;
+font-style:normal'>LTDetectShapeColor</h1>
+
+<table border=0 cellpadding=0 cellspacing=0 width=1099 class=xl6553525161
+ style='border-collapse:collapse;table-layout:fixed;width:825pt'>
+ <col class=xl6553525161 width=219 style='mso-width-source:userset;mso-width-alt:
+ 8009;width:164pt'>
+ <col class=xl6553525161 width=54 style='mso-width-source:userset;mso-width-alt:
+ 1974;width:41pt'>
+ <col class=xl6553525161 width=451 style='mso-width-source:userset;mso-width-alt:
+ 16493;width:338pt'>
+ <col class=xl6553525161 width=81 style='mso-width-source:userset;mso-width-alt:
+ 2962;width:61pt'>
+ <col class=xl6553525161 width=166 style='mso-width-source:userset;mso-width-alt:
+ 6070;width:125pt'>
+ <col class=xl6553525161 width=32 span=4 style='mso-width-source:userset;
+ mso-width-alt:1170;width:24pt'>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 width=219 style='height:12.75pt;width:164pt'>Name</td>
+  <td colspan=2 class=xl6425161 width=505 style='width:379pt'>Categorize shape
+  or color</td>
+  <td colspan=2 class=xl6525161 width=247 style='width:186pt'></td>
+  <td class=xl6553525161 width=32 style='width:24pt'></td>
+  <td class=xl6553525161 width=32 style='width:24pt'></td>
+  <td class=xl6553525161 width=32 style='width:24pt'></td>
+  <td class=xl6553525161 width=32 style='width:24pt'></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Implementing class</td>
+  <td colspan=2 class=xl6425161>LTDetectShapeColor</td>
+  <td colspan=2 class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6625161 style='height:12.75pt'>Description</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>Discriminate
+  based on both colors (regions in RGB space) and shapes</td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6625161 style='height:12.75pt'>Child equivalent</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>Show me black
+  thing or round object</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6625161 style='height:12.75pt'>Child age</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>1 year</td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Prerequisites</td>
+  <td colspan=2 class=xl6525161>LTDetectShape LTDetectColor</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Fully observable world</td>
+  <td colspan=2 class=xl6525161>yes</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Input modalities</td>
+  <td colspan=2 class=xl6525161>Visual only</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Actuators</td>
+  <td colspan=2 class=xl6525161>2 (A,B), both binary</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl6325161 style='height:15.0pt'>Spatial patterns</td>
+  <td class=xl6825161>yes</td>
+  <td class=xl6925161><span style='mso-spacerun:yes'>  </span></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl6325161 style='height:15.0pt'>Temporal patterns</td>
+  <td class=xl7025161>no</td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl6325161 style='height:15.0pt'>Amount of supervision</td>
+  <td class=xl6825161>RL</td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+ </tr>
+ <tr height=20 style='height:15.0pt'>
+  <td height=20 class=xl6325161 style='height:15.0pt'>Distraction</td>
+  <td class=xl6825161>yes</td>
+  <td class=xl6725161 width=451 style='width:338pt'></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=73 style='mso-height-source:userset;height:54.75pt'>
+  <td height=73 class=xl7125161 style='height:54.75pt'>Training unit initial
+  state</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>A training unit
+  begins with a world displaying an empty grid. At some position of the grid,
+  there is a shape. The shape is either a square or a disc. The color of the
+  shape belongs to one of two possible regions in RGB space (e.g., it's bluish
+  or greenish/yellow). The agent will have to classify it based on both shape
+  and color</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=37 style='mso-height-source:userset;height:27.75pt'>
+  <td height=37 class=xl7125161 style='height:27.75pt'>Training unit goal state</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>The agent sets
+  actuator A to 1 if the square is category A (e.g., it's bluish). Otherwise,
+  he sets actuator B to 1.</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Reward</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>Reward for
+  reaching goal state. Punishment for any other action.</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6325161 style='height:12.75pt'>Level success criterion</td>
+  <td colspan=2 class=xl6725161 width=505 style='width:379pt'>The pupil has not
+  made a mistake in the last 20 training units.</td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=314 style='mso-height-source:userset;height:235.5pt'>
+  <td height=314 class=xl6325161 style='height:235.5pt'>Illustration</td>
+  <td colspan=2 height=314 width=505 style='height:235.5pt;width:379pt'
+  align=left valign=top><!--[if gte vml 1]><v:group id="Shape_x0020_2" o:spid="_x0000_s1025"
+   style='position:absolute;margin-left:14.25pt;margin-top:6pt;width:363pt;
+   height:219.75pt;z-index:1' coordorigin="12477,6286" coordsize="59626,27813">
+   <o:lock v:ext="edit" text="t"/>
+   <v:shapetype id="_x0000_t75" coordsize="21600,21600" o:spt="75"
+    o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+    <v:stroke joinstyle="miter"/>
+    <v:formulas>
+     <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+     <v:f eqn="sum @0 1 0"/>
+     <v:f eqn="sum 0 0 @1"/>
+     <v:f eqn="prod @2 1 2"/>
+     <v:f eqn="prod @3 21600 pixelWidth"/>
+     <v:f eqn="prod @3 21600 pixelHeight"/>
+     <v:f eqn="sum @0 0 1"/>
+     <v:f eqn="prod @6 1 2"/>
+     <v:f eqn="prod @7 21600 pixelWidth"/>
+     <v:f eqn="sum @8 21600 0"/>
+     <v:f eqn="prod @7 21600 pixelHeight"/>
+     <v:f eqn="sum @10 21600 0"/>
+    </v:formulas>
+    <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+    <o:lock v:ext="edit" aspectratio="t"/>
+   </v:shapetype><v:shape id="Shape_x0020_11" o:spid="_x0000_s1026" type="#_x0000_t75"
+    style='position:absolute;left:12487;top:6313;width:59607;height:27763;
+    visibility:visible' o:gfxdata="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
+5uZma2hosF69ermffDfY2tpqc+bMMZWnsmpqivtKSqfTrnz97t27d17VVB1nzZo137qpVMoqKiqs
+qqqq4HprG/JsaWlx21G5slDZTAgggAACnQsk9mz5dG2l/WOBXjYroZc67VDXZL/+sdGGMsi581dZ
+D1rioYceslNPPdUOOOAAO/HEE/Pesw8//NDOOOMMe+655+zggw+28847zxSQijEpvH322Wd24YUX
+2owZM+zmm2/Oq9h3333XNthgAxfaKisrXRmqo4LWMsssY1tssYX95je/sUUWWSSv8puamux///uf
+/fGPf7SXXnrJhbmVVlrJjjzySNthhx2suro6r3LLfaXPqz6yiTVP2Bs1k+zTqvdtSuVXNrVqchvL
+kOZFbWjLYrZU8/I2Ys4oW3fOZjaseXjb8zxAAAG/BBIb5FpSKWuomPuTRNIm/afrWgvTrhs4iXWk
+TsUXUPiYOXOma+3Kt3QFrY8//tiefvppa2xstGeeecYmT55siy22WL5Ftq2nFq6vv/7arrnmGrvh
+hhts++23b3su1wdqJVOL3LLLLmsbb7yxW1111/6/8847dtlll9krr7zigmKfPn1yKl7lqAwFYrVI
+KrypFW78+PF23HHHuccKc8UKtzlVzsOFZ6Z+sHv6jnM/7/d6I+seKNTp542al2xC33Fu2eUbR9jO
+dfu4n/7pBbOuz5MIIJAsgcQGuWQxUZskCigMKGzot1qM1C2nIKNJjzMnzQ+674JlM58PHms5/ajM
+oAuxY1nBssFvLat1tFxXgse0adPsySeftMGDB9tmm23mwssDDzxghx56aFBkXr+1f2+99ZZddNFF
+NmHChLzK6LiSWsXWW289u+KKK9qe0v5+8803dvrpp7swev/999tuu+3W9nxXHqil8Nprr3WhUIHz
+5z//ubPbbrvtbO+997aLL77YNt98c8s1IHZl2z1pGQW4cf3/YmP7X2H1FXV575rC38W9TrWrB5xn
++888xvaZ+Vsj0OXNyYoIdKsAQa5budlYsQTUkvX+++/ba6+95gLaiiuuaEsuuaTrUuzfv7+pi06T
+AtYPP/zgAo5awRS0lltuOVtttdXc2LEgpCmc1NfXm7o833jjDTduq7a21pZffnkbMWKE6XHYpDFu
+n376qX355Zeu3K60qmn5hx9+2JW911572eOPP24PPvigHXTQQS6QBttRMFOdsk1qxVLdVH+18KmF
+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
+dfvTn/5kjzzyiK200kru6eB4BMt2/K3ygrF19fX1dvPNN9tll11mCqKDBw9ut/8d1+Xv7hV4rrbS
+zh1YY1Orol/7+dRoWmWFXTywxsb2r7Yzp8+xDRta8imGdWIW0PlH585ijOFVOSqvGGVl7rbK1U9w
+rs52ns5cL+yxz+OBCXJhR5R5iRbQG1etQGPHjrWnn37avZEVgjbddFN7//33bYkllrDRo0e7fZg9
+e7ZrSVJg0HN6o6+yyiq2995728Ybb9wW+PQmVuBRy5W6TzWGTd2Ja665pilsaaxZ2ElCYUQtX88+
++6ztuuuuLkh1hvfJJ5/Y888/75ZXi5kCmP6ePHmyLbbYYm2rf/311y7whW1XC2n+0ksvbRtssIG9
+/fbbLthm7pNObur+HDVqlOtu/fjjj23ZZZdtKz+XByormBQc+/Tp45yD8KvnZs2aZffdd5/JXCft
+sKlv37624447mn5Pnz7ddVMrBJ5zzjl2yy23uHqGrce87hNQS5mC1u39cuuKz7WGCohHDe5tu81q
+shOnz6G7NVfAmJdnPPDcc6wP44EJcjG/GSi++AK6SOCss86yN99804U3BTddgHDXXXe5EKHgpSCn
+YPGXv/zFLr74Yhd4FJoUMp544gkXvE488UQ31k2BSAHkpJNOcgFjs802c61QCkcKFxp7dskll4SO
+iVMLni4suPfee93zahHLNukCAoU+hUR1WS6++OK29dZb26WXXupC269//eu21TVeTGPboia1bO20
+00621lpruRY5haulllqq3eLajrahLtGPPvooryCnVja5ZU4a06YLIQYNGuT2Q88pmF144YWmABoV
+5BZddFH7+c9/7pzV0nfVVVfZFlts4VpC//Of/2RugsclEPiuImXHDq61t3u1b62OsyoKjG/3qrDL
+v22wQa3hHwDi3D5lhwswHtjceUwfVpM+HpggF/4aZm5CBdQCdvfdd7uxYBpof9BBB7mWKbVynX/+
++a6rTm88TRrXpXFjG264oV100UW25JJLujemgqAC0j//+U8bMWKELbPMMvboo4+6KzE15kutWmqB
+0rauvPJKu+KKK+y5554LDXJqWdprr71cOFluueU6VdO4OLXgqSVNwbJ3796utU/BR92tBx54YFsr
+oVrSFDqjJtVxwIABLgTV1dW5LkvVJ3NSt7DCllocdUVrrpOCquqw++67OzttU/PUuifn//u//3OG
+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
+AAAABgAGAIQBAAAmQAAAAAA=
+">
+    <v:imagedata src="LTDetectShapeColor_files/16550224%2016ii31_997_image001.png"
+     o:title=""/>
+    <o:lock v:ext="edit" aspectratio="f"/>
+    <x:ClientData ObjectType="Pict">
+     <x:CF>Bitmap</x:CF>
+     <x:AutoPict/>
+    </x:ClientData>
+   </v:shape><x:ClientData ObjectType="Group">
+    <x:Locked>False</x:Locked>
+   </x:ClientData>
+  </v:group><![endif]--><![if !vml]><span style='mso-ignore:vglayout;
+  position:absolute;z-index:1;margin-left:19px;margin-top:8px;width:484px;
+  height:293px'><img width=484 height=293
+  src="LTDetectShapeColor_files/16550224%2016ii31_997_image002.png" v:shapes="Shape_x0020_2 Shape_x0020_11"></span><![endif]><span
+  style='mso-ignore:vglayout2'>
+  <table cellpadding=0 cellspacing=0>
+   <tr>
+    <td colspan=2 height=314 class=xl6553525161 width=505 style='height:235.5pt;
+    width:379pt'></td>
+   </tr>
+  </table>
+  </span></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl7225161 style='height:12.75pt'></td>
+  <td class=xl7225161></td>
+  <td class=xl7225161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl7225161 style='height:12.75pt'></td>
+  <td class=xl7225161></td>
+  <td class=xl7325161>&nbsp;</td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6525161 style='height:12.75pt'></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+  <td class=xl6425161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6553525161 style='height:12.75pt'></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl7225161></td>
+  <td class=xl6725161 width=166 style='width:125pt'></td>
+  <td class=xl7225161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+ </tr>
+ <tr height=17 style='height:12.75pt'>
+  <td height=17 class=xl6553525161 style='height:12.75pt'></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl7225161></td>
+  <td class=xl7425161 width=166 style='width:125pt'></td>
+  <td class=xl6525161></td>
+  <td class=xl6525161></td>
+  <td class=xl6553525161></td>
+  <td class=xl6553525161></td>
+ </tr>
+ <![if supportMisalignedColumns]>
+ <tr height=0 style='display:none'>
+  <td width=219 style='width:164pt'></td>
+  <td width=54 style='width:41pt'></td>
+  <td width=451 style='width:338pt'></td>
+  <td width=81 style='width:61pt'></td>
+  <td width=166 style='width:125pt'></td>
+  <td width=32 style='width:24pt'></td>
+  <td width=32 style='width:24pt'></td>
+  <td width=32 style='width:24pt'></td>
+  <td width=32 style='width:24pt'></td>
+ </tr>
+ <![endif]>
+</table>
+
+</div>
+
+
+<!----------------------------->
+<!--END OF OUTPUT FROM EXCEL PUBLISH AS WEB PAGE WIZARD-->
+<!----------------------------->
+</body>
+
+</html>

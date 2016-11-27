@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Game.BasicGameController">
+    <Position X="2.25" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BasicGameController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.GameControllerBase">
+    <Position X="2.25" Y="5.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAIADAABAAQCAAgAAAAAAAABAAAAACCAAAAAAA=</HashCode>
+      <FileName>GameControllerBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="GoodAI.ToyWorld.Control.ControllerFactory">
+    <Position X="5.25" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ControllerFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Game.AgentController">
+    <Position X="8.25" Y="3.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAAQAAAAAAAAAAAAAABAAA=</HashCode>
+      <FileName>AgentController.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8C381B5A-3FD7-4311-9C42-F8115587E5FD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GoodAI.School</RootNamespace>
+    <AssemblyName>GoodAI.School</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>conf\doc.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CudaRand">
+      <HintPath>..\..\..\..\packages\ManagedCuda-CURAND.8.0.13\lib\net45\CudaRand.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="ManagedCuda">
+      <HintPath>..\..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPP">
+      <HintPath>..\..\..\..\packages\ManagedCuda-NPP.8.0.13\lib\net45\NPP.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\AbstractLearningTask.cs" />
+    <Compile Include="Common\CurriculumManager.cs" />
+    <Compile Include="Common\GameObject.cs" />
+    <Compile Include="Common\LearningTaskFactory.cs" />
+    <Compile Include="Common\LearningTaskHelpers.cs" />
+    <Compile Include="Common\SchoolCurriculum.cs" />
+    <Compile Include="Common\StandardConflictResolver.cs" />
+    <Compile Include="Common\TrainingSetHints.cs" />
+    <Compile Include="Learning tasks\AvatarsActions.cs" />
+    <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\Ltsct1Fp.cs" />
+    <Compile Include="Learning tasks\Ltsct1d2.cs" />
+    <Compile Include="Learning tasks\Ltsct3Fp.cs" />
+    <Compile Include="Learning tasks\Ltsct2d2.cs" />
+    <Compile Include="Learning tasks\Ltsct3d2.cs" />
+    <Compile Include="Learning tasks\Ltsct3.cs" />
+    <Compile Include="Learning tasks\Ltsct2.cs" />
+    <Compile Include="Learning tasks\Ltsct4d2.cs" />
+    <Compile Include="Learning tasks\Ltsct5d2.cs" />
+    <Compile Include="Learning tasks\Ltsct6d2.cs" />
+    <Compile Include="Learning tasks\Ltsct7d2.cs" />
+    <Compile Include="Learning tasks\Ltsct8d2.cs" />
+    <Compile Include="Learning tasks\Ltsct8.cs" />
+    <Compile Include="Learning tasks\Ltsct7.cs" />
+    <Compile Include="Learning tasks\Ltsct6.cs" />
+    <Compile Include="Learning tasks\Ltsct5.cs" />
+    <Compile Include="Learning tasks\Ltsct4.cs" />
+    <Compile Include="Learning tasks\Ltsct1.cs" />
+    <Compile Include="Learning tasks\LTPongWithBricks.cs" />
+    <Compile Include="Learning tasks\LTPongWithoutBricks.cs" />
+    <Compile Include="Learning tasks\LTSimpleRhythm.cs" />
+    <Compile Include="Learning tasks\LTClassComposition.cs" />
+    <Compile Include="Learning tasks\LTActionWCooldown.cs" />
+    <Compile Include="Learning tasks\LTApproach.cs" />
+    <Compile Include="Learning tasks\LTCompareLayouts.cs" />
+    <Compile Include="Learning tasks\LTCompatibilityMatching.cs" />
+    <Compile Include="Learning tasks\LTConditionalTarget.cs" />
+    <Compile Include="Learning tasks\LTCopyAction.cs" />
+    <Compile Include="Learning tasks\LTCopySequence.cs" />
+    <Compile Include="Learning tasks\LTDebugging.cs" />
+    <Compile Include="Learning tasks\LTDetectBlackAndWhite.cs" />
+    <Compile Include="Learning tasks\LTDetectColor.cs" />
+    <Compile Include="Learning tasks\LTDetectDifference.cs" />
+    <Compile Include="Learning tasks\LTDetectShape.cs" />
+    <Compile Include="Learning tasks\LTDetectShapeColor.cs" />
+    <Compile Include="Learning tasks\LTDetectSimilarity.cs" />
+    <Compile Include="Learning tasks\LTDetectWhite.cs" />
+    <Compile Include="Learning tasks\LTHiddenTarget.cs" />
+    <Compile Include="Learning tasks\LTMovingTarget.cs" />
+    <Compile Include="Learning tasks\LTMultipleTargetsInSequence.cs" />
+    <Compile Include="Learning tasks\LTObstacles.cs" />
+    <Compile Include="Learning tasks\LTObstaclesTargetOnSight.cs" />
+    <Compile Include="Learning tasks\LTPongTest.cs" />
+    <Compile Include="Learning tasks\LTRotateAndMoveToFit.cs" />
+    <Compile Include="Learning tasks\LTShapeSorting.cs" />
+    <Compile Include="Learning tasks\LTSimpleAngle.cs" />
+    <Compile Include="Learning tasks\LTSimpleDistance.cs" />
+    <Compile Include="Learning tasks\LTSimpleSize.cs" />
+    <Compile Include="Learning tasks\LTTetrisFull.cs" />
+    <Compile Include="Learning tasks\LTToyWorld.cs" />
+    <Compile Include="Learning tasks\LTVisualEquivalence.cs" />
+    <Compile Include="Learning tasks\ScConstants.cs" />
+    <Compile Include="Learning tasks\ScFixColors.cs" />
+    <Compile Include="Learning tasks\ScFixPositions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Versioning\MyConversion.cs" />
+    <Compile Include="Worlds\ManInWorld.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Worlds\IWorldAdapter.cs" />
+    <Compile Include="Worlds\PlumberWorld.cs" />
+    <Compile Include="Worlds\PlumberWorldObjectsCreators.cs" />
+    <Compile Include="Worlds\PongAdapterWorld.cs" />
+    <Compile Include="Worlds\RogueGameObjects.cs" />
+    <Compile Include="Worlds\RoguelikeWorldObjectsCreator.cs" />
+    <Compile Include="Worlds\RoguelikeWorld.cs" />
+    <Compile Include="Worlds\SchoolWorld.cs" />
+    <Compile Include="Worlds\TetrisAdapterWorld.cs" />
+    <Compile Include="Worlds\ToyWorldAdapterWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+      <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
+      <Name>TypeMap</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\BasicNodes\Module\BasicNodes.csproj">
+      <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
+      <Name>BasicNodes</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\BrainSimToyWorld\Module\BrainSimToyWorld.csproj">
+      <Project>{4B4762C5-D0CC-4F18-9DC4-34698ED536B8}</Project>
+      <Name>BrainSimToyWorld</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+    <None Include="post_build.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="conf\doc.xml" />
+    <EmbeddedResource Include="conf\nodes.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="res\PlumberWorld\Coin16x16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\PlumberWorld\Goomba.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\PlumberWorld\LakituCloud16x16.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\PlumberWorld\Plumber24x28.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Replaced_Textures\Agent_TOP_blue_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Replaced_Textures\Agent_TOP_green_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Replaced_Textures\Agent_TOP_red_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Replaced_Textures\Agent_TOP_yellow_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Ground_TOP.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number0_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number1_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number2_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number3_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number4_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\Number5_30x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\White10x10.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteCircle10x10.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteCircle50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteDoubleRhombus50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteMountains50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhitePentagon50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteRhombus50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteStar50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteL50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteT50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteTent50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\SchoolWorldCommon\WhiteTriangle50x50.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP1.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_blue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_blue_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_green_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_red_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_yellow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Agent_TOP_yellow_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Armor_Block.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Ball.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Button_OFF.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Button_ON.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Enemy.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Gate.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Gate_Close_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Gate_Open.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Gate_Open_m.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Lava_Surface.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\screen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="res\RoguelikeWorld\Target_TOP.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
