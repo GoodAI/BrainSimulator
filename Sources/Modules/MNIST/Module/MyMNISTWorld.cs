@@ -101,7 +101,7 @@ namespace MNIST
         public MNISTLastImageMethod AfterLastImage { get; set; }
 
         [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 7000),
+        [YAXSerializableField(DefaultValue = 5000),
         DisplayName("Train Examples per Digit"),
         Description("Continue loading images from the dataset until there is required number of training samples for each digit.")]
         public int TrainingExamplesPerDigit
