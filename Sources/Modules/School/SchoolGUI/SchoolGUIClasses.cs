@@ -53,6 +53,23 @@ namespace GoodAI.School.GUI
             IsChecked = true;
         }
 
+        public static LearningTaskNode FromLTDesign(LTDesign design)
+        {
+            Type taskType = Type.GetType(design.TaskType);
+            Type worldType = Type.GetType(design.WorldType);
+            if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
+                return null;
+            return new LearningTaskNode(taskType, worldType) { IsChecked = design.Enabled };
+        }
+
+        public static explicit operator LTDesign(LearningTaskNode node)
+        {
+            string taskType = node.TaskType.AssemblyQualifiedName;
+            string worldType = node.WorldType.AssemblyQualifiedName;
+            bool isEnabled = node.IsChecked;
+            return new LTDesign(taskType, worldType, isEnabled);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj as LearningTaskNode == null)
@@ -149,20 +166,11 @@ namespace GoodAI.School.GUI
         {
         }
 
-        public LTDesign(LearningTaskNode node)
+        public LTDesign(string taskType, string worldType, bool isEnabled)
         {
-            TaskType = node.TaskType.AssemblyQualifiedName;
-            WorldType = node.WorldType.AssemblyQualifiedName;
-            Enabled = node.IsChecked;
-        }
-
-        public static explicit operator LearningTaskNode(LTDesign design)
-        {
-            Type taskType = Type.GetType(design.TaskType);
-            Type worldType = Type.GetType(design.WorldType);
-            if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
-                return null;
-            return new LearningTaskNode(taskType, worldType) { IsChecked = design.Enabled };
+            TaskType = taskType;
+            WorldType = worldType;
+            Enabled = isEnabled;
         }
 
         public ILearningTask AsILearningTask(SchoolWorld world = null)
@@ -202,7 +210,7 @@ namespace GoodAI.School.GUI
         {
             Tasks = node.Nodes.
                 Where(x => x is LearningTaskNode).
-                Select(x => new LTDesign(x as LearningTaskNode)).
+                Select(x => (LTDesign)(x as LearningTaskNode)).
                 ToList();
             Enabled = node.IsChecked;
             Name = node.Text;
@@ -213,7 +221,7 @@ namespace GoodAI.School.GUI
         {
             CurriculumNode node = new CurriculumNode { Text = design.Name, IsChecked = design.Enabled, Description = design.Description };
 
-            design.Tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+            design.Tasks.Where(x => LearningTaskNode.FromLTDesign(x) != null).ToList().ForEach(x => node.Nodes.Add(LearningTaskNode.FromLTDesign(x)));
 
             return node;
         }
