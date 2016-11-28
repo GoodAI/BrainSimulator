@@ -29,7 +29,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         public override void PresentNewTrainingUnit()
         {
-            if (WrappedWorld.GetType() == typeof(PlumberWorld))
+            /*if (WrappedWorld.GetType() == typeof(PlumberWorld))
             {
                 m_agent = new MovableGameObject(@"Plumber24x28.png", new PointF(24, 28), type: GameObjectType.Agent);
                 PlumberWorld world = WrappedWorld as PlumberWorld;
@@ -46,7 +46,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 world.AddGameObject(obj3);
                 world.AddGameObject(obj4);
             }
-            else if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
+            else*/ if (WrappedWorld.GetType() == typeof(RoguelikeWorld))
             {
                 RoguelikeWorld world = WrappedWorld as RoguelikeWorld;
                 world.DegreesOfFreedom = 2;

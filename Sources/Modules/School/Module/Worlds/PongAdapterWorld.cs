@@ -62,6 +62,7 @@ namespace GoodAI.School.Worlds
             if (School != null)
             {
                 Viewport = new Size(School.VisualDimensionsFov.Width, School.VisualDimensionsFov.Height);
+				CopyDataThroughCPU = School.CopyDataThroughCPU;
             }
 
             base.UpdateMemoryBlocks();

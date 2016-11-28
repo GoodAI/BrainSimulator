@@ -26,8 +26,8 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 namespace GoodAI.Modules.School.Worlds
 {
     /// <author>GoodAI</author>
-    /// <meta>Mp,Mv,Os,Ph,Mm</meta>
-    /// <status>WIP</status>
+    /// <meta>Mp,Mv,Os,Ph,Mm,Ms,Sa</meta>
+    /// <status>Working</status>
     /// <summary> Implementation of a configurable 2D world </summary>
     /// <description>
     /// Implementation of a configurable 2D world

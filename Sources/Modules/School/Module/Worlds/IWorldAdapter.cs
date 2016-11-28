@@ -14,7 +14,7 @@ namespace GoodAI.Modules.School.Worlds
         MyWorkingNode World { get; }
         bool CopyDataThroughCPU { get; set; }
 
-        // Must be a method; BS would try to instantiate it if it were a property
+        // Must be a method; BrainSim would try to instantiate it if it were a property
         MyTask GetWorldRenderTask();
 
         void InitAdapterMemory();

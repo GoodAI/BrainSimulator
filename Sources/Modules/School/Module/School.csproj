@@ -172,18 +172,6 @@
     <EmbeddedResource Include="conf\nodes.xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="res\PlumberWorld\Coin16x16.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\PlumberWorld\Goomba.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\PlumberWorld\LakituCloud16x16.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\PlumberWorld\Plumber24x28.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="res\RoguelikeWorld\Replaced_Textures\Agent_TOP_blue_m.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

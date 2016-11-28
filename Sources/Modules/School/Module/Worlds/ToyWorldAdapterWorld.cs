@@ -46,10 +46,13 @@ namespace GoodAI.School.Worlds
 
         public override void UpdateMemoryBlocks()
         {
-            FoVResHeight = School.VisualDimensionsFov.Height; // force the school's dimensions
-            FoVResWidth = School.VisualDimensionsFov.Width; // force the school's dimensions
-            CopyDataThroughCPU = School.CopyDataThroughCPU;
-            ControlModeVisible = School.ControlModeHidden;
+			if(School != null)
+			{
+				FoVResHeight = School.VisualDimensionsFov.Height; // force the school's dimensions
+				FoVResWidth = School.VisualDimensionsFov.Width; // force the school's dimensions
+				CopyDataThroughCPU = School.CopyDataThroughCPU;
+				ControlModeVisible = School.ControlModeHidden;
+			}
             base.UpdateMemoryBlocks();
         }
 

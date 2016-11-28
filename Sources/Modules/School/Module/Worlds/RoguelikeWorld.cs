@@ -5,24 +5,17 @@ using System.Drawing;
 
 namespace GoodAI.Modules.School.Worlds
 {
+	/// <author>GoodAI</author>
+    /// <meta>Mp,Mv,Os,Ph,Mm,Ms,Sa</meta>
+    /// <status>Working</status>
+    /// <summary> Implementation of a configurable top-view 2D world </summary>
+    /// <description>
+    /// Implementation of a configurable top-view 2D world based on ManInWorld
+    /// </description>
     [DisplayName("Roguelike")]
     public partial class RoguelikeWorld : ManInWorld, IMyCustomTaskFactory
     {
         protected override string TEXTURE_DIR { get { return @"res\RoguelikeWorld"; } }
-
-        //[MyTaskInfo(OneShot = true, Order = 90)]
-        //public class InitTask : InitSchoolTask
-        //{
-        //    public override void Init(int nGPU)
-        //    {
-        //        base.Init(nGPU);
-        //    }
-
-        //    public override void Execute()
-        //    {
-        //        base.Execute();
-        //    }
-        //}
 
         public override void Validate(Core.Utils.MyValidator validator)
         {

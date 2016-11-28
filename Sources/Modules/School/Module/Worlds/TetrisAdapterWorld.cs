@@ -57,6 +57,7 @@ namespace GoodAI.School.Worlds
             {
                 VisualWidth = School.VisualDimensionsFov.Width;
                 VisualHeight = School.VisualDimensionsFov.Height;
+				CopyDataThroughCPU = School.CopyDataThroughCPU;
             }
 
             base.UpdateMemoryBlocks();
