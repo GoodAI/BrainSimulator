@@ -1,0 +1,229 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.School</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.Modules.School.Common.AbstractLearningTask`1">
+            <summary>
+            Abstract base class for AI School exercises.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.School.Common.GameObject.DistanceTo(GoodAI.Modules.School.Common.GameObject)">
+            <summary>
+            Computes the shortest distance from any bounding box pixel of this to any bounding box pixel of target
+            </summary>
+            <param name="target"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.Modules.School.Common.Shape.GetRandomShape(System.Random,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="rndGen"></param>
+            <param name="numberOfShapes">Cardinality of set from you are choosing</param>
+            <returns>Random shape</returns>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.SchoolCurriculum">
+            <summary>
+            Holds tasks that an agent should be trained with to gain new abilities
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.School.Common.SchoolCurriculum.GetNext">
+            <summary>
+            Provides next LearningTask if there is any, null otherwise
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.Modules.School.Common.TrainingSetHints">
+            <summary>
+            Training set hints are concrete parameters that
+            determine the difficulty of a task, such as presence of noise or the
+            number of attempts that the agent gets to complete the task.
+            The values of the hints depend on the ChallengeLevel. Hints are world
+            independent, and can sometimes be used/interpreted differently depending
+            on the world.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithBricks">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Pong with bricks" learning task</summary>
+            <description>
+            Ability info: Ability to play pong with bricks.
+            The agent is presented the pong game, the expectancy is that the agent completes the game by passing all the required levels
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTPongWithoutBricks">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Pong without bricks" learning task</summary>
+            <description>
+            Ability info: Ability to play pong without bricks.
+            The difficulty of the levels is denoted by the number of hits (paddle touching ball) needed in order to pass a training unit (BALL_HITS_NEEDED), and the maximum number of misses (ball reaching the bottom part of the screen untouched by the paddle, MAX_MISSES_ALLOWED)
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTConditionalTarget">
+            <summary>
+            In this learning task, the agent must learn to choose one of two targets depending on an arbitrary visual signal (the condition).
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTHiddenTarget">
+            <summary>
+            In this learning task, the agent must learn to choose one of multiple targets without prior information as to which one to choose.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMovingTarget">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Moving Target" learning task</summary>
+            <description>
+            Ability Name: Efficient navigation in a simple environment + moving target. The class is derived from LTApproach with some additions for the moving target (currently: circular movement).
+            Current behaviour of the target, the target moves itself towards the trajectory (the ellipse contained inside the rectangle (the screen)) and then it follows the trajectory
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTMultipleTargetsSequence">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Multiple targets in a sequence" learning task</summary>
+            <description>
+            Ability description: The agent learns to navigate to multiple targets in a defined sequence. One target Type is always the first target, another target Type is always the second and so on.
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstacles">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"Obstacles" learning task</summary>
+            <description>
+            Ability Name: Navigate to the target efficiently by avoiding obstacles
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTObstaclesTargetInSight">
+            <author>GoodAI</author>
+            <meta>Os</meta>
+            <status>WIP</status>
+            <summary>"LTObstacles with POW visible target" learning task</summary>
+            <description>
+            The class is derived from LTObstacles, and implements the level where the target is always visible from POW and randomness Check LTObstacles for further details
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTShapeSorting">
+            <meta>mm</meta>
+            <summary>
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.ComparisonShape">
+            <summary>Visual object for comparison. Similar to the Shape class.</summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.LearningTasks.LTVisualEquivalence">
+            <summary>
+            The learning task tests the comparison of simple objects.
+            Two shapes are presented; they are considered equivalent if they differ
+            only in color, translation, scaling, and rotation.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.ManInWorld">
+            <author>GoodAI</author>
+            <meta>Mp,Mv,Os,Ph,Mm</meta>
+            <status>WIP</status>
+            <summary> Implementation of a configurable 2D world </summary>
+            <description>
+            Implementation of a configurable 2D world
+            </description>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.GetPowGeometry">
+            <summary>
+            Returns POW borders rectangle reduced by 1 pixel
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.RandomPositionInsideViewport(System.Random,System.Drawing.SizeF,System.Single,System.Single)">
+             <summary>
+            
+             </summary>
+             <param name="rndGen"></param>
+             <param name="size"></param>
+             <param name="agentMargin"> if -1, collision is allowed</param>
+             <param name="objectMargin"></param>
+             <returns>Point inside POW with respect to size</returns>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.AddGameObject(GoodAI.Modules.School.Common.GameObject,System.Int32)">
+            <summary>
+            Adds game object with defined layer.
+            </summary>
+            <param name="item"></param>
+            <param name="layer">
+            Layers are rendered from lowest to greatest, so greater layer cover lower.
+            Agent is in layer 10 by default.
+            </param>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateAgent">
+            <summary>
+            Creates agent with default texture in the middle of field.
+            </summary>
+            <returns>Agent</returns>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.CreateNonVisibleAgent">
+            <summary>
+            Creates agenet in the centre of POW. Agents size is 0x0, he's invisible.
+            </summary>
+            <returns>Agent as MovableGameObject</returns>
+        </member>
+        <member name="M:GoodAI.Modules.School.Worlds.ManInWorld.SetRewardForCurrentStep(System.Single)">
+            <summary>
+            For current step sets reward for the agent
+            </summary>
+            <param name="reward">Should be between 1 and -1</param>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.ManInWorld.RenderGLTask">
+            <summary>
+            Render the world to the visual output.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld">
+            <author>GoodAI</author>
+            <meta>os</meta>
+            <status>WIP</status>
+            <summary> Custom implementation of the plumber world (Mario) </summary>
+            <description>
+            2D Platformer world which includes a traditional 2D physics engine and collision detection/handling
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.PlumberWorld.UpdatePlumberTask">
+            <summary>
+            Apply configurable gravity physics to the specified GameObjects
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld">
+            <author>GoodAI</author>
+            <status>Working</status>
+            <summary>Environment for AI School</summary>
+            <description>School world provides the environment necessary for running AI School. It creates it's own execution plan according to the learning tasks selected in the School curriculum. Initialization and execution of each learning task is managed by this world as well as the evaluation of agent's performance.</description>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.InitSchoolWorldTask">
+            <summary>
+            Initializes the School world's curriculum.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.InputAdapterTask">
+            <summary>
+            Performs mapping of input memory blocks from the particular learning task's world to the School world.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.LearningStepTask">
+            <summary>
+            According to AI School's execution plan, one step of current learning task is run, or a separator between tasks is presented, or a new task is initialized.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.School.Worlds.SchoolWorld.OutputAdapterTask">
+            <summary>
+            Performs mapping of output memory blocks from the particular learning task's world to the School world.
+            </summary>
+        </member>
+    </members>
+</doc>

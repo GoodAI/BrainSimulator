@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3831266C-24FE-4DD6-A4CC-39D0EF33C299}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>World</RootNamespace>
+    <AssemblyName>World</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>True</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>True</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>True</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>True</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>False</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsMissingPublicEnsuresAsWarnings>True</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferEnsures>True</CodeContractsInferEnsures>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>True</CodeContractsInferObjectInvariants>
+    <CodeContractsSuggestAssumptions>True</CodeContractsSuggestAssumptions>
+    <CodeContractsSuggestAssumptionsForCallees>True</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestObjectInvariants>True</CodeContractsSuggestObjectInvariants>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsLibPaths />
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsSQLServerOption />
+    <CodeContractsBaseLineFile />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PommaLabs.Thrower, Version=2.2.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Thrower.2.2.2\lib\net45\PommaLabs.Thrower.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Troschuetz.Random, Version=4.0.3.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Troschuetz.Random.4.0.4\lib\net45\Troschuetz.Random.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Atlas\IAtmosphere.cs" />
+    <Compile Include="Atlas\SimpleAtmosphere.cs" />
+    <Compile Include="GameActions\Interact.cs" />
+    <Compile Include="GameActions\PickUp.cs" />
+    <Compile Include="GameActions\UsePickaxe.cs" />
+    <Compile Include="GameActors\GameActorInterfaces.cs" />
+    <Compile Include="GameActors\GameObjects\Ball.cs" />
+    <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
+    <Compile Include="GameActors\Tiles\Background\PathTile.cs" />
+    <Compile Include="GameActors\Tiles\Neighborhoods.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOff.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\KeyDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Bed.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Fireplace.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\FireplaceBurning.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Recharger.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\PoisonuosTile.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\SimpleDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\Trap.cs" />
+    <Compile Include="GameActors\Tiles\Area\AreaBorder.cs" />
+    <Compile Include="GameActors\Tiles\Background\RoomTile.cs" />
+    <Compile Include="Physics\BasicAvatarMover.cs" />
+    <Compile Include="Physics\CollisionChecker.cs" />
+    <Compile Include="Physics\ICollisionResolver.cs" />
+    <Compile Include="Physics\MomentumCollisionResolver.cs" />
+    <Compile Include="Physics\NaiveCollisionResolver.cs" />
+    <Compile Include="Physics\ForwardMovablePhysicalEntity.cs" />
+    <Compile Include="Physics\IAvatarMover.cs" />
+    <Compile Include="Physics\IMovable.cs" />
+    <Compile Include="GameActors\Tiles\OnBackground\OnBackground.cs" />
+    <Compile Include="GameActors\Tiles\Background\Background.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Obstacle.cs" />
+    <Compile Include="Physics\Physics.cs" />
+    <Compile Include="Physics\MovementPhysics.cs" />
+    <Compile Include="Physics\PhysicalEntity.cs" />
+    <Compile Include="Physics\Shapes.cs" />
+    <Compile Include="Physics\StaticPhysicalEntity.cs" />
+    <Compile Include="Physics\Utils.cs" />
+    <Compile Include="Atlas\AreasCarrier.cs" />
+    <Compile Include="ToyWorldCore\AutoupdateRegister.cs" />
+    <Compile Include="GameActors\GameObjects\Avatar.cs" />
+    <Compile Include="GameActors\GameObjects\Character.cs" />
+    <Compile Include="GameActors\Tiles\DynamicTile.cs" />
+    <Compile Include="GameActors\GameActor.cs" />
+    <Compile Include="Atlas\UnpredictableAtmosphere.cs" />
+    <Compile Include="ToyWorldCore\Config.cs" />
+    <Compile Include="Atlas\IAtlas.cs" />
+    <Compile Include="Atlas\Layers\ILayer.cs" />
+    <Compile Include="Atlas\Layers\IObjectLayer.cs" />
+    <Compile Include="Atlas\Layers\LayerType.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="GameActors\Tiles\Tile.cs" />
+    <Compile Include="GameActions\GameActions.cs" />
+    <Compile Include="GameActors\GameObjects\GameObject.cs" />
+    <Compile Include="GameActors\Tiles\TileInterfaces.cs" />
+    <Compile Include="GameActors\Tiles\TilesetTable.cs" />
+    <Compile Include="GameActors\Tiles\Obstacle\Wall.cs" />
+    <Compile Include="GameActors\Tiles\StaticTile.cs" />
+    <Compile Include="ToyWorldCore\Room.cs" />
+    <Compile Include="Atlas\Layers\SimpleObjectLayer.cs" />
+    <Compile Include="Atlas\Layers\SimpleTileLayer.cs" />
+    <Compile Include="Atlas\Layers\Atlas.cs" />
+    <Compile Include="Atlas\Layers\ITileLayer.cs" />
+    <Compile Include="ToyWorldCore\MapLoader.cs" />
+    <Compile Include="ToyWorldCore\TileDetectorRegister.cs" />
+    <Compile Include="ToyWorldCore\ToyWorld.cs" />
+    <Compile Include="WorldInterfaces\IWorld.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Logger\Logger.csproj">
+      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
+      <Name>Logger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj">
+      <Project>{7a4d6fa1-e44b-40e2-9de8-3606dbc657d9}</Project>
+      <Name>TmxMapSerializer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
+      <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
+      <Name>ToyWorldAPI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utils\Utils.csproj">
+      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_winter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Include="ClassDiagramToyWorld.cd" />
+    <EmbeddedResource Include="res\GameActors\Tiles\Tilesets\TilesetTable.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mock_small_stream_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mockup999_pantry_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="res\Worlds\mock_small_pickup_world.tmx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="res\Worlds\ui_default.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
