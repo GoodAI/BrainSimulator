@@ -137,13 +137,13 @@ namespace GoodAI.School.GUI
     public class LTDesign
     {
         [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-        private readonly bool m_enabled;
+        public readonly bool m_enabled;
 
         [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
-        private readonly string m_taskType;
+        public readonly string m_taskType;
 
         [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
-        private readonly string m_worldType;
+        public readonly string m_worldType;
 
         public LTDesign()
         {
@@ -183,16 +183,16 @@ namespace GoodAI.School.GUI
     public class CurriculumDesign
     {
         [YAXSerializeAs("Tasks")]
-        private readonly List<LTDesign> m_tasks;
+        public readonly List<LTDesign> m_tasks;
 
         [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-        private readonly bool m_enabled;
+        public readonly bool m_enabled;
 
         [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
-        private readonly string m_name;
+        public readonly string m_name;
 
         [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
-        private readonly string m_description;
+        public readonly string m_description;
 
         public CurriculumDesign()
         {
@@ -254,7 +254,7 @@ namespace GoodAI.School.GUI
     public class PlanDesign
     {
         [YAXSerializeAs("Curricula")]
-        private List<CurriculumDesign> m_curricula;
+        public List<CurriculumDesign> m_curricula;
 
         public PlanDesign()
         {
