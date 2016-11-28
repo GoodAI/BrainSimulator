@@ -27,6 +27,17 @@ namespace GoodAI.School.GUI
             return node;
         }
 
+        public static List<CurriculumNode> FromPlanDesign(PlanDesign design)
+        {
+            return design.Curricula.Select(x => FromCurriculumDesign(x)).ToList();
+        }
+
+        public static PlanDesign ToPlanDesign(List<CurriculumNode> nodes)
+        {
+            List<CurriculumDesign> curricula = nodes.Select(x => (CurriculumDesign)x).ToList();
+            return new PlanDesign(curricula);
+        }
+
         public static explicit operator CurriculumDesign(CurriculumNode node)
         {
             List<LTDesign> tasks = node.Nodes.
@@ -267,18 +278,9 @@ namespace GoodAI.School.GUI
         [YAXSerializeAs("Curricula")]
         public List<CurriculumDesign> Curricula { get; set; }
 
-        public PlanDesign()
+        public PlanDesign(List<CurriculumDesign> curricula)
         {
-        }
-
-        public PlanDesign(List<CurriculumNode> nodes)
-        {
-            Curricula = nodes.Select(x => (CurriculumDesign)x).ToList();
-        }
-
-        public static explicit operator List<CurriculumNode>(PlanDesign design)
-        {
-            return design.Curricula.Select(x => CurriculumNode.FromCurriculumDesign(x)).ToList();
+            Curricula = curricula;
         }
 
         public static explicit operator SchoolCurriculum(PlanDesign design)

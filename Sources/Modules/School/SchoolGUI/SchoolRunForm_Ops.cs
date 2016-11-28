@@ -115,7 +115,7 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+                return CurriculumNode.ToPlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
             }
         }
 
@@ -482,7 +482,7 @@ namespace GoodAI.School.GUI
             try
             {
                 PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
+                List<CurriculumNode> currs = CurriculumNode.FromPlanDesign(plan);
 
                 foreach (CurriculumNode curr in currs)
                     m_model.Nodes.Add(curr);
