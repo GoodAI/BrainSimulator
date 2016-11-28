@@ -19,6 +19,25 @@ namespace GoodAI.School.GUI
         }
 
         public string Description { get; set; }
+
+        public static CurriculumNode FromCurriculumDesign(CurriculumDesign design)
+        {
+            CurriculumNode node = new CurriculumNode { Text = design.Name, IsChecked = design.Enabled, Description = design.Description };
+            design.Tasks.Where(x => LearningTaskNode.FromLTDesign(x) != null).ToList().ForEach(x => node.Nodes.Add(LearningTaskNode.FromLTDesign(x)));
+            return node;
+        }
+
+        public static explicit operator CurriculumDesign(CurriculumNode node)
+        {
+            List<LTDesign> tasks = node.Nodes.
+                Where(x => x is LearningTaskNode).
+                Select(x => (LTDesign)(x as LearningTaskNode)).
+                ToList();
+            bool isEnabled = node.IsChecked;
+            string name = node.Text;
+            string description = node.Description;
+            return new CurriculumDesign(tasks, isEnabled, name, description);
+        }
     }
 
     public class LearningTaskNode : Node
@@ -202,28 +221,12 @@ namespace GoodAI.School.GUI
         [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
         public string Description { get; private set; }
 
-        public CurriculumDesign()
+        public CurriculumDesign(List<LTDesign> tasks, bool isEnabled, string name, string description)
         {
-        }
-
-        public CurriculumDesign(CurriculumNode node)
-        {
-            Tasks = node.Nodes.
-                Where(x => x is LearningTaskNode).
-                Select(x => (LTDesign)(x as LearningTaskNode)).
-                ToList();
-            Enabled = node.IsChecked;
-            Name = node.Text;
-            Description = node.Description;
-        }
-
-        public static explicit operator CurriculumNode(CurriculumDesign design)
-        {
-            CurriculumNode node = new CurriculumNode { Text = design.Name, IsChecked = design.Enabled, Description = design.Description };
-
-            design.Tasks.Where(x => LearningTaskNode.FromLTDesign(x) != null).ToList().ForEach(x => node.Nodes.Add(LearningTaskNode.FromLTDesign(x)));
-
-            return node;
+            Tasks = tasks;
+            Enabled = isEnabled;
+            Name = name;
+            Description = description;
         }
 
         public static explicit operator SchoolCurriculum(CurriculumDesign design)
@@ -270,12 +273,12 @@ namespace GoodAI.School.GUI
 
         public PlanDesign(List<CurriculumNode> nodes)
         {
-            Curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
+            Curricula = nodes.Select(x => (CurriculumDesign)x).ToList();
         }
 
         public static explicit operator List<CurriculumNode>(PlanDesign design)
         {
-            return design.Curricula.Select(x => (CurriculumNode)x).ToList();
+            return design.Curricula.Select(x => CurriculumNode.FromCurriculumDesign(x)).ToList();
         }
 
         public static explicit operator SchoolCurriculum(PlanDesign design)
