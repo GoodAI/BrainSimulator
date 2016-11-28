@@ -1,7 +1,31 @@
 ## School for AI
 
-This section shows usage of School for AI (or School for short) in Brain Simulator.
-School for AI makes it easy to specify the environments that the agent will interact with. 
+School for AI is a world within BrainSimulator which you can use for training and testing of your architectures. The school assumes that the training is structured into a curriculum, which is composed of individual learning tasks. A single learning task teaches or tests preferably a single new skill or ability.
+
+The training can occur in a range of environments. We've prepared a basic 2D environment (RoguelikeWorld), an advanced 2D environment (ToyWorld), and a basic 3D environment (3D version of ToyWorld). A single curriculum can train the same architecture on multiple different environments.
+
+### Basic concepts
+
+The Agent is expected to experience different environments, each having different rules, School for AI makes this process easier by allowing the user to select, from the user interface, the environments and the order in which those environments appear.
+
+
+#### School
+
+The agent can be seen as attending a virtual school, where different types of exercises are presented to the Agent in order to teach it skills, in "School for AI", those exercises are referred to as "Learning Tasks". A learning task, for example, might have the purpose of teaching to the Agent the detection of shapes, this process would involve presenting different shapes to the Agent on different instances, those specific instances are referred to as "Training Units", a Learning Task consists of one or more Training Units. Lastly, a list of learning tasks compose what is referred to as "Curriculum".
+
+
+
+#### Learning Task
+
+A Learning Task can be seen as an exercise that is presented to the Agent in order to teach it to solve a specific type of problem
+
+#### Training Unit
+
+A Training Unit is a specific instance of the problem that a Learning Task represents and wants to teach the Agent to solve.
+
+#### Curriculum
+
+A curriculum is a composition of one or more Learning Tasks
 
 ### UI
 
@@ -42,34 +66,19 @@ To ease human interaction with the environments in School, you can also connect 
 
 ![](../img/SchoolWorld_Autodetect.png)
 
-### Basic concepts
-
-The Agent is expected to experience different environments, each having different rules, School for AI makes this process easier by allowing the user to select, from the user interface, the environments and the order in which those environments appear.
-
-
-#### School
-
-The agent can be seen as attending a virtual school, where different types of exercises are presented to the Agent in order to teach it skills, in "School for AI", those exercises are referred to as "Learning Tasks". A learning task, for example, might have the purpose of teaching to the Agent the detection of shapes, this process would involve presenting different shapes to the Agent on different instances, those specific instances are referred to as "Training Units", a Learning Task consists of one or more Training Units. Lastly, a list of learning tasks compose what is referred to as "Curriculum".
-
-
-
-#### Learning Task
-
-A Learning Task can be seen as an exercise that is presented to the Agent in order to teach it to solve a specific type of problem
-
-#### Training Unit
-
-A Training Unit is a specific instance of the problem that a Learning Task represents and wants to teach the Agent to solve.
-
-#### Curriculum
-
-A curriculum is a composition of one or more Learning Tasks
-
 ### Architecture overview
 
-#### School World
+
+
+#### SchoolWorld
+
+School is implemented as a MyWorld node called SchoolWorld. This node has a control window associated, accessible from the menu "View->School for AI". The SchoolWorld is special - it can spawn new worlds during runtime. This property is used for creating the training and testing environments for the agent (RoguelikeWorld, TetrisWorld, ToyWorld, etc.)
+
+SchoolWorld acts as a point of contact for your architecture. It provides input to the architecture and receives outputs from it. It then redirects this I/O to the world that was spawned for the current learning task from the curriculum. Besides acting as an intermediate, School also collects statistics of the training and controls the simulation. For instance, School pauses the simulation if the trained architecture fails to pass a learning task.
 
 #### World Adapters
+
+Any world can be connected to SchoolWorld. To connect a world, you need to write a WorldAdapter class. You don't need to register the new adapter anywhere, inheriting the IWorldAdapter interface is enough.
 
 #### Switching Worlds
 
