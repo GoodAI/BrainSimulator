@@ -51,15 +51,15 @@
     <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libs\3rd\WinFormsUI\WinFormsUI.csproj">
+    <ProjectReference Include="..\..\..\Libs\3rd\WinFormsUI\WinFormsUI.csproj">
       <Project>{C75532C4-765B-418E-B09B-46D36B2ABDB1}</Project>
       <Name>WinFormsUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Platform\BrainSimulator\BrainSimulator.csproj">
+    <ProjectReference Include="..\..\..\Platform\BrainSimulator\BrainSimulator.csproj">
       <Project>{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}</Project>
       <Name>BrainSimulator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+    <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
       <Name>Core</Name>
     </ProjectReference>

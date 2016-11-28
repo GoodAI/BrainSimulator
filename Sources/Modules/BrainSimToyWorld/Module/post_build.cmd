@@ -6,7 +6,7 @@ echo Param 2 (ProjectDir) : %2
 echo Param 3 (OutDir)     : %3
 echo Param 4 (ConfigName) : %4
 
-set BRAIN_SIM_DIR=%2..\..\..\..\Platform\BrainSimulator
+set BRAIN_SIM_DIR=%2..\..\..\Platform\BrainSimulator
 
 if not exist %BRAIN_SIM_DIR% (
 	echo "Error: Target directory not found. Please check paths."

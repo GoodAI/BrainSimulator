@@ -11,7 +11,6 @@ using GoodAI.ToyWorld.Control;
 using Logger;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
-using Utils;
 
 namespace GoodAI.ToyWorld
 {

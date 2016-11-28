@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ManagedCuda">
-      <HintPath>..\..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
+      <HintPath>..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -45,10 +45,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="YAXLib, Version=2.13.0.0, Culture=neutral, PublicKeyToken=15c43682c986900f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Libs\3rd\YAXLib\Bin\YAXLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControlMapper.cs" />
@@ -66,13 +62,21 @@
     <Compile Include="WordToVector.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
-      <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+      <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
+      <Name>YAXLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ToyWorld\LoggerIface\LoggerIface.csproj">
-      <Project>{97bd8cc4-ec76-44ef-b774-48062454f4fc}</Project>
+      <Project>{97BD8CC4-EC76-44EF-B774-48062454F4FC}</Project>
       <Name>LoggerIface</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ToyWorld\Logger\Logger.csproj">
+      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
+      <Name>Logger</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ToyWorld\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
@@ -81,10 +85,6 @@
     <ProjectReference Include="..\..\ToyWorld\ToyWorldFactory\ToyWorldFactory.csproj">
       <Project>{f59c62c1-a4e9-4ce7-b1c8-17375d4491d6}</Project>
       <Name>ToyWorldFactory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\ToyWorld\Utils\Utils.csproj">
-      <Project>{772b1188-a00d-45fc-b352-834227adae96}</Project>
-      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -110,6 +110,6 @@
   </Target>
   -->
   <Target Name="AfterClean">
-    <RemoveDir Directories="$(ProjectDir)..\..\..\..\Platform\BrainSimulator\bin\$(Configuration)\modules\GoodAI.ToyWorld" />
+    <RemoveDir Directories="$(ProjectDir)..\..\..\Platform\BrainSimulator\bin\$(Configuration)\modules\GoodAI.ToyWorld" />
   </Target>
 </Project>

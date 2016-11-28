@@ -1,6 +1,6 @@
 set MODULE_NAME=GoodAI.School.GUI
 
-set BRAIN_SIM_DIR=%2..\..\..\..\Platform\BrainSimulator
+set BRAIN_SIM_DIR=%2..\..\..\Platform\BrainSimulator
 
 echo Running %MODULE_NAME% post_build.cmd
 rem echo Param 1 (SolutionDir): %1 (not used)

@@ -34,11 +34,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CudaRand">
-      <HintPath>..\..\..\..\packages\ManagedCuda-CURAND.8.0.13\lib\net45\CudaRand.dll</HintPath>
+      <HintPath>..\..\..\packages\ManagedCuda-CURAND.8.0.13\lib\net45\CudaRand.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="ManagedCuda">
-      <HintPath>..\..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
+      <HintPath>..\..\..\packages\ManagedCuda-80.8.0.13\lib\net45\ManagedCuda.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NPP">
@@ -46,7 +46,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
+      <HintPath>..\..\..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -141,20 +141,20 @@
     <Compile Include="Worlds\ToyWorldAdapterWorld.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
       <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
       <Name>YAXLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
+    <ProjectReference Include="..\..\..\Libs\TypeMap\TypeMap\TypeMap.csproj">
       <Project>{86955c47-2a02-41a4-ab32-c9e592eb2971}</Project>
       <Name>TypeMap</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
-      <Project>{91324E64-9B84-4312-9E55-5A77DF07DA1B}</Project>
+    <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
+      <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\BasicNodes\Module\BasicNodes.csproj">
-      <Project>{c8a4992f-f2cb-40e7-92aa-7d4239653517}</Project>
+    <ProjectReference Include="..\..\BasicNodes\Module\BasicNodes.csproj">
+      <Project>{C8A4992F-F2CB-40E7-92AA-7D4239653517}</Project>
       <Name>BasicNodes</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\BrainSimToyWorld\Module\BrainSimToyWorld.csproj">

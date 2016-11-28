@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aga.Controls, Version=1.7.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AdamsLair.TreeViewAdv.1.7.4.0\lib\net20\Aga.Controls.dll</HintPath>
+    <Reference Include="Aga.Controls">
+      <HintPath>..\..\..\packages\AdamsLair.TreeViewAdv.1.7.6.0\lib\net20\Aga.Controls.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -104,19 +104,19 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Libs\3rd\WinFormsUI\WinFormsUI.csproj">
+    <ProjectReference Include="..\..\..\Libs\3rd\WinFormsUI\WinFormsUI.csproj">
       <Project>{c75532c4-765b-418e-b09b-46d36b2abdb1}</Project>
       <Name>WinFormsUI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
+    <ProjectReference Include="..\..\..\Libs\3rd\YAXLib\YAXLib\YAXLib.csproj">
       <Project>{f1c4d174-c948-4d18-a125-f6855ef55683}</Project>
       <Name>YAXLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Platform\BrainSimulator\BrainSimulator.csproj">
+    <ProjectReference Include="..\..\..\Platform\BrainSimulator\BrainSimulator.csproj">
       <Project>{e45fa5b2-15e6-49e5-abe5-18fe9a7d027d}</Project>
       <Name>BrainSimulator</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Platform\Core\Core.csproj">
+    <ProjectReference Include="..\..\..\Platform\Core\Core.csproj">
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
