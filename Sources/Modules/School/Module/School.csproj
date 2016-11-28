@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Common\AbstractLearningTask.cs" />
     <Compile Include="Common\CurriculumManager.cs" />
+    <Compile Include="Common\DesignClasses.cs" />
     <Compile Include="Common\GameObject.cs" />
     <Compile Include="Common\LearningTaskFactory.cs" />
     <Compile Include="Common\LearningTaskHelpers.cs" />
