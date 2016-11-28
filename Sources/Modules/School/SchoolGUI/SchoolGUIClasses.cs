@@ -133,126 +133,126 @@ namespace GoodAI.School.GUI
 
     #endregion UI classes
 
+    [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+    public class LTDesign
+    {
+        [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
+        private readonly bool m_enabled;
+
+        [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
+        private readonly string m_taskType;
+
+        [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
+        private readonly string m_worldType;
+
+        public LTDesign()
+        {
+        }
+
+        public LTDesign(LearningTaskNode node)
+        {
+            m_taskType = node.TaskType.AssemblyQualifiedName;
+            m_worldType = node.WorldType.AssemblyQualifiedName;
+            m_enabled = node.IsChecked;
+        }
+
+        public static explicit operator LearningTaskNode(LTDesign design)
+        {
+            Type taskType = Type.GetType(design.m_taskType);
+            Type worldType = Type.GetType(design.m_worldType);
+            if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
+                return null;
+            return new LearningTaskNode(taskType, worldType) { IsChecked = design.m_enabled };
+        }
+
+        public ILearningTask AsILearningTask(SchoolWorld world = null)
+        {
+            if (!m_enabled)
+                return null;    //there is no placeholder for empty task, therefore null
+            ILearningTask task;
+            if (world != null)
+                task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
+            else
+                task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
+            task.RequiredWorldType = Type.GetType(m_worldType);
+            return task;
+        }
+    }
+
+    [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
+    public class CurriculumDesign
+    {
+        [YAXSerializeAs("Tasks")]
+        private readonly List<LTDesign> m_tasks;
+
+        [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
+        private readonly bool m_enabled;
+
+        [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
+        private readonly string m_name;
+
+        [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
+        private readonly string m_description;
+
+        public CurriculumDesign()
+        {
+        }
+
+        public CurriculumDesign(CurriculumNode node)
+        {
+            m_tasks = node.Nodes.
+                Where(x => x is LearningTaskNode).
+                Select(x => new LTDesign(x as LearningTaskNode)).
+                ToList();
+            m_enabled = node.IsChecked;
+            m_name = node.Text;
+            m_description = node.Description;
+        }
+
+        public static explicit operator CurriculumNode(CurriculumDesign design)
+        {
+            CurriculumNode node = new CurriculumNode { Text = design.m_name, IsChecked = design.m_enabled, Description = design.m_description };
+
+            design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+
+            return node;
+        }
+
+        public static explicit operator SchoolCurriculum(CurriculumDesign design)
+        {
+            SchoolCurriculum curriculum = new SchoolCurriculum();
+            if (!design.m_enabled)
+                return curriculum;
+
+            design.m_tasks.
+                Select(x => x.AsILearningTask()).
+                Where(x => x != null).
+                ToList().
+                ForEach(x => curriculum.Add(x));
+
+            return curriculum;
+        }
+
+        public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
+        {
+            SchoolCurriculum curriculum = new SchoolCurriculum();
+            if (!m_enabled)
+                return curriculum;
+
+            m_tasks.
+                Select(x => x.AsILearningTask(world)).
+                Where(x => x != null).
+                ToList().
+                ForEach(x => curriculum.Add(x));
+
+            return curriculum;
+        }
+    }
+
     // mediator between view (CurriculumNode) and model (SchoolCurriculum) - is also used for serialization
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
     public class PlanDesign
     {
-        [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
-        private class LTDesign
-        {
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-            private readonly bool m_enabled;
-
-            [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
-            private readonly string m_taskType;
-
-            [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
-            private readonly string m_worldType;
-
-            public LTDesign()
-            {
-            }
-
-            public LTDesign(LearningTaskNode node)
-            {
-                m_taskType = node.TaskType.AssemblyQualifiedName;
-                m_worldType = node.WorldType.AssemblyQualifiedName;
-                m_enabled = node.IsChecked;
-            }
-
-            public static explicit operator LearningTaskNode(LTDesign design)
-            {
-                Type taskType = Type.GetType(design.m_taskType);
-                Type worldType = Type.GetType(design.m_worldType);
-                if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
-                    return null;
-                return new LearningTaskNode(taskType, worldType) { IsChecked = design.m_enabled };
-            }
-
-            public ILearningTask AsILearningTask(SchoolWorld world = null)
-            {
-                if (!m_enabled)
-                    return null;    //there is no placeholder for empty task, therefore null
-                ILearningTask task;
-                if (world != null)
-                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
-                else
-                    task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
-                task.RequiredWorldType = Type.GetType(m_worldType);
-                return task;
-            }
-        }
-
-        [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
-        private class CurriculumDesign
-        {
-            [YAXSerializeAs("Tasks")]
-            private readonly List<LTDesign> m_tasks;
-
-            [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-            private readonly bool m_enabled;
-
-            [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
-            private readonly string m_name;
-
-            [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
-            private readonly string m_description;
-
-            public CurriculumDesign()
-            {
-            }
-
-            public CurriculumDesign(CurriculumNode node)
-            {
-                m_tasks = node.Nodes.
-                    Where(x => x is LearningTaskNode).
-                    Select(x => new LTDesign(x as LearningTaskNode)).
-                    ToList();
-                m_enabled = node.IsChecked;
-                m_name = node.Text;
-                m_description = node.Description;
-            }
-
-            public static explicit operator CurriculumNode(CurriculumDesign design)
-            {
-                CurriculumNode node = new CurriculumNode { Text = design.m_name, IsChecked = design.m_enabled, Description = design.m_description };
-
-                design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
-
-                return node;
-            }
-
-            public static explicit operator SchoolCurriculum(CurriculumDesign design)
-            {
-                SchoolCurriculum curriculum = new SchoolCurriculum();
-                if (!design.m_enabled)
-                    return curriculum;
-
-                design.m_tasks.
-                    Select(x => x.AsILearningTask()).
-                    Where(x => x != null).
-                    ToList().
-                    ForEach(x => curriculum.Add(x));
-
-                return curriculum;
-            }
-
-            public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
-            {
-                SchoolCurriculum curriculum = new SchoolCurriculum();
-                if (!m_enabled)
-                    return curriculum;
-
-                m_tasks.
-                    Select(x => x.AsILearningTask(world)).
-                    Where(x => x != null).
-                    ToList().
-                    ForEach(x => curriculum.Add(x));
-
-                return curriculum;
-            }
-        }
-
         [YAXSerializeAs("Curricula")]
         private List<CurriculumDesign> m_curricula;
 
