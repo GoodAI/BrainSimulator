@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.School.Common;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -468,29 +469,12 @@ namespace GoodAI.School.GUI
 
         private void LoadCurriculum(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
-                return;
-
             string xmlCurr;
-            try { xmlCurr = File.ReadAllText(filePath); }
-            catch (IOException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return;
-            }
+            PlanDesign plan = CurriculumManager.LoadPlanDesign(filePath, out xmlCurr);
+            if (plan == null) return;
 
-            try
-            {
-                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-
-                foreach (CurriculumNode curr in CurriculumNode.FromPlanDesign(plan))
-                    m_model.Nodes.Add(curr);
-            }
-            catch (YAXException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return;
-            }
+            foreach (CurriculumNode curr in CurriculumNode.FromPlanDesign(plan))
+                m_model.Nodes.Add(curr);
 
             Properties.School.Default.LastOpenedFile = filePath;
             Properties.School.Default.Save();

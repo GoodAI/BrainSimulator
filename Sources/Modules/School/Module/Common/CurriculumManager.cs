@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GoodAI.Modules.School.Common;
 using GoodAI.Modules.School.Worlds;
 using System.ComponentModel;
+using System.IO;
+using GoodAI.Core.Utils;
+using GoodAI.Modules.School.Common;
 using YAXLib;
 
 namespace GoodAI.School.Common
@@ -166,6 +168,39 @@ namespace GoodAI.School.Common
             }
 
             return result;
+        }
+
+        public static PlanDesign LoadPlanDesign(string filePath)
+        {
+            string dummy;
+            return LoadPlanDesign(filePath, out dummy);
+        }
+
+        public static PlanDesign LoadPlanDesign(string filePath, out string xmlCurr)
+        {
+            xmlCurr = null;
+
+            YAXSerializer serializer = new YAXSerializer(typeof(PlanDesign));
+            if (string.IsNullOrEmpty(filePath))
+                return null;
+
+            try { xmlCurr = File.ReadAllText(filePath); }
+            catch (IOException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
+                return null;
+            }
+
+            try
+            {
+                PlanDesign plan = (PlanDesign)serializer.Deserialize(xmlCurr);
+                return plan;
+            }
+            catch (YAXException e)
+            {
+                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
+                return null;
+            }
         }
 
         private static bool ContainsType(List<Type> worldTypes, Type selectedWorldType)
