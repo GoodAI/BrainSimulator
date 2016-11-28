@@ -74,10 +74,6 @@
       <Project>{97BD8CC4-EC76-44EF-B774-48062454F4FC}</Project>
       <Name>LoggerIface</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ToyWorld\Logger\Logger.csproj">
-      <Project>{49a532a2-2080-4dbe-afc8-0b34d9b0b210}</Project>
-      <Name>Logger</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ToyWorld\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
       <Name>ToyWorldAPI</Name>

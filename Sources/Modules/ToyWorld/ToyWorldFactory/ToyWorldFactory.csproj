@@ -63,12 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Game\Game.csproj">
-      <Project>{c61db58a-5374-48f3-9457-025a1693c8cc}</Project>
+      <Project>{C61DB58A-5374-48F3-9457-025A1693C8CC}</Project>
       <Name>Game</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Render\Render.csproj">
-      <Project>{c1527127-dd8c-4076-a0a7-39eb2ef23787}</Project>
-      <Name>Render</Name>
     </ProjectReference>
     <ProjectReference Include="..\ToyWorldAPI\ToyWorldAPI.csproj">
       <Project>{527728e6-91be-4678-912f-45a507d0bc67}</Project>
