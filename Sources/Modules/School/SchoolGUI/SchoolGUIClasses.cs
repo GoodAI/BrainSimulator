@@ -29,7 +29,7 @@ namespace GoodAI.School.GUI
 
         public static List<CurriculumNode> FromPlanDesign(PlanDesign design)
         {
-            return design.Curricula.Select(x => FromCurriculumDesign(x)).ToList();
+            return design.Curricula.Select(FromCurriculumDesign).ToList();
         }
 
         public static PlanDesign ToPlanDesign(List<CurriculumNode> nodes)
@@ -102,15 +102,10 @@ namespace GoodAI.School.GUI
 
         public override bool Equals(object obj)
         {
-            if (obj as LearningTaskNode == null)
-            {
+            if (!(obj is LearningTaskNode))
                 return false;
-            }
-            if (TaskType == (obj as LearningTaskNode).TaskType && WorldType == (obj as LearningTaskNode).WorldType)
-            {
-                return true;
-            }
-            return false;
+
+            return TaskType == ((LearningTaskNode)obj).TaskType && WorldType == ((LearningTaskNode)obj).WorldType;
         }
     }
 
@@ -134,47 +129,39 @@ namespace GoodAI.School.GUI
 
     public class AttributeNode
     {
-        private string Annotation;
+        private readonly string m_annotation;
         public string Name { get; set; }
         public string Value { get; set; }
         private Type Type { get; set; }
 
         public AttributeNode(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         public AttributeNode(TSHintAttribute attribute, float value)
         {
-            this.Name = attribute.Name;
+            Name = attribute.Name;
 
-            this.Type = attribute.TypeOfValue;
+            Type = attribute.TypeOfValue;
             if (Type == typeof(Single) || Type == typeof(Double))
-            {
-                this.Value = ((Single)value).ToString("F");
-            }
+                Value = value.ToString("F");
             else
-            {
-                this.Value = Convert.ChangeType(value, Type).ToString();
-            }
+                Value = Convert.ChangeType(value, Type).ToString();
 
-            Annotation = attribute.Annotation;
+            m_annotation = attribute.Annotation;
         }
 
         public override bool Equals(object obj)
         {
-            if (Name == (obj as AttributeNode).Name)
-            {
-                return true;
-            }
-            return false;
+            return Name == (obj as AttributeNode).Name;
         }
 
         // Annotation is not public property because DataGridView automaticly generates columns for
         // all public properties, while this should not be column
         public string GetAnotation()
         {
-            return Annotation;
+            return m_annotation;
         }
     }
 

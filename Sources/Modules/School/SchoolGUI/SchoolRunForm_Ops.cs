@@ -115,7 +115,7 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return CurriculumNode.ToPlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+                return CurriculumNode.ToPlanDesign(m_model.Nodes.OfType<CurriculumNode>().ToList());
             }
         }
 
@@ -482,9 +482,8 @@ namespace GoodAI.School.GUI
             try
             {
                 PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = CurriculumNode.FromPlanDesign(plan);
 
-                foreach (CurriculumNode curr in currs)
+                foreach (CurriculumNode curr in CurriculumNode.FromPlanDesign(plan))
                     m_model.Nodes.Add(curr);
             }
             catch (YAXException e)
