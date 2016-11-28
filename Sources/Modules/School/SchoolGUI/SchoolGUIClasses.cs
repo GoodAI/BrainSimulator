@@ -137,13 +137,13 @@ namespace GoodAI.School.GUI
     public class LTDesign
     {
         [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-        public bool m_enabled { get; private set; }
+        public bool Enabled { get; private set; }
 
         [YAXSerializeAs("TaskType"), YAXSerializableField(DefaultValue = "")]
-        public string m_taskType { get; private set; }
+        public string TaskType { get; private set; }
 
         [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
-        public string m_worldType { get; private set; }
+        public string WorldType { get; private set; }
 
         public LTDesign()
         {
@@ -151,30 +151,30 @@ namespace GoodAI.School.GUI
 
         public LTDesign(LearningTaskNode node)
         {
-            m_taskType = node.TaskType.AssemblyQualifiedName;
-            m_worldType = node.WorldType.AssemblyQualifiedName;
-            m_enabled = node.IsChecked;
+            TaskType = node.TaskType.AssemblyQualifiedName;
+            WorldType = node.WorldType.AssemblyQualifiedName;
+            Enabled = node.IsChecked;
         }
 
         public static explicit operator LearningTaskNode(LTDesign design)
         {
-            Type taskType = Type.GetType(design.m_taskType);
-            Type worldType = Type.GetType(design.m_worldType);
+            Type taskType = Type.GetType(design.TaskType);
+            Type worldType = Type.GetType(design.WorldType);
             if (taskType == null || worldType == null)  //unable to reconstruct types from serialized strings
                 return null;
-            return new LearningTaskNode(taskType, worldType) { IsChecked = design.m_enabled };
+            return new LearningTaskNode(taskType, worldType) { IsChecked = design.Enabled };
         }
 
         public ILearningTask AsILearningTask(SchoolWorld world = null)
         {
-            if (!m_enabled)
+            if (!Enabled)
                 return null;    //there is no placeholder for empty task, therefore null
             ILearningTask task;
             if (world != null)
-                task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType), world);
+                task = LearningTaskFactory.CreateLearningTask(Type.GetType(TaskType), world);
             else
-                task = LearningTaskFactory.CreateLearningTask(Type.GetType(m_taskType));
-            task.RequiredWorldType = Type.GetType(m_worldType);
+                task = LearningTaskFactory.CreateLearningTask(Type.GetType(TaskType));
+            task.RequiredWorldType = Type.GetType(WorldType);
             return task;
         }
     }
@@ -183,16 +183,16 @@ namespace GoodAI.School.GUI
     public class CurriculumDesign
     {
         [YAXSerializeAs("Tasks")]
-        public List<LTDesign> m_tasks { get; private set; }
+        public List<LTDesign> Tasks { get; private set; }
 
         [YAXSerializeAs("Enabled"), YAXAttributeForClass, YAXSerializableField(DefaultValue = true)]
-        public bool m_enabled { get; private set; }
+        public bool Enabled { get; private set; }
 
         [YAXSerializeAs("Name"), YAXAttributeForClass, YAXSerializableField(DefaultValue = "")]
-        public string m_name { get; private set; }
+        public string Name { get; private set; }
 
         [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
-        public string m_description { get; private set; }
+        public string Description { get; private set; }
 
         public CurriculumDesign()
         {
@@ -200,20 +200,20 @@ namespace GoodAI.School.GUI
 
         public CurriculumDesign(CurriculumNode node)
         {
-            m_tasks = node.Nodes.
+            Tasks = node.Nodes.
                 Where(x => x is LearningTaskNode).
                 Select(x => new LTDesign(x as LearningTaskNode)).
                 ToList();
-            m_enabled = node.IsChecked;
-            m_name = node.Text;
-            m_description = node.Description;
+            Enabled = node.IsChecked;
+            Name = node.Text;
+            Description = node.Description;
         }
 
         public static explicit operator CurriculumNode(CurriculumDesign design)
         {
-            CurriculumNode node = new CurriculumNode { Text = design.m_name, IsChecked = design.m_enabled, Description = design.m_description };
+            CurriculumNode node = new CurriculumNode { Text = design.Name, IsChecked = design.Enabled, Description = design.Description };
 
-            design.m_tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
+            design.Tasks.Where(x => (LearningTaskNode)x != null).ToList().ForEach(x => node.Nodes.Add((LearningTaskNode)x));
 
             return node;
         }
@@ -221,10 +221,10 @@ namespace GoodAI.School.GUI
         public static explicit operator SchoolCurriculum(CurriculumDesign design)
         {
             SchoolCurriculum curriculum = new SchoolCurriculum();
-            if (!design.m_enabled)
+            if (!design.Enabled)
                 return curriculum;
 
-            design.m_tasks.
+            design.Tasks.
                 Select(x => x.AsILearningTask()).
                 Where(x => x != null).
                 ToList().
@@ -236,10 +236,10 @@ namespace GoodAI.School.GUI
         public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
         {
             SchoolCurriculum curriculum = new SchoolCurriculum();
-            if (!m_enabled)
+            if (!Enabled)
                 return curriculum;
 
-            m_tasks.
+            Tasks.
                 Select(x => x.AsILearningTask(world)).
                 Where(x => x != null).
                 ToList().
@@ -254,7 +254,7 @@ namespace GoodAI.School.GUI
     public class PlanDesign
     {
         [YAXSerializeAs("Curricula")]
-        public List<CurriculumDesign> m_curricula { get; set; }
+        public List<CurriculumDesign> Curricula { get; set; }
 
         public PlanDesign()
         {
@@ -262,18 +262,18 @@ namespace GoodAI.School.GUI
 
         public PlanDesign(List<CurriculumNode> nodes)
         {
-            m_curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
+            Curricula = nodes.Select(x => new CurriculumDesign(x)).ToList();
         }
 
         public static explicit operator List<CurriculumNode>(PlanDesign design)
         {
-            return design.m_curricula.Select(x => (CurriculumNode)x).ToList();
+            return design.Curricula.Select(x => (CurriculumNode)x).ToList();
         }
 
         public static explicit operator SchoolCurriculum(PlanDesign design)
         {
             SchoolCurriculum result = new SchoolCurriculum();
-            foreach (CurriculumDesign curr in design.m_curricula)
+            foreach (CurriculumDesign curr in design.Curricula)
                 result.Add((SchoolCurriculum)curr);
 
             return result;
@@ -282,7 +282,7 @@ namespace GoodAI.School.GUI
         public SchoolCurriculum AsSchoolCurriculum(SchoolWorld world)
         {
             SchoolCurriculum result = new SchoolCurriculum();
-            foreach (CurriculumDesign curr in m_curricula)
+            foreach (CurriculumDesign curr in Curricula)
                 result.Add(curr.AsSchoolCurriculum(world));
 
             return result;
