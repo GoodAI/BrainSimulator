@@ -170,6 +170,21 @@ namespace GoodAI.School.Common
             return result;
         }
 
+        public static void SavePlanDesign(PlanDesign design, string filePath)
+        {
+            string dummy;
+            SavePlanDesign(design, filePath, out dummy);
+        }
+
+        public static void SavePlanDesign(PlanDesign design, string filePath, out string xmlResult)
+        {
+            YAXSerializer serializer = new YAXSerializer(typeof(PlanDesign));
+
+            xmlResult = serializer.Serialize(design);
+            File.WriteAllText(filePath, xmlResult);
+            MyLog.Writer.WriteLine(MyLogLevel.INFO, "School project saved to: " + filePath);
+        }
+
         public static PlanDesign LoadPlanDesign(string filePath)
         {
             string dummy;
