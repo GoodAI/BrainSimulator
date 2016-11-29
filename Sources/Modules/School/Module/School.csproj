@@ -42,7 +42,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="NPP">
-      <HintPath>..\..\..\..\packages\ManagedCuda-NPP.8.0.13\lib\net45\NPP.dll</HintPath>
+      <HintPath>..\..\..\packages\ManagedCuda-NPP.8.0.13\lib\net45\NPP.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
