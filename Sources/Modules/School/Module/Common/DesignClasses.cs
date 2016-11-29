@@ -29,6 +29,12 @@ namespace GoodAI.School.Common
             Enabled = isEnabled;
         }
 
+        public LTDesign(ILearningTask task)
+        {
+            TaskType = task.GetType().AssemblyQualifiedName;
+            WorldType = task.RequiredWorldType.AssemblyQualifiedName;
+        }
+
         public ILearningTask AsILearningTask(SchoolWorld world = null)
         {
             if (!Enabled)
@@ -67,6 +73,17 @@ namespace GoodAI.School.Common
             Enabled = isEnabled;
             Name = name;
             Description = description;
+        }
+
+        public CurriculumDesign(SchoolCurriculum curriculum)
+        {
+            Tasks = new List<LTDesign>();
+            Enabled = true;
+            Name = "imported";
+            Description = "N/A";
+
+            foreach (ILearningTask task in curriculum)
+                Tasks.Add(new LTDesign(task));
         }
 
         public static explicit operator SchoolCurriculum(CurriculumDesign design)
@@ -113,6 +130,12 @@ namespace GoodAI.School.Common
         public PlanDesign(List<CurriculumDesign> curricula)
         {
             Curricula = curricula;
+        }
+
+        public PlanDesign(SchoolCurriculum curriculum)
+        {
+            CurriculumDesign result = new CurriculumDesign(curriculum);
+            Curricula = new List<CurriculumDesign> {result};
         }
 
         public static explicit operator SchoolCurriculum(PlanDesign design)
