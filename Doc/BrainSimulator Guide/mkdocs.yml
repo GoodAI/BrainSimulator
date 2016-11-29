@@ -22,6 +22,7 @@ pages:
     - Restricted Boltzmann Machine: 'guides/rbm.md'
     - Automated node and brain testing: 'guides/brain_testing.md'
     - Project Runner: 'guides/projectrunner.md'
+    - Python API: 'guides/pythonapi.md'
 
 - Examples:
     - Worlds: 'examples/worlds.md'

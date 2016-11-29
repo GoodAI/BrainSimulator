@@ -1,4 +1,4 @@
-# goodai-brainsim
+# Python API for Brain Simulator
 Python module for using GoodAI's Brain Simulator
 
 The module itself serves as an interface to Brain Simulator's MyProjectRunner. You can find a documentation to MyProjectRunner on [GoodAI's docs website](http://docs.goodai.com/brainsimulator/guides/projectrunner/index.html).
@@ -36,7 +36,7 @@ from GoodAI.School.Worlds import ToyWorldAdapterWorld
 # your code here
 ```
 
-If you want to know how to use `MyProjectRunner` please refer to its [documentation](http://docs.goodai.com/brainsimulator/guides/projectrunner/index.html).
+If you want to know how to use `MyProjectRunner` please refer to its [documentation](projectrunner.md).
 
 ## Example usage
 
