@@ -94,7 +94,7 @@ This world represents a simple 2D environment with a top-down view, support for 
 
 A range of learning tasks for [School for AI](school.md) were implemented in RoguelikeWorld. For instance, simple shape classification, color classification, spotting differences between two scenes etc.
 
-![](../img/Roguelike.gif)
+![](../img/RoguelikeWorld-02.gif)
  
 Please note that RogulikeWorld uses OpenGL for rendering the scene and on some systems, the interoperability between OpenGL and CUDA is not working correctly. In such case, set the world's property "CopyDataThroughCPU" to true, save your project and restart Brain Simulator. 
 
