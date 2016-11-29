@@ -1,0 +1,34 @@
+<PlanDesign>
+  <Curricula>
+    <CurriculumDesign Enabled="True" Name="Curr0">
+      <Tasks>
+        <LTDesign Enabled="True">
+          <TaskType>GoodAI.Modules.School.LearningTasks.LTPongWithBricks, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TaskType>
+          <WorldType>GoodAI.School.Worlds.PongAdapterWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</WorldType>
+        </LTDesign>
+        <LTDesign Enabled="True">
+          <TaskType>GoodAI.Modules.School.LearningTasks.LTPongWithoutBricks, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TaskType>
+          <WorldType>GoodAI.School.Worlds.PongAdapterWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</WorldType>
+        </LTDesign>
+        <LTDesign Enabled="True">
+          <TaskType>GoodAI.Modules.School.LearningTasks.LTPongTest, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TaskType>
+          <WorldType>GoodAI.School.Worlds.PongAdapterWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</WorldType>
+        </LTDesign>
+        <LTDesign Enabled="True">
+          <TaskType>GoodAI.Modules.School.LearningTasks.LTRotateAndMoveToFit, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TaskType>
+          <WorldType>GoodAI.School.Worlds.TetrisAdapterWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</WorldType>
+        </LTDesign>
+      </Tasks>
+      <Description />
+    </CurriculumDesign>
+    <CurriculumDesign Enabled="True" Name="Curr1">
+      <Tasks>
+        <LTDesign Enabled="True">
+          <TaskType>GoodAI.School.Learning_tasks.LTToyWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TaskType>
+          <WorldType>GoodAI.School.Worlds.ToyWorldAdapterWorld, GoodAI.School, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</WorldType>
+        </LTDesign>
+      </Tasks>
+      <Description />
+    </CurriculumDesign>
+  </Curricula>
+</PlanDesign>

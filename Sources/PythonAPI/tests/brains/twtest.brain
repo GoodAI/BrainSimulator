@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Name="twtest" xmlns:yaxlib="http://www.sinairv.com/yaxlib/">
+  <Observers>
+    <MemoryBlockObserver yaxlib:realtype="GoodAI.Core.Observers.MyMemoryBlockObserver">
+      <Method>Raw</Method>
+      <Scale>Linear</Scale>
+      <Elements>2</Elements>
+      <CustomDimensions></CustomDimensions>
+      <TimeStep>0</TimeStep>
+      <ShowCoordinates>True</ShowCoordinates>
+      <ObserveTensors>False</ObserveTensors>
+      <UseCustomDimensions>False</UseCustomDimensions>
+      <TilesInRow>1</TilesInRow>
+      <Id>10909a8e-42f4-481c-be48-7eb036afa9ef</Id>
+      <ViewMode>Fit_2D</ViewMode>
+      <KeepRatio>True</KeepRatio>
+      <Window>
+        <Location X="846" Y="608" />
+        <Size Width="300" Height="300" />
+        <CameraData />
+      </Window>
+      <AutosaveSnapshop>False</AutosaveSnapshop>
+      <BilinearFiltering>False</BilinearFiltering>
+      <TargetIdentifier>22#VisualFOV</TargetIdentifier>
+      <m_boundPolicy>MANUAL</m_boundPolicy>
+      <m_minValue>0</m_minValue>
+      <m_maxValue>1</m_maxValue>
+    </MemoryBlockObserver>
+  </Observers>
+  <Network Sequential="False" LoadOnStart="False" SaveOnStop="False" Id="0" Name="Network">
+    <Children>
+      <RawImageTransform LoadOnStart="False" SaveOnStop="False" Id="23" Name="Node_23" yaxlib:realtype="GoodAI.Modules.Transforms.MyRawImageTransform">
+        <Target>RGB</Target>
+        <DataFolder></DataFolder>
+        <Location X="242" Y="104" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="ImageTransform" yaxlib:realtype="GoodAI.Modules.Transforms.MyRawImageTransform+MyRawImageTransformTask" />
+        </Tasks>
+      </RawImageTransform>
+      <MyUserInput LoadOnStart="False" SaveOnStop="False" Id="24" Name="Node_24" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput">
+        <IO>
+          <OutputSize>13</OutputSize>
+          <ShowValues>False</ShowValues>
+        </IO>
+        <ColumnHint>1</ColumnHint>
+        <MinValue>0</MinValue>
+        <MaxValue>1</MaxValue>
+        <UserInputStr>0;0;0;0;0;0;0;0;0;0;0;0;0</UserInputStr>
+        <ConvertToBinary>False</ConvertToBinary>
+        <DataFolder></DataFolder>
+        <Location X="632" Y="112" />
+        <Tasks>
+          <Task Enabled="True" PropertyName="GenerateInput" yaxlib:realtype="GoodAI.Core.Nodes.MyUserInput+MyTransferTask" />
+        </Tasks>
+      </MyUserInput>
+    </Children>
+    <LayoutProperties />
+    <GroupInputNodes>
+      <MyParentInput ParentInputIndex="0" Id="1" Name="VisualFOV">
+        <Location X="50" Y="100" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="1" Id="4" Name="VisualFOF">
+        <Location X="50" Y="250" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="2" Id="5" Name="Text">
+        <Location X="50" Y="400" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="3" Id="7" Name="Data">
+        <Location X="50" Y="550" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="4" Id="8" Name="DataLength">
+        <Location X="50" Y="700" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="5" Id="9" Name="RewardMB">
+        <Location X="50" Y="850" />
+      </MyParentInput>
+      <MyParentInput ParentInputIndex="6" Id="10" Name="LTStatus">
+        <Location X="50" Y="1000" />
+      </MyParentInput>
+    </GroupInputNodes>
+    <GroupOutputNodes>
+      <MyOutput Id="11" Name="Action">
+        <Location X="809" Y="106" />
+      </MyOutput>
+    </GroupOutputNodes>
+    <DataFolder></DataFolder>
+    <Location />
+    <Connections>
+      <Connection From="24" To="11" FromIndex="0" ToIndex="0" IsLowPriority="False" IsHidden="False" />
+      <Connection From="1" To="23" FromIndex="0" ToIndex="0" IsLowPriority="False" IsHidden="False" />
+    </Connections>
+    <Tasks />
+  </Network>
+  <World LoadOnStart="False" SaveOnStop="False" Id="22" Name="World" yaxlib:realtype="GoodAI.Modules.School.Worlds.SchoolWorld">
+    <AspectRatioFov>1</AspectRatioFov>
+    <WidthFov>1024</WidthFov>
+    <HeightFov>1024</HeightFov>
+    <AspectRatioFof>1</AspectRatioFof>
+    <WidthFof>256</WidthFof>
+    <HeightFof>256</HeightFof>
+    <TextSize>1000</TextSize>
+    <DataSize>100</DataSize>
+    <Format>Raw</Format>
+    <ShowBlackscreen>False</ShowBlackscreen>
+    <CopyDataThroughCPU>True</CopyDataThroughCPU>
+    <DataFolder></DataFolder>
+    <Location />
+    <Tasks>
+      <Task Enabled="True" PropertyName="InitSchool" yaxlib:realtype="GoodAI.Modules.School.Worlds.SchoolWorld+InitSchoolWorldTask" />
+      <Task Enabled="True" PropertyName="AdapterInputStep" yaxlib:realtype="GoodAI.Modules.School.Worlds.SchoolWorld+InputAdapterTask" />
+      <Task Enabled="True" PropertyName="LearningStep" yaxlib:realtype="GoodAI.Modules.School.Worlds.SchoolWorld+LearningStepTask" />
+      <Task Enabled="True" PropertyName="AdapterOutputStep" yaxlib:realtype="GoodAI.Modules.School.Worlds.SchoolWorld+OutputAdapterTask" />
+    </Tasks>
+  </World>
+  <Dashboard>
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardNodePropertyBase, GoodAI.Platform.Core, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null]]" />
+  </Dashboard>
+  <GroupedDashboard>
+    <Properties yaxlib:realtype="System.Collections.Generic.List`1[[GoodAI.Core.Dashboard.DashboardPropertyGroup, GoodAI.Platform.Core, Version=0.5.0.0, Culture=neutral, PublicKeyToken=null]]" />
+  </GroupedDashboard>
+  <LoadAllNodesData>False</LoadAllNodesData>
+  <SaveAllNodesData>False</SaveAllNodesData>
+  <UsedModules>
+    <Module Name="GoodAI.BasicNodes.dll" Version="14" />
+    <Module Name="GoodAI.Platform.Core.dll" Version="14" />
+    <Module Name="GoodAI.School.dll" Version="1" />
+  </UsedModules>
+</Project>
