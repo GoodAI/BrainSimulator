@@ -80,7 +80,7 @@ namespace GoodAI.School.Common
             try { xmlCurr = File.ReadAllText(filePath); }
             catch (IOException e)
             {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
+                MyLog.WARNING.WriteLine("Unable to read file " + filePath + " during curriculum loading. " + e.Message);
                 return null;
             }
 
@@ -91,7 +91,7 @@ namespace GoodAI.School.Common
             }
             catch (YAXException e)
             {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
+                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath + " during curriculum loading. " + e.Message);
                 return null;
             }
         }
