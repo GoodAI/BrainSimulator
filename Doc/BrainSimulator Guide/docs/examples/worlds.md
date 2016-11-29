@@ -87,3 +87,21 @@ This world is very similar to the CustomPongWorld, with two exceptions:
 ![](../img/TwoPlayerPong.png)
  
  The world offers two sets of controls and also two sets of structured data that describe the environment, one set for each of the players. The two sets of data differ because they adopt the perspective of the corresponding player.
+ 
+### RoguelikeWorld
+
+This world represents a simple 2D environment with a top-down view, support for multiple differently textured objects and simple collision detection physics. It may display an object that represents an agent's body. The world can be interacted with using movement controls - "up", "down", "left" and "right".
+
+A range of learning tasks for [School for AI](school.md) were implemented in RoguelikeWorld. For instance, simple shape classification, color classification, spotting differences between two scenes etc.
+
+![](../img/Roguelike.gif)
+ 
+Please note that RogulikeWorld uses OpenGL for rendering the scene and on some systems, the interoperability between OpenGL and CUDA is not working correctly. In such case, set the world's property "CopyDataThroughCPU" to true, save your project and restart Brain Simulator. 
+
+### ToyWorld
+
+This world represents a more complex, continuous 2D environment with a top-down view and an optional 3D first-person view. 
+
+![](../img/ToyWorld-01.gif)
+ 
+Please note that ToyWorld uses OpenGL for rendering the scene and on some systems, the interoperability between OpenGL and CUDA is not working correctly. In such case, set the world's property "CopyDataThroughCPU" to true, save your project and restart Brain Simulator. 
