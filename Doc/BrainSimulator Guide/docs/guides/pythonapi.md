@@ -40,7 +40,69 @@ If you want to know how to use `MyProjectRunner` please refer to its [documentat
 
 ## Example usage
 
-You can find a simple example of using the API in `examples/basic.py`. It creates simple curriculum from tasks for `ToyWorldAdapterWorld` and then runs the curriculum for 10 steps sending random actions to Brain Simulator.
+You can find a simple example of using the API in `examples/basic.py` or below. It creates simple curriculum from tasks for `ToyWorldAdapterWorld` and then runs the curriculum for 10 steps sending random actions to Brain Simulator.
+
+``` python
+import random
+from goodai.brainsim import load_brainsim
+load_brainsim()
+
+from goodai.brainsim import MyProjectRunner
+
+from GoodAI.Modules.School.Common import SchoolCurriculum, LearningTaskFactory
+from GoodAI.School.Common import CurriculumManager
+from GoodAI.School.Worlds import ToyWorldAdapterWorld
+
+# Get Node
+# node = runner.GetNode(22)
+# or
+# node = runner[22]
+
+# Get Memory Block
+# memblock = runner[22].Visual
+
+# Get Values
+# floatField = runner.GetValues(22, "Visual")
+# or
+# memblock = runner[22].Visual
+# memblock.SafeCopyToHost()
+# floatField = memblock.Host
+
+
+runner = MyProjectRunner()
+runner.OpenProject('C:/Users/john.doe/Desktop/test.brain')
+runner.DumpNodes()
+
+school = runner[22]
+
+curr = SchoolCurriculum()
+
+for w in CurriculumManager.GetAvailableWorlds():
+    if w.Name == ToyWorldAdapterWorld.__name__:
+        for t in CurriculumManager.GetTasksForWorld(w):
+            it = LearningTaskFactory.CreateLearningTask(t, school)
+            it.RequiredWorldType = w
+            curr.Add(it)
+
+school.Curriculum = curr
+
+actions = 13 * [0]
+
+runner.RunAndPause(1)
+
+
+for _ in xrange(10):
+    actions[0] = random.random()
+    print(actions)
+    runner.SetValues(24, actions, "Output")
+    runner.RunAndPause(1)
+    tWorld = school.CurrentWorld
+    chosenActions = tWorld.ChosenActions
+    tWorld.ChosenActions.SafeCopyToHost()
+    print(chosenActions.Host[0])
+
+runner.Shutdown()
+```
 
 Other examples can be found in test folder.
 
