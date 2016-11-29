@@ -25,6 +25,7 @@ pages:
 
 - Examples:
     - Worlds: 'examples/worlds.md'
+    - ToyWorld: 'examples/toyWorld.md'
     - Matrix Node: 'examples/matrix.md'
     - Neural Network: 'examples/neuralnetwork.md'
     - Discrete Q-Learning: 'examples/discreteqlearning.md'

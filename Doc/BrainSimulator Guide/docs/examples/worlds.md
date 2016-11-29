@@ -100,8 +100,9 @@ Please note that RogulikeWorld uses OpenGL for rendering the scene and on some s
 
 ### ToyWorld
 
-This world represents a more complex, continuous 2D environment with a top-down view and an optional 3D first-person view. 
+This world represents a more complex, continuous 2D environment with a top-down view and an optional 3D first-person view. `Toy World` serves as a playground for a virtual agent. The world is a grid (a plane) that comprises tiles (vertical contents of a grid cell); you can fill the world with game objects that move and interact independently and have their own behaviours and physics properties. This allows the creation of customized and rather complex learning environments.
 
 ![](../img/ToyWorld-01.gif)
- 
-Please note that ToyWorld uses OpenGL for rendering the scene and on some systems, the interoperability between OpenGL and CUDA is not working correctly. In such case, set the world's property "CopyDataThroughCPU" to true, save your project and restart Brain Simulator. 
+[comment]: # (![](../img/toyWorld.png))
+
+A detailed overview of the world's properties, functionality and architecture can be found on a [separate page](./toyWorld.md).
