@@ -663,9 +663,9 @@ namespace GoodAI.School.GUI
                 return;
 
             List<LearningTaskNode> newLearningTaskNodes = new List<LearningTaskNode>();
-            foreach (Type learningTaskType in AddTaskView.ResultLearningTaskTypes)
+            foreach (Tuple<Type,Type> learningTaskInfo in AddTaskView.ResultLearningTaskTypes)
             {
-                newLearningTaskNodes.Add(new LearningTaskNode(learningTaskType, AddTaskView.ResultWorldType));
+                newLearningTaskNodes.Add(new LearningTaskNode(learningTaskInfo.Item1, learningTaskInfo.Item2));
             }
             //LearningTaskNode task = new LearningTaskNode(AddTaskView.ResultTaskType, AddTaskView.ResultWorldType);
 

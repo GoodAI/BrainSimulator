@@ -19,6 +19,7 @@ namespace GoodAI.School.Common
         [YAXSerializeAs("WorldType"), YAXSerializableField(DefaultValue = "")]
         public string WorldType { get; private set; }
 
+        // Important for YaxLib
         public LTDesign() { }
 
         public LTDesign(string taskType, string worldType, bool isEnabled)
@@ -56,6 +57,9 @@ namespace GoodAI.School.Common
 
         [YAXSerializeAs("Description"), YAXSerializableField(DefaultValue = "")]
         public string Description { get; private set; }
+
+        // Important for YaxLib
+        public CurriculumDesign() { }
 
         public CurriculumDesign(List<LTDesign> tasks, bool isEnabled, string name, string description)
         {
@@ -102,6 +106,9 @@ namespace GoodAI.School.Common
     {
         [YAXSerializeAs("Curricula")]
         public List<CurriculumDesign> Curricula { get; set; }
+
+        // Important for YaxLib
+        public PlanDesign() { }
 
         public PlanDesign(List<CurriculumDesign> curricula)
         {

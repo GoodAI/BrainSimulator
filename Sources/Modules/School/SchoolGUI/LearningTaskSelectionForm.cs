@@ -24,12 +24,13 @@ namespace GoodAI.School.GUI
             worldList.DisplayMember = "DisplayName";
         }
 
-        public HashSet<Type> ResultLearningTaskTypes { get; set; }
-        public Type ResultWorldType { get; set; }
+        // Tuple is <TaskType, WorldType>
+        public HashSet<Tuple<Type,Type>> ResultLearningTaskTypes { get; set; }
+        private Type m_currentWorldType { get; set; }
 
         private void LearningTaskSelectionForm_Load(object sender, EventArgs e)
         {
-            ResultLearningTaskTypes = new HashSet<Type>();
+            ResultLearningTaskTypes = new HashSet<Tuple<Type,Type>>();
             PopulateWorldList();
             PopulateLearningTaskList();
         }
@@ -50,12 +51,14 @@ namespace GoodAI.School.GUI
             Type selectedWorldType = (worldList.SelectedItem as TypeListItem).Type;
 
             List<Type> worldTasks = CurriculumManager.GetTasksForWorld(selectedWorldType);
+            List<Type> checkedTasks = ResultLearningTaskTypes.Select(resultLearningTaskType => resultLearningTaskType.Item1).ToList();
 
             AuthorizeCheck = true;
+
             for (int i = 0; i < worldTasks.Count; i++)
             {
                 learningTaskList.Items.Add(new LearningTaskListItem(worldTasks[i]));
-                learningTaskList.SetItemChecked(i, ResultLearningTaskTypes.Contains(worldTasks[i]));
+                learningTaskList.SetItemChecked(i, checkedTasks.Contains(worldTasks[i]));
             }
             AuthorizeCheck = false;
 
@@ -71,10 +74,11 @@ namespace GoodAI.School.GUI
                 if (typeListItem == null) continue;
 
                 Type ltType = typeListItem.Type;
+                Type worldType = m_currentWorldType;    // this is the value of last known world (it is not reflecting the real "current" at this place
                 if (learningTaskList.GetItemCheckState(i) == CheckState.Checked)
-                    ResultLearningTaskTypes.Add(ltType);
+                    ResultLearningTaskTypes.Add(new Tuple<Type, Type>(ltType, worldType));
                 else
-                    ResultLearningTaskTypes.Remove(ltType);
+                    ResultLearningTaskTypes.Remove(new Tuple<Type, Type>(ltType, worldType));
             }
         }
 
@@ -82,7 +86,6 @@ namespace GoodAI.School.GUI
         {
             CollectCheckedLTs();
             DialogResult = DialogResult.OK;
-            ResultWorldType = (worldList.SelectedItem as TypeListItem).Type;
             Close();
         }
 
@@ -90,7 +93,6 @@ namespace GoodAI.School.GUI
         {
             DialogResult = DialogResult.Cancel;
             ResultLearningTaskTypes = null;
-            ResultWorldType = null;
             Close();
         }
 
@@ -118,6 +120,8 @@ namespace GoodAI.School.GUI
         {
             CollectCheckedLTs();
             PopulateLearningTaskList();
+            // this assignement is here so that CollectCheckedLTs still uses the last known world
+            m_currentWorldType = (worldList.SelectedItem as TypeListItem).Type;
         }
 
         // Implements "check only when box clicked" behavior in the checkedlistbox
