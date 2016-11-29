@@ -68,23 +68,37 @@ To ease human interaction with the environments in School, you can also connect 
 
 ### Architecture overview
 
-
-
 #### SchoolWorld
 
 School is implemented as a MyWorld node called SchoolWorld. This node has a control window associated, accessible from the menu "View->School for AI". The SchoolWorld is special - it can spawn new worlds during runtime. This property is used for creating the training and testing environments for the agent (RoguelikeWorld, TetrisWorld, ToyWorld, etc.)
 
-SchoolWorld acts as a point of contact for your architecture. It provides input to the architecture and receives outputs from it. It then redirects this I/O to the world that was spawned for the current learning task from the curriculum. Besides acting as an intermediate, School also collects statistics of the training and controls the simulation. For instance, School pauses the simulation if the trained architecture fails to pass a learning task.
+SchoolWorld acts as a point of contact for your brain architecture. It provides input to the architecture and receives outputs from it. It then redirects this I/O to the world that was spawned for the current learning task from the curriculum. It also runs the current learning task and switches to the next learning task when the current one is over. Besides acting as an intermediate, School also collects statistics of the training and controls the simulation. For instance, School pauses the simulation if the trained architecture fails to pass a learning task.
 
 #### World Adapters
 
-Any world can be connected to SchoolWorld. To connect a world, you need to write a WorldAdapter class. You don't need to register the new adapter anywhere, inheriting the IWorldAdapter interface is enough.
+Any world can be connected to SchoolWorld. To connect a world, you need to include an IWorldAdapter interface in it, preferably by using inheritance. You don't need to register the new adapter anywhere, inheriting the IWorldAdapter interface is enough. The most important tasks of the adapter are to initialize (or release) the connected world and forward the communication from SchoolWorld to the connected world. It may be necessary to convert the transmitted data, hence the "Adapter" name.
 
 #### Switching Worlds
 
+A world is switched (or reset) whenever a learning task is finished and next learning task should be shown. The previous world is released and the next world is initialized (its init tasks are run). The switching occurs within the ChangeModel method of SchoolWorld.
 
+#### Learning Task
 
+To create a learning task, you need to know which world it will use. Once that is resolved and your world does have a world adapater ready, you need to specify:
 
+1. What data the learning task will provide within a training unit (method PresentNewTrainingUnit),
+2. How many levels the learning task will have and what features the levels will have (constructor of the LT - member TSProgression),
+3. What is the success/fail criterion for a training unit (method DidTrainingUnitComplete),
+4. What is the success/fail criterion for the learning task (method EvaluateStep, property NumberOfSuccessesRequired).
+
+### Connected worlds
+
+As was said above, you can connect any world to School provided that you write the appropriate World Adapter. The worlds that are connectable right now are:
+
+1. RoguelikeWorld: a simple, top-view 2D environment useful for showing basic problems to the agent (e.g. shape detection, visual classification, simple navigation).
+2. ToyWorld: a more complex, continuous, top-view 2D environment (optionally 3D) for showing advanced, continuous problems to the agent. See the separate documentation page for ToyWorld in the Worlds section.
+3. TetrisWorld: a world for playing TetrisWorld.
+4. PongWorld: a world for playing Pong/Breakout.
 
 
 

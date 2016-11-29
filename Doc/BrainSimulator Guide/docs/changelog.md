@@ -3,7 +3,9 @@
 
 #### School for AI
 
-TODO
+A school environment was added to BrainSimulator. It allows you to train and test your architectures easily. See the documentation page for School for AI at http://docs.goodai.com/brainsimulator/examples/school/index.html
+
+2 new worlds useful for School for AI were added - Roguelike World (a simple, highly configurable 2D environment) and ToyWorld (a more complex, continuous 2D environment). See the documentation pages for more details.
 
 #### New features
 
