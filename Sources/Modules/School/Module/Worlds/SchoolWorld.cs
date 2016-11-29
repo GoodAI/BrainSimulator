@@ -44,7 +44,27 @@ namespace GoodAI.Modules.School.Worlds
     /// <author>GoodAI</author>
     /// <status>Working</status>
     /// <summary>Environment for AI School</summary>
-    /// <description>School world provides the environment necessary for running AI School. It creates it's own execution plan according to the learning tasks selected in the School curriculum. Initialization and execution of each learning task is managed by this world as well as the evaluation of agent's performance.</description>
+    /// <description>
+    /// School for AI is a world which you can use for training and testing your architectures on different types of environments. It is supposed to be used together with its UI (accessible from selecting "View->School for AI").
+    ///The school assumes that the training is structured into a curriculum, which is composed of individual learning tasks. A single learning task teaches or tests preferably a single new skill or ability. 
+    ///School for AI was designed to make this process possible, fast and convenient.
+    ///The SchoolWorld provides a fixed set of inputs for your agent and receives a fixed set of outputs from it. This way you can design a single agent architecture that will be subject to training in School, using different learning tasks.
+    ///
+    /// 
+    ///
+    ///
+    /// <h3>The School window allows you to:</h3>
+    /// <ol>
+    /// <li>Specify the curriculum which your agent will be subjected to</li>
+    /// <li>Control the simulation</li>
+    /// <li>See what problem (learning task) is being run at the moment</li>
+    /// <li>See the current progress of a learning task</li>
+    /// <li>See what kind of input data your agent is receiving</li>
+    /// <li>See runtime statistics</li>
+    /// </ol>
+    /// <a href="http://docs.goodai.com/brainsimulator/examples/school/index.html">Link to the documentation</a>
+    /// 
+    /// </description>
     public class SchoolWorld : MyWorld, IModelChanger, IMyCustomExecutionPlanner
     {
         private readonly int m_controlsCount = 13;
