@@ -174,7 +174,7 @@ namespace GoodAI.Modules.School.Common
 
         public virtual void ExecuteStep() { }
 
-        public TrainingResult EvaluateStep()
+        public virtual TrainingResult EvaluateStep()
         {
             // Check for unit completion
             bool wasUnitSuccessful = true;
