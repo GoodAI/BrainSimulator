@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using GoodAI.School.Common;
 using WeifenLuo.WinFormsUI.Docking;
 using YAXLib;
 
@@ -115,7 +116,7 @@ namespace GoodAI.School.GUI
         {
             get
             {
-                return new PlanDesign(m_model.Nodes.Where(x => x is CurriculumNode).Select(x => x as CurriculumNode).ToList());
+                return CurriculumNode.ToPlanDesign(m_model.Nodes.OfType<CurriculumNode>().ToList());
             }
         }
 
@@ -457,9 +458,9 @@ namespace GoodAI.School.GUI
 
         private void SaveProject(string path)
         {
-            string xmlResult = m_serializer.Serialize(m_design);
-            File.WriteAllText(path, xmlResult);
-            MyLog.Writer.WriteLine(MyLogLevel.INFO, "School project saved to: " + path);
+            string xmlResult;
+            CurriculumManager.SavePlanDesign(m_design, path, out xmlResult);
+
             m_savedRepresentation = xmlResult;
             m_currentFile = path;
             UpdateWindowName(null, EventArgs.Empty);
@@ -468,30 +469,12 @@ namespace GoodAI.School.GUI
 
         private void LoadCurriculum(string filePath)
         {
-            if (string.IsNullOrEmpty(filePath))
-                return;
-
             string xmlCurr;
-            try { xmlCurr = File.ReadAllText(filePath); }
-            catch (IOException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to read file " + filePath);
-                return;
-            }
+            PlanDesign plan = CurriculumManager.LoadPlanDesign(filePath, out xmlCurr);
+            if (plan == null) return;
 
-            try
-            {
-                PlanDesign plan = (PlanDesign)m_serializer.Deserialize(xmlCurr);
-                List<CurriculumNode> currs = (List<CurriculumNode>)plan;
-
-                foreach (CurriculumNode curr in currs)
-                    m_model.Nodes.Add(curr);
-            }
-            catch (YAXException e)
-            {
-                MyLog.WARNING.WriteLine("Unable to deserialize data from " + filePath);
-                return;
-            }
+            foreach (CurriculumNode curr in CurriculumNode.FromPlanDesign(plan))
+                m_model.Nodes.Add(curr);
 
             Properties.School.Default.LastOpenedFile = filePath;
             Properties.School.Default.Save();
