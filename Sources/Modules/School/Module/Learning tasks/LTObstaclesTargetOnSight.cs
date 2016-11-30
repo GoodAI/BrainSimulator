@@ -26,6 +26,7 @@ namespace GoodAI.Modules.School.LearningTasks
             TSHints.Add(TIMESTEPS_LIMIT, 200);
             TSHints.Add(TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000);
             TSHints.Add(TSHintAttributes.IMAGE_NOISE, 0);
+            TSHints.Add(TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 0);
 
             TSProgression.Add(TSHints.Clone());
             TSProgression.Add(TIMESTEPS_LIMIT, 100);

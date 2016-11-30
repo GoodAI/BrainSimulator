@@ -38,7 +38,8 @@ namespace GoodAI.Modules.School.LearningTasks
                 { NUMBER_OF_FALSE_TARGETS, 1 },
                 { TSHintAttributes.IMAGE_NOISE, 0 },
                 { TSHintAttributes.GIVE_PARTIAL_REWARDS, 1 },
-                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
+                { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
+                { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 0 },
             };
 
             TSProgression.Add(TSHints.Clone());

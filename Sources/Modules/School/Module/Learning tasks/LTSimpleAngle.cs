@@ -32,7 +32,6 @@ namespace GoodAI.Modules.School.LearningTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(FIXED_DISTANCE, 1);
             TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
             TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
             TSProgression.Add(TSHintAttributes.NUMBER_OF_DIFFERENT_OBJECTS, 1);

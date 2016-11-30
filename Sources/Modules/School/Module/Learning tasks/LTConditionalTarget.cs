@@ -198,6 +198,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 },
                 // Currently, target locations are always uniformly distributed inside POW
                 //{ TSHintAttributes.DEPRECATED_MAX_TARGET_DISTANCE, .3f }
+                { TSHintAttributes.IMAGE_TEXTURE_BACKGROUND, 0 },
             };
 
             TSProgression.Add(TSHints.Clone());

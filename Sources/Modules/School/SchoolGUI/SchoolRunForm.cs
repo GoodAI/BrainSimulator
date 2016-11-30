@@ -710,6 +710,11 @@ namespace GoodAI.School.GUI
                 TreeNodeAdv n = (TreeNodeAdv)treeViewLTList.SelectedNodes[i];
                 (n.Tag as Node).Parent = null;
             }
+            if(treeViewLTList.SelectedNodes.Count == 0)
+            {
+                richTextBoxLTInfo.Clear();
+                richTextBoxLTLevelInfo.Clear();
+            }
         }
 
         private void btnAutosave_CheckedChanged(object sender, EventArgs e)
