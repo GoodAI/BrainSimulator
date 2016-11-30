@@ -869,7 +869,10 @@ namespace GoodAI.BrainSimulator.Forms
         {
             ValidationView.UpdateListView();
             foreach (GraphLayoutForm graphView in GraphViews.Values)
+            {
                 graphView.ReloadContent();
+                graphView.RefreshGraph();
+            }
         }
 
         public void ProjectStateChanged(string action)
