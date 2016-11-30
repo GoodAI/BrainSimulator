@@ -14,6 +14,13 @@ using YAXLib;
 
 namespace GoodAI.Core.Nodes
 {
+    /// <author>GoodAI</author>
+    /// <status>Working</status>
+    /// <summary>DeviceInput node takes inputs from Keyboard.</summary>
+    /// <description>The node has an output of size 1*256, the values are mapped from Keyboard device <br />  
+    /// <b>Note:</b> To use inputs from Keyboard while the simulation is running, DeviceInput node needs to be selected in BrainSim <br />  <br /> 
+    /// In "SchoolWorld", the environments "Pong", "Tetris", "ToyWorld" and "RogueLike" allow you to interact with the world by using the WASD Keyboard mapping (and Q+E keys for Tetris)
+    /// </description>
     public class DeviceInput : MyWorkingNode
     {
         // The keyboard keys should fit into a short (add some fields for continuous inputs, like mouse).
@@ -65,7 +72,10 @@ namespace GoodAI.Core.Nodes
 
         private DeviceInputTask ProcessInputTask { get; set; }
 
-        public class DeviceInputTask : MyTask<DeviceInput> 
+        /// <summary>
+        /// When key presses are detected, copies values to output
+        /// </summary>
+        public class DeviceInputTask : MyTask<DeviceInput>
         {
             public override void Init(int nGPU)
             {
@@ -73,7 +83,7 @@ namespace GoodAI.Core.Nodes
 
             public override void Execute()
             {
-                while(Owner.m_keyPresses.Count > 0)
+                while (Owner.m_keyPresses.Count > 0)
                 {
                     Tuple<int, bool> keyPress = Owner.m_keyPresses.First.Value;
                     Owner.m_keyPresses.RemoveFirst();
