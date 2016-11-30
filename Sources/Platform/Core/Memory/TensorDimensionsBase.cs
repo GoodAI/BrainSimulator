@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace GoodAI.Core.Memory
         public InvalidDimensionsException(string message) : base(message) { }
     }
 
-    public abstract class TensorDimensionsBase
+    public abstract class TensorDimensionsBase : IEnumerable<int>
     {
         protected readonly IImmutableList<int> m_dims;
 
@@ -42,6 +43,16 @@ namespace GoodAI.Core.Memory
             return (m_dims != null) && (other.m_dims != null) && m_dims.SequenceEqual(other.m_dims);
         }
 
+        public IEnumerator<int> GetEnumerator()
+        {
+            return m_dims.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
         public override int GetHashCode()
         {
             if (m_hashCode == -1)
@@ -51,6 +62,7 @@ namespace GoodAI.Core.Memory
 
             return m_hashCode;
         }
+
         private int m_hashCode = -1;
 
         public bool IsEmpty

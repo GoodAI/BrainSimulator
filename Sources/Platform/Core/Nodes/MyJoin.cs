@@ -7,6 +7,7 @@ using ManagedCuda.BasicTypes;
 using System.ComponentModel;
 using YAXLib;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GoodAI.Core.Nodes
 {
@@ -316,6 +317,7 @@ namespace GoodAI.Core.Nodes
 
             TensorDimensions firstInputDimensions = null; ;
 
+            bool firstInputDimensionsRankOne = false;
             for (int i = 0; i < InputBranches; i++)
             {
                 MyMemoryBlock<float> ai = GetInput(i);
@@ -329,14 +331,22 @@ namespace GoodAI.Core.Nodes
                 if (firstInputDimensions == null)
                 {
                     firstInputDimensions = ai.Dims;
+                    firstInputDimensionsRankOne = IsRankOne(firstInputDimensions);
                 }
 
-                if (firstInputDimensions.Rank != ai.Dims.Rank)
+                var bothDimensionsRankOne = firstInputDimensionsRankOne && IsRankOne(ai.Dims);
+
+                if (firstInputDimensions.Rank != ai.Dims.Rank && !bothDimensionsRankOne)
                 {
-                    MyLog.ERROR.WriteLine(Name + ": Incompatible input ranks!");
+                    validator.AddError(this, string.Format("{0}: Incompatible input ranks!", Name));
                     return;
                 }
             }
+        }
+
+        private bool IsRankOne(TensorDimensions dimensions)
+        {
+            return dimensions.Any() && dimensions.All(dim => dim == 1);
         }
 
         public override string Description
