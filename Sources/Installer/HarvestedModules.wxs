@@ -25,13 +25,6 @@
                     
                     
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
                     <Directory Id="dir6A23F53168B0684056A17F9416992A77" Name="ptx">
                         <Directory Id="dir479BD28860CE58E072B47CD77773C4A8" Name="Clustering">
                             <Component Id="cmpB561F4242F166C846ADFB713314BD132" Guid="*">
@@ -648,6 +641,12 @@
                     <Component Id="cmp106B51D635A76E20412259D2558811DB" Guid="*">
                         <File Id="fil358F82E98DBB950D49EC06EE3748A3F9" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.MNIST\GoodAI.MNIST.dll" />
                     </Component>
+                    
+                    
+                    
+                    
+                    
+                    
                     
                     
                     
@@ -2402,6 +2401,11 @@
                     
                     
                     
+                    
+                    
+                    
+                    
+                    
                     <Component Id="cmp6DEAE8B58A55487E14A3D288AD007E8E" Guid="*">
                         <File Id="filD7806FAF98C297884AAD1D983313540B" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School\World.dll" />
                     </Component>
@@ -3420,6 +3424,15 @@
                                 <File Id="fil08325D0BD0DA2710DE1EA04E1F76CCE4" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\animationpredictionworld\SwitchTest_00016.png" />
                             </Component>
                         </Directory>
+                        <Directory Id="dir8B6CE0A64D4569FFD195C41AD0B90942" Name="GameActors">
+                            <Directory Id="dir6A0843CBCBCAEA5ABD45E833F7A15F9C" Name="Tiles">
+                                <Directory Id="dir1B512D6976AEAAD0074796D51E27C0B1" Name="Tilesets">
+                                    <Component Id="cmp1DD448D499EEC102828281DE2C1A61C0" Guid="*">
+                                        <File Id="fil02DC9355248FC97145702E60BFE7B4BB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\GameActors\Tiles\Tilesets\TilesetTable.csv" />
+                                    </Component>
+                                </Directory>
+                            </Directory>
+                        </Directory>
                         <Directory Id="dirB6043FAD3953A875A7892B6ACA40041A" Name="gridworld">
                             <Component Id="cmpD55043CD3D193106B8BAEB9AD84D4AD4" Guid="*">
                                 <File Id="filEE902A1028F3E2D0A7ACCB7C714054B0" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\gridworld\agent.png" />
@@ -3795,6 +3808,26 @@
                                 <File Id="fil8C050D10CB742A1735B7B25A3A25F060" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\tictactoeworld\taleX.png" />
                             </Component>
                         </Directory>
+                        <Directory Id="dirF9599D201F94F6CF97D6E645F548BC4C" Name="Worlds">
+                            <Component Id="cmp393839E59F590118051D9BDE693C44F3" Guid="*">
+                                <File Id="filF6A898C34764AA50D38064A363456FDB" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\mockup999_pantry_world.tmx" />
+                            </Component>
+                            <Component Id="cmp7A01CA122761E246759382BFA0B7120C" Guid="*">
+                                <File Id="fil9FAC75AAF2DAA7C12480855C1E2F7802" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\mock_small_pickup_world.tmx" />
+                            </Component>
+                            <Component Id="cmp3B7D0E3213091772BAD6C1B446E4C9A0" Guid="*">
+                                <File Id="fil5C3D6BF2A707CEFAFC4BD5FF3BEE6B4B" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\mock_small_stream_world.tmx" />
+                            </Component>
+                            <Component Id="cmpBFC64E63C8D88AF77902A593837B180E" Guid="*">
+                                <File Id="fil14DBE9CA182E92955259483D27E2A706" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\roguelike_selection_summer.png" />
+                            </Component>
+                            <Component Id="cmp6A8E03E83FCFFC87D164F142E0677D0F" Guid="*">
+                                <File Id="filA6FA269BC9EEA981E10C1C1D45CF9357" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\roguelike_selection_winter.png" />
+                            </Component>
+                            <Component Id="cmp59D3D64581DEA4C1565747C73105C185" Guid="*">
+                                <File Id="fil3BAC20EBAFA2669ACA3B6F4087477543" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\res\Worlds\ui_default.png" />
+                            </Component>
+                        </Directory>
                     </Directory>
                     <Directory Id="dirE457F8D4F19EC2CC46E6DB29E163346C" Name="Resources">
                         <Directory Id="dir94C6CFCCA7A5FD2B5203C439DB398513" Name="html">
@@ -3887,6 +3920,9 @@
                             </Component>
                             <Component Id="cmpFBE7D618A97B62E66B5DE006D56E6E4F" Guid="*">
                                 <File Id="fil8F11EDC3C33144A4D6D09A2401C3A192" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\Resources\html\LTTetrisFull.html" />
+                            </Component>
+                            <Component Id="cmpC478E07734CB60E753D12060953156C7" Guid="*">
+                                <File Id="filC8428226812669C089FD59A5C139E80D" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\Resources\html\LTToyWorld.html" />
                             </Component>
                             <Component Id="cmp25014E95862AF96B34C4C8C8DC42F30E" Guid="*">
                                 <File Id="fil3C68BB58DBEE6D226EC54DF572584528" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.School.GUI\Resources\html\LTVisualEquivalence.html" />
@@ -4428,6 +4464,14 @@
                     
                     
                     
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
                 </Directory>
                 <Directory Id="dir1F5FBDEBFA28C90B7EF3A001DBD14B9D" Name="GoodAI.ToyWorld">
                     
@@ -4490,12 +4534,6 @@
                         <File Id="filF697C602AB1B857904094D22C53688E0" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.ToyWorld\Utils.dll" />
                     </Component>
                     
-                    
-                    
-                    
-                    
-                    
-                    
                     <Component Id="cmp430DB5F70E906EFBAE0CA89DF6BE1BB2" Guid="*">
                         <File Id="fil497FBB750BC7B44BD1DA2138573D1A00" KeyPath="yes" Source="!(wix.ModulesSourceDirectory)\GoodAI.ToyWorld\World.dll" />
                     </Component>
@@ -4547,13 +4585,6 @@
             
             
             <ComponentRef Id="cmp951509EBF8D65F10E60EA0DB048457C6" />
-            
-            
-            
-            
-            
-            
-            
             
             
             
@@ -4749,6 +4780,12 @@
             
             
             <ComponentRef Id="cmp106B51D635A76E20412259D2558811DB" />
+            
+            
+            
+            
+            
+            
             
             
             
@@ -5363,6 +5400,11 @@
             
             
             
+            
+            
+            
+            
+            
             <ComponentRef Id="cmp6DEAE8B58A55487E14A3D288AD007E8E" />
             
             
@@ -5716,6 +5758,7 @@
             <ComponentRef Id="cmpDC18DA68AED189ED656DCDFAF0C64BD8" />
             <ComponentRef Id="cmp3FDF7AD9C94E1783CD98531762F5FE8E" />
             <ComponentRef Id="cmpF04738541176E428AEAE12BFE73A3CCB" />
+            <ComponentRef Id="cmp1DD448D499EEC102828281DE2C1A61C0" />
             <ComponentRef Id="cmpD55043CD3D193106B8BAEB9AD84D4AD4" />
             <ComponentRef Id="cmpFB0E967FD22693018F54800607805A72" />
             <ComponentRef Id="cmp0490CD84CAE48441040A06C45A62468A" />
@@ -5833,6 +5876,12 @@
             <ComponentRef Id="cmp5491213EFC416EA98F354326D10E8C4A" />
             <ComponentRef Id="cmpB91F819F8266438CF212E0AA0A2CADCE" />
             <ComponentRef Id="cmp689E286B575C46471815D825B646A5EE" />
+            <ComponentRef Id="cmp393839E59F590118051D9BDE693C44F3" />
+            <ComponentRef Id="cmp7A01CA122761E246759382BFA0B7120C" />
+            <ComponentRef Id="cmp3B7D0E3213091772BAD6C1B446E4C9A0" />
+            <ComponentRef Id="cmpBFC64E63C8D88AF77902A593837B180E" />
+            <ComponentRef Id="cmp6A8E03E83FCFFC87D164F142E0677D0F" />
+            <ComponentRef Id="cmp59D3D64581DEA4C1565747C73105C185" />
             <ComponentRef Id="cmp8C192E96F63BD268C476AD4CFFC7EF00" />
             <ComponentRef Id="cmp7F794B97FC81E33B269FF60D9616914C" />
             <ComponentRef Id="cmpD067E812E7352A57687329A5B895CD3A" />
@@ -5863,6 +5912,7 @@
             <ComponentRef Id="cmpAB99D60C1EDB1E8FF16FB74C318B02F8" />
             <ComponentRef Id="cmpA947F6F431A93658A87C1506D1A3A5CF" />
             <ComponentRef Id="cmpFBE7D618A97B62E66B5DE006D56E6E4F" />
+            <ComponentRef Id="cmpC478E07734CB60E753D12060953156C7" />
             <ComponentRef Id="cmp25014E95862AF96B34C4C8C8DC42F30E" />
             <ComponentRef Id="cmpA336FEC670BA22C3D5062F75C5A2BE5D" />
             <ComponentRef Id="cmp12F68A62044CAB33C6B3276A53CD9613" />
@@ -6060,6 +6110,14 @@
             
             
             
+            
+            
+            
+            
+            
+            
+            
+            
             <ComponentRef Id="cmp209EC29C5787DA2B6F15474365F0A252" />
             
             
@@ -6092,12 +6150,6 @@
             
             
             <ComponentRef Id="cmpEA2B14232181EDE02091ED9CF0A7BD88" />
-            
-            
-            
-            
-            
-            
             
             <ComponentRef Id="cmp430DB5F70E906EFBAE0CA89DF6BE1BB2" />
             
