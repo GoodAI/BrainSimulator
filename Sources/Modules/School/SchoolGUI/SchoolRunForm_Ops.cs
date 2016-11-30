@@ -334,9 +334,6 @@ namespace GoodAI.School.GUI
                         MyMemoryBlockObserver observer = new MyMemoryBlockObserver();
                         observer.Target = m_school.VisualFOV;
 
-                        if (observer == null)
-                            throw new InvalidOperationException("No observer was initialized");
-
                         m_observer = new ObserverForm(m_mainForm, observer, m_school);
 
                         m_observer.TopLevel = false;
@@ -366,6 +363,10 @@ namespace GoodAI.School.GUI
             {
                 if (m_observer != null)
                 {
+                    //(m_observer.Observer as MyMemoryBlockObserver).Target = null;
+                    m_observer.Close();
+                    m_observer.Dispose();
+                    m_observer = null;
                     dockPanelObserver.Hide();
                 }
             }
