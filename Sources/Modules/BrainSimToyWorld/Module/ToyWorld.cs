@@ -26,7 +26,7 @@ namespace GoodAI.ToyWorld
     /// view in the 3D mode.
     /// </p>
     /// <p>
-    /// For more detailed description please see the <a href="http://docs.goodai.com/brainsimulator/examples/toyworld/index.html">Toy World's overview page</a>.
+    /// For a more detailed description please see the <a href="http://docs.goodai.com/brainsimulator/examples/toyworld/index.html">Toy World's overview page</a>.
     /// </p>
     /// </description>
     public partial class ToyWorld : MyWorld, IMyVariableBranchViewNodeBase
