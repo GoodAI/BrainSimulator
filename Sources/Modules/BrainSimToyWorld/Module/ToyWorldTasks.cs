@@ -16,6 +16,9 @@ namespace GoodAI.ToyWorld
 {
     public partial class ToyWorld
     {
+        /// <summary>
+        /// Initializes the ToyWorld core and sets up render requests.
+        /// </summary>
         [MyTaskInfo(OneShot = true, Disabled = false)]
         public class TWInitTask : MyTask<ToyWorld>
         {
@@ -272,6 +275,9 @@ namespace GoodAI.ToyWorld
             { }
         }
 
+        /// <summary>
+        /// Encodes Brain Simulator control outputs and provides them to the ToyWorld's avatar.
+        /// </summary>
         public class TWGetInputTask : MyTask<ToyWorld>
         {
 
@@ -317,6 +323,9 @@ namespace GoodAI.ToyWorld
             }
         }
 
+        /// <summary>
+        /// Performs a ToyWorld simulation step: updates game objects, resolves their actions, renders the scene and copies visual and other outputs to input memory blocks.
+        /// </summary>
         public class TWUpdateTask : MyTask<ToyWorld>
         {
             private Stopwatch m_fpsStopwatch;

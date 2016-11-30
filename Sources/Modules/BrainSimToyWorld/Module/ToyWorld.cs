@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -15,6 +15,20 @@ using YAXLib;
 
 namespace GoodAI.ToyWorld
 {
+    /// <author>GoodAI</author>
+    /// <meta>mm,mp,mv,ms</meta>
+    /// <status>Working</status>
+    /// <summary> A continuous 2D learning environment.</summary>
+    /// <description>
+    /// <p>
+    /// A more generally customizable continuous 2D world (has a prototype 3D version). The agent can control an avatar that moves in <br />
+    /// a simple environment and can interact with various objects. The world is viewed from top-down in 2D mode and from the avatar's <br />
+    /// view in the 3D mode.
+    /// </p>
+    /// <p>
+    /// For more detailed description please see the <a href="http://docs.goodai.com/brainsimulator/examples/toyworld/index.html">Toy World's overview page</a>.
+    /// </p>
+    /// </description>
     public partial class ToyWorld : MyWorld, IMyVariableBranchViewNodeBase
     {
         private readonly int m_controlsCount = 13;
