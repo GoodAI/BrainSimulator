@@ -29,10 +29,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TmxMapSerializer", "..\ToyWorld\TmxUtilities\TmxMapSerializer\TmxMapSerializer\TmxMapSerializer.csproj", "{7A4D6FA1-E44B-40E2-9DE8-3606DBC657D9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasicNodes", "..\BasicNodes\Module\BasicNodes.csproj", "{C8A4992F-F2CB-40E7-92AA-7D4239653517}"
+	ProjectSection(ProjectDependencies) = postProject
+		{72423431-4A15-4E8D-B987-8E684BD730FE} = {72423431-4A15-4E8D-B987-8E684BD730FE}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BasicNodesCuda", "..\BasicNodes\Cuda\BasicNodesCuda.vcxproj", "{72423431-4A15-4E8D-B987-8E684BD730FE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "..\..\Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\..\Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
 EndProject
