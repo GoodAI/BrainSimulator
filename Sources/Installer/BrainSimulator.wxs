@@ -113,6 +113,14 @@
         <File Id='AgaControlsDLL' Name='Aga.Controls.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\Aga.Controls.dll' KeyPath='yes' />
       </Component>
 
+      <Component Id='BEPUphysicsLib' Guid='*'>
+        <File Id='BEPUphysicsDLL' Name='BEPUphysics.dll' DiskId='1' Source='$(var.BasicNodes.TargetDir)\BEPUphysics.dll' KeyPath='yes' />
+      </Component>
+
+      <Component Id='BEPUutilitiesLib' Guid='*'>
+        <File Id='BEPUutilitiesDLL' Name='BEPUutilities.dll' DiskId='1' Source='$(var.BasicNodes.TargetDir)\BEPUutilities.dll' KeyPath='yes' />
+      </Component>
+
       <Component Id='ManagedCudaBlasLib' Guid='*'>
         <File Id='ManagedCudaBlasDLL' Name='CudaBlas.dll' DiskId='1' Source='$(var.BrainSimulator.TargetDir)\CudaBlas.dll' KeyPath='yes' />
       </Component>
