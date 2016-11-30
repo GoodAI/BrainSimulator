@@ -634,6 +634,9 @@
     <Content Include="Resources\html\LTTetrisFull_files\School Learning Tasks_17263_image002.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\html\LTToyWorld.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\html\LTVisualEquivalence_files\16550224 16ii32_443_image001.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
