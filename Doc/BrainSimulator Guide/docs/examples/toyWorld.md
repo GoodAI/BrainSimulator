@@ -1,8 +1,8 @@
 # Toy World
 
-On this page, expect to find both general user overview and a more concrete programmer's insights into what the `Toy World` is and how it is designed, should you want to tinker and bend the code to your liking.
+On this page, expect to find both a general user overview and more concrete programmer's insights into what the `Toy World` is and how it is designed, should you want to tinker and bend the code to your liking.
 
-The Toy World is a simple customizable continuous 2D (optionally 3D) environment. It was designed as a test bed for general artificial intelligence agents; the possible complexity of the world enables the experimenters to gradually increase the requirements for the agent's skills. The design decisions were mostly made in favour of rapid world prototyping and easy data transfer between your application and the Toy World core. 
+The Toy World is a simple customizable continuous 2D (optionally 3D) environment. It was designed as a test bed for general artificial intelligence agents; the possible complexity of the world enables the experimenters to gradually increase the requirements for the agent's skills. The design decisions were mostly made in favor of rapid world prototyping and easy data transfer between your application and the Toy World core. 
 
 ![](../img/ToyWorld/toyWorld.png)
 
@@ -25,15 +25,15 @@ This allows an easier interaction with objects based on the type of layer they a
 
 The world has a few interesting tiles and properties ready from the start, e.g.:
 
+ * tree tiles that periodically spawn objects near them (apples, pears, pinecones, etc.) that the characters can eat or transport around,
  * a day/night cycle that darkens the screen in the evening,
- * a summer/winter cycle that periodically covers tiles in snow or
- * tree tiles that periodically spawn objects near them (apples, pears, pinecones, etc.) that the characters can eat or transport around.
+ * a summer/winter cycle that periodically covers tiles in snow.
 
 
 ### Character design
 `Characters` in Toy World are "a dynamic version of tiles" in that they can move in the environment independently from the grid. They follow the usual physics-based rules like collision with impassable objects (tiles and other characters that share an interval in their layers).
 
-A special class of a character is the `Avatar`. In addition to movement, Avatars can interact with the environment (open doors, pickup objects, eat fruit, etc.). This is the entity in the Toy World core that your application's artificial brain can connect and send inputs to. This means that you can independently control any number of avatars in the world using any means you desire (a neural network-based learning system or e.g. a simple behavioral tree for lesser avatars).
+A special class of characters is the `Avatar`. In addition to movement, Avatars can interact with the environment (open doors, pickup objects, eat fruit, etc.). This is the entity in the Toy World core that your application's artificial brain can connect to and send inputs to. This means that you can independently control any number of avatars in the world using any means you desire (a neural network-based learning system or e.g. a simple behavioral tree for lesser avatars).
 
 Each avatar not only accepts inputs based on which it behaves in the environment, but also produces a set of outputs. These are e.g.:
 
@@ -57,10 +57,9 @@ There are several not necessarily self-explanatory properties.
  * *Rotate map* - should the map be rotated and the avatar remain facing up at all times?
  * *Use 3D* - this is a provisional mode where the scene gets rendered from the avatar's point of view instead. Note that this disables the use of field of focus.
  * *Day/Night cycle* - if enabled, the scene will periodically fade into darkness.
- * *Draw lights* - this is a provisional feature. If enabled, all characters except avatars will emanate light with attenuation based on their current speed of movement. At a later stage, this should be used for ambient purposes (and be 
- completely re-done).
+ * *Draw lights* - this is a provisional feature. If enabled, all characters except avatars will emanate light with attenuation based on their current speed of movement. At a later stage, this should be used for ambient purposes (and be re-done).
  * *Draw noise* - A random gaussian noise will be added to each of the RGB channels. The variance of the distribution is influenced by the "Noise intensity" property.
- * *Draw smoke* - The are between impassable objects will be filled by a semi-transparent fog. This is based on the continuous 3D perlin noise. You can specify the intensity (fog "thickness"), scale (the steepness of the gradient) and the speed of fog's flow.   
+ * *Draw smoke* - The areas between impassable objects will be filled by a semi-transparent fog. This is based on the continuous 3D perlin noise. You can specify the intensity (fog "thickness"), scale (the steepness of the gradient) and the speed of fog's flow.   
 
 <br />
 #### Render requests      
@@ -91,7 +90,7 @@ How to add a new character in .tmx so that it works in ToyWorld
 -->
 
 ### API
-We provide a rich interface for controlling the Toy World core. The first (and so far only) thing you can do with the core in code is to access the `ToyWorldFactory`. The factory lets you get an `IGameController` object (a standard one or a threadsafe variety) that lets you do several things:
+We provide a rich interface for controlling the Toy World core. The access to core is limited to the `ToyWorldFactory`. The factory lets you get an `IGameController` object (a standard one or a thread-safe variety) that lets you do several things:
 
  * Register Render Requests - these are used to draw the environment in the selected manner. Call the `RegisterRenderRequest` function and specify the interface of the desired render request as its type parameter. In return, you will be provided with a proxy to the render request that you can use to set up the rendering and collect the data.
  * Get Avatar controllers - you can get an `IAvatarController` to the specified Avatar. Through this object, you can set the Avatar's inputs and query for its status.
