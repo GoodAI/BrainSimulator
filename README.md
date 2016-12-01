@@ -14,3 +14,8 @@ Running Brain Simulator requires an NVIDIA **CUDA-enabled graphics** card and **
 * .NET Framework 4.5
 * NVIDIA graphics card with CUDA support (compute capability 2.0 or higher)
 
+### Building Brain Simulator
+
+To build Brain Simulator, open the Sources/BrainSimulator.sln solution in Visual Studio 2015 Update 3. You need to have NVIDIA CUDA 8 installed.
+
+To build the School and School GUI modules, open the Sources/Modules/School/School.sln solution and build the SchoolGUI project.
