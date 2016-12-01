@@ -256,6 +256,12 @@
       <Component Id="cmpA28E7462B57EC30AE7CAAE03677D6CC0" Guid="*">
           <File Id="filFA8422246C7D4FC3C1E3BFF9A20D3F5D" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\YAXLib.txt" />
       </Component>
+      <Component Id="PommaLabs.Thrower.txt" Guid="*">
+          <File Id="PommaLabsThrowerTXT" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\PommaLabs.Thrower.txt" />
+      </Component>
+      <Component Id="Troschuetz.Random.txt" Guid="*">
+          <File Id="TroschuetzRandomTXT" KeyPath="yes" Source="$(var.BrainSimulator.TargetDir)\Licenses\Troschuetz.Random.txt" />
+      </Component>
     </ComponentGroup>
   </Fragment>
 </Wix>
