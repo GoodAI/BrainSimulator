@@ -79,13 +79,17 @@ There are several not necessarily self-explanatory properties.
 
 
 ## Programmer's part
+
+<!---
+
 ### World architecture
 How the atlas works (overview)
 How to define your own map using Tiled (.tmx) so it works in ToyWorld
 How to add a new tile/layer in .tmx so that it works in ToyWorld
 How to add a new character in .tmx so that it works in ToyWorld
-         
-         
+
+-->
+
 ### API
 We provide a rich interface for controlling the Toy World core. The first (and so far only) thing you can do with the core in code is to access the `ToyWorldFactory`. The factory lets you get an `IGameController` object (a standard one or a threadsafe variety) that lets you do several things:
 
