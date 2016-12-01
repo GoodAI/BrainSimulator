@@ -1,10 +1,12 @@
 # GoodAI Brain Simulator
 
+**New with School for AI (read more here: [http://blog.marekrosa.org/2016/12/goodai-releases-school-for-ai-new_1.html](http://blog.marekrosa.org/2016/12/goodai-releases-school-for-ai-new_1.html)).**
+
 Brain Simulator is a collaborative platform for researchers, developers and high-tech companies to prototype and simulate artificial brain architecture, share knowledge, and exchange feedback.
 
 The platform is designed to simplify collaboration, testing, and the implementation of new theories, and to easily visualize experiments and data. No mathematical or programming background is required to experiment with Brain Simulator modules.
 
-Please keep in mind that Brain Simulator is still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
+Please keep in mind that Brain Simulator and all included modules are still in the PROTOTYPE STAGE OF DEVELOPMENT. GoodAI will continuously improve the platform based on its own research advancement and user feedback.
 
 ## System Requirements
 
