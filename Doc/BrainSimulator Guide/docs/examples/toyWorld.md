@@ -79,15 +79,31 @@ There are several not necessarily self-explanatory properties.
 
 ## Programmer's part
 
-<!---
-
 ### World architecture
-How the atlas works (overview)
-How to define your own map using Tiled (.tmx) so it works in ToyWorld
-How to add a new tile/layer in .tmx so that it works in ToyWorld
-How to add a new character in .tmx so that it works in ToyWorld
 
--->
+####Atlas
+Atlas is class carriing all other objects of the world. More specifficaly, there is map description, all movable objects and some special objects like atmospehere and location identifier. GameObjects and Tiles are placed in object layers and tile layers respectively; details are described in section World design. Also, atlas provides important methods returning informations like whether is given position free from obstacles, which objects are there and so on.
+
+####Map addition
+For editing and creating new maps we use Tiled editor. By default mockup999_pantry_world.tmx in ..\Sources\Modules\ToyWorld\World\res\Worlds is loaded, but you can change this in world settings in BrainSimulator. If you want to try to experiment with the maps, we would recommend you first to try to inspect and change this file using Tiled editor before creating new map. Tmx file is an xml-file, so you can also watch the code of the file. If you don't know Tiled editor, don't worry, usage is very intuitive.
+
+We should emphasize, that not all features of tmx files are suppotted by the loader of maps (class MapLoader). We do not recommend to change anything under tags <tileset> and attributes of the map. New map must contain all layers in same order and the tileset description. Objects and tiles should be placed in correct layers to work properly.
+
+For objects, there is mechanism how to set their properties. It is using reflection, so every object's public property (for example public float RotationSpeed {get;set;} for any Character) is automatically accessible. In Tiled open mockup999_pantry_world.tmx and click on any ball. On left panel you should find section "Custom properties". Property names there are matched with object's properties and values automatically parsed during map loading.
+
+On maps, areas and rooms can be defined to inform agent about current location. It is done by circular objects of type "AreaLabel" (not visible during simulation) and tiles in Area layer and Background. To avoid errors, always make areas closed and with one name label only.
+
+####Tile addition
+All tiles are placed in ..\Sources\Modules\ToyWorld\World\GameActors\Tiles. To add new Tile, first add its texture to the tileset (summer, winter) in ..\Sources\Modules\ToyWorld\World\res\Worlds. Add newly added tile to the map in Tiled and check the tmx file for its number (you can find it in layer table). 
+
+Next thing to do is to programm the functionality. If is your new tile same as some existing, you can skip this paragraph. There are several interfaces your new tile can implement in file TileInterfaces.cs and GameActorInterfaces.cs, so check them. There must be always two constructors (see for example `Fruit.cs`). Your tile will be inherited from either `StaticTile` or `DynamicTile` class. Use static tile if your tile have no internal state shich may change or you want this state to be same for all tiles - static tile will have only one instance, although rendered can be multiple times. For more details, watch code of existing tiles.
+
+Last thing to do is to assign number of tile with class name in ..\Sources\Modules\ToyWorld\World\res\GameActors\Tiles\Tilesets\TilesetTable.csv. One class can be assigned to more different numbers. Column default means that if new object is added during game run, its number will be the one with default mark, if there is more with the same.
+
+####GameObject addition
+To add a `GameObject` to a tmx file, first click on Insert tile button and select the picture from the tileset. Then type its class name to column Type in Tiled.
+
+![](../img/ToyWorld/tiledObject.png)
 
 ### API
 We provide a rich interface for controlling the Toy World core. The access to core is limited to the `ToyWorldFactory`. The factory lets you get an `IGameController` object (a standard one or a thread-safe variety) that lets you do several things:
