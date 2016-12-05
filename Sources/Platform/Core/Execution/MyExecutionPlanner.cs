@@ -101,8 +101,10 @@ namespace GoodAI.Core.Execution
                 defaultPlanContent.Add(new MyOutgoingSignalTask(node));
             }
 
-            MyExecutionBlock defaultPlan = new MyExecutionBlock(defaultPlanContent.ToArray());
-            defaultPlan.Name = node.Name;
+            var defaultPlan = new MyExecutionBlock(defaultPlanContent.ToArray())
+            {
+                Name = node.Name
+            };
 
             MyExecutionBlock resultPlan = defaultPlan;
 

@@ -220,6 +220,7 @@ namespace GoodAI.Core.Execution
                 if (task.GetType().ToString() == type.ToString())
                     return task;
             }
+
             return null;
         }
 

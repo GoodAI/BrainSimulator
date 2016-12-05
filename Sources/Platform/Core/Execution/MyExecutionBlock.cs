@@ -52,7 +52,7 @@ namespace GoodAI.Core.Execution
             }
         }
 
-        /// All children elements
+        /// All child elements
         public IMyExecutable[] Children
         {
             get { return m_children; }
@@ -68,11 +68,11 @@ namespace GoodAI.Core.Execution
 
             m_children = children;
 
-            for (int i = 0; i < m_children.Length; i++)
+            foreach (IMyExecutable child in m_children)
             {
-                if (m_children[i] is MyExecutionBlock)
+                if (child is MyExecutionBlock)
                 {
-                    (m_children[i] as MyExecutionBlock).Parent = this;
+                    (child as MyExecutionBlock).Parent = this;
                 }
             }
         }

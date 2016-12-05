@@ -46,80 +46,77 @@ namespace GoodAI.Core.Nodes
 
         internal static void CollectNodeInfo(Type type)
         {
-            if (!NODE_INFO.ContainsKey(type))
+            if (NODE_INFO.ContainsKey(type))
+                return;
+
+            var nodeInfo = new MyNodeInfo
             {
-                MyNodeInfo nodeInfo = new MyNodeInfo();
-                nodeInfo.Attributes = type.GetCustomAttribute<MyNodeInfoAttribute>(true);
+                Attributes = type.GetCustomAttribute<MyNodeInfoAttribute>(true) ?? new MyNodeInfoAttribute()
+            };
 
-                if (nodeInfo.Attributes == null)
+            foreach (PropertyInfo pInfo in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                if (typeof(MyTask).IsAssignableFrom(pInfo.PropertyType))
                 {
-                    nodeInfo.Attributes = new MyNodeInfoAttribute();
-                }                               
+                    nodeInfo.KnownTasks.Add(pInfo.Name, pInfo);
+                    nodeInfo.TaskOrder.Add(pInfo);
 
-                foreach (PropertyInfo pInfo in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
-                {
-                    if (typeof(MyTask).IsAssignableFrom(pInfo.PropertyType))
+                    MyTaskGroupAttribute groupAttr = pInfo.GetCustomAttribute<MyTaskGroupAttribute>(true);
+
+                    if (groupAttr != null)
                     {
-                        nodeInfo.KnownTasks.Add(pInfo.Name, pInfo);
-                        nodeInfo.TaskOrder.Add(pInfo);
-
-                        MyTaskGroupAttribute groupAttr = pInfo.GetCustomAttribute<MyTaskGroupAttribute>(true);
-
-                        if (groupAttr != null)
+                        if (!nodeInfo.TaskGroups.ContainsKey(groupAttr.Name))
                         {
-                            if (!nodeInfo.TaskGroups.ContainsKey(groupAttr.Name))
-                            {
-                                nodeInfo.TaskGroups[groupAttr.Name] = new List<PropertyInfo>();
-                            }
-
-                            nodeInfo.TaskGroups[groupAttr.Name].Add(pInfo);
+                            nodeInfo.TaskGroups[groupAttr.Name] = new List<PropertyInfo>();
                         }
-                    }
-                    else if (typeof(MyAbstractMemoryBlock).IsAssignableFrom(pInfo.PropertyType))
-                    {
-                        MyInputBlockAttribute inAttr = pInfo.GetCustomAttribute<MyInputBlockAttribute>(true);
-                        if (inAttr != null)
-                        {
-                            nodeInfo.InputBlocks.Add(pInfo);
-                        }
-                        else 
-                        {
-                            if (typeof(MyWorkingNode).IsAssignableFrom(type))
-                            {
-                                nodeInfo.OwnedMemoryBlocks.Add(pInfo);
-                            }
 
-                            if (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
-                            {
-                                nodeInfo.OutputBlocks.Add(pInfo);
-                            }
-                        }                        
-                    }
-                    else if (typeof(MySignal).IsAssignableFrom(pInfo.PropertyType))
-                    {
-                        nodeInfo.RegisteredSignals.Add(pInfo);
-                    }
-
-                    object defaultValue = pInfo.GetAttributeProperty((YAXSerializableFieldAttribute fa) => fa.DefaultValue);
-
-                    if (defaultValue != null)
-                    {
-                        nodeInfo.InitiableProperties.Add(pInfo);
+                        nodeInfo.TaskGroups[groupAttr.Name].Add(pInfo);
                     }
                 }
+                else if (typeof(MyAbstractMemoryBlock).IsAssignableFrom(pInfo.PropertyType))
+                {
+                    MyInputBlockAttribute inAttr = pInfo.GetCustomAttribute<MyInputBlockAttribute>(true);
+                    if (inAttr != null)
+                    {
+                        nodeInfo.InputBlocks.Add(pInfo);
+                    }
+                    else 
+                    {
+                        if (typeof(MyWorkingNode).IsAssignableFrom(type))
+                        {
+                            nodeInfo.OwnedMemoryBlocks.Add(pInfo);
+                        }
 
-                nodeInfo.InputBlocks = new List<PropertyInfo>(
-                    nodeInfo.InputBlocks.OrderBy(x => x.GetCustomAttribute<MyInputBlockAttribute>(true).Order));
+                        if (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
+                        {
+                            nodeInfo.OutputBlocks.Add(pInfo);
+                        }
+                    }                        
+                }
+                else if (typeof(MySignal).IsAssignableFrom(pInfo.PropertyType))
+                {
+                    nodeInfo.RegisteredSignals.Add(pInfo);
+                }
 
-                nodeInfo.OutputBlocks = new List<PropertyInfo>(
-                    nodeInfo.OutputBlocks.OrderBy(x => x.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
+                object defaultValue = pInfo.GetAttributeProperty((YAXSerializableFieldAttribute fa) => fa.DefaultValue);
 
-                nodeInfo.TaskOrder = new List<PropertyInfo>(
-                    nodeInfo.TaskOrder.OrderBy(x => (x.GetCustomAttribute<MyTaskInfoAttribute>(true) != null ?
+                if (defaultValue != null)
+                {
+                    nodeInfo.InitiableProperties.Add(pInfo);
+                }
+            }
+
+            nodeInfo.InputBlocks = new List<PropertyInfo>(
+                nodeInfo.InputBlocks.OrderBy(x => x.GetCustomAttribute<MyInputBlockAttribute>(true).Order));
+
+            nodeInfo.OutputBlocks = new List<PropertyInfo>(
+                nodeInfo.OutputBlocks.OrderBy(x => x.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
+
+            nodeInfo.TaskOrder = new List<PropertyInfo>(
+                nodeInfo.TaskOrder.OrderBy(x => (x.GetCustomAttribute<MyTaskInfoAttribute>(true) != null ?
                     x.GetCustomAttribute<MyTaskInfoAttribute>(true).Order : 0)));
 
-                NODE_INFO[type] = nodeInfo;
-            }
+            NODE_INFO[type] = nodeInfo;
         }
 
         public static MyNodeInfo Get(Type type)
