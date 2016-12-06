@@ -29,14 +29,9 @@ namespace GoodAI.Core.Execution
         {
             get
             {
-                if (m_childIterator < m_children.Length)
-                {
-                    return m_children[m_childIterator];
-                }
-                else
-                {
-                    return null;
-                }
+                return (m_childIterator < m_children.Length)
+                    ? m_children[m_childIterator]
+                    : null;
             }
         }
 

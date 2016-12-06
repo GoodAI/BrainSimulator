@@ -12,7 +12,7 @@ namespace GoodAI.Core.Nodes
 {
     public class MyNodeInfo
     {
-        private static Dictionary<Type, MyNodeInfo> NODE_INFO = new Dictionary<Type, MyNodeInfo>();
+        private static readonly Dictionary<Type, MyNodeInfo> NODE_INFO = new Dictionary<Type, MyNodeInfo>();
 
         public MyNodeInfoAttribute Attributes { get; set; }
 
