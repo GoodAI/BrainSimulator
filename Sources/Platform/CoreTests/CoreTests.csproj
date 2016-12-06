@@ -80,6 +80,8 @@
     <Compile Include="CoreTestBase.cs" />
     <Compile Include="DashboardTests.cs" />
     <Compile Include="EnumerableExtensionsTests.cs" />
+    <Compile Include="Execution\MyExecutionPlannerTests.cs" />
+    <Compile Include="Execution\TaskOrderNode.cs" />
     <Compile Include="Memory\CustomDimensionsTests.cs" />
     <Compile Include="Memory\MemoryBlockMetadataTests.cs" />
     <Compile Include="Memory\MemoryBlockTests.cs" />
@@ -138,6 +140,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
