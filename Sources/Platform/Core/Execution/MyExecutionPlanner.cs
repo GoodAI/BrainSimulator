@@ -71,9 +71,9 @@ namespace GoodAI.Core.Execution
                 defaultPlanContent.Add(new MyIncomingSignalTask(node));
             }
 
-            foreach (string taskName in node.GetInfo().KnownTasks.Keys)
+            foreach (var taskPropertyInfo in node.GetInfo().TaskOrder)
             {
-                MyTask task = node.GetTaskByPropertyName(taskName);
+                MyTask task = node.GetTaskByPropertyName(taskPropertyInfo.Name);
 
                 if (task != null && !task.DesignTime && (initPhase && task.OneShot || !initPhase && !task.OneShot))
                 {
