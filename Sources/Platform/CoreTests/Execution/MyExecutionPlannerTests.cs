@@ -21,7 +21,7 @@ namespace CoreTests.Execution
             
             var taskOrderNode = new TaskOrderNode();
 
-            MyNodeInfo.CollectNodeInfo(typeof(TaskOrderNode));
+            MyNodeInfo.CollectNodeInfo(taskOrderNode.GetType());
 
             MyExecutionBlock execBlock = planner.CreateNodeExecutionPlan(taskOrderNode, initPhase: false);
            
@@ -37,6 +37,23 @@ namespace CoreTests.Execution
 
                 lastOrder = taskInfo.Order;
             }
+        }
+
+        [Fact]
+        public void PlannerKeepsOrderOfTasksWithoutOrderAttribute()
+        {
+            var planner = new MyDefaultExecutionPlanner();
+            
+            var unorderedTasksNode = new UnorderedTasksNode();
+
+            MyNodeInfo.CollectNodeInfo(unorderedTasksNode.GetType());
+
+            MyExecutionBlock execBlock = planner.CreateNodeExecutionPlan(unorderedTasksNode, initPhase: false);
+           
+            // This is maybe a bit fragile. Remove the test if it breaks due to unrelated and intended changes.
+            Assert.Equal("CherryTask", execBlock.Children[1].Name);
+            Assert.Equal("BananaTask", execBlock.Children[2].Name);
+            Assert.Equal("AppleTask", execBlock.Children[3].Name);
         }
     }
 }

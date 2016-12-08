@@ -38,4 +38,36 @@ namespace CoreTests.Execution
         {
         }
     }
+    
+    /// <summary>
+    /// A testing node that does NOT use task ordering.
+    /// </summary>
+    internal sealed class UnorderedTasksNode : MyWorkingNode
+    {
+        public CherryTask CherryTaskProp { get; private set; }
+        public BananaTask BananaTaskProp { get; private set; }
+        public AppleTask AppleTaskProp { get; private set; }
+
+        public class AppleTask : MyTask<UnorderedTasksNode>
+        {
+            public override void Init(int nGPU) { }
+            public override void Execute() { }
+        }
+
+        public class BananaTask : MyTask<UnorderedTasksNode>
+        {
+            public override void Init(int nGPU) { }
+            public override void Execute() { }
+        }
+
+        public class CherryTask : MyTask<UnorderedTasksNode>
+        {
+            public override void Init(int nGPU) { }
+            public override void Execute() { }
+        }
+
+        public override void UpdateMemoryBlocks()
+        {
+        }
+    }
 }
