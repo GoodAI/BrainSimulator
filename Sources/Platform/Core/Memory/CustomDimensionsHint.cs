@@ -26,15 +26,18 @@ namespace GoodAI.Core.Memory
         #endregion
 
         private CustomDimensionsHint()
-        {}
+        {
+        }
 
         public CustomDimensionsHint(params int[] dimensions)
             : base(ProcessDimensions(dimensions))
-        {}
+        {
+        }
 
         public CustomDimensionsHint(IEnumerable<int> dimensions)
             : base(ProcessDimensions(dimensions))
-        {}
+        {
+        }
 
         public bool IsFullyDefined
         {
@@ -109,20 +112,20 @@ namespace GoodAI.Core.Memory
             IEnumerable<int> dimensions = source.Split(',', ';')
                 .Select(item => item.Trim())
                 .Select(item =>
-            {
-                int result;
-
-                if (item == ComputedDimLiteral)
                 {
-                    result = -1;  // computed dimension
-                }
-                else if (!int.TryParse(item, out result))
-                {
-                    throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
-                }
+                    int result;
 
-                return result;
-            });
+                    if (item == ComputedDimLiteral)
+                    {
+                        result = -1; // computed dimension
+                    }
+                    else if (!int.TryParse(item, out result))
+                    {
+                        throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
+                    }
+
+                    return result;
+                });
 
             return dimensions;
         }
