@@ -126,7 +126,7 @@ namespace GoodAI.Core.Memory
                     }
                     else if (!int.TryParse(item, out result))
                     {
-                        throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
+                        throw new InvalidDimensionsException($"Dimension '{item}' is not an integer.");
                     }
 
                     return result;
@@ -144,13 +144,13 @@ namespace GoodAI.Core.Memory
             foreach (int item in dimensions)
             {
                 if ((item < -1) || (item == 0))
-                    throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
+                    throw new InvalidDimensionsException($"Number {item} is not a valid dimension.");
 
                 if (item == -1)
                 {
                     if (foundComputedDimension)
-                        throw new InvalidDimensionsException(string.Format(
-                            "Multiple computed dimensions not allowed (item #{0}).", newDimensions.Count + 1));
+                        throw new InvalidDimensionsException(
+                            $"Multiple computed dimensions not allowed (item #{newDimensions.Count + 1}).");
 
                     foundComputedDimension = true;
                 }
@@ -158,8 +158,7 @@ namespace GoodAI.Core.Memory
                 newDimensions.Add(item);
 
                 if (newDimensions.Count > MaxDimensions)
-                    throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.",
-                        MaxDimensions));
+                    throw new InvalidDimensionsException($"Maximum number of dimensions is {MaxDimensions}.");
             }
 
             return newDimensions.ToImmutable();
