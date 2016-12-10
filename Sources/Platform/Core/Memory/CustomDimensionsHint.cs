@@ -74,16 +74,21 @@ namespace GoodAI.Core.Memory
 
         public TensorDimensions TryToApply(TensorDimensions originalDims)
         {
-            return ComputeDimensions(originalDims.ElementCount) ?? originalDims;
+            return TryComputeDimensions(originalDims.ElementCount) ?? originalDims;
         }
 
         public bool TryToApply(TensorDimensions originalDims, out TensorDimensions customDims)
         {
-            TensorDimensions adjustedDims = ComputeDimensions(originalDims.ElementCount);
+            TensorDimensions adjustedDims = TryComputeDimensions(originalDims.ElementCount);
 
             customDims = adjustedDims ?? originalDims;
 
             return (adjustedDims != null);
+        }
+
+        public TensorDimensions Apply(TensorDimensions originalDims)
+        {
+            return ComputeDimensions(originalDims.ElementCount);
         }
 
         public string PrintSource()
@@ -92,8 +97,8 @@ namespace GoodAI.Core.Memory
                 return "";
 
             return string.Join(", ", m_dims.Select(item =>
-                (item == -1) ? ComputedDimLiteral : item.ToString()
-                ));
+                        (item == -1) ? ComputedDimLiteral : item.ToString()
+            ));
         }
 
         #endregion
@@ -160,28 +165,48 @@ namespace GoodAI.Core.Memory
             return newDimensions.ToImmutable();
         }
 
-        private TensorDimensions ComputeDimensions(int targetElementCount)
+        private TensorDimensions TryComputeDimensions(int targetElementCount)
+        {
+            try
+            {
+                return ComputeDimensions(targetElementCount);
+            }
+            catch (InvalidDimensionsException)
+            {
+                return null;
+            }
+        }
+
+        private TensorDimensions ComputeDimensions(int originalElementCount)
         {
             if (IsEmpty || (ElementCount == 0))  // Prevent division by zero.
             {
-                return null;
+                throw new InvalidDimensionsException("Custom dimenstions are empty");
             }
 
             if (IsFullyDefined)
             {
                 // Use the hint only when its element count matches the target count.
-                return (ElementCount == targetElementCount)
-                    ? new TensorDimensions(m_dims) // TODO: this superfluously creates a new immutable collection
-                    : null;
+                if (ElementCount != originalElementCount)
+                {
+                    throw new InvalidDimensionsException(
+                        $"Original element count ({originalElementCount}) != custom element count ({ElementCount})");
+                }
+
+                return new TensorDimensions(m_dims); // TODO: this superfluously creates a new immutable collection
             }
 
             // ...else is not fully defined (there's a computed dimension).
             // Use the hint when target count is divisible by the hint's element count.
-            int computed = targetElementCount / ElementCount;
+            int computed = originalElementCount / ElementCount;
 
-            return (computed * ElementCount == targetElementCount)
-                ? new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim))
-                : null;
+            if (computed*ElementCount != originalElementCount)
+            {
+                throw new InvalidDimensionsException(
+                    $"Original element count {originalElementCount} not divisible by custom element count ({ElementCount})");
+            }
+
+            return new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim));
         }
 
         #endregion
