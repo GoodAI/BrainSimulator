@@ -275,10 +275,10 @@ namespace GoodAI.Core.Execution
             {
                 ExecutionPlanner = executionPlanner;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 m_threadPool.Finish();
-                throw e;
+                throw;
             }
         }
 
