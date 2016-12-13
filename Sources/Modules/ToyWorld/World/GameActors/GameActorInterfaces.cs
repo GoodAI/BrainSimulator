@@ -55,6 +55,10 @@ namespace World.GameActors
     public interface ISwitchableGameActor : IGameActor
     {
         ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+
+        ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+
+        ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
     }
 
     public interface ISwitcherGameActor : IGameActor

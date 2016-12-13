@@ -24,5 +24,15 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             atlas.Remove(new GameActorPosition(this, (Vector2)Position, LayerType.OnGroundInteractable));
             return closedDoor;
         }
+
+        public ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        {
+            return this;
+        }
+
+        public ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        {
+            return Switch(gameActorPosition, atlas, table);
+        }
     }
 }

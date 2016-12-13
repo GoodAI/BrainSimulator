@@ -16,6 +16,8 @@ namespace World.Physics
         /// </summary>
         IShape Shape { get; set; }
 
+        // if no collision specified, entity does not collide
+
         bool InelasticCollision { get; set; }
 
         bool ElasticCollision { get; set; }

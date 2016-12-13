@@ -25,6 +25,7 @@ namespace World.GameActors.GameObjects
             direction,
             typeof(CircleShape))
         {
+            ElasticCollision = true;
         }
 
         public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)

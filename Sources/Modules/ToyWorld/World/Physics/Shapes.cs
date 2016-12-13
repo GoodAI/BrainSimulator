@@ -64,6 +64,12 @@ namespace World.Physics
             Size = size;
         }
 
+        public RectangleShape(Vector2 size)
+        {
+            Position = Vector2.Zero;
+            Size = size;
+        }
+
         public override float PossibleCollisionDistance()
         {
             return Size.Length() / 2;

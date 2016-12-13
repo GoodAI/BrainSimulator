@@ -21,6 +21,11 @@ OnGroundInteractable;Water;196;1;
 ;Recharger;202;1;
 ;KeyToDoor;203;1;
 ;Bed;204;1;
+;StepSwitch;205;1;
+;StepSwitch;206;0;
+;StepSwitch;220;0;
+;StepSwitch;221;0;
+;StepSwitch;235;0;
 Obstacle;Obstacle;256;1;Non destroyable Wall
 ;AppleTree;257;1;
 ;PearTree;258;1;

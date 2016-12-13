@@ -149,6 +149,7 @@ namespace World.Physics
 
         public bool CollidesWithTile(IPhysicalEntity physicalEntity)
         {
+            if (!physicalEntity.ElasticCollision && !physicalEntity.InelasticCollision) return false;
             List<Vector2I> coverTilesCoordinates = physicalEntity.CoverTiles();
             bool colliding = !coverTilesCoordinates.TrueForAll(x => !m_atlas.ContainsCollidingTile(x));
             return colliding;
@@ -156,6 +157,7 @@ namespace World.Physics
 
         public bool CollidesWithPhysicalEntity(IPhysicalEntity physicalEntity)
         {
+            if (!physicalEntity.ElasticCollision && !physicalEntity.InelasticCollision) return false;
             var circle = new Circle(physicalEntity.Position, 2 * MaximumGameObjectRadius);
             List<IPhysicalEntity> physicalEntities = m_objectLayer.GetPhysicalEntities(circle);
             return physicalEntities.Any(physicalEntity.CollidesWith);

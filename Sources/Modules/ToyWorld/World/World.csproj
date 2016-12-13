@@ -172,6 +172,7 @@
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Bed.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs" />
+    <Compile Include="GameActors\Tiles\OnGroundInteractable\StepSwitch.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs" />
