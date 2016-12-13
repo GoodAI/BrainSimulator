@@ -26,15 +26,18 @@ namespace GoodAI.Core.Memory
         #endregion
 
         private CustomDimensionsHint()
-        {}
+        {
+        }
 
         public CustomDimensionsHint(params int[] dimensions)
             : base(ProcessDimensions(dimensions))
-        {}
+        {
+        }
 
         public CustomDimensionsHint(IEnumerable<int> dimensions)
             : base(ProcessDimensions(dimensions))
-        {}
+        {
+        }
 
         public bool IsFullyDefined
         {
@@ -71,16 +74,21 @@ namespace GoodAI.Core.Memory
 
         public TensorDimensions TryToApply(TensorDimensions originalDims)
         {
-            return ComputeDimensions(originalDims.ElementCount) ?? originalDims;
+            return TryComputeDimensions(originalDims.ElementCount) ?? originalDims;
         }
 
         public bool TryToApply(TensorDimensions originalDims, out TensorDimensions customDims)
         {
-            TensorDimensions adjustedDims = ComputeDimensions(originalDims.ElementCount);
+            TensorDimensions adjustedDims = TryComputeDimensions(originalDims.ElementCount);
 
             customDims = adjustedDims ?? originalDims;
 
             return (adjustedDims != null);
+        }
+
+        public TensorDimensions Apply(TensorDimensions originalDims)
+        {
+            return ComputeDimensions(originalDims.ElementCount);
         }
 
         public string PrintSource()
@@ -89,8 +97,8 @@ namespace GoodAI.Core.Memory
                 return "";
 
             return string.Join(", ", m_dims.Select(item =>
-                (item == -1) ? ComputedDimLiteral : item.ToString()
-                ));
+                        (item == -1) ? ComputedDimLiteral : item.ToString()
+            ));
         }
 
         #endregion
@@ -109,20 +117,20 @@ namespace GoodAI.Core.Memory
             IEnumerable<int> dimensions = source.Split(',', ';')
                 .Select(item => item.Trim())
                 .Select(item =>
-            {
-                int result;
-
-                if (item == ComputedDimLiteral)
                 {
-                    result = -1;  // computed dimension
-                }
-                else if (!int.TryParse(item, out result))
-                {
-                    throw new InvalidDimensionsException(string.Format("Dimension '{0}' is not an integer.", item));
-                }
+                    int result;
 
-                return result;
-            });
+                    if (item == ComputedDimLiteral)
+                    {
+                        result = -1; // computed dimension
+                    }
+                    else if (!int.TryParse(item, out result))
+                    {
+                        throw new InvalidDimensionsException($"Dimension '{item}' is not an integer.");
+                    }
+
+                    return result;
+                });
 
             return dimensions;
         }
@@ -136,13 +144,13 @@ namespace GoodAI.Core.Memory
             foreach (int item in dimensions)
             {
                 if ((item < -1) || (item == 0))
-                    throw new InvalidDimensionsException(string.Format("Number {0} is not a valid dimension.", item));
+                    throw new InvalidDimensionsException($"Number {item} is not a valid dimension.");
 
                 if (item == -1)
                 {
                     if (foundComputedDimension)
-                        throw new InvalidDimensionsException(string.Format(
-                            "Multiple computed dimensions not allowed (item #{0}).", newDimensions.Count + 1));
+                        throw new InvalidDimensionsException(
+                            $"Multiple computed dimensions not allowed (item #{newDimensions.Count + 1}).");
 
                     foundComputedDimension = true;
                 }
@@ -150,35 +158,54 @@ namespace GoodAI.Core.Memory
                 newDimensions.Add(item);
 
                 if (newDimensions.Count > MaxDimensions)
-                    throw new InvalidDimensionsException(string.Format("Maximum number of dimensions is {0}.",
-                        MaxDimensions));
+                    throw new InvalidDimensionsException($"Maximum number of dimensions is {MaxDimensions}.");
             }
 
             return newDimensions.ToImmutable();
         }
 
-        private TensorDimensions ComputeDimensions(int targetElementCount)
+        private TensorDimensions TryComputeDimensions(int targetElementCount)
+        {
+            try
+            {
+                return ComputeDimensions(targetElementCount);
+            }
+            catch (InvalidDimensionsException)
+            {
+                return null;
+            }
+        }
+
+        private TensorDimensions ComputeDimensions(int originalElementCount)
         {
             if (IsEmpty || (ElementCount == 0))  // Prevent division by zero.
             {
-                return null;
+                throw new InvalidDimensionsException("Custom dimenstions are empty");
             }
 
             if (IsFullyDefined)
             {
                 // Use the hint only when its element count matches the target count.
-                return (ElementCount == targetElementCount)
-                    ? new TensorDimensions(m_dims) // TODO: this superfluously creates a new immutable collection
-                    : null;
+                if (ElementCount != originalElementCount)
+                {
+                    throw new InvalidDimensionsException(
+                        $"Original element count ({originalElementCount}) != custom element count ({ElementCount})");
+                }
+
+                return new TensorDimensions(m_dims); // TODO: this superfluously creates a new immutable collection
             }
 
             // ...else is not fully defined (there's a computed dimension).
             // Use the hint when target count is divisible by the hint's element count.
-            int computed = targetElementCount / ElementCount;
+            int computed = originalElementCount / ElementCount;
 
-            return (computed * ElementCount == targetElementCount)
-                ? new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim))
-                : null;
+            if (computed*ElementCount != originalElementCount)
+            {
+                throw new InvalidDimensionsException(
+                    $"Original element count {originalElementCount} not divisible by custom element count ({ElementCount})");
+            }
+
+            return new TensorDimensions(m_dims.Select(dim => (dim == -1) ? computed : dim));
         }
 
         #endregion
