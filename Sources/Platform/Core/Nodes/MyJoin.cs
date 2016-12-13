@@ -233,8 +233,8 @@ namespace GoodAI.Core.Nodes
                     if (Input0ColHint == 0)
                         OutputSize = 0;
                     else
-                        OutputSize = Input0Count / Input0ColHint * Input1ColHint; /// size of output matrix: #rows A  times #cols B
-                    Output.ColumnHint = Input1ColHint;  /// # of columns in the output correspond to the # of columns in the first matrix
+                        OutputSize = Input0Count / Input0ColHint * Input1ColHint;  // size of output matrix: #rows A  times #cols B
+                    Output.ColumnHint = Input1ColHint;  // # of columns in the output correspond to the # of columns in the first matrix
                     if (firstInputDimensions.Rank > 2)
                     {
                         MyLog.WARNING.WriteLine(Name + ": Matrix multiplication is not defined for tensors.");
@@ -250,7 +250,7 @@ namespace GoodAI.Core.Nodes
                         InputBlocksPointers.Count = InputBranches;
                         Output.Dims = ComputeLastDimension(firstInputDimensions, GetInputSize(0));
                     }
-                    else // (if InputBranches == 2)
+                    else  // (if InputBranches == 2)
                     {
                         InputBlocksPointers.Count = InputBranches;
 
