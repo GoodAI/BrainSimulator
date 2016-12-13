@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,11 @@ namespace GoodAI.Platform.Core.Utils
                 yield return new Indexed<T>(item, i);
                 i++;
             }
+        }
+
+        public static IEnumerable<TResult> SelectManyOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TResult>> selector, TResult defaultValue)
+        {
+            return !source.Any() ? new List<TResult> { defaultValue } : source.SelectMany(selector);
         }
     }
 }

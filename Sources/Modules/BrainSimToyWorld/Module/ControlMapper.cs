@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Utils;
 
 namespace GoodAI.ToyWorld
 {
@@ -69,7 +70,7 @@ namespace GoodAI.ToyWorld
         {
             get
             {
-                int max = m_controls.Values.Select(controlIndexes => controlIndexes.Values.Max()).Max();
+                int max = m_controls.Values.SelectManyOrDefault(controlIndexes => controlIndexes.Values, -1).Max();
                 return max + 1; // +1 because values are indices to array -> they start at 0
             }
         }
