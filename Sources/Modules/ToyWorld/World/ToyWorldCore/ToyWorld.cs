@@ -138,7 +138,6 @@ namespace World.ToyWorldCore
             UpdateLayers();
             UpdateAvatars();
             UpdateCharacters();
-            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
             UpdatePhysics();
             UpdateAtmosphere();
             //Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");

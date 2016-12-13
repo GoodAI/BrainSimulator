@@ -355,21 +355,20 @@ namespace World.ToyWorldCore
         {
             foreach (Type t in types)
             {
-                if (t.Name == className)
+                if (t.Name != className) continue;
+
+                Tile instance;
+
+                if (t.IsSubclassOf(typeof(DynamicTile)))
                 {
-                    Tile instance;
-
-                    if (t.IsSubclassOf(typeof(DynamicTile)))
-                    {
-                        instance = (Tile)Activator.CreateInstance(t, tileNumber, position);
-                    }
-                    else
-                    {
-                        instance = (Tile)Activator.CreateInstance(t, tileNumber);
-                    }
-
-                    return instance;
+                    instance = (Tile)Activator.CreateInstance(t, tileNumber, position);
                 }
+                else
+                {
+                    instance = (Tile)Activator.CreateInstance(t, tileNumber);
+                }
+
+                return instance;
             }
             Log.Instance.Error("MapLoader cannot find class " + className);
             return null;

@@ -10,10 +10,6 @@ namespace World.GameActors.Tiles
     /// </summary>
     public abstract class Tile : GameActor
     {
-        /// <summary>
-        ///     TileType is number in tsx tileset
-        /// </summary>
-        public readonly int TileType;
 
         protected Tile(ITilesetTable tilesetTable)
         {

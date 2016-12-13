@@ -26,18 +26,38 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 
         public bool RequiresCenterOfObject => false;
 
+
+        private bool m_wasActive = false;
+        private bool m_isActive = false;
         public void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable)
         {
-            Switchable = Switchable?.SwitchOn(null, atlas, tilesetTable);
+            if (m_wasActive)
+            {
+                m_isActive = true;
+                return;
+            }
+            m_isActive = true;
             NextUpdateAfter = 1;
+            atlas.RegisterToAutoupdate(this);
         }
 
-        public int NextUpdateAfter { get; private set; } = 1;
+        public int NextUpdateAfter { get; private set; } = 0;
+
+        private const int DELAY = 8;
 
         public void Update(IAtlas atlas, ITilesetTable table)
         {
-            Switchable = Switchable?.SwitchOff(null, atlas, table);
+            if (m_isActive)
+            {
+                Switchable?.SwitchOn(null, atlas, table);
+                m_isActive = false;
+                m_wasActive = true;
+                NextUpdateAfter = DELAY;
+                return;
+            }
+            Switchable?.SwitchOff(null, atlas, table);
             NextUpdateAfter = 0;
+            m_wasActive = false;
         }
     }
 }

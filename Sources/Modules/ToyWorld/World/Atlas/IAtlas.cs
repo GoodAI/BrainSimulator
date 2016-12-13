@@ -120,6 +120,8 @@ namespace World.Atlas
         /// <param name="replacement"></param>
         void ReplaceWith(GameActorPosition original, GameActor replacement);
 
+        bool MoveToOtherLayer(GameActorPosition actor, LayerType layerType);
+
         /// <summary>
         ///
         /// </summary>

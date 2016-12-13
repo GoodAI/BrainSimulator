@@ -24,7 +24,7 @@ namespace World.GameActors
     {
         public GameActor Actor { get; private set; }
         public Vector2 Position { get; private set; }
-        public LayerType Layer { get; private set; }
+        public LayerType Layer { get; set; }
 
         public GameActorPosition(GameActor actor, Vector2 position, LayerType layer)
         {

@@ -8,6 +8,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 {
     public class RcDoorClosed : DynamicTile, ISwitchableGameActor
     {
+        private bool m_close = false;
+
         public RcDoorClosed(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
         {
         }
@@ -18,20 +20,29 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 
         public ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
         {
-            RcDoorOpened openedDoor = new RcDoorOpened(table, Position);
-            bool added = atlas.Add(new GameActorPosition(openedDoor, (Vector2)Position, LayerType.OnGroundInteractable));
-            if (!added) return this;
-            atlas.Remove(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable));
-            return openedDoor;
+            if (m_close)
+            {
+                SwitchOn(gameActorPosition, atlas, table);
+            }
+            else
+            {
+                SwitchOff(gameActorPosition, atlas, table);
+            }
+            m_close = !m_close;
+            return this;
         }
 
         public ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
         {
-            return Switch(gameActorPosition, atlas, table);
+            TilesetId = table.TileNumber("RcDoorOpened");
+            atlas.MoveToOtherLayer(new GameActorPosition(this, new Vector2(Position), LayerType.ObstacleInteractable), LayerType.OnGroundInteractable);
+            return this;
         }
 
         public ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
         {
+            TilesetId = table.TileNumber("RcDoorClosed");
+            atlas.MoveToOtherLayer(new GameActorPosition(this, new Vector2(Position), LayerType.OnGroundInteractable), LayerType.ObstacleInteractable);
             return this;
         }
     }

@@ -186,6 +186,14 @@ namespace World.Atlas.Layers
             return Neighborhoods.ChebyshevNeighborhood(position).Where(x => IsCoordinateFree(x, type));
         }
 
+        public bool MoveToOtherLayer(GameActorPosition actor, LayerType layerType)
+        {
+            Remove(actor);
+            actor.Layer = layerType;
+            Add(actor);
+            return true;
+        }
+
         public List<IGameObject> StayingOnTile(Vector2I tilePosition)
         {
             return ((IObjectLayer)GetLayer(LayerType.Object)).GetGameObjects(tilePosition);
