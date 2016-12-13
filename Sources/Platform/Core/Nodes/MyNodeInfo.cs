@@ -12,7 +12,7 @@ namespace GoodAI.Core.Nodes
 {
     public class MyNodeInfo
     {
-        private static Dictionary<Type, MyNodeInfo> NODE_INFO = new Dictionary<Type, MyNodeInfo>();
+        private static readonly Dictionary<Type, MyNodeInfo> NODE_INFO = new Dictionary<Type, MyNodeInfo>();
 
         public MyNodeInfoAttribute Attributes { get; set; }
 
@@ -54,7 +54,8 @@ namespace GoodAI.Core.Nodes
                 Attributes = type.GetCustomAttribute<MyNodeInfoAttribute>(true) ?? new MyNodeInfoAttribute()
             };
 
-            foreach (PropertyInfo pInfo in type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            foreach (PropertyInfo pInfo in type.GetProperties(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
             {
                 if (typeof(MyTask).IsAssignableFrom(pInfo.PropertyType))
                 {
@@ -107,14 +108,15 @@ namespace GoodAI.Core.Nodes
             }
 
             nodeInfo.InputBlocks = new List<PropertyInfo>(
-                nodeInfo.InputBlocks.OrderBy(x => x.GetCustomAttribute<MyInputBlockAttribute>(true).Order));
+                nodeInfo.InputBlocks.OrderBy(p => p.GetCustomAttribute<MyInputBlockAttribute>(true).Order));
 
             nodeInfo.OutputBlocks = new List<PropertyInfo>(
-                nodeInfo.OutputBlocks.OrderBy(x => x.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
+                nodeInfo.OutputBlocks.OrderBy(p => p.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
 
             nodeInfo.TaskOrder = new List<PropertyInfo>(
-                nodeInfo.TaskOrder.OrderBy(x => (x.GetCustomAttribute<MyTaskInfoAttribute>(true) != null ?
-                    x.GetCustomAttribute<MyTaskInfoAttribute>(true).Order : 0)));
+                nodeInfo.TaskOrder.OrderBy(
+                    // check pInfo.PropertyType because MyTaskInfo is a class attribute not property attribute
+                    p => p.PropertyType.GetCustomAttribute<MyTaskInfoAttribute>(true)?.Order ?? 0));
 
             NODE_INFO[type] = nodeInfo;
         }
