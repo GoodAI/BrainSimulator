@@ -245,7 +245,7 @@
       <CompileOut>$(OutDir)%(RelativeDir)%(Filename).ptx</CompileOut>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <NvccCompilation>ptx</NvccCompilation>
-      <CodeGeneration>compute_20,sm_20</CodeGeneration>
+      <CodeGeneration>compute_30,sm_30</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
