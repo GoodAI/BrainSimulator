@@ -175,12 +175,12 @@ namespace Render.RenderRequests
             get { return m_resolution; }
             set
             {
-                const int minResolution = 16;
+                const int minResolution = 2;
                 const int maxResolution = 4096;
                 if (value.Width < minResolution || value.Height < minResolution)
-                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be greater than " + minResolution + " pixels.");
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be greater than " + minResolution + "x" + minResolution+" pixels.");
                 if (value.Width > maxResolution || value.Height > maxResolution)
-                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be at most " + maxResolution + " pixels.");
+                    throw new ArgumentOutOfRangeException("value", "Invalid resolution: must be at most " + maxResolution + "x" + maxResolution + " pixels.");
 
                 m_resolution = value;
             }

@@ -107,8 +107,11 @@ namespace World.GameActors.GameObjects
         public float DesiredSpeed { get; set; }
         public float DesiredLeftRotation { get; set; }
         public bool Interact { get; set; }
+        public bool InteractPreviousStep { get; set; }
         public bool UseTool { get; set; }
+        public bool UseToolPreviousStep { get; set; }
         public bool PickUp { get; set; }
+        public bool PickUpPreviousStep { get; set; }
         public PointF Fof { get; set; }
 
         public Avatar(
@@ -129,6 +132,7 @@ namespace World.GameActors.GameObjects
             Temperature = 1f;
             Rested = 1f;
             PuppetControlled = false;
+            InitializeControls();
         }
 
         public void Update(IAtlas atlas, ITilesetTable table)
@@ -144,34 +148,59 @@ namespace World.GameActors.GameObjects
 
             if (Interact)
             {
-                InteractWithAllInteractablesInFrontOf(atlas, table);
-
+                if (!InteractPreviousStep)
+                {
+                    InteractWithAllInteractablesInFrontOf(atlas, table);
+                }
                 Interact = false;
+                InteractPreviousStep = true;
                 return;
+            }
+            else
+            {
+                InteractPreviousStep = false;
             }
 
             if (PickUp)
             {
-                if (Tool == null)
+                if (!PickUpPreviousStep)
                 {
-                    PerformPickup(atlas, table);
-                }
-                else
-                {
-                    PerformLayDown(atlas, table);
+                    if (Tool == null)
+                    {
+                        PerformPickup(atlas, table);
+                    }
+                    else
+                    {
+                        PerformLayDown(atlas, table);
+                    }
                 }
                 PickUp = false;
+                PickUpPreviousStep = true;
                 return;
+            }
+            else
+            {
+                PickUpPreviousStep = false;
             }
 
             if (UseTool)
             {
-                var usable = Tool as IUsableGameActor;
-
-                if (usable != null)
+                if (!UseToolPreviousStep)
                 {
-                    usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas, table);
+                    var usable = Tool as IUsableGameActor;
+
+                    if (usable != null)
+                    {
+                        usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas, table);
+                    }
                 }
+                UseTool = false;
+                UseToolPreviousStep = true;
+                return;
+            }
+            else
+            {
+                UseToolPreviousStep = false;
             }
         }
 
@@ -237,6 +266,14 @@ namespace World.GameActors.GameObjects
             Rested -= FATIGUE_FOR_LIVING;
         }
 
+        public void InitializeControls()
+        {
+            ResetControls();
+            InteractPreviousStep = false;
+            UseToolPreviousStep = false;
+            PickUpPreviousStep = false;
+        }
+
         public void ResetControls()
         {
             DesiredSpeed = 0f;
@@ -275,7 +312,7 @@ namespace World.GameActors.GameObjects
 
         private void LoseEnergy()
         {
-            if (UseTool || Interact || PickUp)
+            if ((UseTool && !UseToolPreviousStep) || (Interact && !InteractPreviousStep) || (PickUp && !PickUpPreviousStep))
             {
                 Energy -= ENERGY_FOR_ACTION;
             }
