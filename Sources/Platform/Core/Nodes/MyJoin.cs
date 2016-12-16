@@ -347,8 +347,8 @@ namespace GoodAI.Core.Nodes
 
                 if (firstInputDimensions.Rank != ai.Dims.Rank && !bothDimensionsRankOne)
                 {
-                    validator.AddError(this, string.Format("{0}: Incompatible input ranks!", Name));
-                    return;
+                    // TODO(Premek): replace warning with error when the check gets smart enough
+                    validator.AddWarning(this, $"Incompatible input ranks (input #{i}).");
                 }
             }
         }
