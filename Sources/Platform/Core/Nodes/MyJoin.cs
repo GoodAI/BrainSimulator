@@ -320,18 +320,22 @@ namespace GoodAI.Core.Nodes
                     break;
             }
 
-            TensorDimensions firstInputDimensions = null; ;
-
+            TensorDimensions firstInputDimensions = null;
             bool firstInputDimensionsRankOne = false;
+
             for (int i = 0; i < InputBranches; i++)
             {
                 MyMemoryBlock<float> ai = GetInput(i);
-   
-
                 if (ai == null)
-                    validator.AddError(this, string.Format("Missing input {0}.", i));
-                else if (InputBranches > 2) // Two inputs are allowed to be of variable size
-                    validator.AssertError(ai.Count == OutputSize, this, "Operand size differs from output size");
+                {
+                    validator.AddError(this, $"Missing input {i}.");
+                    return;
+                }
+
+                if (InputBranches > 2) // Two inputs are allowed to be of variable size
+                {
+                    validator.AssertError(ai.Count == OutputSize, this, $"Operand #{i} size differs from output size");
+                }
 
                 if (firstInputDimensions == null)
                 {
