@@ -34,11 +34,11 @@ Obstacle;Obstacle;;256;1;Non destroyable Wall
 ObstacleInteractable;Apple;;316;1;
 ;Pear;;317;1;
 ;Pinecone;;318;1;
-;SimpleDoorClosed;;319;1;
+;SimpleDoor;Closed;319;1;
+;SimpleDoor;Open;334;0;
 ;RcDoor;Open;320;1;
 ;RcDoor;Closed;335;0;
-;KeyDoorClosed;;321;1;
-;LeverSwitchOff;;324;1;
-;LeverSwitchOn;;325;1;
-;SimpleDoorOpened;;334;1;
-;KeyDoorOpened;;336;1;
+;KeyDoor;Closed;321;1;
+;KeyDoor;Open;336;0;
+;LeverSwitch;Off;324;1;
+;LeverSwitch;On;325;0;

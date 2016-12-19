@@ -4,21 +4,21 @@ using World.Atlas.Layers;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
-    public class RcDoor : DynamicTile, ISwitchableGameActor
+    public class KeyDoor : DynamicTile, ISwitchableGameActor
     {
-        private bool m_closed;
+        private bool m_closed = true;
 
-        public RcDoor(Vector2I position) : base(position)
+        public KeyDoor(Vector2I position) : base(position)
         {
             Init();
         }
 
-        public RcDoor(Vector2I position, int textureId) : base(position, textureId)
+        public KeyDoor(Vector2I position, int textureId) : base(position, textureId)
         {
             Init();
         }
 
-        public RcDoor(Vector2I position, string textureName) : base(position, textureName)
+        public KeyDoor(Vector2I position, string textureName) : base(position, textureName)
         {
             Init();
         }
@@ -33,27 +33,27 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         {
             if (m_closed)
             {
-                SwitchOff(gameActorPosition, atlas);
+                SwitchOn(gameActorPosition, atlas);
             }
             else
             {
-                SwitchOn(gameActorPosition, atlas);
+                SwitchOff(gameActorPosition, atlas);
             }
             return this;
         }
 
         public ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-            TilesetId = AlternativeTextures.Id("Closed");
-            atlas.MoveToOtherLayer(new GameActorPosition(this, new Vector2(Position), LayerType.ObstacleInteractable), LayerType.OnGroundInteractable);
+            TilesetId = AlternativeTextures.Id("Open");
+            atlas.MoveToOtherLayer(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable), LayerType.OnGroundInteractable);
             m_closed = true;
             return this;
         }
 
         public ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-            TilesetId = AlternativeTextures.Id("Open");
-            atlas.MoveToOtherLayer(new GameActorPosition(this, new Vector2(Position), LayerType.OnGroundInteractable), LayerType.ObstacleInteractable);
+            TilesetId = AlternativeTextures.Id("Closed");
+            atlas.MoveToOtherLayer(new GameActorPosition(this, (Vector2)Position, LayerType.OnGroundInteractable), LayerType.ObstacleInteractable);
             m_closed = false;
             return this;
         }

@@ -10,6 +10,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     {
         public Fruit(Vector2I position) : base(position) { }
 
+        public Fruit(Vector2I position, int textureId) : base(position, textureId) { }
+
         public Fruit(Vector2I position, string textureName) : base(position, textureName) { }
 
         public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position)
@@ -36,6 +38,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 
         public Apple(Vector2I position) : base(position) { Init(); }
 
+        public Apple(Vector2I position, int textureId) : base(position, textureId) { Init(); }
+
         public Apple(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
@@ -55,6 +59,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 
         public Pear(Vector2I position) : base(position) { Init(); }
 
+        public Pear(Vector2I position, int textureId) : base(position, textureId) { Init(); }
+
         public Pear(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
@@ -71,6 +77,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     public class Pinecone : Fruit
     {
         public Pinecone(Vector2I position) : base(position) { }
+
+        public Pinecone(Vector2I position, int textureId) : base(position, textureId) { }
 
         public Pinecone(Vector2I position, string textureName) : base(position, textureName) { }
     }
