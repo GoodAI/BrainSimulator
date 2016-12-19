@@ -40,13 +40,13 @@ namespace GoodAI.Modules.School.LearningTasks
             PointF location = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
 
             Shape randomVeryGoodFood = WrappedWorld.CreateRandomVeryGoodFood(location, size, RndGen);
-            Actions.Movement = MoveActionsToTarget(randomVeryGoodFood.Center());
+            Actions.Movement = MoveActionsToTarget(randomVeryGoodFood.GetCenter());
 
             PointF location2 = WrappedWorld.RandomPositionInsidePowNonCovering(RndGen, size);
             if (RndGen.Next(3) > 0)
             {
                 Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, RndGen);
-                Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
+                Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.GetCenter()));
             }
             else if (RndGen.Next(3) > 0)
             {

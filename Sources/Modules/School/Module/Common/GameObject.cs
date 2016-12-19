@@ -202,7 +202,7 @@ namespace GoodAI.Modules.School.Common
             return (float)Math.Sqrt(Math.Pow(centerX - targetCenterX, 2) + Math.Pow(centerY - targetCenterY, 2));
         }
 
-        public PointF Center()
+        public PointF GetCenter()
         {
             float centerX = Position.X + Size.Width / 2;
             float centerY = Position.Y + Size.Height / 2;

@@ -51,7 +51,7 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 Shape randomEnemy = WrappedWorld.CreateRandomEnemy(location2, size, RndGen);
                 Actions.Eat = false;
-                Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.Center()));
+                Actions.Movement = NegateMoveActions(MoveActionsToTarget(randomEnemy.GetCenter()));
             }
             else if (RndGen.Next(3) > 0)
             {

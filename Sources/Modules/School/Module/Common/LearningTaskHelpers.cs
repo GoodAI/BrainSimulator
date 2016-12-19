@@ -136,6 +136,12 @@ namespace GoodAI.Modules.School.Common
             return rndGen.Next(0, 2) == 1;
         }
 
+        // Return true or false with equal probability
+        public static bool FlipBiasedCoin(Random rndGen, float probabilityOf1)
+        {
+            return rndGen.NextDouble() <= probabilityOf1;
+        }
+
         public static float GetRandomGaussian(Random rndGen)
         {
             float u1 = Convert.ToSingle(rndGen.NextDouble()); //these are uniform(0,1) random doubles
@@ -197,6 +203,21 @@ namespace GoodAI.Modules.School.Common
         public static Color RandomVisibleColor(Random rndGen, int numberOfColors = 11)
         {
             return GetVisibleColor(rndGen.Next(numberOfColors));
+        }
+
+        public static Color GetVisibleGrayscaleColor(int colorIndex)
+        {
+            switch (colorIndex)
+            {
+                case 0:
+                    return Color.White;
+                case 1:
+                    return Color.Black;
+                case 2:
+                    return Color.Gray;
+                default:
+                    return Color.White;
+            }
         }
 
         public static Color GetVisibleColor(int colorIndex)
