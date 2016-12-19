@@ -691,6 +691,13 @@ namespace GoodAI.Modules.School.Worlds
             GameObjects = GameObjects.OrderBy(o1 => o1.Layer).ToList();
         }
 
+        // does not free the game object's texture, if loaded
+        public void RemoveGameObject(GameObject item)
+        {
+            GameObjects.Remove(item);
+            GameObjects = GameObjects.OrderBy(o1 => o1.Layer).ToList();
+        }
+
         #endregion
 
         #region Tasks
