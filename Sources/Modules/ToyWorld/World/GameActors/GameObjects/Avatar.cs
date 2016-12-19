@@ -148,16 +148,13 @@ namespace World.GameActors.GameObjects
             {
                 if (!InteractPreviousStep)
                 {
-                    InteractWithAllInteractablesInFrontOf(atlas, table);
+                    InteractWithAllInteractablesInFrontOf(atlas);
                 }
                 Interact = false;
                 InteractPreviousStep = true;
                 return;
             }
-            else
-            {
-                InteractPreviousStep = false;
-            }
+            InteractPreviousStep = false;
 
             if (PickUp)
             {
