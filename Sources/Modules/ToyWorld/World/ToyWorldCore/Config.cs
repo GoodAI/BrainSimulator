@@ -31,7 +31,7 @@ namespace World.ToyWorldCore
         public int FruitSpawnRange { get { return 1000; } }
         public int FruitFirstSpawn { get { return 500; } }
         public int FruitFirstSpawnRange { get { return 200; } }
-        public int FruitRotAfter { get { return 5000; } }
+        public int FruitRotAfter { get { return int.MaxValue; } }
 
         public float BedRechargeRate { get { return 0.1f; } }
     }
