@@ -2,7 +2,6 @@
 using VRageMath;
 using World.Atlas;
 using World.Atlas.Layers;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
@@ -14,12 +13,12 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         public float MaxDistance { get; private set; }
         public int NextUpdateAfter { get; private set; }
 
-        public FireplaceBurning(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public FireplaceBurning(Vector2I position) : base(position)
         {
             Init();
         }
 
-        public FireplaceBurning(int tileType, Vector2I position) : base(tileType, position)
+        public FireplaceBurning(Vector2I position, string textureName) : base(position, textureName)
         {
             Init();
         }
@@ -32,7 +31,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             m_counter = 0;
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             if (Heat < 0)
             {
@@ -46,7 +45,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                 // fourth update - fire is extinguished.
                 Heat = 0;
                 NextUpdateAfter = 0;
-                var fireplace = new Fireplace(table, Position);
+                var fireplace = new Fireplace(Position);
                 atlas.UnregisterHeatSource(this);
                 atlas.ReplaceWith(ThisGameActorPosition(LayerType.OnGroundInteractable), fireplace);
                 return;
@@ -65,7 +64,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
                     ICombustibleGameActor combustible = gameActorPosition.Actor as ICombustibleGameActor;
                     if (combustible != null)
                     {
-                        combustible.Burn(gameActorPosition, atlas, table);
+                        combustible.Burn(gameActorPosition, atlas);
                     }
                 }
                 m_counter++;

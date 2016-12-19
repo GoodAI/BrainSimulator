@@ -18,8 +18,9 @@ namespace World.GameActors.Tiles.Obstacle
         private int m_updatePeriod;
         private static readonly Random m_rng = new Random();
 
-        protected Tree(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { Init(); }
-        protected Tree(int tileType, Vector2I position) : base(tileType, position) { Init(); }
+        protected Tree(Vector2I position) : base(position) { Init(); }
+        protected Tree(Vector2I position, int textureId) : base(position, textureId) { Init(); }
+        protected Tree(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
         {
@@ -28,7 +29,7 @@ namespace World.GameActors.Tiles.Obstacle
             NextUpdateAfter = m_firstUpdate;
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             List<Vector2I> free = atlas.FreePositionsAround(Position, LayerType.Obstacle | LayerType.Object).ToList();
             if (free.Count == 0) return;
@@ -38,7 +39,7 @@ namespace World.GameActors.Tiles.Obstacle
             if (free.Count == 0) return;
 
             Vector2I targetPosition = free[m_rng.Next(free.Count)];
-            object[] args = { table, targetPosition };
+            object[] args = { targetPosition };
             Fruit fruit = (Fruit)Activator.CreateInstance(typeof(T), args);
             GameActorPosition fruitPosition = new GameActorPosition(fruit, new Vector2(targetPosition), LayerType.ObstacleInteractable);
             atlas.Add(fruitPosition);
@@ -49,19 +50,22 @@ namespace World.GameActors.Tiles.Obstacle
 
     public class AppleTree : Tree<Apple>
     {
-        public AppleTree(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
-        public AppleTree(int tileType, Vector2I position) : base(tileType, position) { }
+        public AppleTree(Vector2I position) : base(position) { }
+        public AppleTree(Vector2I position, int textureId) : base(position, textureId) { }
+        public AppleTree(Vector2I position, string textureName) : base(position, textureName) { }
     }
 
     public class PearTree : Tree<Apple>
     {
-        public PearTree(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
-        public PearTree(int tileType, Vector2I position) : base(tileType, position) { }
+        public PearTree(Vector2I position) : base(position) { }
+        public PearTree(Vector2I position, int textureId) : base(position, textureId) { }
+        public PearTree(Vector2I position, string textureName) : base(position, textureName) { }
     }
 
     public class Pine : Tree<Pinecone>
     {
-        public Pine(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
-        public Pine(int tileType, Vector2I position) : base(tileType, position) { }
+        public Pine(Vector2I position) : base(position) { }
+        public Pine(Vector2I position, int textureId) : base(position, textureId) { }
+        public Pine(Vector2I position, string textureName) : base(position, textureName) { }
     }
 }

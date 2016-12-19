@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using GoodAI.Logging;
 using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas;
@@ -48,7 +47,7 @@ namespace World.ToyWorldCore
 
             InitAtlas(tmxDeserializedMap);
             InitPhysics();
-            TileDetectorRegister = new TileDetectorRegister(Atlas, TilesetTable);
+            TileDetectorRegister = new TileDetectorRegister(Atlas);
             RegisterSignals();
         }
 
@@ -152,7 +151,7 @@ namespace World.ToyWorldCore
         private void UpdateScheduled()
         {
             TileDetectorRegister.Update();
-            AutoupdateRegister.UpdateItems(Atlas, TilesetTable);
+            AutoupdateRegister.UpdateItems(Atlas);
             AutoupdateRegister.Tick();
         }
 

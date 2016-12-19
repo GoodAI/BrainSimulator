@@ -1,6 +1,5 @@
 ﻿using World.Atlas;
 using World.GameActors.GameObjects;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
 {
@@ -20,8 +19,7 @@ namespace World.GameActors.Tiles
         /// </summary>
         /// <param name="gameObject"></param>
         /// <param name="atlas"></param>
-        /// <param name="tilesetTable"></param>
-        void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable);
+        void ObjectDetected(IGameObject gameObject, IAtlas atlas);
     }
 
     /// <summary>

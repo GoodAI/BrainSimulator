@@ -2,11 +2,13 @@
 {
     class OnBackground : StaticTile
     {
-        public OnBackground(ITilesetTable tileset) : base(tileset)
+        public OnBackground()
         {
         }
 
-        public OnBackground(int tileType) : base(tileType)
+        public OnBackground(int textureId) : base(textureId) { }
+
+        public OnBackground(string textureName) : base(textureName)
         {
         }
     }

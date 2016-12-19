@@ -2,7 +2,6 @@
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
@@ -10,27 +9,25 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     {
         public ISwitchableGameActor Switchable { get; set; }
 
-        public LeverSwitchOff(ITilesetTable tilesetTable, Vector2I position)
-            : base(tilesetTable, position)
+        public LeverSwitchOff(Vector2I position) : base(position) { } 
+
+ 		public LeverSwitchOff(Vector2I position, int textureId) : base(position, textureId) { }
+
+        public LeverSwitchOff(Vector2I position, string textureName) : base(position, textureName)
         {
         }
 
-        public LeverSwitchOff(int tileType, Vector2I position)
-            : base(tileType, position)
+        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-        }
-
-        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
-        {
-            var leverOn = new LeverSwitchOn(table, Position);
+            var leverOn = new LeverSwitchOn(Position);
             atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable), leverOn);
             if (Switchable == null) return;
-            leverOn.Switchable = Switchable.Switch(null, atlas, table);
+            leverOn.Switchable = Switchable.Switch(null, atlas);
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
-            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity, LayerType.ObstacleInteractable), atlas, tilesetTable);
+            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity, LayerType.ObstacleInteractable), atlas);
         }
     }
 }

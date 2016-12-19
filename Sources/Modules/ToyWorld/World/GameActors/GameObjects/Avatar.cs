@@ -3,16 +3,14 @@ using System.Linq;
 using GoodAI.ToyWorldAPI;
 using System.Collections.Generic;
 using System;
-﻿﻿using System.Diagnostics;
+﻿using System.Diagnostics;
 ﻿﻿using GoodAI.Logging;
 using VRageMath;
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.GameActors.Tiles;
-﻿using World.GameActors.Tiles.ObstacleInteractable;
+using World.GameActors.Tiles.ObstacleInteractable;
 ﻿using World.Physics;
-using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
@@ -135,7 +133,7 @@ namespace World.GameActors.GameObjects
             InitializeControls();
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             var temperatureAround = atlas.Temperature(Position);
 
@@ -167,11 +165,11 @@ namespace World.GameActors.GameObjects
                 {
                     if (Tool == null)
                     {
-                        PerformPickup(atlas, table);
+                    PerformPickup(atlas);
                     }
                     else
                     {
-                        PerformLayDown(atlas, table);
+                    PerformLayDown(atlas);
                     }
                 }
                 PickUp = false;
@@ -191,7 +189,7 @@ namespace World.GameActors.GameObjects
 
                     if (usable != null)
                     {
-                        usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas, table);
+                    usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas);
                     }
                 }
                 UseTool = false;
@@ -204,7 +202,7 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private void InteractWithAllInteractablesInFrontOf(IAtlas atlas, ITilesetTable table)
+        private void InteractWithAllInteractablesInFrontOf(IAtlas atlas)
         {
             List<GameActorPosition> tilesInFrontOf = GetInteractableTilesInFrontOf(atlas);
             foreach (GameActorPosition tileInFrontOf in tilesInFrontOf)
@@ -216,7 +214,7 @@ namespace World.GameActors.GameObjects
 
                     if (interactable != null)
                     {
-                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position, table);
+                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position);
                     }
                     if (tileInFrontOf.Actor is Fruit)
                     {
@@ -329,15 +327,15 @@ namespace World.GameActors.GameObjects
             }
         }
 
-        private bool PerformLayDown(IAtlas atlas, ITilesetTable tilesetTable)
+        private bool PerformLayDown(IAtlas atlas)
         {
             Vector2 positionInFrontOf = atlas.PositionInFrontOf(this, 1);
             GameAction layDownAction = new LayDown(this);
-            Tool.PickUp(atlas, layDownAction, positionInFrontOf, tilesetTable);
+            Tool.PickUp(atlas, layDownAction, positionInFrontOf);
             return true;
         }
 
-        private bool PerformPickup(IAtlas atlas, ITilesetTable tilesetTable)
+        private bool PerformPickup(IAtlas atlas)
         {
             // check tile in front of
             List<GameActorPosition> targets = GetInteractableTilesInFrontOf(atlas);
@@ -353,7 +351,7 @@ namespace World.GameActors.GameObjects
                 IPickableGameActor interactableTarget = target.Actor as IPickableGameActor;
                 if (interactableTarget == null) continue;
                 GameAction pickUpAction = new PickUp(this);
-                interactableTarget.PickUp(atlas, pickUpAction, target.Position, tilesetTable);
+                interactableTarget.PickUp(atlas, pickUpAction, target.Position);
 
                 RemoveSpeed(target);
                 return true;

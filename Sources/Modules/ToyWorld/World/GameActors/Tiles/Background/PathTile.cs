@@ -2,13 +2,14 @@
 {
     public class PathTile : StaticTile
     {
-        public PathTile(ITilesetTable tileset)
-            : base(tileset)
+        public PathTile()
         {
         }
 
-        public PathTile(int tileType)
-            : base(tileType)
+        public PathTile(int textureId) : base(textureId) { }
+
+        public PathTile(string textureName)
+            : base(textureName)
         {
         }
     }

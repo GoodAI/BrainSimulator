@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using System.Threading.Tasks;
 using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
-using World.Physics;
 
 namespace World.Atlas.Layers
 {

@@ -1,7 +1,6 @@
 ﻿using VRageMath;
 using World.Atlas;
 using World.GameActors.GameObjects;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
@@ -9,19 +8,17 @@ namespace World.GameActors.Tiles.OnGroundInteractable
     {
         public ISwitchableGameActor Switchable { get; set; }
 
-        public StepSwitch(ITilesetTable tilesetTable, Vector2I position)
-            : base(tilesetTable, position)
+        public StepSwitch(Vector2I position) : base(position) { } 
+
+ 		public StepSwitch(Vector2I position, int textureId) : base(position, textureId) { }
+
+        public StepSwitch(Vector2I position, string textureName) : base(position, textureName)
         {
         }
 
-        public StepSwitch(int tileType, Vector2I position)
-            : base(tileType, position)
+        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-        }
-
-        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
-        {
-            Switchable = Switchable?.SwitchOn(null, atlas, table);
+            Switchable = Switchable?.SwitchOn(null, atlas);
         }
 
         public bool RequiresCenterOfObject => false;
@@ -29,7 +26,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 
         private bool m_wasActive = false;
         private bool m_isActive = false;
-        public void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable)
+        public void ObjectDetected(IGameObject gameObject, IAtlas atlas)
         {
             if (m_wasActive)
             {
@@ -45,17 +42,17 @@ namespace World.GameActors.Tiles.OnGroundInteractable
 
         private const int DELAY = 8;
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             if (m_isActive)
             {
-                Switchable?.SwitchOn(null, atlas, table);
+                Switchable?.SwitchOn(null, atlas);
                 m_isActive = false;
                 m_wasActive = true;
                 NextUpdateAfter = DELAY;
                 return;
             }
-            Switchable?.SwitchOff(null, atlas, table);
+            Switchable?.SwitchOff(null, atlas);
             NextUpdateAfter = 0;
             m_wasActive = false;
         }

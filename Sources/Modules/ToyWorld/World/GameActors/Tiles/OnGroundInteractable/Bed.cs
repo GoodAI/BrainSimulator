@@ -13,23 +13,25 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         public int NextUpdateAfter { get; private set; }
         public bool SomeoneOnTile { get; set; }
 
-        public Bed(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { Init(); }
+        public Bed(Vector2I position) : base(position) { Init(); }
 
-        public Bed(int tileType, Vector2I position) : base(tileType, position) { Init(); }
+        public Bed(Vector2I position, int textureId) : base(position, textureId) { Init(); }
+
+        public Bed(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
         {
             NextUpdateAfter = 0;
         }
 
-        public void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable)
+        public void ObjectDetected(IGameObject gameObject, IAtlas atlas)
         {
             if (SomeoneOnTile) return;
             NextUpdateAfter = 60;
             atlas.RegisterToAutoupdate(this);
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             List<IGameObject> gameActorPositions = atlas.StayingOnTile(Position);
 

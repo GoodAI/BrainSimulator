@@ -2,11 +2,13 @@
 {
     public class RoomTile : StaticTile
     {
-        public RoomTile(ITilesetTable tilesetTable) : base(tilesetTable)
+        public RoomTile()
         {
         }
 
-        public RoomTile(int tileType) : base(tileType)
+        public RoomTile(int textureId) : base(textureId) { }
+
+        public RoomTile(string textureName) : base(textureName)
         {
         }
     }

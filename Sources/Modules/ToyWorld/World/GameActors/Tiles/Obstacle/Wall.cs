@@ -3,7 +3,6 @@ using VRageMath;
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.Obstacle
 {
@@ -12,17 +11,16 @@ namespace World.GameActors.Tiles.Obstacle
     /// </summary>
     public class Wall : StaticTile, IInteractableGameActor
     {
-        public Wall(ITilesetTable tilesetTable)
-            : base(tilesetTable)
+        public Wall() : base() { } 
+
+ 		public Wall(int textureId) : base(textureId) { }
+
+        public Wall(string textureName)
+            : base(textureName)
         {
         }
 
-        public Wall(int tileType)
-            : base(tileType)
-        {
-        }
-
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
             if (!(gameAction is UsePickaxe))
                 return;
@@ -33,10 +31,10 @@ namespace World.GameActors.Tiles.Obstacle
 
             if (usePickaxe.Damage >= 1.0f)
             {
-                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall());
                 return;
             }
-            atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DamagedWall(usePickaxe.Damage, tilesetTable, Vector2I.Zero));
+            atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DamagedWall(usePickaxe.Damage, Vector2I.Zero));
         }
     }
 
@@ -48,19 +46,18 @@ namespace World.GameActors.Tiles.Obstacle
     {
         public float Health { get; private set; }
 
-        private DamagedWall(ITilesetTable tilesetTable, Vector2I position)
-            : base(tilesetTable, position)
+        private DamagedWall(Vector2I position) : base(position)
         {
             Health = 1f;
         }
 
-        public DamagedWall(float damage, ITilesetTable tilesetTable, Vector2I position)
-            : this(tilesetTable, position)
+        public DamagedWall(float damage, Vector2I position)
+            : this(position)
         {
             Health -= damage;
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
             UsePickaxe action = gameAction as UsePickaxe;
             if (action != null)
@@ -70,7 +67,7 @@ namespace World.GameActors.Tiles.Obstacle
             }
 
             if (Health <= 0f)
-                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall(tilesetTable));
+                atlas.ReplaceWith(new GameActorPosition(this, position, LayerType.ObstacleInteractable), new DestroyedWall());
         }
     }
 
@@ -78,9 +75,8 @@ namespace World.GameActors.Tiles.Obstacle
     /// </summary>
     public class DestroyedWall : StaticTile
     {
-        public DestroyedWall(ITilesetTable tilesetTable)
-            : base(tilesetTable)
-        {
-        }
+        public DestroyedWall() : base (){ } 
+
+ 		public DestroyedWall(int textureId) : base(textureId) { }
     }
 }

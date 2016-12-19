@@ -2,40 +2,37 @@
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
     public class Fireplace : DynamicTile, IInteractableGameActor, ICombustibleGameActor
     {
-        public Fireplace(ITilesetTable tilesetTable, Vector2I position)
-            : base(tilesetTable, position)
+        public Fireplace(Vector2I position) : base(position) {}
+
+        public Fireplace(Vector2I position, int textureId) : base(position, textureId) { }
+
+        public Fireplace(Vector2I position, string textureName) : base(position, textureName)
         {
         }
 
-        public Fireplace(int tileType, Vector2I position)
-            : base(tileType, position)
-        {
-        }
-
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
             var interact = gameAction as Interact;
 
             if (interact != null)
             {
-                Ignite(atlas, tilesetTable);
+                Ignite(atlas);
             }
         }
 
-        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-            Ignite(atlas, table);
+            Ignite(atlas);
         }
 
-        private void Ignite(IAtlas atlas, ITilesetTable tilesetTable)
+        private void Ignite(IAtlas atlas)
         {
-            var fireplaceBurning = new FireplaceBurning(tilesetTable, Position);
+            var fireplaceBurning = new FireplaceBurning(Position);
             atlas.ReplaceWith(ThisGameActorPosition(LayerType.OnGroundInteractable), fireplaceBurning);
             atlas.RegisterToAutoupdate(fireplaceBurning);
         }

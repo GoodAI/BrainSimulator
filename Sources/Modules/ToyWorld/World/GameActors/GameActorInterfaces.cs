@@ -1,7 +1,6 @@
 ﻿using VRageMath;
 using World.Atlas;
 using World.GameActions;
-using World.GameActors.Tiles;
 
 namespace World.GameActors
 {
@@ -16,7 +15,7 @@ namespace World.GameActors
         /// <param name="atlas"></param>
         /// <param name="table"></param>
         /// <returns>True if want to be updated again.</returns>
-        void Update(IAtlas atlas, ITilesetTable table);
+        void Update(IAtlas atlas);
 
         /// <summary>
         /// In steps. Set 0 for no update.
@@ -32,7 +31,7 @@ namespace World.GameActors
         /// <summary>
         /// Method is called when something apply GameAction on this object.
         /// </summary>
-        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable);
+        void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position);
     }
 
     /// <summary>
@@ -40,7 +39,7 @@ namespace World.GameActors
     /// </summary>
     public interface IPickableGameActor : IGameActor
     {
-        void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable);
+        void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position);
     }
 
     /// <summary>
@@ -48,28 +47,28 @@ namespace World.GameActors
     /// </summary>
     public interface IUsableGameActor : IGameActor
     {
-        void Use(GameActorPosition senderPosition, IAtlas atlas, ITilesetTable tilesetTable);
+        void Use(GameActorPosition senderPosition, IAtlas atlas);
     }
 
 
     public interface ISwitchableGameActor : IGameActor
     {
-        ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+        ISwitchableGameActor Switch(GameActorPosition gameActorPosition, IAtlas atlas);
 
-        ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+        ISwitchableGameActor SwitchOn(GameActorPosition gameActorPosition, IAtlas atlas);
 
-        ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+        ISwitchableGameActor SwitchOff(GameActorPosition gameActorPosition, IAtlas atlas);
     }
 
     public interface ISwitcherGameActor : IGameActor
     {
-        void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+        void Switch(GameActorPosition gameActorPosition, IAtlas atlas);
 
         ISwitchableGameActor Switchable { get; set; }
     }
 
     public interface ICombustibleGameActor : IGameActor
     {
-        void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table);
+        void Burn(GameActorPosition gameActorPosition, IAtlas atlas);
     }
 }

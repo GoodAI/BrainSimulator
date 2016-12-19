@@ -3,25 +3,23 @@ using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
 using World.GameActors.Tiles.ObstacleInteractable;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
     public class SimpleDoorOpened : StaticTile, IInteractableGameActor
     {
-        public SimpleDoorOpened(ITilesetTable tilesetTable)
-            : base(tilesetTable)
+        public SimpleDoorOpened()
         {
         }
 
-        public SimpleDoorOpened(int tileType)
-            : base(tileType)
+        public SimpleDoorOpened(string textureName)
+            : base(textureName)
         {
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
-            var doorClosed = new SimpleDoorClosed(tilesetTable);
+            var doorClosed = new SimpleDoorClosed();
             bool added = atlas.Add(new GameActorPosition(doorClosed, position, LayerType.ObstacleInteractable), true);
             if (added)
             {

@@ -2,7 +2,6 @@
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.ObstacleInteractable
 {
@@ -10,27 +9,25 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     {
         public ISwitchableGameActor Switchable { get; set; }
 
-        public LeverSwitchOn(ITilesetTable tilesetTable, Vector2I position)
-            : base(tilesetTable, position)
+        public LeverSwitchOn(Vector2I position) : base(position) { } 
+
+        public LeverSwitchOn(Vector2I position, int textureId) : base(position, textureId) { }
+
+        public LeverSwitchOn(Vector2I position, string textureName) : base(position, textureName)
         {
         }
 
-        public LeverSwitchOn(int tileType, Vector2I position)
-            : base(tileType, position)
+        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas)
         {
-        }
-
-        public void Switch(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
-        {
-            var leverOff = new LeverSwitchOff(table, Position);
+            var leverOff = new LeverSwitchOff(Position);
             atlas.ReplaceWith(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable), leverOff);
             if (Switchable == null) return;
-            leverOff.Switchable = Switchable.Switch(null, atlas, table) as ISwitchableGameActor;
+            leverOff.Switchable = Switchable.Switch(null, atlas) as ISwitchableGameActor;
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
-            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity, LayerType.ObstacleInteractable), atlas, tilesetTable);
+            gameAction.Resolve(new GameActorPosition(this, Vector2.PositiveInfinity, LayerType.ObstacleInteractable), atlas);
         }
     }
 }

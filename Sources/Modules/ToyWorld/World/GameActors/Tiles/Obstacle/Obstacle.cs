@@ -2,13 +2,12 @@
 {
     public class Obstacle : StaticTile
     {
-        public Obstacle(ITilesetTable tilesetTable)
-            : base(tilesetTable)
-        {
-        }
+        public Obstacle() : base (){ } 
 
-        public Obstacle(int tileType)
-            : base(tileType)
+ 		public Obstacle(int textureId) : base(textureId) { }
+
+        public Obstacle(string textureName)
+            : base(textureName)
         {
         }
     }

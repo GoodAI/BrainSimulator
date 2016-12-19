@@ -2,11 +2,11 @@
 {
     public class AreaBorder : StaticTile
     {
-        public AreaBorder(ITilesetTable tilesetTable) : base(tilesetTable)
-        {
-        }
+        public AreaBorder() : base (){ } 
 
-        public AreaBorder(int tileType) : base(tileType)
+ 		public AreaBorder(int textureId) : base(textureId) { }
+
+        public AreaBorder(string textureName) : base(textureName)
         {
         }
     }

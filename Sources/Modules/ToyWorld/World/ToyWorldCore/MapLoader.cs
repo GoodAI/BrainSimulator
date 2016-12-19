@@ -361,7 +361,7 @@ namespace World.ToyWorldCore
 
                 if (t.IsSubclassOf(typeof(DynamicTile)))
                 {
-                    instance = (Tile)Activator.CreateInstance(t, tileNumber, position);
+                    instance = (Tile)Activator.CreateInstance(t, position, tileNumber);
                 }
                 else
                 {
@@ -421,17 +421,17 @@ namespace World.ToyWorldCore
                         }
                         else if (propertyType == typeof(bool))
                         {
-                            if (property.Value == "1")
+                            switch (property.Value)
                             {
-                                value = true;
-                            }
-                            else if (property.Value == "0")
-                            {
-                                value = false;
-                            }
-                            else
-                            {
-                                value = bool.Parse(property.Value);
+                                case "1":
+                                    value = true;
+                                    break;
+                                case "0":
+                                    value = false;
+                                    break;
+                                default:
+                                    value = bool.Parse(property.Value);
+                                    break;
                             }
 
                         }

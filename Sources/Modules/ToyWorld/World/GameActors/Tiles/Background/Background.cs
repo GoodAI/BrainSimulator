@@ -2,13 +2,11 @@
 {
     public class Background : StaticTile
     {
-        public Background(ITilesetTable tileset)
-            : base(tileset)
-        {
-        }
+        public Background() : base (){ } 
 
-        public Background(int tileType)
-            : base(tileType)
+ 		public Background(int textureId) : base(textureId) { }
+
+        public Background(string textureName) : base(textureName)
         {
         }
     }

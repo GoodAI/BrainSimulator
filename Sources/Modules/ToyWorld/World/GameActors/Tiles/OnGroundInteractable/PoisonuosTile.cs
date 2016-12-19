@@ -3,7 +3,6 @@ using System.Linq;
 using VRageMath;
 using World.Atlas;
 using World.GameActors.GameObjects;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
@@ -14,12 +13,14 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         public bool SomeoneOnTile { get; set; }
         public bool RequiresCenterOfObject { get; private set; }
 
-        public PoisonuosTile(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position)
+        public PoisonuosTile(Vector2I position) : base(position)
         {
             Ctor();
         }
 
-        public PoisonuosTile(int tileType, Vector2I position) : base(tileType, position)
+        public PoisonuosTile(Vector2I position, int textureId) : base(position, textureId) { Ctor(); }
+
+        public PoisonuosTile(Vector2I position, string textureName) : base(position, textureName)
         {
             Ctor();
         }
@@ -30,14 +31,14 @@ namespace World.GameActors.Tiles.OnGroundInteractable
             RequiresCenterOfObject = true;
         }
 
-        public void ObjectDetected(IGameObject gameObject, IAtlas atlas, ITilesetTable tilesetTable)
+        public void ObjectDetected(IGameObject gameObject, IAtlas atlas)
         {
             if(SomeoneOnTile) return;
             NextUpdateAfter = 60;
             atlas.RegisterToAutoupdate(this);
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             List<IGameObject> gameActorPositions = atlas.StayingOnTile(Position);
 

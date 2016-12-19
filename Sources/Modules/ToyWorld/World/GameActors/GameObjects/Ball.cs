@@ -2,9 +2,7 @@
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActions;
-using World.GameActors.Tiles;
 using World.Physics;
-using World.ToyWorldCore;
 
 namespace World.GameActors.GameObjects
 {
@@ -28,11 +26,11 @@ namespace World.GameActors.GameObjects
             ElasticCollision = true;
         }
 
-        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable = null)
+        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
             if (gameAction is PickUp || gameAction is LayDown)
             {
-                gameAction.Resolve(new GameActorPosition(this, position, LayerType.Object), atlas, tilesetTable);
+                gameAction.Resolve(new GameActorPosition(this, position, LayerType.Object), atlas);
             }
         }
     }

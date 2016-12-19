@@ -1,7 +1,5 @@
 ﻿using World.Atlas;
 using World.GameActors;
-using World.GameActors.Tiles;
-using World.ToyWorldCore;
 
 namespace World.GameActions
 {
@@ -20,7 +18,6 @@ namespace World.GameActions
         /// </summary>
         /// <param name="target">Target of the action</param>
         /// <param name="atlas"></param>
-        /// <param name="tilesetTable"></param>
-        public abstract void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable tilesetTable);
+        public abstract void Resolve(GameActorPosition target, IAtlas atlas);
     }
 }

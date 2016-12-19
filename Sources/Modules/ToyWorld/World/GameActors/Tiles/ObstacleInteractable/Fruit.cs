@@ -8,23 +8,23 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 {
     public class Fruit : DynamicTile, IPickableGameActor, ICombustibleGameActor, IInteractableGameActor
     {
-        public Fruit(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
+        public Fruit(Vector2I position) : base(position) { }
 
-        public Fruit(int tileType, Vector2I position) : base(tileType, position) { }
+        public Fruit(Vector2I position, string textureName) : base(position, textureName) { }
 
-        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void PickUp(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
-            gameAction.Resolve(new GameActorPosition(this, position, LayerType.ObstacleInteractable), atlas, tilesetTable);
+            gameAction.Resolve(new GameActorPosition(this, position, LayerType.ObstacleInteractable), atlas);
         }
 
-        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas, ITilesetTable table)
+        public void Burn(GameActorPosition gameActorPosition, IAtlas atlas)
         {
             atlas.Remove(gameActorPosition);
         }
 
-        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position, ITilesetTable tilesetTable)
+        public void ApplyGameAction(IAtlas atlas, GameAction gameAction, Vector2 position)
         {
-            gameAction.Resolve(new GameActorPosition(this, position, LayerType.ObstacleInteractable), atlas, tilesetTable);
+            gameAction.Resolve(new GameActorPosition(this, position, LayerType.ObstacleInteractable), atlas);
         }
     }
 
@@ -34,16 +34,16 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     {
         public int NextUpdateAfter { get; private set; }
 
-        public Apple(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { Init(); }
+        public Apple(Vector2I position) : base(position) { Init(); }
 
-        public Apple(int tileType, Vector2I position) : base(tileType, position) { Init(); }
+        public Apple(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
         {
             NextUpdateAfter = TWConfig.Instance.FruitRotAfter; // time to rot
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             atlas.Remove(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable));
         }
@@ -53,16 +53,16 @@ namespace World.GameActors.Tiles.ObstacleInteractable
     {
         public int NextUpdateAfter { get; private set; }
 
-        public Pear(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { Init(); }
+        public Pear(Vector2I position) : base(position) { Init(); }
 
-        public Pear(int tileType, Vector2I position) : base(tileType, position) { Init(); }
+        public Pear(Vector2I position, string textureName) : base(position, textureName) { Init(); }
 
         private void Init()
         {
             NextUpdateAfter = TWConfig.Instance.FruitRotAfter; // time to rot
         }
 
-        public void Update(IAtlas atlas, ITilesetTable table)
+        public void Update(IAtlas atlas)
         {
             atlas.Remove(new GameActorPosition(this, (Vector2)Position, LayerType.ObstacleInteractable));
         }
@@ -70,8 +70,8 @@ namespace World.GameActors.Tiles.ObstacleInteractable
 
     public class Pinecone : Fruit
     {
-        public Pinecone(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable, position) { }
+        public Pinecone(Vector2I position) : base(position) { }
 
-        public Pinecone(int tileType, Vector2I position) : base(tileType, position) { }
+        public Pinecone(Vector2I position, string textureName) : base(position, textureName) { }
     }
 }

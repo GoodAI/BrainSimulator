@@ -5,11 +5,15 @@
     /// </summary>
     public abstract class StaticTile : Tile
     {
-        protected StaticTile(ITilesetTable tilesetTable) : base(tilesetTable)
+        protected StaticTile() : base()
         {
         }
 
-        protected StaticTile(int tileType) : base(tileType)
+        protected StaticTile(int textureId) : base(textureId)
+        {
+        }
+
+        protected StaticTile(string textureName) : base(textureName)
         {
         }
     }

@@ -1,8 +1,6 @@
 ﻿using World.Atlas;
 using World.GameActors;
-using World.GameActors.Tiles;
 using World.GameActors.Tiles.ObstacleInteractable;
-using World.ToyWorldCore;
 
 namespace World.GameActions
 {
@@ -12,7 +10,7 @@ namespace World.GameActions
         {
         }
 
-        public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
+        public override void Resolve(GameActorPosition target, IAtlas atlas)
         {
             if (target.Actor is Apple || target.Actor is Pear)
             {
@@ -23,7 +21,7 @@ namespace World.GameActions
 
             if (switcher != null)
             {
-                switcher.Switch(target, atlas, table);
+                switcher.Switch(target, atlas);
             }
         }
     }

@@ -11,7 +11,7 @@ namespace World.GameActions
     {
         public PickUp(GameActor sender) : base(sender) { }
 
-        public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
+        public override void Resolve(GameActorPosition target, IAtlas atlas)
         {
             ICanPickGameObject picker = Sender as ICanPickGameObject;
             IPickableGameActor pickItem = target.Actor as IPickableGameActor;
@@ -27,7 +27,7 @@ namespace World.GameActions
     {
         public LayDown(GameActor sender) : base(sender) { }
 
-        public override void Resolve(GameActorPosition target, IAtlas atlas, ITilesetTable table)
+        public override void Resolve(GameActorPosition target, IAtlas atlas)
         {
             ICanPickGameObject picker = Sender as ICanPickGameObject;
             ICharacter character = Sender as ICharacter;

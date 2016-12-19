@@ -12,12 +12,10 @@ namespace World.ToyWorldCore
     public class TileDetectorRegister
     {
         private readonly IAtlas m_atlas;
-        private readonly ITilesetTable m_tilesetTable;
 
-        public TileDetectorRegister(IAtlas atlas, ITilesetTable tilesetTable)
+        public TileDetectorRegister(IAtlas atlas)
         {
             m_atlas = atlas;
-            m_tilesetTable = tilesetTable;
         }
 
         public void Update()
@@ -41,7 +39,7 @@ namespace World.ToyWorldCore
                         if (tileDetector.RequiresCenterOfObject && !Atlas.Layers.Atlas.InsideTile(coverTile, gameObject.Position))
                             continue;
 
-                        tileDetector.ObjectDetected(gameObject, m_atlas, m_tilesetTable);
+                        tileDetector.ObjectDetected(gameObject, m_atlas);
                     }
                 }
             }

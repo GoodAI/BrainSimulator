@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
@@ -8,7 +7,6 @@ using VRageMath;
 using World.GameActors;
 using World.GameActors.Tiles;
 using World.GameActors.Tiles.Obstacle;
-using World.Physics;
 
 namespace World.Atlas.Layers
 {
@@ -105,7 +103,7 @@ namespace World.Atlas.Layers
         {
             if (x < 0 || y < 0 || x >= Width || y >= Height)
             {
-                return new Obstacle(0);
+                return new Obstacle();
             }
             return Tiles[x][y];
         }

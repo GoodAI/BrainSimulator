@@ -11,19 +11,24 @@ namespace World.GameActors.Tiles
     public abstract class Tile : GameActor
     {
 
-        protected Tile(ITilesetTable tilesetTable)
+        protected Tile()
         {
-            if (tilesetTable == null)
-                throw new ArgumentNullException("tilesetTable");
-            Contract.EndContractBlock();
-
-            string typeName = GetType().Name;
-            TilesetId = tilesetTable.TileNumber(typeName);
+            TilesetId = DefaultTextureId;
         }
 
-        protected Tile(int tilesetId)
+        protected Tile(int textureId)
         {
-            TilesetId = tilesetId;
+            TilesetId = textureId;
+        }
+
+        protected Tile(string textureName)
+        {
+            TilesetId = AlternativeTextures.Id(textureName);
+        }
+
+        public void setTexture(string textureName)
+        {
+            TilesetId = AlternativeTextures.Id(textureName);
         }
 
         public static explicit operator int(Tile t)

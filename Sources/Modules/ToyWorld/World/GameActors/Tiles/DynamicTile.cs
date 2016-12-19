@@ -1,7 +1,6 @@
 ﻿using VRageMath;
 using World.Atlas.Layers;
 using World.Physics;
-using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles
 {
@@ -24,13 +23,17 @@ namespace World.GameActors.Tiles
     {
         public Vector2I Position { get; private set; }
 
-        protected DynamicTile(ITilesetTable tilesetTable, Vector2I position) : base(tilesetTable)
+        protected DynamicTile(Vector2I position)
         {
             Position = position;
         }
 
-        protected DynamicTile(int tileType, Vector2I position)
-            : base(tileType)
+        protected DynamicTile(Vector2I position, int textureId) : base(textureId)
+        {
+            Position = position;
+        }
+
+        protected DynamicTile(Vector2I position, string textureName) : base(textureName)
         {
             Position = position;
         }

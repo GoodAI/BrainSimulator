@@ -138,6 +138,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="PommaLabs.Thrower, Version=2.2.0.0, Culture=neutral, PublicKeyToken=2f204b7110a52060, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\Thrower.2.2.2\lib\net45\PommaLabs.Thrower.dll</HintPath>
       <Private>True</Private>
@@ -168,14 +169,13 @@
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOff.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitchOn.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\KeyDoorClosed.cs" />
-    <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoorClosed.cs" />
+    <Compile Include="GameActors\Tiles\ObstacleInteractable\RcDoor.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Bed.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyToDoor.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\KeyDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\StepSwitch.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\SimpleDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\Obstacle\Tree.cs" />
-    <Compile Include="GameActors\Tiles\OnGroundInteractable\RcDoorOpened.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Fireplace.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\FireplaceBurning.cs" />
     <Compile Include="GameActors\Tiles\OnGroundInteractable\Recharger.cs" />

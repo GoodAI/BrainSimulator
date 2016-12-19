@@ -4,7 +4,6 @@ using System.Diagnostics.Contracts;
 using VRage.Collections;
 using World.Atlas;
 using World.GameActors;
-using World.GameActors.Tiles;
 
 namespace World.ToyWorldCore
 {
@@ -49,7 +48,7 @@ namespace World.ToyWorldCore
             m_register.MoveNext();
         }
 
-        public void UpdateItems(IAtlas atlas, TilesetTable table)
+        public void UpdateItems(IAtlas atlas)
         {
             if (atlas.NewAutoupdateables != null)
             {
@@ -58,7 +57,7 @@ namespace World.ToyWorldCore
             }
             foreach (IAutoupdateableGameActor actor in CurrentUpdateRequests)
             {
-                actor.Update(atlas, table);
+                actor.Update(atlas);
                 if (actor.NextUpdateAfter > 0)
                     Register(actor, actor.NextUpdateAfter);
             }
