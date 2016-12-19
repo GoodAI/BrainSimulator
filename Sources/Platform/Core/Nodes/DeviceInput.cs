@@ -53,14 +53,12 @@ namespace GoodAI.Core.Nodes
 
         public void SetKeyDown(int keyValue)
         {
-            bool wasNotPressed = Output.Host[keyValue] < 1.0f; // valid only when simulation state is PAUSED, otherwise the result is undefined
-
             m_keyPresses.AddLast(new Tuple<int, bool>(keyValue, true));
 
             ExecuteIfPaused();
 
             MySimulationHandler handler = Owner.SimulationHandler;
-            if (wasNotPressed && StepOnKeyDown && (handler.State == MySimulationHandler.SimulationState.PAUSED))
+            if (StepOnKeyDown && (handler.State == MySimulationHandler.SimulationState.PAUSED))
                 handler.StartSimulation(1);
         }
 
