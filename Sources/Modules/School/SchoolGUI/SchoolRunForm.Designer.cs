@@ -278,7 +278,7 @@
             this.labelPreviusStepReward.Name = "labelPreviusStepReward";
             this.labelPreviusStepReward.Size = new System.Drawing.Size(100, 13);
             this.labelPreviusStepReward.TabIndex = 16;
-            this.labelPreviusStepReward.Text = "Previus step reward";
+            this.labelPreviusStepReward.Text = "Previous step reward";
             // 
             // labelTrainingUnit
             // 

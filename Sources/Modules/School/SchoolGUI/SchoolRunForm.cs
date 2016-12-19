@@ -176,6 +176,7 @@ namespace GoodAI.School.GUI
         {
             Invoke((MethodInvoker)(() =>
             {
+                m_school.RewardMB.SafeCopyToHost();
                 labelPreviousStepRewardValue.Text = m_school.Reward.ToString("F");
             }
             ));

@@ -556,7 +556,7 @@ namespace GoodAI.Modules.School.Worlds
             blocks.AddRange(defaultInitPhasePlan.Children.Where(x => x != InitSchool));
             MyExecutionBlock initPhasePlanPruned = new MyExecutionBlock(blocks.ToArray());
 
-            return new MyExecutionBlock(initPhasePlanPruned, plan, LearningStep);
+            return new MyExecutionBlock(initPhasePlanPruned, plan); //, LearningStep);
         }
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
@@ -889,6 +889,7 @@ namespace GoodAI.Modules.School.Worlds
                 }
 
                 Owner.CurrentWorld.MapWorldOutputs();
+                Owner.TrainingUnitUpdated(Owner, new SchoolEventArgs(Owner.CurrentLearningTask)); // the TU may have updated the reward signal etc.
 
                 int inputWidth = Owner.VisualDimensionsFov.Width;
                 int inputHeight = Owner.VisualDimensionsFov.Height;
@@ -936,6 +937,7 @@ namespace GoodAI.Modules.School.Worlds
             set
             {
                 RewardMB.Host[0] = value;
+                RewardMB.SafeCopyToDevice();
             }
         }
     }
