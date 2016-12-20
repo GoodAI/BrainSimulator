@@ -35,12 +35,12 @@ namespace GoodAI.Modules.School.LearningTasks
             : base(w)
         {
             TSHints = new TrainingSetHints {
-                { TSHintAttributes.IMAGE_NOISE, 0 },
+                { TSHintAttributes.IS_VARIABLE_COLOR, 0 },
                 { TSHintAttributes.MAX_NUMBER_OF_ATTEMPTS, 10000 }
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IMAGE_NOISE, 1);
+            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
 
             m_objectColor[ObjectType.Target] = 0;
             m_objectColor[ObjectType.Empty] = 1;
@@ -77,7 +77,7 @@ namespace GoodAI.Modules.School.LearningTasks
                 
             if (LearningTaskHelpers.FlipBiasedCoin(m_rndGen, 0.33f))
             {
-                WrappedWorld.CreateNonVisibleAgent();
+                //WrappedWorld.CreateNonVisibleAgent();
                 CreateObject(ObjectType.Target);
                 m_targetsShown++;
             }
@@ -88,6 +88,13 @@ namespace GoodAI.Modules.School.LearningTasks
         }
 
         public override TrainingResult EvaluateStep()
+        {
+            SinglePixelRLEvaluateStep();
+
+            return base.EvaluateStep();
+        }
+
+        protected virtual void SinglePixelRLEvaluateStep()
         {
             SchoolWorld.ActionInput.SafeCopyToHost();
             bool wasTargetDetected = SchoolWorld.ActionInput.Host[ControlMapper.Idx("forward")] != 0;
@@ -117,8 +124,6 @@ namespace GoodAI.Modules.School.LearningTasks
             {
                 WrappedWorld.Reward.Host[0] = 0;
             }
-
-            return base.EvaluateStep();
         }
 
         protected override bool DidTrainingUnitComplete(ref bool wasUnitSuccessful)
@@ -131,7 +136,7 @@ namespace GoodAI.Modules.School.LearningTasks
             // - correction, because when ending, ExecuteStep is done before the last EvaluateStep - the ExecuteStep may prepare a new state which should be ignored by EvaluateStep
         }
 
-        protected void CreateObject(ObjectType objectType)
+        protected virtual void CreateObject(ObjectType objectType)
         {
             m_previousObjectType = m_currentObjectType;
             m_currentObjectType = objectType;
@@ -139,14 +144,6 @@ namespace GoodAI.Modules.School.LearningTasks
             CreateTarget();
 
             SetTargetColor(m_objectColor[objectType]);
-        }
-
-        protected void CreateTarget1()
-        {
-            SizeF size = new SizeF(SchoolWorld.WidthFov, SchoolWorld.HeightFov);
-            m_object = new Shape(Shape.Shapes.Square, PointF.Empty, size);
-            m_object.GetCenter();
-            WrappedWorld.AddGameObject(m_object);
         }
 
         protected void CreateTarget()
@@ -168,7 +165,7 @@ namespace GoodAI.Modules.School.LearningTasks
 
         protected byte AddRandomColorOffset(byte colorComponent)
         {
-            if (TSHints[TSHintAttributes.IMAGE_NOISE] != 1.0f)
+            if (TSHints[TSHintAttributes.IS_VARIABLE_COLOR] != 1.0f)
                 return colorComponent;
             const int MAX_RANDOM_OFFSET = 10;
             return (byte)Math.Max(0, Math.Min(255, colorComponent + m_rndGen.Next(-MAX_RANDOM_OFFSET, MAX_RANDOM_OFFSET + 1)));
