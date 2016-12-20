@@ -39,6 +39,8 @@ namespace GoodAI.BrainSimulator.Nodes
 
         private const float PaddingF = 2.0f;
 
+        private Font m_font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f, FontStyle.Bold);
+
         public IconSubitem AddIcon(Image image, bool enabled = false)
         {
             var icon = new IconSubitem(image, enabled);
@@ -90,11 +92,10 @@ namespace GoodAI.BrainSimulator.Nodes
 
         private SizeF DrawTextItem(Graphics graphics, PointF position, SizeF size, bool justMeasure = false)
         {
-            var font = new Font(SystemFonts.MenuFont.FontFamily, SystemFonts.MenuFont.Size - 2.0f, FontStyle.Bold);
             var text = TextItem;
             var format = GraphConstants.RightMeasureTextStringFormat;
 
-            return DrawOrMeasureString(graphics, text, font, position, size, format, justMeasure);
+            return DrawOrMeasureString(graphics, text, m_font, position, size, format, justMeasure);
         }
 
         // TODO(Premek): Move to up to the library (or to a different lib).
