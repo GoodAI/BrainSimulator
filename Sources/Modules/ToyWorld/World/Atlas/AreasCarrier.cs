@@ -39,7 +39,15 @@ namespace World.Atlas
         public string AreaName(Vector2 coordinates)
         {
             Vector2I v = new Vector2I(Vector2.Floor(coordinates));
-            return AreaNames[v.X][v.Y];
+            try
+            {
+                return AreaNames[v.X][v.Y];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
+
         }
 
         public string RoomName(Vector2 coordinates)
@@ -51,7 +59,14 @@ namespace World.Atlas
         public Room Room(Vector2 coordinates)
         {
             Vector2I v = new Vector2I(Vector2.Floor(coordinates));
-            return Rooms[v.X][v.Y];
+            try
+            {
+                return Rooms[v.X][v.Y];
+            }
+            catch (IndexOutOfRangeException)
+            {
+                return null;
+            }
         }
 
         private void FillNamedArea(int x, int y, string name, ITileLayer pathLayer, ITileLayer areaLayer)
