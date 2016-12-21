@@ -1076,5 +1076,24 @@ namespace VRageMath
             X = X * (float)Math.Cos(angle) - Y * (float)Math.Sin(angle);
             Y = Y * (float)Math.Cos(angle) + tmpX * (float)Math.Sin(angle);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="zeroAlongY"></param>
+        /// <returns></returns>
+        public static float AngleTo(Vector2 from, Vector2 to, bool zeroAlongY = true)
+        {
+            float deltaY = to.Y - from.Y;
+            float deltaX = to.X - from.X;
+            if (zeroAlongY)
+            {
+                return (float)Math.Atan2(deltaX, deltaY);
+            }
+            return (float)Math.Atan2(deltaY, deltaX);
+        }
+
     }
 }
