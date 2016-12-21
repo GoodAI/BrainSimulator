@@ -143,6 +143,7 @@
     <Compile Include="Observers\MyShape.cs" />
     <Compile Include="Observers\MySpikeRasterObserver.cs" />
     <Compile Include="Observers\MyTextObserver.cs" />
+    <Compile Include="Profiling\LoggingStopwatch.cs" />
     <Compile Include="Project\ProjectLoader.cs" />
     <Compile Include="Transforms\KernelVector.cs" />
     <Compile Include="Transforms\MyReduction.cs" />
