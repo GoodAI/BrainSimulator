@@ -89,6 +89,7 @@ namespace GoodAI.Platform.Core.Profiling
 
         private readonly int m_itersPerBatch;
         private readonly string m_title;
+        private bool m_isFirstBatch;
 
         private long m_enclosingSegmentTicks = 0;
 
@@ -96,10 +97,11 @@ namespace GoodAI.Platform.Core.Profiling
 
         private string ContextName => (ContextId.GetHashCode() % 10000).ToString().PadLeft(4);
 
-        public LoggingStopwatch(string title = "", int iterationCountPerBatch = 20)
+        public LoggingStopwatch(string title = "", int iterationCountPerBatch = 20, bool shouldHideFirstBatch = false)
         {
-            m_itersPerBatch = iterationCountPerBatch;
             m_title = title;
+            m_itersPerBatch = iterationCountPerBatch;
+            m_isFirstBatch = shouldHideFirstBatch;
 
             ContextId = this;
         }
@@ -142,13 +144,18 @@ namespace GoodAI.Platform.Core.Profiling
             m_enclosingSegment.AddElapsedTicks(m_enclosingSegmentTicks);
             m_enclosingSegmentTicks = 0;
 
+            // ReSharper disable once InvertIf
             if (m_enclosingSegment.IterCount >= m_itersPerBatch)
             {
-                PrintStatsAndRestartBatch();
+                if (!m_isFirstBatch)
+                    PrintStats();
+
+                m_isFirstBatch = false;
+                RestartBatch();
             }
         }
 
-        private void PrintStatsAndRestartBatch()
+        private void PrintStats()
         {
             if (m_segments.Count > 1)
             {
@@ -157,13 +164,21 @@ namespace GoodAI.Platform.Core.Profiling
                 foreach (var segment in m_segments.Values.Cast<TimeSegment>())
                 {
                     segment.PrintInfo();
-                    segment.Reset();
                 }
             }
 
             m_enclosingSegment.PrintInfo((m_segments.Count > 1)
                 ? "Total"
                 : $"{m_title}[{ContextName}] ");
+
+        }
+
+        private void RestartBatch()
+        {
+            foreach (var segment in m_segments.Values.Cast<TimeSegment>())
+            {
+                segment.Reset();
+            }
 
             m_enclosingSegment.Reset();
         }
