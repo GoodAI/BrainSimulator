@@ -316,14 +316,12 @@ namespace GoodAI.Core.Execution
 
                 bool measureSpeed = false;
                 bool reportProgress = false;
-                int measureInterval = m_speedMeasureInterval;
                 if (State == SimulationState.RUNNING_STEP)
                 {
                     if (performedSteps % ReportIntervalSteps == 0)
                     {
                         measureSpeed = true;
                         reportProgress = true;
-                        measureInterval = Environment.TickCount - speedStart;
                     }
                 }
                 else
@@ -336,7 +334,7 @@ namespace GoodAI.Core.Execution
 
                 if (measureSpeed)
                 {                                             
-                    SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / measureInterval;
+                    SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / (Environment.TickCount - speedStart);
 
                     speedStart = Environment.TickCount;
                     speedStep = SimulationStep;
