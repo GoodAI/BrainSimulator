@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using GoodAI.Core.Nodes;
 using System.Diagnostics;
+using GoodAI.Platform.Core.Profiling;
 
 namespace GoodAI.Core.Execution
 {
@@ -275,8 +276,12 @@ namespace GoodAI.Core.Execution
             uint speedStep = SimulationStep;
             uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
 
+            var runningAverage = new SimSpeedRunningAverage();
+
             while (true)
             {
+                runningAverage.AddTimePoint(SimulationStep);
+
                 if (State == SimulationState.RUNNING_STEP)
                 {
                     if (performedSteps >= m_stepsToPerform)
@@ -338,6 +343,8 @@ namespace GoodAI.Core.Execution
 
                     speedStart = Environment.TickCount;
                     speedStep = SimulationStep;
+
+                    SimulationSpeed = runningAverage.GetItersPerSecond(SimulationStep);
                 }
 
                 if (reportProgress)
@@ -351,10 +358,7 @@ namespace GoodAI.Core.Execution
                     }
                 }
 
-                if (StepPerformed != null)
-                {
-                    StepPerformed(this, null);
-                }
+                StepPerformed?.Invoke(this, null);
             }
             
         }
