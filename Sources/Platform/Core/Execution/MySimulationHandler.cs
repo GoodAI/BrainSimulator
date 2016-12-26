@@ -102,6 +102,21 @@ namespace GoodAI.Core.Execution
 
         public float SimulationSpeed { get; private set; }
 
+        public string SimulationSpeedStr
+        {
+            get
+            {
+                var s = SimulationSpeed;
+                if (Math.Abs(s) < 0.000001)
+                    return "?/s";
+
+                return ((s < 10.0f)
+                    ? $"{Math.Round(s, 1):0.0}"
+                    : $"{Math.Round(s)}")
+                    + "/s";
+            }
+        }
+
         private SimulationState m_state;
         private uint m_stepsToPerform;
         private Action m_closeCallback;

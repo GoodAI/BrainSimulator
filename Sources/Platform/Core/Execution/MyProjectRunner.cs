@@ -500,7 +500,7 @@ namespace GoodAI.Core.Execution
         {
             if (SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
             {
-                MyLog.INFO.WriteLine("[" + SimulationHandler.SimulationStep + "] Running at " + SimulationHandler.SimulationSpeed + "/s");
+                MyLog.INFO.WriteLine("[" + SimulationHandler.SimulationStep + "] Running at " + SimulationHandler.SimulationSpeedStr);
             }
         }
 

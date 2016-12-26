@@ -1227,11 +1227,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             if (SimulationHandler.State != MySimulationHandler.SimulationState.STOPPED)
             {
-                var simSpeed = SimulationHandler.SimulationSpeed;
-                var niceSimSpeed = (simSpeed < 10.0f) ? Math.Round(simSpeed, 1) : Math.Round(simSpeed);
-
                 statusStrip.BeginInvoke((MethodInvoker)(() =>
-                    stepStatusLabel.Text = $"({SimulationHandler.SimulationStep}, {niceSimSpeed}/s)"));
+                    stepStatusLabel.Text = $"({SimulationHandler.SimulationStep}, {SimulationHandler.SimulationSpeedStr})"));
 
                 if (dockPanel.ActiveDocument is GraphLayoutForm)
                 {
