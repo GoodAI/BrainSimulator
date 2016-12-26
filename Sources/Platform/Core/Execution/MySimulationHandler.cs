@@ -451,7 +451,7 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Clearing simulation...");
                 // This will destroy the collection that holds the nodes, so it has to be the last thing.
                 Simulation.Clear();
-                MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
+                MyLog.INFO.WriteLine($"Stopped after {SimulationStep} steps (speed {SimulationSpeedStr})");
 
                 if (SimulationStopped != null)
                 {
