@@ -10,6 +10,8 @@ namespace GoodAI.Platform.Core.Profiling
     public class SimSpeedRunningAverage
     {
         private const int IntervalCount = 30;
+        private readonly long m_minRecordIntervalTicks;
+
 
         private struct TimePoint
         {
@@ -29,14 +31,29 @@ namespace GoodAI.Platform.Core.Profiling
 
         private int m_index;
 
+        private long m_lastElapsedTicks;
+
+        public SimSpeedRunningAverage(long minRecordIntervalMillisec = 0)
+        {
+            m_minRecordIntervalTicks = minRecordIntervalMillisec * Stopwatch.Frequency / 1000;
+        }
+
         public void Restart()
         {
             m_stopwatch.Restart();
             m_index = 0;
         }
 
-        public void AddTimePoint(long stepCount)
+        public void AddTimePoint(long stepCount, bool force = false)
         {
+            if (!force && (m_minRecordIntervalTicks > 0)
+                && (m_stopwatch.ElapsedTicks - m_lastElapsedTicks < m_minRecordIntervalTicks))
+            {
+                return;
+            }
+
+            m_lastElapsedTicks = m_stopwatch.ElapsedTicks;
+
             m_timePoints[m_index % IntervalCount] = new TimePoint(stepCount, m_stopwatch.ElapsedTicks);
 
             m_index++;

@@ -96,7 +96,7 @@ namespace GoodAI.Core.Execution
         public delegate void SimulationStoppedEventHandler(object sender, SimulationStoppedEventArgs args);
         public event SimulationStoppedEventHandler SimulationStopped;
 
-        private readonly int m_speedMeasureInterval;
+        private readonly int m_speedMeasureIntervalMillisec;
 
         public float SimulationSpeed { get; private set; }
 
@@ -157,7 +157,7 @@ namespace GoodAI.Core.Execution
             ReportIntervalSteps = 100;
             ReportInterval = 20;
             SleepInterval = 0;
-            m_speedMeasureInterval = 2000;
+            m_speedMeasureIntervalMillisec = 998;  // Almost 1 second (to prevent some races).
             AutosaveInterval = 10000;
 
             Simulation = simulation;
@@ -281,18 +281,20 @@ namespace GoodAI.Core.Execution
                 throw new IllegalStateException("Bad worker state: " + State);
             }
 
-            Stopwatch progressUpdateStopWatch = Stopwatch.StartNew();
-            long reportStart = progressUpdateStopWatch.ElapsedTicks;
-            int speedStart = Environment.TickCount;
-            uint speedStep = SimulationStep;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            long reportLastTicks = stopwatch.ElapsedTicks;
+            long reportIntervalTicks = ReportInterval * Stopwatch.Frequency / 1000;
+            long speedUpdateIntervalTicks = m_speedMeasureIntervalMillisec * Stopwatch.Frequency / 1000;
+            long speedUpdateLastTicks = stopwatch.ElapsedTicks;
+
             uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
 
-            var runningAverage = new SimSpeedRunningAverage();
+            var runningAverage = new SimSpeedRunningAverage(minRecordIntervalMillisec: m_speedMeasureIntervalMillisec);
+
+            SimulationSpeed = 0.0f;
 
             while (true)
             {
-                runningAverage.AddTimePoint(SimulationStep);
-
                 if (State == SimulationState.RUNNING_STEP)
                 {
                     if (performedSteps >= m_stepsToPerform)
@@ -330,37 +332,24 @@ namespace GoodAI.Core.Execution
                     Thread.Sleep(SleepInterval);
                 }
 
-                bool measureSpeed = false;
-                bool reportProgress = false;
-                if (State == SimulationState.RUNNING_STEP)
-                {
-                    if (performedSteps % ReportIntervalSteps == 0)
-                    {
-                        measureSpeed = true;
-                        reportProgress = true;
-                    }
-                }
-                else
-                {
-                    if (Environment.TickCount - speedStart > m_speedMeasureInterval)
-                        measureSpeed = true;
-                    if ((progressUpdateStopWatch.ElapsedTicks - reportStart) * 1000 / Stopwatch.Frequency >= ReportInterval)
-                        reportProgress = true;
-                }
+                bool reportProgress = (State == SimulationState.RUNNING_STEP)
+                    && (performedSteps % ReportIntervalSteps == 0);
 
-                if (measureSpeed)
-                {                                             
-                    SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / (Environment.TickCount - speedStart);
+                runningAverage.AddTimePoint(SimulationStep, reportProgress);
 
-                    speedStart = Environment.TickCount;
-                    speedStep = SimulationStep;
-
-                    SimulationSpeed = runningAverage.GetItersPerSecond(SimulationStep);
-                }
+                if ((stopwatch.ElapsedTicks - reportLastTicks) >= reportIntervalTicks)
+                    reportProgress = true;
 
                 if (reportProgress)
                 {
-                    reportStart = progressUpdateStopWatch.ElapsedTicks;
+                    reportLastTicks = stopwatch.ElapsedTicks;
+
+                    if ((stopwatch.ElapsedTicks - speedUpdateLastTicks) >= speedUpdateIntervalTicks)
+                    {
+                        speedUpdateLastTicks = stopwatch.ElapsedTicks;
+
+                        SimulationSpeed = runningAverage.GetItersPerSecond(SimulationStep);
+                    }
 
                     if (ProgressChanged != null)
                     {
