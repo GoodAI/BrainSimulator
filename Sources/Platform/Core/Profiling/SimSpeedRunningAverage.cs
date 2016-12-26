@@ -59,17 +59,22 @@ namespace GoodAI.Platform.Core.Profiling
             m_index++;
         }
 
-        public float GetItersPerSecond(long currentStepCount)
+        public float GetItersPerSecond()
         {
+            if (m_index < 2)
+                return 0.0f;
+
             var oldestTimePoint = m_timePoints[Math.Max(m_index - IntervalCount, 0) % IntervalCount];
 
-            var stepCount = currentStepCount - oldestTimePoint.Steps;
-            if (stepCount < 0)
-                throw new ArgumentException("Current step count is lower then recorded one", nameof(currentStepCount));
+            var newestTimePoint = m_timePoints[(m_index - 1) % IntervalCount];
 
-            var ticks = m_stopwatch.ElapsedTicks - oldestTimePoint.Ticks;
+            var stepCount = newestTimePoint.Steps - oldestTimePoint.Steps;
+            if (stepCount < 0)
+                throw new InvalidOperationException("New step count is smaller then old one.");
+
+            var ticks = newestTimePoint.Ticks - oldestTimePoint.Ticks;
             if (ticks < 0)
-                throw new InvalidOperationException("Elapsed ticks is lower then recorded ones.");
+                throw new InvalidOperationException("New elapsed ticks is lower then old ones.");
 
             if (ticks == 0)
                 return 0.0f;
