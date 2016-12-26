@@ -50,9 +50,7 @@ namespace GoodAI.Core.Execution
 
         private readonly BackgroundWorker m_worker;
         private readonly ManualResetEvent m_workedCompleted;
-        private bool doPause = false;
-
-        private Action closeCallback = null;
+        private bool m_doPause = false;
 
         public uint ReportIntervalSteps { get; set; } // How often (in steps) should be speed of simulation reported in RUNNING_STEP state
         public int ReportInterval { get; set; } // How often (in ms) should be speed of simulation reported in RUNNING state
@@ -122,7 +120,7 @@ namespace GoodAI.Core.Execution
         private Action m_closeCallback;
         private uint m_lastProgressChangedStep;
 
-        public SimulationState State    ///< State of the simulation
+        public SimulationState State
         { 
             get 
             { 
@@ -130,13 +128,11 @@ namespace GoodAI.Core.Execution
             }
             private set
             {
-                SimulationState oldState = m_state;
+                var oldState = m_state;
                 m_state = value;
-                if (StateChanged != null)
-                {
-                    StateChanged(this, new StateEventArgs(oldState, m_state));
-                }
-                
+
+                StateChanged?.Invoke(this, new StateEventArgs(oldState, m_state));
+
             }
         }
         public uint SimulationStep { get { return Simulation.SimulationStep; } }    
@@ -232,7 +228,7 @@ namespace GoodAI.Core.Execution
         {
             if (State == SimulationState.RUNNING || State == SimulationState.RUNNING_STEP)
             {
-                doPause = false;
+                m_doPause = false;
                 m_worker.CancelAsync();
             }
             else
@@ -244,7 +240,7 @@ namespace GoodAI.Core.Execution
         //UI thread
         public void PauseSimulation()
         {            
-            doPause = true;
+            m_doPause = true;
             m_worker.CancelAsync();
         }
 
@@ -386,7 +382,7 @@ namespace GoodAI.Core.Execution
                 ProgressChanged(this, null);
             }
 
-            if (e.Cancelled && !doPause)
+            if (e.Cancelled && !m_doPause)
             {
                 DoStop();
             }
