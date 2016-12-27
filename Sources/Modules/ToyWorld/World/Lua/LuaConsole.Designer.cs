@@ -38,10 +38,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputListBox.FormattingEnabled = true;
+            this.outputListBox.HorizontalScrollbar = true;
             this.outputListBox.Location = new System.Drawing.Point(0, 0);
             this.outputListBox.Name = "outputListBox";
             this.outputListBox.ScrollAlwaysVisible = true;
-            this.outputListBox.Size = new System.Drawing.Size(441, 592);
+            this.outputListBox.Size = new System.Drawing.Size(441, 589);
             this.outputListBox.TabIndex = 0;
             // 
             // inputTextBox
@@ -65,6 +66,7 @@
             this.Controls.Add(this.outputListBox);
             this.Name = "LuaConsole";
             this.Text = "LuaConsole";
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LuaConsole_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

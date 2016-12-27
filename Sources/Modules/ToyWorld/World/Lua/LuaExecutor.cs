@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using World.Atlas;
 
@@ -25,16 +28,18 @@ namespace World.Lua
 
             AvatarCommander avatarCommander = new AvatarCommander(this, atlas, scriptSynchronization);
             State["ac"] = avatarCommander;
-            
+
+            State.RegisterFunction("Help", typeof(LuaExecutor).GetMethod("Help"));
         }
 
         private Thread m_thread;
 
-        public void ExecuteChunk(string command, Action<string> performAfterFinished = null)
+        public Thread ExecuteChunk(string command, Action<string> performAfterFinished = null)
         {
             m_thread = new Thread(() => RunScript(command, performAfterFinished));
             m_thread.Start();
             Thread.Sleep(1);
+            return m_thread;
         }
 
         private void RunScript(string command, Action<string> performAfterFinished = null)
@@ -47,7 +52,6 @@ namespace World.Lua
             try
             {
                 objects = State.DoString(command);
-                
             }
             catch (NLua.Exceptions.LuaScriptException e)
             {
@@ -110,6 +114,20 @@ namespace World.Lua
         {
             m_scriptSynchronization.WaitOne();
             stepFunc(parameters);
+        }
+
+        public static string Help(object o)
+        {
+            if (o == null) return "null";
+            Type type = o.GetType();
+            PropertyInfo[] propertyInfos = type.GetProperties();
+            string propertiesJoined = string.Join(",\n\t\t", propertyInfos.Select(x => x.ToString()));
+            propertiesJoined = Regex.Replace(propertiesJoined, @"\w+\.", "");
+            MethodInfo[] methodInfos = type.GetMethods();
+            string methodsJoined = string.Join(",\n\t\t", methodInfos.Select(x => x.ToString()));
+            methodsJoined = Regex.Replace(methodsJoined, @"\w+\.", "");
+            return "Name: \"" + type.Name + "\"\n\tProperties: { " + propertiesJoined + " } " + "\n\tMethods: { " +
+                   methodsJoined + " }.";
         }
     }
 }

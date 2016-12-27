@@ -12,6 +12,7 @@ namespace World.Lua
         private readonly List<string> m_inputOutputList = new List<string>();
         private readonly List<string> m_inputList = new List<string>();
         private int m_historyPointer = -1;
+        private Thread m_currentlyExecutedChunk;
 
         private int HistoryPointer
         {
@@ -54,20 +55,31 @@ namespace World.Lua
                 ResetBox();
 
                 inputTextBox.Clear();
-                inputTextBox.Enabled = false;
+                //inputTextBox.Enabled = false;
 
-                m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
+                if (command.StartsWith("Help")) command = "return " + command;
+                if (command.StartsWith("help ")) command = "return Help(" + command.Substring(5) + ")";
+
+                m_currentlyExecutedChunk = m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
             }
+
+            if (e.KeyCode == Keys.Q || e.KeyCode == Keys.Escape)
+            {
+                m_currentlyExecutedChunk?.Abort();
+            }
+
+            if (HistoryPointer < 0) return;
             if (e.KeyCode == Keys.Up)
             {
+                if (HistoryPointer < 0) return;
                 inputTextBox.Text = m_inputList[HistoryPointer];
                 HistoryPointer--;
             }
             if (e.KeyCode == Keys.Down)
             {
+                if (HistoryPointer < 0) return;
                 inputTextBox.Text = m_inputList[HistoryPointer];
                 HistoryPointer++;
-
             }
         }
 
@@ -75,9 +87,12 @@ namespace World.Lua
         {
             Invoke(new Action(() =>
             {
-                m_inputOutputList.Add("O: " + result);
+                foreach (string s in result.Split('\n'))
+                {
+                    m_inputOutputList.Add(s);
+                }
                 ResetBox();
-                inputTextBox.Enabled = true;
+                //inputTextBox.Enabled = true;
                 inputTextBox.Focus();
             }));
         }
@@ -87,14 +102,6 @@ namespace World.Lua
             outputListBox.DataSource = null;
             outputListBox.DataSource = m_inputOutputList;
             outputListBox.SetSelected(m_inputOutputList.Count - 1, true);
-        }
-
-        private static string NewLine => "\r\n>";
-
-        private static string LastCommand(string s)
-        {
-            int lastIndexOfG = s.LastIndexOf(">", StringComparison.Ordinal);
-            return s.Substring(lastIndexOfG + 1);
         }
 
         private void inputTextBox_KeyPress(object sender, KeyPressEventArgs e)

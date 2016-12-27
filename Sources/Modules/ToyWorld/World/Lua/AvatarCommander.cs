@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using GoodAI.ToyWorld.Control;
 using VRageMath;
@@ -23,26 +22,13 @@ namespace World.Lua
         public AvatarCommander(LuaExecutor ex, IAtlas atlas, AutoResetEvent scriptSynchronization)
         {
             m_atlas = atlas;
-            ex.State.RegisterFunction("help", typeof(AvatarCommander).GetMethod("Help"));
+
             ex.State.RegisterFunction("Vector", typeof(AvatarCommander).GetMethod("Vector"));
             
             m_currentAvatar = atlas.Avatars.Values.First();
             ex.State["avatar"] = m_currentAvatar;
 
             m_le = ex;
-        }
-
-        public static string Help(object o)
-        {
-            Type type = o.GetType();
-            PropertyInfo[] propertyInfos = type.GetProperties();
-            string propertiesJoined = string.Join(",\n\t\t", propertyInfos.Select(x => x.ToString()));
-            propertiesJoined = Regex.Replace(propertiesJoined, @"\w+\.", "");
-            MethodInfo[] methodInfos = type.GetMethods();
-            string methodsJoined = string.Join(",\n\t\t", methodInfos.Select(x => x.ToString()));
-            methodsJoined = Regex.Replace(methodsJoined, @"\w+\.", "");
-            return "Name: \"" + type.Name + "\"\n\tProperties: { " + propertiesJoined + " } " + "\n\tMethods: { " +
-                   methodsJoined + " }.";
         }
 
         public void Goto(Vector2 position)
