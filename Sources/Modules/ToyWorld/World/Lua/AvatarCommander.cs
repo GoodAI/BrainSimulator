@@ -205,9 +205,9 @@ namespace World.Lua
             return null;
         }
 
-        public GameActorPosition GetNearest(IGameObject gameObject, string type)
+        public GameActorPosition GetNearest(string type)
         {
-            return GetNearest(gameObject.Position, type);
+            return GetNearest(m_currentAvatar.Position, type);
         }
 
         public static Vector2 Vector(float x, float y)

@@ -33,6 +33,7 @@ namespace World.Lua
         }
 
         private Thread m_thread;
+        private bool m_stopScript;
 
         public Thread ExecuteChunk(string command, Action<string> performAfterFinished = null)
         {
@@ -91,20 +92,32 @@ namespace World.Lua
             for (int i = 0; i < 100000; i++)
             {
                 m_scriptSynchronization.WaitOne();
+                if (m_stopScript)
+                {
+                    m_stopScript = false;
+                    return;
+                }
                 object o = stepFunc(parameters);
                 bool end = (bool)o;
                 if (end)
                 {
                     return;
                 }
+
+
             }
-            throw new Exception("Too long script execution.");
+            throw new Exception("Too long time in Do function.");
         }
 
         public void Repeat(Action<object[]> stepFunc, int repetitions, params object[] parameters)
         {
             for (int i = 0; i < repetitions; i++)
             {
+                if (m_stopScript)
+                {
+                    m_stopScript = false;
+                    return;
+                }
                 m_scriptSynchronization.WaitOne();
                 stepFunc(parameters);
             }
@@ -114,6 +127,11 @@ namespace World.Lua
         {
             m_scriptSynchronization.WaitOne();
             stepFunc(parameters);
+        }
+
+        public void StopScript()
+        {
+            m_stopScript = true;
         }
 
         public static string Help(object o)

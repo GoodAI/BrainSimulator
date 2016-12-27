@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LuaConsole));
             this.outputListBox = new System.Windows.Forms.ListBox();
             this.inputTextBox = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -44,6 +45,7 @@
             this.outputListBox.ScrollAlwaysVisible = true;
             this.outputListBox.Size = new System.Drawing.Size(441, 589);
             this.outputListBox.TabIndex = 0;
+            this.outputListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LuaConsole_KeyDown);
             // 
             // inputTextBox
             // 
@@ -64,6 +66,7 @@
             this.ClientSize = new System.Drawing.Size(441, 618);
             this.Controls.Add(this.inputTextBox);
             this.Controls.Add(this.outputListBox);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "LuaConsole";
             this.Text = "LuaConsole";
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LuaConsole_KeyDown);
