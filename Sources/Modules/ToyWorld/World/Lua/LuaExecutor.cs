@@ -1,0 +1,115 @@
+﻿using System;
+using System.Text;
+using System.Threading;
+using World.Atlas;
+
+namespace World.Lua
+{
+    public delegate void LuaExecutorInitEventHandler();
+
+    public class LuaExecutor
+    {
+        public NLua.Lua State;
+        private readonly AutoResetEvent m_scriptSynchronization;
+
+        public LuaExecutor(IAtlas atlas, AutoResetEvent scriptSynchronization)
+        {
+            m_scriptSynchronization = scriptSynchronization;
+            State = new NLua.Lua();
+            State.LoadCLRPackage();
+            State.DoString(@"import ('World','World.ToyWorldCore')");
+            State.DoString(@"import ('World','World.Lua')");
+
+            State["le"] = this;
+            State["atlas"] = atlas;
+
+            AvatarCommander avatarCommander = new AvatarCommander(this, atlas, scriptSynchronization);
+            State["ac"] = avatarCommander;
+            
+        }
+
+        private Thread m_thread;
+
+        public void ExecuteChunk(string command, Action<string> performAfterFinished = null)
+        {
+            m_thread = new Thread(() => RunScript(command, performAfterFinished));
+            m_thread.Start();
+            Thread.Sleep(1);
+        }
+
+        private void RunScript(string command, Action<string> performAfterFinished = null)
+        {
+            StringBuilder result = new StringBuilder();
+
+            m_scriptSynchronization.WaitOne();
+
+            object[] objects = null;
+            try
+            {
+                objects = State.DoString(command);
+                
+            }
+            catch (NLua.Exceptions.LuaScriptException e)
+            {
+                try
+                {
+                    objects = State.DoString("return " + command);
+
+                }
+                catch (NLua.Exceptions.LuaScriptException)
+                {
+                    result.Append(e);
+                }
+            }
+
+            if (objects != null)
+            {
+                result.Append("{ ");
+                foreach (object o in objects)
+                {
+                    if (o == null) continue;
+                    result.Append(o).Append(", ");
+                }
+                result.TrimEnd(result.Length > 2 ? 2 : 1);
+                result.Append(" }");
+            }
+
+            if (result.Length == 0)
+            {
+                result.Append("Done");
+            }
+
+            performAfterFinished?.Invoke(result.ToString());
+        }
+
+        public void Do(Func<object[], bool> stepFunc, params object[] parameters)
+        {
+            for (int i = 0; i < 100000; i++)
+            {
+                m_scriptSynchronization.WaitOne();
+                object o = stepFunc(parameters);
+                bool end = (bool)o;
+                if (end)
+                {
+                    return;
+                }
+            }
+            throw new Exception("Too long script execution.");
+        }
+
+        public void Repeat(Action<object[]> stepFunc, int repetitions, params object[] parameters)
+        {
+            for (int i = 0; i < repetitions; i++)
+            {
+                m_scriptSynchronization.WaitOne();
+                stepFunc(parameters);
+            }
+        }
+
+        public void Perform(Action<object[]> stepFunc, params object[] parameters)
+        {
+            m_scriptSynchronization.WaitOne();
+            stepFunc(parameters);
+        }
+    }
+}

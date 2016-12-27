@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using TmxMapSerializer.Elements;
 using VRageMath;
 using World.Atlas;
 using World.GameActors;
 using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
+using World.Lua;
 using World.Physics;
 using World.WorldInterfaces;
 
@@ -17,6 +19,10 @@ namespace World.ToyWorldCore
 {
     public class ToyWorld : IWorld
     {
+        private LuaConsole m_luaConsole;
+        private AutoResetEvent m_luaSynch;
+
+
         private ICollisionResolver m_collisionResolver;
 
         public Vector2I Size { get; private set; }
@@ -49,6 +55,10 @@ namespace World.ToyWorldCore
             InitPhysics();
             TileDetectorRegister = new TileDetectorRegister(Atlas);
             RegisterSignals();
+
+            m_luaSynch = new AutoResetEvent(false);
+            m_luaConsole = new LuaConsole(Atlas, m_luaSynch) { Visible = true };
+
         }
 
         private void RegisterSignals()
@@ -132,6 +142,9 @@ namespace World.ToyWorldCore
 
         public void Update()
         {
+            m_luaSynch.Set();
+            Thread.Sleep(1);
+
             UpdateTime();
             UpdateScheduled();
             UpdateLayers();
@@ -139,6 +152,7 @@ namespace World.ToyWorldCore
             UpdateCharacters();
             UpdatePhysics();
             UpdateAtmosphere();
+
             //Log.Instance.Debug("World.ToyWorldCore.ToyWorld: ===================Step performed======================");
         }
 
