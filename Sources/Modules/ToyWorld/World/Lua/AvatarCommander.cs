@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using GoodAI.ToyWorld.Control;
 using VRageMath;
 using World.Atlas;
 using World.GameActors;
@@ -17,14 +15,13 @@ namespace World.Lua
         private readonly IAtlas m_atlas;
         private readonly IAvatar m_currentAvatar;
         private readonly LuaExecutor m_le;
-        private IAvatarController m_avatarController;
 
-        public AvatarCommander(LuaExecutor ex, IAtlas atlas, AutoResetEvent scriptSynchronization)
+        public AvatarCommander(LuaExecutor ex, IAtlas atlas)
         {
             m_atlas = atlas;
 
             ex.State.RegisterFunction("Vector", typeof(AvatarCommander).GetMethod("Vector"));
-            
+
             m_currentAvatar = atlas.Avatars.Values.First();
             ex.State["avatar"] = m_currentAvatar;
 
@@ -85,11 +82,11 @@ namespace World.Lua
             m_le.Do(f, cuPos + relative, distance);
         }
 
-        public void Heading(string heading)
+        public void SetHeading(string heading)
         {
             string lower = heading.ToLower();
             string trim = lower.Trim();
-            float r = 0;
+            float r;
             switch (trim[0])
             {
                 case 'n':
@@ -102,25 +99,32 @@ namespace World.Lua
                     r = MathHelper.Pi;
                     break;
                 case 'e':
-                    r = MathHelper.Pi - 2;
+                    r = - MathHelper.Pi / 2;
                     break;
                 default:
                     throw new ArgumentException("Direction was not recognized.");
+                    
             }
             RotateTo(r);
         }
 
-        public void TeleportAvatar(float x, float y)
+        public void SetHeading(int heading)
+        {
+            float r = MathHelper.ToRadians(-heading);
+            RotateTo(r);
+        }
+
+        public void Teleport(float x, float y)
         {
             m_currentAvatar.Position = new Vector2(x, y);
         }
 
-        public void TeleportAvatar(Vector2 vector)
+        public void Teleport(Vector2 vector)
         {
             m_currentAvatar.Position = vector;
         }
 
-        public void TeleportAvatarRelatively(float x, float y)
+        public void TeleportR(float x, float y)
         {
             m_currentAvatar.Position += new Vector2(x, y);
         }
@@ -137,7 +141,7 @@ namespace World.Lua
         {
             // luaTest:RotateRight(100)
             Func<object[], bool> f = RotateToI;
-            m_le.Do(f, finalAngle, MathHelper.Pi / 16);
+            m_le.Do(f, finalAngle, MathHelper.Pi / 160);
         }
 
         private bool GotoI(params object[] parameters)
@@ -169,14 +173,16 @@ namespace World.Lua
         {
             float targetRotation = (float)a[0];
             float precision = (float)a[1];
-            if (Math.Abs(m_currentAvatar.Rotation - targetRotation) < precision) return true;
-            if (MathHelper.WrapAngle(m_currentAvatar.Rotation - targetRotation) < 0)
+            float diff = m_currentAvatar.Rotation - targetRotation;
+            float absDiff = Math.Abs(diff);
+            if (absDiff < precision) return true;
+            if (MathHelper.WrapAngle(diff) < 0)
             {
-                m_currentAvatar.DesiredLeftRotation = 1;
+                m_currentAvatar.DesiredLeftRotation = Math.Min(absDiff/3, 1);
             }
             else
             {
-                m_currentAvatar.DesiredLeftRotation = -1;
+                m_currentAvatar.DesiredLeftRotation = Math.Max(-absDiff/3, -1);
             }
             return false;
         }

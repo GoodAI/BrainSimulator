@@ -26,10 +26,13 @@ namespace World.Lua
             State["le"] = this;
             State["atlas"] = atlas;
 
-            AvatarCommander avatarCommander = new AvatarCommander(this, atlas, scriptSynchronization);
-            State["ac"] = avatarCommander;
-
             State.RegisterFunction("Help", typeof(LuaExecutor).GetMethod("Help"));
+
+            if (atlas.Avatars.Count > 0)
+            {
+                AvatarCommander avatarCommander = new AvatarCommander(this, atlas);
+                State["ac"] = avatarCommander;
+            }
         }
 
         private Thread m_thread;

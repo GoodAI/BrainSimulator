@@ -34,8 +34,8 @@ namespace Game
 
         public virtual void Dispose()
         {
-            if (m_renderer != null)
-                m_renderer.Dispose();
+            m_renderer?.Dispose();
+            World?.Dispose();
         }
 
 

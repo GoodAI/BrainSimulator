@@ -17,13 +17,14 @@ using World.WorldInterfaces;
 
 namespace World.ToyWorldCore
 {
-    public class ToyWorld : IWorld
+    public class ToyWorld : IWorld, IDisposable
     {
         private LuaConsole m_luaConsole;
         private AutoResetEvent m_luaSynch;
 
 
         private ICollisionResolver m_collisionResolver;
+        private readonly Thread m_consoleThread;
 
         public Vector2I Size { get; private set; }
         public AutoupdateRegister AutoupdateRegister { get; protected set; }
@@ -31,6 +32,9 @@ namespace World.ToyWorldCore
         public IAtlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
+
+        public delegate void ToyWorldDisposedHandler(object sender);
+        public event ToyWorldDisposedHandler ToyWorldDisposed;
 
         /// <summary>
         /// Dictionary with signal names as keys. This prevents user from defining two signals with the same name.
@@ -57,8 +61,12 @@ namespace World.ToyWorldCore
             RegisterSignals();
 
             m_luaSynch = new AutoResetEvent(false);
-            m_luaConsole = new LuaConsole(Atlas, m_luaSynch) { Visible = true };
-
+            m_consoleThread = new Thread(() =>
+            {
+                m_luaConsole = new LuaConsole(this, Atlas, m_luaSynch);
+                m_luaConsole.ShowDialog();
+            });
+            m_consoleThread.Start();
         }
 
         private void RegisterSignals()
@@ -222,6 +230,11 @@ namespace World.ToyWorldCore
         {
             Contract.Invariant(Atlas != null, "Atlas cannot be null");
             Contract.Invariant(AutoupdateRegister != null, "Autoupdate register cannot be null");
+        }
+
+        public void Dispose()
+        {
+            ToyWorldDisposed?.Invoke(this);
         }
     }
 }

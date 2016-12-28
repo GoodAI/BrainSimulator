@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using World.Atlas;
+using World.ToyWorldCore;
 
 namespace World.Lua
 {
@@ -35,15 +36,24 @@ namespace World.Lua
             }
         }
 
-        public LuaConsole(IAtlas atlas, AutoResetEvent luaSynch)
+        public LuaConsole(ToyWorld toyWorld, IAtlas atlas, AutoResetEvent luaSynch)
         {
             InitializeComponent();
+
+            toyWorld.ToyWorldDisposed += CloseConsole;
+
             outputListBox.DataSource = m_inputOutputList;
 
             m_lex = new LuaExecutor(atlas, luaSynch);
 
             m_inputOutputList.Add(INVITATION_MESSAGE);
             ResetBox();
+
+        }
+
+        private void CloseConsole(object sender)
+        {
+            Invoke(new Action(Close));
         }
 
         private void LuaConsole_KeyDown(object sender, KeyEventArgs e)
