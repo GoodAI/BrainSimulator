@@ -170,7 +170,7 @@ namespace GoodAI.Core.Task
             }
         }
 
-        public MyTask()
+        protected MyTask()
         {
             Enabled = true;            
         }

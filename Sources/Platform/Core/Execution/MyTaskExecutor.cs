@@ -56,8 +56,11 @@ namespace GoodAI.Core.Execution
         {
             for (int i = 0; i < m_numOfThreads; i++)
             {
-                m_threads[i] = new Thread(Worker);
-                m_threads[i].Name = "Task Executor Thread #" + i;
+                m_threads[i] = new Thread(Worker)
+                {
+                    Name = "Task Executor Thread #" + i
+                };
+
                 m_threadExecInfos[i] = new ThreadExecInfo(i);
                 m_eventsDone[i] = m_threadExecInfos[i].EventDone;
 
@@ -70,7 +73,8 @@ namespace GoodAI.Core.Execution
             for (int i = 0; i < m_numOfThreads; i++)
             {
                 m_threadExecInfos[i].EventGo.Set();
-            }         
+            }
+
             WaitHandle.WaitAll(m_eventsDone);
         }
 
@@ -79,7 +83,8 @@ namespace GoodAI.Core.Execution
             for (int i = 0; i < m_numOfThreads; i++)
             {
                 m_threadExecInfos[i].EventFinish.Set();
-            }         
+            }
+
             WaitHandle.WaitAll(m_eventsDone);
         }
 
