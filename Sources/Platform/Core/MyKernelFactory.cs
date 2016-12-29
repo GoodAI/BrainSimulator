@@ -105,12 +105,6 @@ namespace GoodAI.Core
         }
     }
 
-    public enum MyKernelMode
-    {
-        Immediate,
-        Scripted
-    }
-
     public class MyKernelFactory : IDisposable
     {
 
@@ -181,25 +175,24 @@ namespace GoodAI.Core
             {
                 return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU);
             }
-            else
+
+            try
             {
-                try
-                {
-                    FileInfo ptxFile = new FileInfo(ptxFileName);
+                FileInfo ptxFile = new FileInfo(ptxFileName);
 
-                    if (ptxFile.Exists)
-                    {
-                        CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
-                        m_ptxModules[GPU][ptxFileName] = ptxModule;
-
-                        return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU);
-                    }
-                    else return null;
-                }
-                catch (Exception e)
+                if (ptxFile.Exists)
                 {
-                    throw new CudaException(e.Message + " (" + ptxFileName + ")", e);
+                    CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
+                    m_ptxModules[GPU][ptxFileName] = ptxModule;
+
+                    return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU);
                 }
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                throw new CudaException(e.Message + " (" + ptxFileName + ")", e);
             }
         }
 
