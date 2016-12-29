@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using GoodAI.Core.Nodes;
 using System.Diagnostics;
+using GoodAI.Platform.Core.Profiling;
 
 namespace GoodAI.Core.Execution
 {
@@ -49,9 +50,7 @@ namespace GoodAI.Core.Execution
 
         private readonly BackgroundWorker m_worker;
         private readonly ManualResetEvent m_workedCompleted;
-        private bool doPause = false;
-
-        private Action closeCallback = null;
+        private bool m_doPause = false;
 
         public uint ReportIntervalSteps { get; set; } // How often (in steps) should be speed of simulation reported in RUNNING_STEP state
         public int ReportInterval { get; set; } // How often (in ms) should be speed of simulation reported in RUNNING state
@@ -97,16 +96,31 @@ namespace GoodAI.Core.Execution
         public delegate void SimulationStoppedEventHandler(object sender, SimulationStoppedEventArgs args);
         public event SimulationStoppedEventHandler SimulationStopped;
 
-        private readonly int m_speedMeasureInterval;
+        private readonly int m_speedMeasureIntervalMillisec;
 
         public float SimulationSpeed { get; private set; }
+
+        public string SimulationSpeedStr
+        {
+            get
+            {
+                var s = SimulationSpeed;
+                if (Math.Abs(s) < 0.000001)
+                    return "?/s";
+
+                return ((s < 10.0f)
+                    ? $"{Math.Round(s, 1):0.0}"
+                    : $"{Math.Round(s)}")
+                    + "/s";
+            }
+        }
 
         private SimulationState m_state;
         private uint m_stepsToPerform;
         private Action m_closeCallback;
         private uint m_lastProgressChangedStep;
 
-        public SimulationState State    ///< State of the simulation
+        public SimulationState State
         { 
             get 
             { 
@@ -114,13 +128,11 @@ namespace GoodAI.Core.Execution
             }
             private set
             {
-                SimulationState oldState = m_state;
+                var oldState = m_state;
                 m_state = value;
-                if (StateChanged != null)
-                {
-                    StateChanged(this, new StateEventArgs(oldState, m_state));
-                }
-                
+
+                StateChanged?.Invoke(this, new StateEventArgs(oldState, m_state));
+
             }
         }
         public uint SimulationStep { get { return Simulation.SimulationStep; } }    
@@ -145,7 +157,7 @@ namespace GoodAI.Core.Execution
             ReportIntervalSteps = 100;
             ReportInterval = 20;
             SleepInterval = 0;
-            m_speedMeasureInterval = 2000;
+            m_speedMeasureIntervalMillisec = 998;  // Almost 1 second (to prevent some races).
             AutosaveInterval = 10000;
 
             Simulation = simulation;
@@ -216,7 +228,7 @@ namespace GoodAI.Core.Execution
         {
             if (State == SimulationState.RUNNING || State == SimulationState.RUNNING_STEP)
             {
-                doPause = false;
+                m_doPause = false;
                 m_worker.CancelAsync();
             }
             else
@@ -228,7 +240,7 @@ namespace GoodAI.Core.Execution
         //UI thread
         public void PauseSimulation()
         {            
-            doPause = true;
+            m_doPause = true;
             m_worker.CancelAsync();
         }
 
@@ -269,11 +281,15 @@ namespace GoodAI.Core.Execution
                 throw new IllegalStateException("Bad worker state: " + State);
             }
 
-            Stopwatch progressUpdateStopWatch = Stopwatch.StartNew();
-            long reportStart = progressUpdateStopWatch.ElapsedTicks;
-            int speedStart = Environment.TickCount;
-            uint speedStep = SimulationStep;
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            long reportLastTicks = stopwatch.ElapsedTicks;
+            long reportIntervalTicks = ReportInterval * Stopwatch.Frequency / 1000;
+
             uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
+
+            var runningAverage = new SimSpeedRunningAverage(minRecordIntervalMillisec: m_speedMeasureIntervalMillisec);
+
+            SimulationSpeed = 0.0f;
 
             while (true)
             {
@@ -300,6 +316,8 @@ namespace GoodAI.Core.Execution
 
                     Simulation.PerformStep(State == SimulationState.RUNNING_STEP);
                     ++performedSteps;
+
+                    StepPerformed?.Invoke(this, null);
                 }
                 catch (Exception ex)
                 {
@@ -307,53 +325,38 @@ namespace GoodAI.Core.Execution
                     m_simulationStoppedException = ex;
                     e.Cancel = true;
                     break;
-                }                 
+                }
 
                 if (SleepInterval > 0)
                 {
                     Thread.Sleep(SleepInterval);
                 }
 
-                bool measureSpeed = false;
-                bool reportProgress = false;
-                if (State == SimulationState.RUNNING_STEP)
+                // Status reporting
+                try
                 {
-                    if (performedSteps % ReportIntervalSteps == 0)
+                    bool doReportThisStep = (State == SimulationState.RUNNING_STEP)
+                        && (performedSteps % ReportIntervalSteps == 0);
+
+                    runningAverage.AddTimePoint(SimulationStep, doReportThisStep);
+
+                    if (doReportThisStep || ((stopwatch.ElapsedTicks - reportLastTicks) >= reportIntervalTicks))
                     {
-                        measureSpeed = true;
-                        reportProgress = true;
+                        reportLastTicks = stopwatch.ElapsedTicks;
+
+                        SimulationSpeed = runningAverage.GetItersPerSecond();
+
+                        if (ProgressChanged != null)
+                        {
+                            m_lastProgressChangedStep = SimulationStep;
+                            ProgressChanged(this, null);
+                        }
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    if (Environment.TickCount - speedStart > m_speedMeasureInterval)
-                        measureSpeed = true;
-                    if ((progressUpdateStopWatch.ElapsedTicks - reportStart) * 1000 / Stopwatch.Frequency >= ReportInterval)
-                        reportProgress = true;
-                }
-
-                if (measureSpeed)
-                {                                             
-                    SimulationSpeed = (SimulationStep - speedStep) * 1000.0f / (Environment.TickCount - speedStart);
-
-                    speedStart = Environment.TickCount;
-                    speedStep = SimulationStep;
-                }
-
-                if (reportProgress)
-                {
-                    reportStart = progressUpdateStopWatch.ElapsedTicks;
-
-                    if (ProgressChanged != null)
-                    {
-                        m_lastProgressChangedStep = SimulationStep;
-                        ProgressChanged(this, null);
-                    }
-                }
-
-                if (StepPerformed != null)
-                {
-                    StepPerformed(this, null);
+                    MyLog.WARNING.WriteLine("Error during sim. status reporting: " + ex.Message);
+                    // Continue...
                 }
             }
             
@@ -367,7 +370,7 @@ namespace GoodAI.Core.Execution
                 ProgressChanged(this, null);
             }
 
-            if (e.Cancelled && !doPause)
+            if (e.Cancelled && !m_doPause)
             {
                 DoStop();
             }
@@ -448,7 +451,7 @@ namespace GoodAI.Core.Execution
                 MyLog.INFO.WriteLine("Clearing simulation...");
                 // This will destroy the collection that holds the nodes, so it has to be the last thing.
                 Simulation.Clear();
-                MyLog.INFO.WriteLine("Stopped after "+this.SimulationStep+" steps.");
+                MyLog.INFO.WriteLine($"Stopped after {SimulationStep} steps (speed {SimulationSpeedStr})");
 
                 if (SimulationStopped != null)
                 {
@@ -462,8 +465,7 @@ namespace GoodAI.Core.Execution
             }
 
             // Cleanup and invoke the callback action.
-            if (m_closeCallback != null)
-                m_closeCallback();
+            m_closeCallback?.Invoke();
         }
 
         private void PrintMemoryInfo() 
