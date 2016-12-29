@@ -114,7 +114,7 @@
     <Compile Include="Execution\MySimulationHandler.cs" />
     <Compile Include="Execution\MyExecutionPlanner.cs" />
     <Compile Include="Execution\MyPartitionStrategy.cs" />
-    <Compile Include="Execution\MyTaskExecutor.cs" />
+    <Compile Include="Execution\MyThreadPool.cs" />
     <Compile Include="Memory\CustomDimensionsHint.cs" />
     <Compile Include="Memory\MemBlockAttribute.cs" />
     <Compile Include="Memory\MemoryBlockMetadata.cs" />
