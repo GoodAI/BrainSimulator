@@ -12,17 +12,16 @@ namespace GoodAI.Platform.Core.Profiling
         private const int IntervalCount = 30;
         private readonly long m_minRecordIntervalTicks;
 
-
         private struct TimePoint
         {
-            public TimePoint(long steps, long ticks)
+            public void Set(long steps, long ticks)
             {
                 Steps = steps;
                 Ticks = ticks;
             }
 
-            public long Steps { get; }
-            public long Ticks { get; }
+            public long Steps { get; private set; }
+            public long Ticks { get; private set; }
         }
 
         private readonly TimePoint[] m_timePoints = new TimePoint[IntervalCount];
@@ -54,7 +53,7 @@ namespace GoodAI.Platform.Core.Profiling
 
             m_lastElapsedTicks = m_stopwatch.ElapsedTicks;
 
-            m_timePoints[m_index % IntervalCount] = new TimePoint(stepCount, m_stopwatch.ElapsedTicks);
+            m_timePoints[m_index % IntervalCount].Set(stepCount, m_stopwatch.ElapsedTicks);
 
             m_index++;
         }
