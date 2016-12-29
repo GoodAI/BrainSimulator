@@ -23,6 +23,8 @@ namespace GoodAI.Core
         protected CudaKernel m_kernel;
         protected int m_GPU;
 
+        private CudaStream m_stream;
+
         public string KernelName { get { return m_kernel.KernelName; } }
         public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set {m_kernel.BlockDimensions = value; } }
         public dim3 GridDimensions { get { return m_kernel.GridDimensions; } set {m_kernel.GridDimensions = value; } }
@@ -42,18 +44,27 @@ namespace GoodAI.Core
         public void SetConstantVariable<T>(string name, T value) where T : struct { m_kernel.SetConstantVariable<T>(name, value); }
         //public void SetConstantVariable(string name, CUdeviceptr value) { m_kernel.SetConstantVariable(name, value); } 
 
-        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU)
+        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStream stream)
         {
             m_GPU = GPU;
+            m_stream = stream;
+
             m_kernel = new CudaKernel(kernelName, module, cuda);
             MAX_THREADS = m_kernel.MaxThreadsPerBlock;
         }
+
+        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU)
+            : this(kernelName, module, cuda, GPU, null)
+        {}
 
         public void Run(params object[] args)
         {
             ConvertMemoryBlocksToDevicePtrs(args);
 
-            m_kernel.Run(args);
+            if (m_stream != null)
+                m_kernel.RunAsync(m_stream.Stream, args);
+            else
+                m_kernel.Run(args);
         }
 
         public void RunAsync(CudaStream stream, params object[] args)
@@ -132,6 +143,7 @@ namespace GoodAI.Core
         private int m_devCount; // number of CUDA-enabled devices
         private CudaContext[] m_contexts;
         private CudaRandDevice[] m_randDevices;
+        private CudaStream[] m_streams;
         private bool[] m_contextAlive;
 
         public CudaRandDevice GetRandDevice(MyNode callee)
@@ -173,7 +185,7 @@ namespace GoodAI.Core
         {
             if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
             {
-                return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU);
+                return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
             }
 
             try
@@ -185,7 +197,7 @@ namespace GoodAI.Core
                     CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
                     m_ptxModules[GPU][ptxFileName] = ptxModule;
 
-                    return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU);
+                    return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
                 }
 
                 return null;
@@ -309,6 +321,7 @@ namespace GoodAI.Core
 
             m_contexts = new CudaContext[m_devCount];
             m_randDevices = new CudaRandDevice[m_devCount];
+            m_streams = new CudaStream[m_devCount];
             m_contextAlive = new bool[m_devCount];
 
             for (int i = 0; i < DevCount; i++)
@@ -322,8 +335,11 @@ namespace GoodAI.Core
             m_contexts[GPU] = new CudaContext(GPU);
 
             m_contexts[GPU].SetCurrent();
+
             m_randDevices[GPU] = new CudaRandDevice(GeneratorType.PseudoDefault);
             m_randDevices[GPU].SetPseudoRandomGeneratorSeed((ulong)DateTime.Now.Ticks.GetHashCode());
+
+            m_streams[GPU] = new CudaStream(CUstream.StreamPerThread);
 
             m_contextAlive[GPU] = true;
         }
@@ -345,6 +361,7 @@ namespace GoodAI.Core
                 if (!IsContextAlive(i))
                 {
                     m_randDevices[i].Dispose();
+                    m_streams[i].Dispose();
                     m_ptxModules[i].Clear();
 
                     m_contexts[i].Dispose();
