@@ -57,6 +57,11 @@ namespace GoodAI.Core
             : this(kernelName, module, cuda, GPU, null)
         {}
 
+        /// <summary>
+        /// Runs the kernel asynchronously when a non-null CudaStream was injected via the constructor
+        /// or synchronously when it was not.
+        /// </summary>
+        /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void Run(params object[] args)
         {
             if (m_stream != null)
@@ -65,6 +70,8 @@ namespace GoodAI.Core
                 RunSync(args);
         }
 
+        /// <summary>Runs the kernel in synchronous mode.</summary>
+        /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void RunSync(params object[] args)
         {
             ConvertMemoryBlocksToDevicePtrs(args);
@@ -72,6 +79,9 @@ namespace GoodAI.Core
             m_kernel.Run(args);
         }
 
+        /// <summary> Runs the kernel in asynchronous mode. </summary>
+        /// <param name="stream">If the stream is null, the default per-thread stream is used.</param>
+        /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void RunAsync(CudaStream stream, params object[] args)
         {
             ConvertMemoryBlocksToDevicePtrs(args);
