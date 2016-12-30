@@ -108,7 +108,7 @@ namespace GoodAI.Core.Execution
                 if (Math.Abs(s) < 0.000001)
                     return "?/s";
 
-                return ((s < 10.0f)
+                return ((s < 30.0f)
                     ? $"{Math.Round(s, 1):0.0}"
                     : $"{Math.Round(s)}")
                     + "/s";
