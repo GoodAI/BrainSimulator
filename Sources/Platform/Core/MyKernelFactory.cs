@@ -59,23 +59,25 @@ namespace GoodAI.Core
 
         public void Run(params object[] args)
         {
+            if (m_stream != null)
+                RunAsync(m_stream, args);
+            else
+                RunSync(args);
+        }
+
+        public void RunSync(params object[] args)
+        {
             ConvertMemoryBlocksToDevicePtrs(args);
 
-            if (m_stream != null)
-                m_kernel.RunAsync(m_stream.Stream, args);
-            else
-                m_kernel.Run(args);
+            m_kernel.Run(args);
         }
 
         public void RunAsync(CudaStream stream, params object[] args)
         {
             ConvertMemoryBlocksToDevicePtrs(args);
 
-            CUstream cuStream = CUstream.NullStream;
-            if (stream != null)
-            {
-                cuStream = stream.Stream;
-            }
+            CUstream cuStream = stream?.Stream ?? CUstream.StreamPerThread;
+
             m_kernel.RunAsync(cuStream, args);
         }
 
