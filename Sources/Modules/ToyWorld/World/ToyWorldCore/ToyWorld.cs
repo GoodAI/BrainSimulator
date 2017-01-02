@@ -151,7 +151,6 @@ namespace World.ToyWorldCore
         public void Update()
         {
             m_luaSynch.Set();
-            Thread.Sleep(1);
 
             UpdateTime();
             UpdateScheduled();
