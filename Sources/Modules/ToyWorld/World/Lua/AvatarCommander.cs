@@ -29,14 +29,14 @@ namespace World.Lua
 
         public void Goto(Vector2 position)
         {
-            // ah:Goto(Vector(20,30))
+            // ac:Goto(Vector(20,30))
             Func<object[], bool> f = GotoI;
             m_le.Do(f, position, 0.1f);
         }
 
         public void Goto(int x, int y)
         {
-            // ah:Goto(10,10)
+            // ac:Goto(10,10)
             Func<object[], bool> f = GotoI;
             m_le.Do(f, new Vector2(x + 0.5f, y + 0.5f), 0.1f);
         }
@@ -44,14 +44,14 @@ namespace World.Lua
         public void Goto(Vector2 position, float distance)
         {
             if (distance <= 0) throw new ArgumentException("Distance must be positive.");
-            // ah:Goto("Pinecone", 2)
+            // ac:Goto("Pinecone", 2)
             Func<object[], bool> f = GotoI;
             m_le.Do(f, position, distance);
         }
 
-        public void Goto(string type)
+        public void Goto(string type, float distance = (float)0.1)
         {
-            // ah:Goto("Pinecone")
+            // ac:Goto("Pinecone", 1.2)
             GameActorPosition gameActorPosition = GetNearest(m_currentAvatar.Position, type);
             if (gameActorPosition == null) return;
             Vector2 position = gameActorPosition.Position;
@@ -59,12 +59,12 @@ namespace World.Lua
             {
                 position = Tile.Center((Vector2I)position);
             }
-            Goto(position);
+            Goto(position, distance);
         }
 
         public void GotoR(int x, int y)
         {
-            // ah:Goto(10,10)
+            // ac:Goto(10,10)
             Vector2 cuPos = m_currentAvatar.Position;
             Func<object[], bool> f = GotoI;
             Vector2 relative = new Vector2(x, y);
@@ -74,7 +74,7 @@ namespace World.Lua
         public void GotoR(int x, int y, float distance)
         {
             if (distance <= 0) throw new ArgumentException("Distance must be positive.");
-            // ah:Goto(10,10,0.5)
+            // ac:Goto(10,10,0.5)
             Vector2 cuPos = m_currentAvatar.Position;
             Func<object[], bool> f = GotoI;
             Vector2 relative = new Vector2(x, y);
@@ -131,14 +131,14 @@ namespace World.Lua
         public void RotateTo(float finalAngle, float precision)
         {
             if (precision <= 0) throw new ArgumentException("Precision must be positive.");
-            // luaTest:RotateRight(100)
+            // ac:RotateRight(100)
             Func<object[], bool> f = RotateToI;
             m_le.Do(f, finalAngle, precision);
         }
 
         public void RotateTo(float finalAngle)
         {
-            // luaTest:RotateRight(100)
+            // ac:RotateRight(100)
             Func<object[], bool> f = RotateToI;
             m_le.Do(f, finalAngle, MathHelper.Pi / 160);
         }
@@ -170,19 +170,20 @@ namespace World.Lua
 
         private bool RotateToI(params object[] a)
         {
-            float targetRotation = (float)a[0];
-            float precision = (float)a[1];
-            float diff = m_currentAvatar.Rotation - targetRotation;
+            float targetRotation = (float) a[0];
+            float precision = (float) a[1];
+            float diff = CalculateDifferenceBetweenAngles(m_currentAvatar.Rotation, targetRotation);
             float absDiff = Math.Abs(diff);
             if (absDiff < precision) return true;
             if (MathHelper.WrapAngle(diff) < 0)
             {
-                m_currentAvatar.DesiredLeftRotation = Math.Min(absDiff/3, 1);
+                m_currentAvatar.DesiredLeftRotation = Math.Max((float)-Math.Sqrt(absDiff), -1);
             }
             else
             {
-                m_currentAvatar.DesiredLeftRotation = Math.Max(-absDiff/3, -1);
+                m_currentAvatar.DesiredLeftRotation = Math.Min((float)Math.Sqrt(absDiff), 1);
             }
+        
             return false;
         }
 
@@ -216,6 +217,14 @@ namespace World.Lua
         public static Vector2 Vector(float x, float y)
         {
             return new Vector2(x, y);
+        }
+
+        private float CalculateDifferenceBetweenAngles(float firstAngle, float secondAngle)
+        {
+            float difference = secondAngle - firstAngle;
+            while (difference < -MathHelper.Pi) difference += MathHelper.Pi*2;
+            while (difference > MathHelper.Pi) difference -= MathHelper.Pi*2;
+            return difference;
         }
     }
 }
