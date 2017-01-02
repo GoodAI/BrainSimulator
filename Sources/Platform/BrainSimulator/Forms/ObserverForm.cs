@@ -155,27 +155,27 @@ namespace GoodAI.BrainSimulator.Forms
 
         internal void UpdateView(uint simulationStep)
         {
-            if (!this.IsDisposed)
+            if (IsDisposed)
+                return;
+
+            peekLabel.Visible = false;
+
+            try
             {
-                peekLabel.Visible = false;
+                Observer.UpdateFrame(simulationStep);
+            }
+            catch (Exception exc)
+            {
+                MyLog.ERROR.WriteLine("Observer update failed: " + exc.Message);
+            }
+            finally
+            {
+                glControl.Invalidate();
+            }
 
-                try
-                {
-                    Observer.UpdateFrame(simulationStep);
-                }
-                catch (Exception exc)
-                {
-                    MyLog.ERROR.WriteLine("Observer update failed: " + exc.Message);
-                }
-                finally
-                {
-                    glControl.Invalidate();
-                }
-
-                if (Observer.AutosaveSnapshop)
-                {
-                    snapshotToolStripMenuItem_Click(this, EventArgs.Empty);
-                }
+            if (Observer.AutosaveSnapshop)
+            {
+                snapshotToolStripMenuItem_Click(this, EventArgs.Empty);
             }
         }
 
@@ -281,11 +281,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (!IsDisposed)
-            {
-                uint simulationStep = (sender as MySimulationHandler).SimulationStep;
-                this.Invoke((MethodInvoker)(() => UpdateView(simulationStep)));
-            }
+            if (IsDisposed)
+                return;
+
+            uint simulationStep = (sender as MySimulationHandler).SimulationStep;
+
+            Invoke((MethodInvoker)(() => UpdateView(simulationStep)));
         }
 
         void SimulationHandler_StateChanged(object sender, MySimulationHandler.StateEventArgs e)
@@ -366,12 +367,11 @@ namespace GoodAI.BrainSimulator.Forms
             {
                 peekLabel.Visible = false;
             }
-            return;
         }
 
         private int GetPositionInMemoryBlock(MyMemoryBlockObserver mbObserver, int px, int py)
         {
-            if (mbObserver.ObserveTensors == true)
+            if (mbObserver.ObserveTensors)
             {
                 if (mbObserver.Method == RenderingMethod.RedGreenScale)
                 {
