@@ -286,6 +286,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <None Include="packages.config" />
+    <None Include="post_build.cmd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="res\Worlds\roguelike_selection_summer.png">
@@ -300,7 +301,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>
-xcopy /s /y "D:\BrainSimInternal\Sources\Modules\School\.nuget\..\..\..\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"</PostBuildEvent>
+xcopy /s /y "D:\BrainSimInternal\Sources\Modules\School\.nuget\..\..\..\packages\NLua.1.3.2.1\lib\native\*.*" "$(TargetDir)"
+
+"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
