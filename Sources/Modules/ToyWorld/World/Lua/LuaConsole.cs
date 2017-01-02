@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using World.Atlas;
@@ -78,8 +79,22 @@ namespace World.Lua
                 inputTextBox.Clear();
                 inputTextBox.Enabled = false;
 
-                if (command.StartsWith("Help")) command = "return " + command;
-                if (command.StartsWith("help ")) command = "return Help(" + command.Substring(5) + ")";
+                if (command.StartsWith("execute "))
+                {
+                    try
+                    {
+                        string substring = command.Substring(8);
+                        StreamReader sr = new StreamReader(new FileStream(substring, FileMode.Open));
+                        string readToEnd = sr.ReadToEnd();
+                        command = readToEnd;
+                    }
+                    catch (Exception)
+                    {
+                        Print(e.ToString());
+                    }
+                }
+                else if (command.StartsWith("Help")) command = "return " + command;
+                else if (command.StartsWith("help ")) command = "return Help(" + command.Substring(5) + ")";
 
                 m_currentlyExecutedChunk = m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
             }
