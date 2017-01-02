@@ -31,6 +31,9 @@ namespace Graph
 {
     public static class GraphRenderer
     {
+        // Cache this because it lights up in the profiler (75 % of RenderLabel)
+        private static readonly Font StatusFont = SystemFonts.StatusFont;
+
         private static GraphStyle m_defaultStyle = null;
         public static GraphStyle DefaultStyle
         {
@@ -519,7 +522,7 @@ namespace Graph
                 if (connection.textBounds.IsEmpty ||
                     connection.textBounds.Location != center)
                 {
-                    size = graphics.MeasureString(text, SystemFonts.StatusFont, center, GraphConstants.CenterTextStringFormat);
+                    size = graphics.MeasureString(text, StatusFont, center, GraphConstants.CenterTextStringFormat);
 
                     if (isConnectionHidden) 
                     {
@@ -566,7 +569,7 @@ namespace Graph
                 {
                     graphics.FillPath(brush, path);
                 }
-                graphics.DrawString(text, SystemFonts.StatusFont, Brushes.Black, textPosition, GraphConstants.CenterTextStringFormat);
+                graphics.DrawString(text, StatusFont, Brushes.Black, textPosition, GraphConstants.CenterTextStringFormat);
 
                 //draw outline for all conn. labels when not dragged focused or hovered
                 if ((state & ~RenderState.Hidden & ~RenderState.Backward) == RenderState.None) 
