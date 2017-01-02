@@ -199,6 +199,7 @@
       <DependentUpon>LuaConsole.cs</DependentUpon>
     </Compile>
     <Compile Include="Lua\LuaExecutor.cs" />
+    <Compile Include="Lua\AtlasManipulator.cs" />
     <Compile Include="Physics\BasicAvatarMover.cs" />
     <Compile Include="Physics\CollisionChecker.cs" />
     <Compile Include="Physics\ICollisionResolver.cs" />

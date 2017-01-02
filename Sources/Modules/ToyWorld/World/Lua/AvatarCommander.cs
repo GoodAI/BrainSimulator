@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using VRageMath;
 using World.Atlas;
 using World.GameActors;
@@ -189,9 +188,7 @@ namespace World.Lua
 
         public GameActorPosition GetNearest(Vector2 position, string type)
         {
-            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            Assembly assembly = assemblies.First(x => x.FullName.StartsWith("World,"));
-            Type t = assembly.GetTypes().FirstOrDefault(x => x.Name == type);
+            Type t = GameActor.GetType(type);
 
             for (int i = 1; i < 20; i++)
             {

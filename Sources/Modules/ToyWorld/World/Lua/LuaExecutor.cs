@@ -33,6 +33,9 @@ namespace World.Lua
                 AvatarCommander avatarCommander = new AvatarCommander(this, atlas);
                 State["ac"] = avatarCommander;
             }
+
+            AtlasManipulator atlasManipulator = new AtlasManipulator(this, atlas);
+            State["am"] = atlasManipulator;
         }
 
         private Thread m_thread;

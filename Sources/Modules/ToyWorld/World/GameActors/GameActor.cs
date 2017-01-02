@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using VRageMath;
 using World.Atlas.Layers;
 
@@ -57,6 +58,14 @@ namespace World.GameActors
                     : default(TilesetIds);
             }
             set { m_tilesetIdsDict[GetType().Name] = value; }
+        }
+
+        public static Type GetType(string type)
+        {
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Assembly assembly = assemblies.First(a => a.FullName.StartsWith("World,"));
+            Type t = assembly.GetTypes().Where(a => a.IsSubclassOf(typeof(GameActor))).FirstOrDefault(a => a.Name == type);
+            return t;
         }
     }
 
