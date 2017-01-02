@@ -2,6 +2,8 @@
   <Configuration RootNamespace="MNIST">
     <KnownWorlds>
     <World type="MNIST.MyMNISTWorld" />
+    <World type="MNIST.MNISTWorld" />
+    <World type="MNIST.USPSWorld" />
     <World type="BrainSimulator.Retina.MyMovingObjectsWorld" />
   </KnownWorlds>
 </Configuration>

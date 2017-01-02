@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using CoreTests;
-using GoodAI.Core;
+﻿using CoreTests;
 using GoodAI.Core.Execution;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
