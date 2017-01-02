@@ -281,7 +281,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (IsDisposed)
+            if (IsDisposed || IsHidden)
                 return;
 
             uint simulationStep = (sender as MySimulationHandler).SimulationStep;
