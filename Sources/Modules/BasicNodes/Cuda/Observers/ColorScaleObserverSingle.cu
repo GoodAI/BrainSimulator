@@ -116,9 +116,9 @@ extern "C"
 			    fblue  = values[2 * ta + id_R_value]/maxValue;
             }
 
-	        fred   = fminf(fmaxf((fred+1)/2,   0), 1) * 255;    // normalize colors to be -1 and 1
-	        fgreen = fminf(fmaxf((fgreen+1)/2, 0), 1) * 255;
-	        fblue  = fminf(fmaxf((fblue+1)/2,  0), 1) * 255;
+	        fred   = fminf(fmaxf((fred),   0), 1) * 255;    // normalize colors to be between 0 and 255
+	        fgreen = fminf(fmaxf((fgreen), 0), 1) * 255;
+	        fblue  = fminf(fmaxf((fblue),  0), 1) * 255;
 
 			unsigned char red   = (unsigned char) __float2uint_rn(fred);
 			unsigned char green = (unsigned char) __float2uint_rn(fgreen);
