@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using VRage.Collections;
 using World.Atlas;
@@ -58,6 +59,7 @@ namespace World.ToyWorldCore
             foreach (IAutoupdateableGameActor actor in CurrentUpdateRequests)
             {
                 actor.Update(atlas);
+                Debug.Assert(actor.NextUpdateAfter < m_register.Size, "Update period too large. Increase size of the AutoupdateRegister.");
                 if (actor.NextUpdateAfter > 0)
                     Register(actor, actor.NextUpdateAfter);
             }
