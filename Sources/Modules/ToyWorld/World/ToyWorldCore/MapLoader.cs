@@ -214,6 +214,8 @@ namespace World.ToyWorldCore
 
             var gameAvatar = new Avatar(tilesetName, newGid, avatar.Name, avatar.Id, initialPosition, size, rotation);
 
+            gameAvatar.Invisible = avatar.Invisible;
+
             // this is magic
             if (avatar.Properties != null)
             {
@@ -250,6 +252,8 @@ namespace World.ToyWorldCore
                 size,
                 rotation
                 );
+
+            gameObject.Invisible = tmxObject.Invisible;
 
             // this is magic
             if (tmxObject.Properties != null)

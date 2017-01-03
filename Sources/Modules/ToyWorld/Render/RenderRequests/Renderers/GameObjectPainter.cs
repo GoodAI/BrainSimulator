@@ -285,7 +285,7 @@ namespace Render.RenderRequests
             {
                 foreach (var gameObject in objectLayer.GetGameObjects(new RectangleF(gridView)))
                 {
-                    if (IgnoredGameObjects.Contains(gameObject))
+                    if (IgnoredGameObjects.Contains(gameObject) || gameObject.Invisible)
                         continue;
 
                     // Set up transformation to screen space for the gameObject

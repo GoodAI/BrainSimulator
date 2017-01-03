@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="13" tilewidth="16" tileheight="16" nextobjectid="152">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="13" height="13" tilewidth="16" tileheight="16" nextobjectid="155">
  <tileset firstgid="1" name="summer" tilewidth="16" tileheight="16" spacing="1" tilecount="900" columns="15">
   <image source="roguelike_selection_summer.png" trans="ff00ff" width="256" height="1024"/>
  </tileset>
@@ -31,13 +31,13 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,376,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,376,0,0,0,0,0,376,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,376,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -105,7 +105,7 @@
 256,0,0,0,0,0,0,0,0,0,0,0,256,
 256,0,0,0,0,0,256,0,0,0,0,0,256,
 256,0,0,0,0,0,256,0,0,0,0,0,256,
-256,256,256,0,256,256,256,256,256,0,256,256,256,
+256,256,256,0,256,256,0,256,256,0,256,256,256,
 256,0,0,0,0,0,256,0,0,0,0,0,256,
 256,0,0,0,0,0,256,0,0,0,0,0,256,
 256,0,0,0,0,0,0,0,0,0,0,0,256,
@@ -115,10 +115,15 @@
 </data>
  </layer>
  <objectgroup name="Object">
-  <object id="151" name="Ball" type="Ball" gid="497" x="50.3899" y="63.9737" width="16" height="16" rotation="313.025">
+  <object id="151" name="Ball" type="Ball" gid="497" x="50.3899" y="63.9737" width="10" height="10" rotation="330">
    <properties>
     <property name="ElasticCollision" value="true"/>
     <property name="ForwardSpeed" value="0.2"/>
+   </properties>
+  </object>
+  <object id="152" name="InvisibleAvatar" type="Avatar" gid="496" x="96" y="112" width="16" height="16" visible="0">
+   <properties>
+    <property name="InelasticCollision" value="true"/>
    </properties>
   </object>
  </objectgroup>

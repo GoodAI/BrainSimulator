@@ -14,7 +14,7 @@ namespace World.GameActors
     /// <summary>
     /// Common ancestor of GameObjects and Tiles
     /// </summary>
-    public abstract class GameActor
+    public abstract class GameActor : IGameActor
     {
         /// <summary>
         /// Serial number of texture in tileset.

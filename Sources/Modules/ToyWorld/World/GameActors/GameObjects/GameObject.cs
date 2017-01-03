@@ -6,7 +6,7 @@ namespace World.GameActors.GameObjects
     /// <summary>
     /// Game object is loaded from .tmx file. According to type attribute is casted to the concrete object type.
     /// </summary>
-    public interface IGameObject
+    public interface IGameObject : IGameActor
     {
         /// <summary>
         /// Name of an GameObject. Deserialized from .tmx file.
@@ -34,14 +34,9 @@ namespace World.GameActors.GameObjects
         float Weight { get; set; }
 
         /// <summary>
-        /// Serial number of texture in tileset.
-        /// </summary>
-        int TilesetId { get; set; }
-
-        /// <summary>
         /// Name of source Tileset for texture.
         /// </summary>
-        string TilesetName { get; set; }
+        //string TilesetName { get; set; }
 
         /// <summary>
         /// Check if this GameObject center is inside given Shape
@@ -56,6 +51,8 @@ namespace World.GameActors.GameObjects
         /// <param name="shape"></param>
         /// <returns></returns>
         bool Intersects(IShape shape);
+
+        bool Invisible { get; set; }
     }
 
     public abstract class GameObject : GameActor, IGameObject
@@ -82,13 +79,11 @@ namespace World.GameActors.GameObjects
 
         public float Weight { get { return PhysicalEntity.Weight; } set { PhysicalEntity.Weight = value; } }
 
-        public int TilesetId { get; set; }
-
         public string TilesetName { get; set; }
 
-        public GameObject(string tilesetName, int tilesetID, string name)
+        protected GameObject(string tilesetName, int tilesetId, string name)
         {
-            TilesetId = tilesetID;
+            TilesetId = tilesetId;
             TilesetName = tilesetName;
             Name = name;
         }
@@ -102,5 +97,7 @@ namespace World.GameActors.GameObjects
         {
             return shape.CollidesWith(PhysicalEntity.Shape);
         }
+
+        public bool Invisible { get; set; } = false;
     }
 }
