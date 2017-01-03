@@ -6,7 +6,7 @@ using World.GameActors.GameObjects;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class PoisonuosTile : DynamicTile, IAutoupdateableGameActor, IDetectorTile
+    public class PoisonuosTile : DynamicTile, IAutoupdateable, IDetectorTile
     {
         private float ENERGY_FOR_STEP_OR_WAIT_A_SECOND_ON_POISON = 0.1f;
         public int NextUpdateAfter { get; private set; }

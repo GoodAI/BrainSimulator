@@ -30,7 +30,7 @@ namespace World.GameActors.Tiles.ObstacleInteractable
         }
     }
 
-    public interface IEatable : IAutoupdateableGameActor { }
+    public interface IEatable : IAutoupdateable { }
 
     public class Apple : Fruit, IEatable
     {

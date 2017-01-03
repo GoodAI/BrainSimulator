@@ -10,15 +10,15 @@ namespace World.ToyWorldCore
 {
     public class AutoupdateRegister
     {
-        private readonly CircularList<List<IAutoupdateableGameActor>> m_register;
+        private readonly CircularList<List<IAutoupdateable>> m_register;
 
         public int Size { get { return m_register.Size; } }
 
-        protected List<IAutoupdateableGameActor> CurrentUpdateRequests
+        protected List<IAutoupdateable> CurrentUpdateRequests
         {
             get
             {
-                Contract.Ensures(Contract.Result<List<IAutoupdateableGameActor>>() != null);
+                Contract.Ensures(Contract.Result<List<IAutoupdateable>>() != null);
                 return m_register[0];
             }
         }
@@ -29,11 +29,11 @@ namespace World.ToyWorldCore
                 throw new ArgumentOutOfRangeException("registerSize");
             Contract.EndContractBlock();
 
-            m_register = new CircularList<List<IAutoupdateableGameActor>>(registerSize);
+            m_register = new CircularList<List<IAutoupdateable>>(registerSize);
             m_register.MoveNext();
         }
 
-        public void Register(IAutoupdateableGameActor actor, int timePeriod = 1)
+        public void Register(IAutoupdateable actor, int timePeriod = 1)
         {
             if (actor == null)
                 throw new ArgumentNullException("actor");
@@ -56,7 +56,7 @@ namespace World.ToyWorldCore
                 CurrentUpdateRequests.AddRange(atlas.NewAutoupdateables);
                 atlas.NewAutoupdateables.Clear();
             }
-            foreach (IAutoupdateableGameActor actor in CurrentUpdateRequests)
+            foreach (IAutoupdateable actor in CurrentUpdateRequests)
             {
                 actor.Update(atlas);
                 Debug.Assert(actor.NextUpdateAfter < m_register.Size, "Update period too large. Increase size of the AutoupdateRegister.");

@@ -132,13 +132,13 @@ namespace World.Atlas
         /// <summary>
         /// List of newly added IAutoupdatables.
         /// </summary>
-        List<IAutoupdateableGameActor> NewAutoupdateables { get; }
+        List<IAutoupdateable> NewAutoupdateables { get; }
 
         /// <summary>
         /// This method adds actor to automatically updated queue.
         /// </summary>
         /// <param name="actor"></param>
-        void RegisterToAutoupdate(IAutoupdateableGameActor actor);
+        void RegisterToAutoupdate(IAutoupdateable actor);
 
         IAreasCarrier AreasCarrier { get; set; }
 

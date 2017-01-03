@@ -5,7 +5,7 @@ using World.Atlas.Layers;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateableGameActor
+    class FireplaceBurning : DynamicTile, IHeatSource, IAutoupdateable
     {
         private int m_counter;
         private const float MAX_HEAT = 4;

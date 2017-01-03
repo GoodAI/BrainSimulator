@@ -7,7 +7,7 @@ using World.ToyWorldCore;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class Bed : DynamicTile, IAutoupdateableGameActor, IDetectorTile
+    public class Bed : DynamicTile, IAutoupdateable, IDetectorTile
     {
         public bool RequiresCenterOfObject { get { return true; } }
         public int NextUpdateAfter { get; private set; }

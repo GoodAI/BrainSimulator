@@ -14,7 +14,7 @@ using World.GameActors.Tiles.ObstacleInteractable;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateableGameActor, ICanPickGameObject, IMessageSender
+    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPickGameObject, IMessageSender
     {
         /// <summary>
         /// Avatar unique Id for connecting from outside. Specified in .tmx file.
@@ -184,14 +184,10 @@ namespace World.GameActors.GameObjects
                 {
                     var usable = Tool as IUsableGameActor;
 
-                    if (usable != null)
-                    {
-                    usable.Use(new GameActorPosition(this, Position, LayerType.Object), atlas);
-                    }
+                    usable?.Use(new GameActorPosition(this, Position, LayerType.Object), atlas);
                 }
                 UseTool = false;
                 UseToolPreviousStep = true;
-                return;
             }
             else
             {
@@ -209,10 +205,7 @@ namespace World.GameActors.GameObjects
                     var interactable = tileInFrontOf.Actor as IInteractableGameActor;
 
 
-                    if (interactable != null)
-                    {
-                        interactable.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position);
-                    }
+                    interactable?.ApplyGameAction(atlas, new Interact(this), tileInFrontOf.Position);
                     if (tileInFrontOf.Actor is Fruit)
                     {
                         EatFruit(tileInFrontOf);
@@ -221,6 +214,7 @@ namespace World.GameActors.GameObjects
             }
         }
 
+/*
         private void LogAvatarStatus(IAtlas atlas, float temperatureAround)
         {
             string areaName = atlas.AreasCarrier.AreaName(Position);
@@ -249,6 +243,7 @@ namespace World.GameActors.GameObjects
             Log.Instance.Debug("Temperature around avatar " + temperatureAround + ".");
             Log.Instance.Debug("Temperature of avatar " + Temperature + ".");
         }
+*/
 
         private void BalanceTemperature(float temperatureAround, float energyDiff)
         {
@@ -261,7 +256,7 @@ namespace World.GameActors.GameObjects
             Rested -= FATIGUE_FOR_LIVING;
         }
 
-        public void InitializeControls()
+        private void InitializeControls()
         {
             ResetControls();
             InteractPreviousStep = false;

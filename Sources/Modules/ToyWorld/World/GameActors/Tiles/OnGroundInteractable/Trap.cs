@@ -52,7 +52,7 @@ namespace World.GameActors.Tiles.OnGroundInteractable
         }
     }
 
-    public class TrapDischarged : DynamicTile, IAutoupdateableGameActor
+    public class TrapDischarged : DynamicTile, IAutoupdateable
     {
         public int NextUpdateAfter { get; private set; }
 

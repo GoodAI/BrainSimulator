@@ -14,7 +14,7 @@ namespace World.Atlas.Layers
     public class Atlas : IAtlas
     {
         public IAtmosphere Atmosphere { get; set; }
-        public List<IAutoupdateableGameActor> NewAutoupdateables { get; private set; }
+        public List<IAutoupdateable> NewAutoupdateables { get; private set; }
         public List<ITileLayer> TileLayers { get; private set; }
         public List<IObjectLayer> ObjectLayers { get; private set; }
         public IAreasCarrier AreasCarrier { get; set; }
@@ -48,7 +48,7 @@ namespace World.Atlas.Layers
             m_timeTicks = new DateTime(2000, 1, 1, 0, 0, 0).Ticks;
             YearLength = TimeSpan.FromMinutes(2);
             DayLength = TimeSpan.FromSeconds(10);
-            NewAutoupdateables = new List<IAutoupdateableGameActor>();
+            NewAutoupdateables = new List<IAutoupdateable>();
             Avatars = new Dictionary<int, IAvatar>();
             Characters = new List<ICharacter>();
             TileLayers = new List<ITileLayer>();
@@ -102,7 +102,7 @@ namespace World.Atlas.Layers
         }
 
 
-        public void RegisterToAutoupdate(IAutoupdateableGameActor actor)
+        public void RegisterToAutoupdate(IAutoupdateable actor)
         {
             NewAutoupdateables.Add(actor);
         }

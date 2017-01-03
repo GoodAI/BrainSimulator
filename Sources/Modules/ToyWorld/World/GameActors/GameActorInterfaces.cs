@@ -7,7 +7,7 @@ namespace World.GameActors
     /// <summary>
     /// GameActor will be updated in given interval.
     /// </summary>
-    public interface IAutoupdateableGameActor : IGameActor
+    public interface IAutoupdateable
     {
         /// <summary>
         ///

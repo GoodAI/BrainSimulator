@@ -6,7 +6,7 @@ using World.GameActors.GameObjects;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class Recharger : DynamicTile, IAutoupdateableGameActor, IDetectorTile
+    public class Recharger : DynamicTile, IAutoupdateable, IDetectorTile
     {
         private float ENERGY_RECHARGED = 0.1f;
         public int NextUpdateAfter { get; private set; }

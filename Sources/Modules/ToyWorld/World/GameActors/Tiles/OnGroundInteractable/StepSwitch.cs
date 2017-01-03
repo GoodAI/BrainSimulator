@@ -4,7 +4,7 @@ using World.GameActors.GameObjects;
 
 namespace World.GameActors.Tiles.OnGroundInteractable
 {
-    public class StepSwitch : DynamicTile, ISwitcherGameActor, IDetectorTile, IAutoupdateableGameActor
+    public class StepSwitch : DynamicTile, ISwitcherGameActor, IDetectorTile, IAutoupdateable
     {
         public ISwitchableGameActor Switchable { get; set; }
 
