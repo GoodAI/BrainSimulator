@@ -23,25 +23,35 @@ namespace World.Lua
             this.m_atlas = atlas;
         }
 
-        public void CreateGameActor(string type, float x, float y, object[] properties)
+        public void CreateTile(string type, string layer, float x, float y)
         {
             Type t = GameActor.GetType(type);
-            if (t == null) throw new Exception("Object of type " + t + " not founded in assembly.");
+            if (t == null) throw new Exception("Object of type " + type + " not found in assembly.");
 
             GameActor ga = (GameActor)Activator.CreateInstance(t);
             if (t.IsSubclassOf(typeof(Tile)))
             {
                 int xi = (int) x;
                 int yi = (int) y;
-            }
-            else if (t.IsSubclassOf(typeof(Tile)))
-            {
-                m_atlas.Add(new GameActorPosition(ga, new Vector2(x, y), LayerType.Object));
+                m_atlas.Add(new GameActorPosition(ga, new Vector2(xi, yi), Layer(layer)));
             }
             else
             {
-                throw new Exception("Object of type " + t + " is not Tile or Object.");
+                throw new Exception("Object of type " + t + " is not subclass of Tile.");
             }
+        }
+
+        public void DestroyTile(string layer, int x, int y)
+        {
+            m_atlas.Remove(new GameActorPosition(null, new Vector2(x,y), Layer(layer)));
+        }
+
+        public LayerType Layer(string layer)
+        {
+            LayerType t;
+            bool tryParse = Enum.TryParse(layer, true, out t);
+            if (!tryParse) throw new Exception("Layer " + layer +" was not found.");
+            return t;
         }
     }
 }

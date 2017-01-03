@@ -127,6 +127,7 @@ namespace World.Lua
                   "\tac - AvatarControl\n" +
                   "\tavatar - current Avatar\n" +
                   "\tle - LuaExecutor\n" +
+                  "\tam - Atlas manipulator\n" +
                   "\tatlas - Atlas\n\n" +
                   "To acces a property, type '[object].[propery]'.\n" +
                   "To run a method, type '[object]:[method]([arguments])'\n\n" +

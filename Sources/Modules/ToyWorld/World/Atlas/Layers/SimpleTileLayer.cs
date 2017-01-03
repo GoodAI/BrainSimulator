@@ -239,10 +239,12 @@ namespace World.Atlas.Layers
         {
             int x = (int)Math.Floor(original.Position.X);
             int y = (int)Math.Floor(original.Position.Y);
-            Tile item = GetActorAt(x, y);
+
+            /*Tile item = GetActorAt(x, y);
 
             if (item != original.Actor)
                 return false;
+            */
 
             Tiles[x][y] = null;
             Tile tileReplacement = replacement as Tile;
