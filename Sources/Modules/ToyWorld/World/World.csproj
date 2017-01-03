@@ -164,6 +164,7 @@
     <Compile Include="GameActors\GameObjects\Ball.cs" />
     <Compile Include="GameActors\GameObjects\GameObjectInterfaces.cs" />
     <Compile Include="GameActors\Tiles\Background\PathTile.cs" />
+    <Compile Include="GameActors\Tiles\Foreground.cs" />
     <Compile Include="GameActors\Tiles\Neighborhoods.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\Fruit.cs" />
     <Compile Include="GameActors\Tiles\ObstacleInteractable\LeverSwitch.cs" />

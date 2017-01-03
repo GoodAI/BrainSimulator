@@ -43,4 +43,4 @@ ObstacleInteractable;Apple;;316;1;
 ;LeverSwitch;Off;324;1;
 ;LeverSwitch;On;325;0;
 Foreground;Foreground;;376;1;
-;Foreground;;377;1;
+;Foreground;;377;0;
