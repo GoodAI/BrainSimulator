@@ -77,10 +77,6 @@
       <Project>{91324e64-9b84-4312-9e55-5a77df07da1b}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ToyWorld\Utils\Utils.csproj">
-      <Project>{772B1188-A00D-45FC-B352-834227ADAE96}</Project>
-      <Name>Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
