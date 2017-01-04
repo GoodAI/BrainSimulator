@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using VRageMath;
 using World.GameActors.GameObjects;
 using World.Physics;
@@ -26,6 +27,13 @@ namespace World.Atlas.Layers
         /// </summary>
         /// <returns></returns>
         List<IGameObject> GetGameObjects(Vector2I tilePosition);
+
+        /// <summary>
+        /// Returns object of given name or null if there is no such.
+        /// </summary>
+        /// <param name="name">Name of the object (not type)</param>
+        /// <returns></returns>
+        IGameObject GetGameObject(string name);
 
         GameObject GetActorAt(Shape shape);
 

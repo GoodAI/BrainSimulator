@@ -39,6 +39,11 @@ namespace World.Atlas.Layers
             return GetGameObjects(new RectangleF(new Vector2(tilePosition) + Vector2.One / 2, Vector2.One));
         }
 
+        public IGameObject GetGameObject(string name)
+        {
+            return GameObjects.FirstOrDefault(x => x.Name == name);
+        }
+
         public GameObject GetActorAt(Shape shape)
         {
             foreach (IGameObject gameObject in GameObjects)

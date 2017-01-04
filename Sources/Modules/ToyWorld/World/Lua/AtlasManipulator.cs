@@ -53,5 +53,11 @@ namespace World.Lua
             if (!tryParse) throw new Exception("Layer " + layer +" was not found.");
             return t;
         }
+
+        public Vector2 WhereIsObject(string name)
+        {
+            IObjectLayer layer = (IObjectLayer) m_atlas.GetLayer(LayerType.Object);
+            return layer.GetGameObject(name).Position;
+        }
     }
 }

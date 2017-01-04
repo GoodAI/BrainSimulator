@@ -7,15 +7,38 @@ function sleep(n)  -- seconds
   while clock() - t0 <= n do end
 end
 
-for i=1,3 do
-	am:CreateTile("Wall","Obstacle",6,3)
-	am:CreateTile("Wall","Obstacle",3,6)
-	am:CreateTile("Wall","Obstacle",6,9)
-	am:CreateTile("Wall","Obstacle",9,6)
+function whichRoom(x,y)
+	if x < 6.5 then
+		if y < 6.5 then
+			return 1
+		else
+			return 4
+		end
+	else
+		if y < 6.5 then
+			return 2
+		else
+			return 3
+		end
+	end
+end
+
+function backDoor(room)
+	if(room == 1) then return 3,6
+	elseif(room == 2) then return 6,3
+	elseif(room == 3) then return 9,6
+	elseif(room == 4) then return 6,9
+	else return nil end
+end
+
+
+for i=1,10000 do
+	local v = am:WhereIsObject("Ball")
+	local room = whichRoom(v.X,v.Y)
+	local x,y = backDoor(room)
+	am:CreateTile("Wall","Obstacle",x,y)
+	sleep(10)
+	
+	am:DestroyTile("Obstacle",x,y)
 	sleep(2)
-	am:DestroyTile("Obstacle",6,3)
-	am:DestroyTile("Obstacle",3,6)
-	am:DestroyTile("Obstacle",6,9)
-	am:DestroyTile("Obstacle",9,6)
-	sleep(4)
 end
