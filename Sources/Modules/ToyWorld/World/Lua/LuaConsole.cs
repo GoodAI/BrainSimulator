@@ -57,6 +57,13 @@ namespace World.Lua
 
         private void LuaConsole_KeyDown(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+            {
+                m_lex.StopScript();
+            }
+
+            if (!inputTextBox.Enabled) return;
+
             if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = true;
@@ -97,14 +104,10 @@ namespace World.Lua
                 m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
             }
 
-            if (e.KeyCode == Keys.Escape)
-            {
-                m_lex.StopScript();
-            }
-
             if (HistoryPointer < 0) return;
             if (e.KeyCode == Keys.Up)
             {
+                
                 if (m_inputList.Count == 0) return;
                 HistoryPointer--;
                 inputTextBox.Text = m_inputList[HistoryPointer];
