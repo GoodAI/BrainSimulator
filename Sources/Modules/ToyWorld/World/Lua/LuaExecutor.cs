@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using NLua.Event;
 using World.Atlas;
 
 namespace World.Lua
@@ -13,29 +14,54 @@ namespace World.Lua
     public class LuaExecutor
     {
         public NLua.Lua State;
+        private readonly IAtlas m_atlas;
         private readonly AutoResetEvent m_scriptSynchronization;
+        private readonly LuaConsole m_luaConsole;
 
-        public LuaExecutor(IAtlas atlas, AutoResetEvent scriptSynchronization)
+        public LuaExecutor(IAtlas atlas, AutoResetEvent scriptSynchronization, LuaConsole luaConsole = null)
         {
+            m_atlas = atlas;
             m_scriptSynchronization = scriptSynchronization;
+            m_luaConsole = luaConsole;
+            SetInitialState();
+        }
+
+        private void SetInitialState()
+        {
             State = new NLua.Lua();
             State.LoadCLRPackage();
             State.DoString(@"import ('World','World.ToyWorldCore')");
             State.DoString(@"import ('World','World.Lua')");
 
             State["le"] = this;
-            State["atlas"] = atlas;
+            State["atlas"] = m_atlas;
 
             State.RegisterFunction("Help", typeof(LuaExecutor).GetMethod("Help"));
 
-            if (atlas.Avatars.Count > 0)
+            if (m_atlas.Avatars.Count > 0)
             {
-                AvatarCommander avatarCommander = new AvatarCommander(this, atlas);
+                AvatarCommander avatarCommander = new AvatarCommander(this, m_atlas);
                 State["ac"] = avatarCommander;
             }
 
-            AtlasManipulator atlasManipulator = new AtlasManipulator(this, atlas);
+            AtlasManipulator atlasManipulator = new AtlasManipulator(this, m_atlas);
             State["am"] = atlasManipulator;
+
+            State["lc"] = m_luaConsole;
+
+            State.DebugHook += OnDebugHook;
+
+            State.SetDebugHook(EventMasks.LUA_MASKLINE, 1000);
+        }
+
+        private void OnDebugHook(object sender, DebugHookEventArgs e)
+        {
+            if (!m_stopScript) return;
+            State.DoString(@"function TALuaScriptInternalStopHook(why)  error ('" +
+                "User interruption." + "'); end; debug.sethook (TALuaScriptInternalStopHook, '', 1);");
+            State.DoString("lc:Print(\"Core reset!\")");
+            m_stopScript = false;
+            SetInitialState();
         }
 
         private Thread m_thread;

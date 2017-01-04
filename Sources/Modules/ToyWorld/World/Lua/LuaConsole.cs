@@ -13,8 +13,7 @@ namespace World.Lua
         private readonly LuaExecutor m_lex;
         private readonly List<string> m_inputOutputList = new List<string>();
         private readonly List<string> m_inputList = new List<string>();
-        private int m_historyPointer = 0;
-        private Thread m_currentlyExecutedChunk;
+        private int m_historyPointer;
 
         private const string INVITATION_MESSAGE = "Lua-console for ToyWorld. Type 'help' for basic usage examples.";
 
@@ -45,11 +44,10 @@ namespace World.Lua
 
             outputListBox.DataSource = m_inputOutputList;
 
-            m_lex = new LuaExecutor(atlas, luaSynch);
+            m_lex = new LuaExecutor(atlas, luaSynch, this);
 
             m_inputOutputList.Add(INVITATION_MESSAGE);
             ResetBox();
-
         }
 
         private void CloseConsole(object sender)
@@ -64,7 +62,7 @@ namespace World.Lua
                 e.Handled = true;
 
                 string command = inputTextBox.Text;
-                Print("I: " + command);
+                PrintLines(">>" + command);
                 m_inputList.Add(command);
                 HistoryPointer = int.MaxValue;
 
@@ -90,13 +88,13 @@ namespace World.Lua
                     }
                     catch (Exception)
                     {
-                        Print(e.ToString());
+                        PrintLines(e.ToString());
                     }
                 }
                 else if (command.StartsWith("Help")) command = "return " + command;
                 else if (command.StartsWith("help ")) command = "return Help(" + command.Substring(5) + ")";
 
-                m_currentlyExecutedChunk = m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
+                m_lex.ExecuteChunk(command, PrintResultAndActivateInput);
             }
 
             if (e.KeyCode == Keys.Escape)
@@ -121,13 +119,14 @@ namespace World.Lua
 
         private void PrintHelp()
         {
-            Print("Type 'help [object]' for list of accessible methods. \n\n" +
+            PrintLines("Type 'help [object]' for list of accessible methods. \n\n" +
                   "If you want to stop a method, press Esc key.\n\n" +
                   "Useful objects: \n" +
-                  "\tac - AvatarControl\n" +
-                  "\tavatar - current Avatar\n" +
                   "\tle - LuaExecutor\n" +
+                  "\tlc - LuaConsole (lc:PrintLines(\"toPrint\"))\n" +
+                  "\tac - AvatarControl\n" +
                   "\tam - Atlas manipulator\n" +
+                  "\tavatar - current Avatar\n" +
                   "\tatlas - Atlas\n\n" +
                   "To acces a property, type '[object].[propery]'.\n" +
                   "To run a method, type '[object]:[method]([arguments])'\n\n" +
@@ -138,26 +137,34 @@ namespace World.Lua
         {
             Invoke(new Action(() =>
             {
-                Print(result);
+                PrintLines(result);
                 inputTextBox.Enabled = true;
                 inputTextBox.Focus();
             }));
         }
 
-        private void Print(string toPrint)
+        private void PrintLines(object o)
         {
-            foreach (string s in toPrint.Split('\n'))
+            foreach (string s in o.ToString().Split('\n'))
             {
                 m_inputOutputList.Add(s);
             }
             ResetBox();
         }
 
+        public void Print(object o)
+        {
+            Invoke(new Action(() =>
+            {
+                PrintLines(o);
+            }));
+        }
+
         private void ResetBox()
         {
             outputListBox.DataSource = null;
             outputListBox.DataSource = m_inputOutputList;
-            outputListBox.SetSelected(m_inputOutputList.Count - 1, true);
+            //outputListBox.SetSelected(m_inputOutputList.Count - 1, true);
         }
 
         private void inputTextBox_KeyPress(object sender, KeyPressEventArgs e)

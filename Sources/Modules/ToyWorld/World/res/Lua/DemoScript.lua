@@ -32,10 +32,12 @@ function backDoor(room)
 end
 
 
-for i=1,10000 do
+for i=1,10 do
+	lc:Print("Cyclus nr.: " .. i)
 	local v = am:WhereIsObject("Ball")
 	local room = whichRoom(v.X,v.Y)
 	local x,y = backDoor(room)
+	lc:Print("Current room: " .. tostring(room))
 	am:CreateTile("Wall","Obstacle",x,y)
 	sleep(10)
 	
