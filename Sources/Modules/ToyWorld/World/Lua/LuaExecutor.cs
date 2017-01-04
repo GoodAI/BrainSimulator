@@ -111,10 +111,10 @@ namespace World.Lua
                 result.Append(" }");
             }
 
-            if (result.Length == 0)
+            /*if (result.Length == 0)
             {
                 result.Append("Done");
-            }
+            }*/
 
             performAfterFinished?.Invoke(result.ToString());
         }

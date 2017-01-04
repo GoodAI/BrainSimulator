@@ -148,6 +148,7 @@ namespace World.Lua
 
         private void PrintLines(object o)
         {
+            if (o.ToString() == "") return;
             foreach (string s in o.ToString().Split('\n'))
             {
                 m_inputOutputList.Add(s);
@@ -167,7 +168,7 @@ namespace World.Lua
         {
             outputListBox.DataSource = null;
             outputListBox.DataSource = m_inputOutputList;
-            //outputListBox.SetSelected(m_inputOutputList.Count - 1, true);
+            outputListBox.SetSelected(m_inputOutputList.Count - 1, true);
         }
 
         private void inputTextBox_KeyPress(object sender, KeyPressEventArgs e)

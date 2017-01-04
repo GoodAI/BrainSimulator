@@ -43,7 +43,7 @@
             this.outputListBox.Location = new System.Drawing.Point(0, 0);
             this.outputListBox.Name = "outputListBox";
             this.outputListBox.ScrollAlwaysVisible = true;
-            this.outputListBox.Size = new System.Drawing.Size(441, 589);
+            this.outputListBox.Size = new System.Drawing.Size(600, 589);
             this.outputListBox.TabIndex = 0;
             this.outputListBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LuaConsole_KeyDown);
             // 
@@ -54,7 +54,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.inputTextBox.Location = new System.Drawing.Point(0, 598);
             this.inputTextBox.Name = "inputTextBox";
-            this.inputTextBox.Size = new System.Drawing.Size(441, 20);
+            this.inputTextBox.Size = new System.Drawing.Size(600, 20);
             this.inputTextBox.TabIndex = 1;
             this.inputTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.LuaConsole_KeyDown);
             this.inputTextBox.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.inputTextBox_KeyPress);
@@ -63,7 +63,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(441, 618);
+            this.ClientSize = new System.Drawing.Size(600, 618);
             this.Controls.Add(this.inputTextBox);
             this.Controls.Add(this.outputListBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
