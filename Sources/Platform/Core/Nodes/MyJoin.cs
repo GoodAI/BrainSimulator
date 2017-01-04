@@ -273,15 +273,14 @@ namespace GoodAI.Core.Nodes
             if (m_outputDimsHint.IsEmpty)
                 return;
 
-            try
-            {
-                Output.Dims = m_outputDimsHint.Apply(Output.Dims);
+            string errorMessage;
+            Output.Dims = m_outputDimsHint.TryToApply(Output.Dims, out errorMessage);
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            { 
+                MyLog.WARNING.WriteLine($"Join node '{Name}': Could not apply OutputDimensions: {errorMessage}");
             }
-            catch(InvalidDimensionsException ex)
-            {
-                MyLog.WARNING.WriteLine($"Join node '{Name}': Could not apply OutputDimensions: {ex.Message}");
-            }
-        }
+    }
 
         public override void Validate(MyValidator validator)
         {

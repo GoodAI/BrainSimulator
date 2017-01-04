@@ -31,7 +31,7 @@ namespace CoreTests.Memory
                 {"", CustomDimensionsHint.Empty, true, false }  // Empty is *not* fully defined by definition (OK?)
             };
         
-        [Theory, MemberData("ValidParseData")]
+        [Theory, MemberData(nameof(ValidParseData))]
         public void ParsingAndFlaggingTheory(
             string source, CustomDimensionsHint expectedHint, bool isEmpty, bool isFullyDefined)
         {
@@ -93,7 +93,7 @@ namespace CoreTests.Memory
                 { CustomDimensionsHint.Empty, new TensorDimensions(7, 13) }
             };
 
-        [Theory, MemberData("ApplyFallbackData")]
+        [Theory, MemberData(nameof(ApplyFallbackData))]
         public void ApplyFallbackTheory(CustomDimensionsHint hint, TensorDimensions originalDims)
         {
             TensorDimensions resultDims;
@@ -102,6 +102,26 @@ namespace CoreTests.Memory
 
             Assert.Equal(originalDims, resultDims);
             Assert.False(didApply);
+        }
+
+        [Theory, MemberData(nameof(ApplyFallbackData))]
+        public void ApplyWithErrorMessageTheory(CustomDimensionsHint hint, TensorDimensions originalDims)
+        {
+            string errorMessage;
+            var resultDims = hint.TryToApply(originalDims, out errorMessage);
+            
+            Assert.Equal(originalDims, resultDims);
+            Assert.False(string.IsNullOrEmpty(errorMessage));
+        }
+
+        [Fact]
+        public void ApplyWithoutErrorMessage()
+        {
+            string errorMessage;
+            var resultDims = CustomDimensionsHint.Parse("3, 2").TryToApply(new TensorDimensions(6), out errorMessage);
+
+            Assert.Equal(new TensorDimensions(3, 2), resultDims);
+            Assert.Equal(string.Empty, errorMessage);
         }
     }
 }
