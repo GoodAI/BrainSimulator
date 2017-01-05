@@ -52,6 +52,7 @@ namespace World.Lua
 
         private void CloseConsole(object sender)
         {
+            if (!Visible) return;
             Invoke(new Action(Close));
         }
 
@@ -69,6 +70,13 @@ namespace World.Lua
                 e.Handled = true;
 
                 string command = inputTextBox.Text;
+
+                if (command.Trim() == "")
+                {
+                    PrintLines(">>");
+                    return;
+                }
+
                 PrintLines(">>" + command);
                 m_inputList.Add(command);
                 HistoryPointer = int.MaxValue;
