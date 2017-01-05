@@ -117,6 +117,8 @@ namespace World.Lua
             }*/
 
             performAfterFinished?.Invoke(result.ToString());
+
+            m_scriptSynchronization.Set();
         }
 
         public void Do(Func<object[], bool> stepFunc, params object[] parameters)

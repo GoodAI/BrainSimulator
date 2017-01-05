@@ -39,7 +39,7 @@ for i=1,10 do
 	local x,y = backDoor(room)
 	lc:Print("Current room: " .. tostring(room))
 	am:CreateTile("Wall","Obstacle",x,y)
-	sleep(10)
+	sleep(4)
 	
 	am:DestroyTile("Obstacle",x,y)
 	sleep(2)
