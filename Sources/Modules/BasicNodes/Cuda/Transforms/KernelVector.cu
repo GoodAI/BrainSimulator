@@ -26,7 +26,7 @@ extern "C"
 		float weightA,
 		float weightB,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -45,7 +45,7 @@ extern "C"
 		float scalar,
 		float* output,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -62,7 +62,7 @@ extern "C"
 		float* output,	//output vector of the same length as input
 		int noSegments, //number of segments == N
 		int count		//length of the input vector
-		)
+	)
 	{
 		int id = GetId();
 
@@ -81,7 +81,7 @@ extern "C"
 		float * input,
 		float scalar,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -98,7 +98,7 @@ extern "C"
 		float scalar1,
 		float scalar2,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -112,7 +112,7 @@ extern "C"
 		float* a,
 		float* result,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -134,7 +134,7 @@ extern "C"
 		float* b,
 		float* result,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -152,7 +152,7 @@ extern "C"
 		float maxBound,
 		float* result,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -177,7 +177,7 @@ extern "C"
 		float maxBound,
 		float* result,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -200,9 +200,38 @@ extern "C"
 		float weightA,
 		float weightB,
 		int count
-		)
+	)
 	{
 		device_ElementwiseAdd_Weighted(a, b, out, weightA, weightB, count);
+	}
+
+	// output is wa*a + wb*b, zero otherwise. a and b can be offsetted
+	__global__ void ElementwiseAdd_WeightedOffsetted(
+		float* a,
+		float* b,
+		float* out,
+		float weightA,
+		float weightB,
+		int offsetA,
+		int offsetB,
+		int countA,
+		int countB,
+		int count
+	)
+	{
+		int id = GetId();
+
+		if (id < count)
+		{
+			out[id] = 0.0f;
+
+			if (id >= offsetA && id < offsetA + countA) {
+				out[id] += weightA * a[id - offsetA];
+			}
+			if (id >= offsetB && id < offsetB + countB) {
+				out[id] += weightB * b[id - offsetB];
+			}
+		}
 	}
 
 	// output = a./b
@@ -211,7 +240,7 @@ extern "C"
 		float* b,
 		float* output,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -227,7 +256,7 @@ extern "C"
 		float* b,
 		float* out,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -244,7 +273,7 @@ extern "C"
 		float* out,
 		int lengthA,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -262,7 +291,7 @@ extern "C"
 		float* b,
 		float* result,
 		int count
-		)
+	)
 	{
 		int id = GetId();
 
@@ -279,7 +308,7 @@ extern "C"
 		float* output,	//matrix m * n, where m = length a and m = length b
 		int lengthA,
 		int lengthB
-		)
+	)
 	{
 		int id = GetId();
 
@@ -300,7 +329,7 @@ extern "C"
 		float* b,
 		float* result,
 		int count
-		)
+	)
 	{
 		device_ElementwiseAdd_Weighted(a, b, result, 0.5f, 0.5f, count);
 	}
