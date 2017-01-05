@@ -20,13 +20,6 @@ namespace GoodAI.Core.Observers
         public Vector3 Translation;
         public MyAbstractObserver Observer { get; internal set; }
 
-        public MyShape() { }
-
-        protected MyShape(MyAbstractObserver observer)
-        {
-            Observer = observer;
-        }
-
         public abstract void Render();
     }
 
