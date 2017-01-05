@@ -10,6 +10,11 @@ namespace MNIST
 {
     public abstract class ImageWorld : MyWorld
     {
+        #region Abstract Properties
+        protected abstract TensorDimensions _inputDims { get; }
+        protected abstract int _nClasses { get; }
+        #endregion
+
         #region Memory Blocks
         [MyOutputBlock(0)]
         public MyMemoryBlock<float> Input
@@ -27,18 +32,45 @@ namespace MNIST
         #endregion
 
         #region World settings
-        //[MyBrowsable, Category("Input"), Description("Binarize Input images with threshold = 0.5")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool Binarize { get; set; }
+        [MyBrowsable, Category("Input"), Description("Binarize Input images with threshold = 0.5")]
+        [YAXSerializableField(DefaultValue = false)]
+        public bool Binarize { get; set; }
 
         [MyBrowsable, Category("Target"), Description("Present target in one-hot encoding instead of class number")]
         [YAXSerializableField(DefaultValue = false)]
         public bool OneHot { get; set; }
 
-        //[MyBrowsable, Category("Random"), Description("Used to shuffle the order in which examples get presented.\n0 = use random RandomSeed")]
-        //[YAXSerializableField(DefaultValue = 0)]
-        //public int RandomSeed { get; set; }
+        [MyBrowsable, Category("Random"), DisplayName("Seed"), Description("Used to shuffle the order in which examples get presented. 0 = use random seed")]
+        [YAXSerializableField(DefaultValue = 0)]
+        public int RandomSeed { get; set; }
+
+        [MyBrowsable, Category("Random"), Description("Reshuffle dataset after each epoch.")]
+        [YAXSerializableField(DefaultValue = true)]
+        public bool Reshuffle { get; set; }
+
         #endregion
+
+        public override void UpdateMemoryBlocks()
+        {
+            Input.Dims = _inputDims;
+
+            if (OneHot)
+            {
+                Target.Dims = new TensorDimensions(_nClasses);
+                Target.MinValueHint = 0;
+                Target.MaxValueHint = 1;
+            }
+            else
+            {
+                Target.Dims = new TensorDimensions(1);
+                Target.MinValueHint = 0;
+                Target.MaxValueHint = _nClasses - 1;
+            }
+
+            //because values are normalized
+            Input.MinValueHint = 0;
+            Input.MaxValueHint = 1;
+        }
     }
 
     [Description("Send Training Data"), MyTaskInfo(OneShot = false)]
@@ -68,22 +100,32 @@ namespace MNIST
         //public bool SequenceOrdered { get; set; }
 
 
-        //[MyBrowsable, Category("Params"), DisplayName("Random order"),
-        //Description("Reshuffle dataset after each epoch.")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool Reshuffle { get; set; }
+        protected abstract DatasetReaderFactory CreateFactory(string basePath);
+
+        public override void Init(int nGPU)
+        {
+            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
+            DatasetReaderFactory factory = CreateFactory(basePath);
+            _dataset = new DatasetManager(factory, Owner.RandomSeed, Owner.Reshuffle);
+        }
 
         public override void Execute()
         {
             if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
                 IExample ex = _dataset.GetNext();
-                Array.Copy(ex.Input, Owner.Input.Host, ex.Input.Length);
 
-                //if (Owner.Binarize)
-                //{
-                //    //Owner.Input.Host.ForEach(v => v >= 127 ? 255 : 0);
-                //}
+                if (Owner.Binarize)
+                {
+                    for (int i = 0; i < ex.Input.Length; i++)
+                    {
+                        Owner.Input.Host[i] = ex.Input[i] >= 0.5 ? 1 : 0;
+                    }
+                }
+                else
+                {
+                    Array.Copy(ex.Input, Owner.Input.Host, ex.Input.Length);
+                }
 
                 if (Owner.OneHot)
                 {

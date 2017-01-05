@@ -36,16 +36,17 @@ namespace MNIST
                 //TODO: include path of the file?
                 throw new InvalidDataException("Invalid USPS file: invalid number of elements on line");
             }
-            var ci = new CultureInfo("en-US");
 
-            int target = (int) float.Parse(numbers[0],ci);
-            float[] input = new float[nPixels];
+            CultureInfo ci = new CultureInfo("en-US");
+            int label = (int) float.Parse(numbers[0], ci);
+
+            float[] imageData = new float[nPixels];
             for (int i = 0; i < nPixels; ++i)
             {
-                input[i] = float.Parse(numbers[i + 1],ci);
+                imageData[i] = float.Parse(numbers[i + 1], ci);
             }
 
-            return new Example(input, target);
+            return new NormalizedExample(imageData, label);
         }
 
         public bool HasNext()

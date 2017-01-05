@@ -52,13 +52,13 @@
     <Compile Include="DatasetReader.cs" />
     <Compile Include="Example.cs" />
     <Compile Include="ImageWorld.cs" />
-    <Compile Include="MNISTDatasetReader.cs" />
+    <Compile Include="MNISTDataset.cs" />
     <Compile Include="MNISTWorld.cs" />
     <Compile Include="MyMNISTManager.cs" />
     <Compile Include="MyMNISTWorld.cs" />
     <Compile Include="MyMovingObjectsWorld.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="USPSDatasetReader.cs" />
+    <Compile Include="USPSDataset.cs" />
     <Compile Include="USPSWorld.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>

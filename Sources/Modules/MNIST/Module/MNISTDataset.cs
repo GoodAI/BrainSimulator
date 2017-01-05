@@ -68,7 +68,7 @@ namespace MNIST
             byte[] imageData = _brImages.ReadBytes(ImageRows * ImageColumns);
             int label = _brLabels.ReadByte();
             _nExamplesLeft--;
-            return new Example(imageData, label);
+            return new NormalizedExample(imageData, label);
         }
 
         public bool HasNext()

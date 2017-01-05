@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using System.ComponentModel;
+using System;
 
 namespace MNIST
 {
@@ -17,48 +18,38 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendUSPSTestDataTask SendTestUSPSData { get; protected set; }
 
-        public override void UpdateMemoryBlocks()
+        protected override TensorDimensions _inputDims
         {
-            Input.Dims = new TensorDimensions(USPSDatasetReader.ImageRows, USPSDatasetReader.ImageColumns);
-
-            if (OneHot)
+            get
             {
-                Target.Dims = new TensorDimensions(10);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = 1;
+                return new TensorDimensions(USPSDatasetReader.ImageRows, USPSDatasetReader.ImageColumns, USPSDatasetReader.ImageChannels);
             }
-            else
-            {
-                Target.Dims = new TensorDimensions(1);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = USPSDatasetReader.NumberOfClasses - 1;
-            }
+        }
 
-            //because values are not normalized
-            Input.MinValueHint = -1;
-            Input.MaxValueHint = 1;
+        protected override int _nClasses
+        {
+            get
+            {
+                return USPSDatasetReader.NumberOfClasses;
+            }
         }
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTrainDataTask : SendDataTask
     {
-        public override void Init(int nGPU)
+        protected override DatasetReaderFactory CreateFactory(string basePath)
         {
-            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            DatasetReaderFactory factory = new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Train);
-            _dataset = new DatasetManager(factory);
+            return new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Train);
         }
     }
 
     [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTestDataTask : SendDataTask
     {
-        public override void Init(int nGPU)
+        protected override DatasetReaderFactory CreateFactory(string basePath)
         {
-            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            DatasetReaderFactory factory = new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Test);
-            _dataset = new DatasetManager(factory);
+            return new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Test);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace MNIST
     /// <meta>mn</meta>
     /// <status>Work in progress</status>
     /// <summary>New version of MNIST World (2017)</summary>
-    /// <description>There is 60000 (roughly 6000 for each class) and training and 10000 testing images.</description>
+    /// <description>There is 60000 (roughly 6000 for each class) training and 10000 testing images.</description>
     public class MNISTWorld : ImageWorld
     {
         [MyTaskGroup("SendData")]
@@ -18,48 +18,38 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendMNISTTestDataTask SendTestMNISTData { get; protected set; }
 
-        public override void UpdateMemoryBlocks()
+        protected override TensorDimensions _inputDims
         {
-            Input.Dims = new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns);
-
-            if (OneHot)
+            get
             {
-                Target.Dims = new TensorDimensions(10);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = 1;
+                return new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
             }
-            else
-            {
-                Target.Dims = new TensorDimensions(1);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = MNISTDatasetReader.NumberOfClasses - 1;
-            }
+        }
 
-            //because values are not normalized
-            Input.MinValueHint = 0;
-            Input.MaxValueHint = 255;
+        protected override int _nClasses
+        {
+            get
+            {
+                return MNISTDatasetReader.NumberOfClasses;
+            }
         }
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]
     public class SendMNISTTrainDataTask : SendDataTask
     {
-        public override void Init(int nGPU)
+        protected override DatasetReaderFactory CreateFactory(string basePath)
         {
-            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            DatasetReaderFactory factory = new MNISTDatasetReaderFactory(basePath, DatasetReaderFactoryType.Train);
-            _dataset = new DatasetManager(factory);
+            return new MNISTDatasetReaderFactory(basePath, DatasetReaderFactoryType.Train);
         }
     }
 
     [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
     public class SendMNISTTestDataTask : SendDataTask
     {
-        public override void Init(int nGPU)
+        protected override DatasetReaderFactory CreateFactory(string basePath)
         {
-            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            DatasetReaderFactory factory = new MNISTDatasetReaderFactory(basePath, DatasetReaderFactoryType.Test);
-            _dataset = new DatasetManager(factory);
+            return new MNISTDatasetReaderFactory(basePath, DatasetReaderFactoryType.Test);
         }
     }
 }

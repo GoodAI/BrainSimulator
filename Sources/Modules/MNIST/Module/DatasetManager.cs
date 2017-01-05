@@ -11,20 +11,34 @@ namespace MNIST
         private DatasetReaderFactory _readerFactory;
         private List<IExample> _examples;
 
-        private List<int> _indexes;
-        List<int>.Enumerator _indexer;
+        private int[] _indexes;
+        int _indexer;
 
-        List<int> _nExamplesPerClass;
-    
-        public DatasetManager(DatasetReaderFactory readerFactory)
+        private int[] _nExamplesPerClass;
+
+        private Random _random;
+        private bool _doShuffle;
+        public DatasetManager(DatasetReaderFactory readerFactory, int seed, bool doShuffle)
         {
             _readerFactory = readerFactory;
+            _doShuffle = doShuffle;
+            _indexer = 0;
 
+            if (seed == 0)
+            {
+                _random = new Random();
+            }
+            else
+            {
+                _random = new Random(seed);
+            }
+
+            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            //sw.Start();
             using (IDatasetReader r = _readerFactory.CreateReader())
             {
                 int nClasses = r.NumClasses;
-                _nExamplesPerClass = new List<int>(nClasses);
-                _nExamplesPerClass.AddRange(Enumerable.Repeat(0, r.NumClasses));
+                _nExamplesPerClass = Enumerable.Repeat(0, r.NumClasses).ToArray();
 
                 _examples = new List<IExample>();
                 while (r.HasNext())
@@ -37,26 +51,49 @@ namespace MNIST
                 //check if _examples.Count > 0?
             }
 
-            int nIndexes = _examples.Count - 1;
-            _indexes = new List<int>(nIndexes);
-            _indexes.AddRange(Enumerable.Range(0, nIndexes));
+            _indexes = Enumerable.Range(0, _examples.Count - 1).ToArray();
 
-            _indexer = _indexes.GetEnumerator();
+            if (_examples.Count == 0)
+            {
+                throw new Exception("Dataset is empty!"); //TODO: better exception?
+            }
+
+            //sw.Stop();
+            //Console.WriteLine("Elapsed={0}", sw.Elapsed);
         }
 
-        public int GetMinMaxNumberPerClass()
+        public int GetMaxNumberPerClass()
         {
             return _nExamplesPerClass.Min();
+        }
+        
+        private void CheckShuffle()
+        {
+            if (_doShuffle)
+            {
+                for (int n = _indexes.Length; n > 1; --n)
+                {
+                    int i = _random.Next(n);
+                    int tmp = _indexes[i];
+                    _indexes[i] = _indexes[n - 1];
+                    _indexes[n - 1] = tmp;
+                }
+            }
         }
 
         public IExample GetNext()
         {
-            if (_indexer.MoveNext() == false) {
-                _indexer = _indexes.GetEnumerator();
-                return GetNext();
+
+            if (_indexer == _indexes.Length) {
+                _indexer = 0;
             }
 
-            return _examples[_indexer.Current];
+            if (_indexer == 0)
+            {
+                CheckShuffle();
+            }
+
+            return _examples[_indexes[_indexer++]];
         }
     }
 }
