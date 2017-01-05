@@ -129,6 +129,28 @@ extern "C"
 		}
 	}
 
+	__global__ void ElementwiseThreshold(
+		float* output,
+		float* input,
+		float threshold,
+		int count
+	)
+	{
+		int id = GetId();
+
+		if (id < count)
+		{
+			if (input[id] < threshold)
+			{
+				output[id] = threshold;
+			}
+			else
+			{
+				output[id] = input[id];
+			}
+		}
+	}
+
 	__global__ void ElementwiseAdd(
 		float* a,
 		float* b,
