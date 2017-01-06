@@ -16,7 +16,11 @@ namespace World.Lua
         private int m_historyPointer;
 
         private const string INVITATION_MESSAGE = "Lua-console for ToyWorld. Type 'help' for basic usage examples.";
+        private const string INPUT_LINE_START = ">>";
 
+        /// <summary>
+        /// Points to current position in list of all previous inputs.
+        /// </summary>
         private int HistoryPointer
         {
             get { return m_historyPointer; }
@@ -73,11 +77,11 @@ namespace World.Lua
 
                 if (command.Trim() == "")
                 {
-                    PrintLines(">>");
+                    PrintLines(INPUT_LINE_START);
                     return;
                 }
 
-                PrintLines(">>" + command);
+                PrintLines(INPUT_LINE_START + command);
                 m_inputList.Add(command);
                 HistoryPointer = int.MaxValue;
 
@@ -130,18 +134,21 @@ namespace World.Lua
 
         private void PrintHelp()
         {
-            PrintLines("Type 'help [object]' for list of accessible methods. \n\n" +
-                  "If you want to stop a method, press Esc key.\n\n" +
-                  "Useful objects: \n" +
-                  "\tle - LuaExecutor\n" +
-                  "\tlc - LuaConsole (lc:PrintLines(\"toPrint\"))\n" +
-                  "\tac - AvatarControl\n" +
-                  "\tam - Atlas manipulator\n" +
-                  "\tavatar - current Avatar\n" +
-                  "\tatlas - Atlas\n\n" +
-                  "To acces a property, type '[object].[propery]'.\n" +
-                  "To run a method, type '[object]:[method]([arguments])'\n\n" +
-                  "You can use assignments and standard Lua control mechanisms.");
+            PrintLines(@"Type 'help [object]' for list of accessible methods.
+If you want to stop a method, press Esc key
+
+Useful objects:
+\ttle - LuaExecutor
+\tlc - LuaConsole (lc:PrintLines('toPrint'))
+\tac - AvatarControl
+\tam - Atlas manipulator
+\tavatar - current Avatar
+\tatlas - Atlas
+
+To acces a property, type '[object].[propery]'.
+To run a method, type '[object]:[method]([arguments])'
+
+You can use assignments and standard Lua control mechanisms.");
         }
 
         private void PrintResultAndActivateInput(string result)
@@ -181,7 +188,7 @@ namespace World.Lua
 
         private void inputTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar.Equals((char)13))
+            if (e.KeyChar.Equals((char)Keys.Return))
             {
                 e.Handled = true;
             }

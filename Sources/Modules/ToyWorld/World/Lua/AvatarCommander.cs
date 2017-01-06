@@ -81,7 +81,11 @@ namespace World.Lua
             m_le.Do(f, cuPos + relative, distance);
         }
 
-        public void SetHeading(string heading)
+        /// <summary>
+        /// Continously rotates avatar to heading.
+        /// </summary>
+        /// <param name="heading">Target heading can be either "N", "S", "W" or "E".</param>
+        public void RotateToHeading(string heading)
         {
             string lower = heading.ToLower();
             string trim = lower.Trim();
@@ -107,12 +111,21 @@ namespace World.Lua
             RotateTo(r);
         }
 
-        public void SetHeading(int heading)
+        /// <summary>
+        /// Continously rotates avatar to heading.
+        /// </summary>
+        /// <param name="heading">Target heading in degrees. 0 means north, 90 means right.</param>
+        public void RotateToHeading(int heading)
         {
             float r = MathHelper.ToRadians(-heading);
             RotateTo(r);
         }
 
+        /// <summary>
+        /// Teleports avatar to given location.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         public void Teleport(float x, float y)
         {
             m_currentAvatar.Position = new Vector2(x, y);
@@ -189,7 +202,7 @@ namespace World.Lua
 
         public GameActorPosition GetNearest(Vector2 position, string type)
         {
-            Type t = GameActor.GetType(type);
+            Type t = GameActor.GetGameActorType(type);
 
             for (int i = 1; i < 20; i++)
             {

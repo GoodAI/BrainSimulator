@@ -14,18 +14,16 @@ namespace World.Lua
 {
     class AtlasManipulator
     {
-        private IAtlas m_atlas;
-        private LuaExecutor m_luaExecutor;
+        private readonly IAtlas m_atlas;
 
-        public AtlasManipulator(LuaExecutor luaExecutor, IAtlas atlas)
+        public AtlasManipulator(IAtlas atlas)
         {
-            this.m_luaExecutor = luaExecutor;
             this.m_atlas = atlas;
         }
 
         public void CreateTile(string type, string layer, float x, float y)
         {
-            Type t = GameActor.GetType(type);
+            Type t = GameActor.GetGameActorType(type);
             if (t == null) throw new Exception("Object of type " + type + " not found in assembly.");
 
             GameActor ga = (GameActor)Activator.CreateInstance(t);

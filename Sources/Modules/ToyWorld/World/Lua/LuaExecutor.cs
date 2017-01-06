@@ -18,6 +18,8 @@ namespace World.Lua
         private readonly AutoResetEvent m_scriptSynchronization;
         private readonly LuaConsole m_luaConsole;
 
+        private const int MAXIMUM_NUMBER_OF_DO_METHED_CALLS = 100000;
+
         public LuaExecutor(IAtlas atlas, AutoResetEvent scriptSynchronization, LuaConsole luaConsole = null)
         {
             m_atlas = atlas;
@@ -44,7 +46,7 @@ namespace World.Lua
                 State["ac"] = avatarCommander;
             }
 
-            AtlasManipulator atlasManipulator = new AtlasManipulator(this, m_atlas);
+            AtlasManipulator atlasManipulator = new AtlasManipulator(m_atlas);
             State["am"] = atlasManipulator;
 
             State["lc"] = m_luaConsole;
@@ -66,6 +68,7 @@ namespace World.Lua
 
         private Thread m_thread;
         private bool m_stopScript;
+
 
         public Thread ExecuteChunk(string command, Action<string> performAfterFinished = null)
         {
@@ -111,6 +114,7 @@ namespace World.Lua
                 result.Append(" }");
             }
 
+            // uncomment to get confirmation when command run successfuly
             /*if (result.Length == 0)
             {
                 result.Append("Done");
@@ -123,7 +127,7 @@ namespace World.Lua
 
         public void Do(Func<object[], bool> stepFunc, params object[] parameters)
         {
-            for (int i = 0; i < 100000; i++)
+            for (int i = 0; i < MAXIMUM_NUMBER_OF_DO_METHED_CALLS; i++)
             {
                 m_scriptSynchronization.WaitOne();
                 if (m_stopScript)
@@ -168,6 +172,11 @@ namespace World.Lua
             m_stopScript = true;
         }
 
+        /// <summary>
+        /// This function returns info about object connatining list of all object's properties and methods.
+        /// </summary>
+        /// <param name="o">Any C# object in assembly.</param>
+        /// <returns></returns>
         public static string Help(object o)
         {
             if (o == null) return "null";
