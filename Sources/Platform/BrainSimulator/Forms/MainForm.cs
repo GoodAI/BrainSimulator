@@ -43,6 +43,8 @@ namespace GoodAI.BrainSimulator.Forms
         {
             UpgradeUserSettings();
 
+            RestoreWindowPlacement();
+
             ToolBarNodes.InitDefaultToolBar(Settings.Default, MyConfiguration.KnownNodes);
 
             if (!TryRestoreViewsLayout(UserLayoutFileName))
@@ -50,7 +52,6 @@ namespace GoodAI.BrainSimulator.Forms
                 ResetViewsLayout();
             }
 
-            this.WindowState = FormWindowState.Maximized;
             statusStrip.BackColor = STATUS_BAR_BLUE;
 
             if (!TryOpenStartupProject())
@@ -70,6 +71,26 @@ namespace GoodAI.BrainSimulator.Forms
                 recentFilesList.CopyTo(tmp, 0);
                 m_recentMenu.AddFiles(tmp);
             }
+        }
+
+        private void RestoreWindowPlacement()
+        {
+            var position = Settings.Default.MainFormPosition;
+
+            if ((position.Width == 0) || (position.Height == 0))
+                return;
+
+            try
+            {
+                WinApi.SetWindowPlacement(this,
+                    windowState: Settings.Default.MainFormState,
+                    position: Settings.Default.MainFormPosition);
+            }
+            catch (Exception ex)
+            {
+                MyLog.WARNING.WriteLine("Failed to restore window placement: " + ex.Message);
+            }
+             
         }
 
         private static void UpgradeUserSettings()
@@ -437,8 +458,11 @@ namespace GoodAI.BrainSimulator.Forms
                     SaveProjectOrSaveAs();
             }
 
+            SaveWindowPlacement();
+
             // When this is true, the event will just return next time it's called.
             m_isClosing = true;
+
             SimulationHandler.Finish(Close);
         }
 
@@ -451,6 +475,22 @@ namespace GoodAI.BrainSimulator.Forms
                 settings.RecentFilesList = new StringCollection();
                 settings.RecentFilesList.AddRange(m_recentMenu.GetFiles());
             });
+        }
+
+        private void SaveWindowPlacement()
+        {
+            try
+            {
+                var windowPlacement = WinApi.GetWindowPlacement(this);
+
+                Settings.Default.MainFormState = windowPlacement.WindowState;
+                Settings.Default.MainFormPosition = windowPlacement.Position;
+            }
+            catch (Exception ex)
+            {
+                // Too late to show in console.
+                MessageBox.Show("Failed to get main window placement: " + ex.Message, "Warning");
+            }
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
