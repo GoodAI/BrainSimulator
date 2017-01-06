@@ -114,7 +114,7 @@ namespace World.Lua
                 result.Append(" }");
             }
 
-            // uncomment to get confirmation when command run successfuly
+            // uncomment to get confirmation when command run successfully
             /*if (result.Length == 0)
             {
                 result.Append("Done");
@@ -125,6 +125,13 @@ namespace World.Lua
             m_scriptSynchronization.Set();
         }
 
+        /// <summary>
+        /// This method synchronize execution of given function and ToyWorld.
+        /// The function is called once per ToyWorld execution step until the function
+        /// returns true.
+        /// </summary>
+        /// <param name="stepFunc">A function changing or observing ToyWorld. Returns bool.</param>
+        /// <param name="parameters">Any parameters the function accepts.</param>
         public void Do(Func<object[], bool> stepFunc, params object[] parameters)
         {
             for (int i = 0; i < MAXIMUM_NUMBER_OF_DO_METHED_CALLS; i++)
@@ -141,8 +148,6 @@ namespace World.Lua
                 {
                     return;
                 }
-
-
             }
             throw new Exception("Too long time in Do function.");
         }
@@ -173,7 +178,7 @@ namespace World.Lua
         }
 
         /// <summary>
-        /// This function returns info about object connatining list of all object's properties and methods.
+        /// This function returns info about object containing list of all object's properties and methods.
         /// </summary>
         /// <param name="o">Any C# object in assembly.</param>
         /// <returns></returns>

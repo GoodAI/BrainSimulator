@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using VRageMath;
 using World.Atlas;
@@ -43,8 +42,8 @@ namespace World.Lua
 
         public void GoTo(Vector2 position, float distance)
         {
-            if (distance <= 0) throw new ArgumentException("Distance must be positive.");
             // ac:GoTo("Pinecone", 2)
+            if (distance <= 0) throw new ArgumentException("Distance must be positive.");
             Func<object[], bool> f = GoToI;
             m_le.Do(f, position, distance);
         }
@@ -52,8 +51,8 @@ namespace World.Lua
         public void GoTo(string type, float distance = (float)0.1)
         {
             // ac:GoTo("Pinecone", 1.2)
-            GameActorPosition gameActorPosition = GetNearest(m_currentAvatar.Position, type);
-            if (gameActorPosition == null) return;
+            GameActorPosition gameActorPosition = GetNearest(type);
+            if (gameActorPosition == null) throw new Exception("No object of type " + type + " found.");
             Vector2 position = gameActorPosition.Position;
             if (gameActorPosition.Actor is Tile)
             {
@@ -82,7 +81,7 @@ namespace World.Lua
         }
 
         /// <summary>
-        /// Continously rotates avatar to heading.
+        /// Continuously rotates avatar to heading.
         /// </summary>
         /// <param name="heading">Target heading can be either "N", "S", "W" or "E".</param>
         public void RotateToHeading(string heading)
@@ -112,7 +111,7 @@ namespace World.Lua
         }
 
         /// <summary>
-        /// Continously rotates avatar to heading.
+        /// Continuously rotates avatar to given heading.
         /// </summary>
         /// <param name="heading">Target heading in degrees. 0 means north, 90 means right.</param>
         public void RotateToHeading(int heading)
@@ -122,7 +121,7 @@ namespace World.Lua
         }
 
         /// <summary>
-        /// Teleports avatar to given location.
+        /// Immediately put avatar to different position avatar to given location.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -156,6 +155,17 @@ namespace World.Lua
             m_le.Do(f, finalAngle, MathHelper.Pi / 160);
         }
 
+        /// <summary>
+        /// Step function (see LuaExecutor.Do(stepFunction, parameters))
+        /// Continuously change direction towards given position and
+        /// if the direction is precise enough, make step forward.
+        /// Return true when close enough to target.
+        /// </summary>
+        /// <param name="parameters">
+        /// Vector2 position of target.
+        /// float distance from target - tolerance for stopping.
+        /// </param>
+        /// <returns></returns>
         private bool GoToI(params object[] parameters)
         {
             Vector2 targetPosition = (Vector2)parameters[0];
@@ -181,6 +191,12 @@ namespace World.Lua
             return false;
         }
 
+        /// <summary>
+        /// Step function (see LuaExecutor.Do(stepFunction, parameters))
+        /// Continuously change direction towards given position.
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
         private bool RotateToI(params object[] a)
         {
             float targetRotation = (float) a[0];
@@ -200,36 +216,10 @@ namespace World.Lua
             return false;
         }
 
-        public GameActorPosition GetNearest(Vector2 position, string type)
-        {
-            Type t = GameActor.GetGameActorType(type);
-
-            for (int i = 1; i < 20; i++)
-            {
-                IEnumerable<Vector2I> chebyshevNeighborhood = Neighborhoods.VonNeumannNeighborhood((Vector2I)position, i);
-
-                foreach (var x in chebyshevNeighborhood)
-                {
-                    foreach (GameActorPosition gameActorPosition in m_atlas.ActorsAt((Vector2)x))
-                    {
-                        if (gameActorPosition.Actor.GetType() == t)
-                        {
-                            return gameActorPosition;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
         public GameActorPosition GetNearest(string type)
         {
-            return GetNearest(m_currentAvatar.Position, type);
-        }
-
-        public static Vector2 Vector(float x, float y)
-        {
-            return new Vector2(x, y);
+            return AtlasManipulator.GetNearest((int) m_currentAvatar.Position.X, (int) m_currentAvatar.Position.Y,
+                type, m_atlas);
         }
 
         private float CalculateDifferenceBetweenAngles(float firstAngle, float secondAngle)
