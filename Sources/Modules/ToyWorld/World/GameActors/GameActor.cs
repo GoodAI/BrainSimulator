@@ -62,9 +62,10 @@ namespace World.GameActors
 
         public static Type GetGameActorType(string type)
         {
-            Type f = Assembly.GetAssembly(typeof(GameActor)).GetType(type);
-            if(!f.IsSubclassOf(typeof(GameActor))) throw new Exception("Type found is not subclass of GameActor.");
-            return f;
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Assembly assembly = assemblies.First(a => a.FullName.StartsWith("World,"));
+            Type t = assembly.GetTypes().Where(a => a.IsSubclassOf(typeof(GameActor))).FirstOrDefault(a => a.Name == type);
+            return t;
         }
     }
 

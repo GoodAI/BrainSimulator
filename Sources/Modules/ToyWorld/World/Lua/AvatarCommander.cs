@@ -18,7 +18,7 @@ namespace World.Lua
         {
             m_atlas = atlas;
 
-            ex.State.RegisterFunction("Vector", typeof(AvatarCommander).GetMethod("Vector"));
+            ex.State.RegisterFunction("Vector", typeof(AtlasManipulator).GetMethod("Vector"));
 
             m_currentAvatar = atlas.Avatars.Values.First();
             ex.State["avatar"] = m_currentAvatar;
@@ -228,6 +228,17 @@ namespace World.Lua
             while (difference < -MathHelper.Pi) difference += MathHelper.Pi*2;
             while (difference > MathHelper.Pi) difference -= MathHelper.Pi*2;
             return difference;
+        }
+
+
+        public string CurrentRoom()
+        {
+            return m_atlas.AreasCarrier.Room(m_currentAvatar.Position)?.Name;
+        }
+
+        public string CurrentArea()
+        {
+            return m_atlas.AreasCarrier.AreaName(m_currentAvatar.Position);
         }
     }
 }

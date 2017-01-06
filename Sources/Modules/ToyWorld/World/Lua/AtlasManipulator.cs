@@ -4,6 +4,7 @@ using VRageMath;
 using World.Atlas;
 using World.Atlas.Layers;
 using World.GameActors;
+using World.GameActors.GameObjects;
 using World.GameActors.Tiles;
 
 namespace World.Lua
@@ -57,6 +58,12 @@ namespace World.Lua
             return layer.GetGameObject(name).Position;
         }
 
+        public IGameObject GetObject(string name)
+        {
+            IObjectLayer layer = (IObjectLayer)m_atlas.GetLayer(LayerType.Object);
+            return layer.GetGameObject(name);
+        }
+
         public static Vector2 Vector(float x, float y)
         {
             return new Vector2(x, y);
@@ -81,6 +88,16 @@ namespace World.Lua
         public GameActorPosition GetNearest(int x, int y, string type)
         {
             return GetNearest(x, y, type, m_atlas);
+        }
+
+        public string InRoom(IGameObject o)
+        {
+            return m_atlas.AreasCarrier.Room(o.Position)?.Name;
+        }
+
+        public string InArea(IGameObject o)
+        {
+            return m_atlas.AreasCarrier.AreaName(o.Position);
         }
     }
 }
