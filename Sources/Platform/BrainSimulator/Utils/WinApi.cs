@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 // Some code adapted from www.pinvoke.net
 
@@ -91,8 +93,82 @@ namespace GoodAI.BrainSimulator.Utils
         #endregion
     }
 
+    public struct WindowPlacement
+    {
+        public FormWindowState WindowState;
+
+        /// <summary>A rectangle describing both location and size.</summary>
+        public Rectangle Position;
+
+        public WindowPlacement(FormWindowState windowState, Rectangle position)
+        {
+            WindowState = windowState;
+            Position = position;
+        }
+    }
+
     public static class WinApi
     {
+        public static WindowPlacement GetWindowPlacement(Control form)
+        {
+            return GetWindowPlacement(form.Handle);
+        }
+
+        public static WindowPlacement GetWindowPlacement(IntPtr windowHandle)
+        {
+            var wp = new WINDOWPLACEMENT();
+            wp.length = Marshal.SizeOf(wp);
+
+            var retVal = GetWindowPlacement(windowHandle, ref wp);
+            if (!retVal)
+                throw new Win32Exception("Call to GetWindowPlacement failed");
+
+            return new WindowPlacement(ShowCmdToWindowState(wp.showCmd), wp.rcNormalPosition);
+        }
+
+        public static void SetWindowPlacement(Control form, FormWindowState windowState, Rectangle position)
+        {
+            SetWindowPlacement(form.Handle, windowState, position);
+        }
+
+        public static void SetWindowPlacement(IntPtr windowHandle, FormWindowState windowState, Rectangle position)
+        {
+            var wp = new WINDOWPLACEMENT();
+            wp.length = Marshal.SizeOf(wp);
+
+            var retVal = GetWindowPlacement(windowHandle, ref wp);
+            if (!retVal)
+                throw new Win32Exception("Call to GetWindowPlacement failed");
+
+            wp.showCmd = WindowStateToShowCmd(windowState);
+            wp.rcNormalPosition = position;
+
+            retVal = SetWindowPlacement(windowHandle, ref wp);
+            if (!retVal)
+                throw new Win32Exception("Call to SetWindowPlacement failed");
+        }
+
+        private static FormWindowState ShowCmdToWindowState(int showCmd)
+        {
+            switch (showCmd % 4)
+            {
+                case 2: return FormWindowState.Minimized;
+                case 3: return FormWindowState.Maximized;
+                default: return FormWindowState.Normal;
+            }
+        }
+
+        private static int WindowStateToShowCmd(FormWindowState windowState)
+        {
+            switch (windowState)
+            {
+                case FormWindowState.Normal: return 1;
+                case FormWindowState.Minimized: return 2;
+                case FormWindowState.Maximized: return 3;
+                default: throw new ArgumentOutOfRangeException(nameof(windowState), "Invalid value");
+            }
+        }
+
         [StructLayout(LayoutKind.Sequential)]
         private struct WINDOWPLACEMENT
         {
