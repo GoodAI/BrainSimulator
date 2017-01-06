@@ -27,31 +27,31 @@ namespace World.Lua
             m_le = ex;
         }
 
-        public void Goto(Vector2 position)
+        public void GoTo(Vector2 position)
         {
-            // ac:Goto(Vector(20,30))
-            Func<object[], bool> f = GotoI;
+            // ac:GoTo(Vector(20,30))
+            Func<object[], bool> f = GoToI;
             m_le.Do(f, position, 0.1f);
         }
 
-        public void Goto(int x, int y)
+        public void GoTo(int x, int y)
         {
-            // ac:Goto(10,10)
-            Func<object[], bool> f = GotoI;
+            // ac:GoTo(10,10)
+            Func<object[], bool> f = GoToI;
             m_le.Do(f, new Vector2(x + 0.5f, y + 0.5f), 0.1f);
         }
 
-        public void Goto(Vector2 position, float distance)
+        public void GoTo(Vector2 position, float distance)
         {
             if (distance <= 0) throw new ArgumentException("Distance must be positive.");
-            // ac:Goto("Pinecone", 2)
-            Func<object[], bool> f = GotoI;
+            // ac:GoTo("Pinecone", 2)
+            Func<object[], bool> f = GoToI;
             m_le.Do(f, position, distance);
         }
 
-        public void Goto(string type, float distance = (float)0.1)
+        public void GoTo(string type, float distance = (float)0.1)
         {
-            // ac:Goto("Pinecone", 1.2)
+            // ac:GoTo("Pinecone", 1.2)
             GameActorPosition gameActorPosition = GetNearest(m_currentAvatar.Position, type);
             if (gameActorPosition == null) return;
             Vector2 position = gameActorPosition.Position;
@@ -59,24 +59,24 @@ namespace World.Lua
             {
                 position = Tile.Center((Vector2I)position);
             }
-            Goto(position, distance);
+            GoTo(position, distance);
         }
 
-        public void GotoR(int x, int y)
+        public void GoToR(int x, int y)
         {
-            // ac:Goto(10,10)
+            // ac:GoTo(10,10)
             Vector2 cuPos = m_currentAvatar.Position;
-            Func<object[], bool> f = GotoI;
+            Func<object[], bool> f = GoToI;
             Vector2 relative = new Vector2(x, y);
             m_le.Do(f, cuPos + relative, 0.01f);
         }
 
-        public void GotoR(int x, int y, float distance)
+        public void GoToR(int x, int y, float distance)
         {
             if (distance <= 0) throw new ArgumentException("Distance must be positive.");
-            // ac:Goto(10,10,0.5)
+            // ac:GoTo(10,10,0.5)
             Vector2 cuPos = m_currentAvatar.Position;
-            Func<object[], bool> f = GotoI;
+            Func<object[], bool> f = GoToI;
             Vector2 relative = new Vector2(x, y);
             m_le.Do(f, cuPos + relative, distance);
         }
@@ -143,7 +143,7 @@ namespace World.Lua
             m_le.Do(f, finalAngle, MathHelper.Pi / 160);
         }
 
-        private bool GotoI(params object[] parameters)
+        private bool GoToI(params object[] parameters)
         {
             Vector2 targetPosition = (Vector2)parameters[0];
             float targetDistance = (float)parameters[1];
