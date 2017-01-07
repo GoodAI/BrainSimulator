@@ -283,7 +283,6 @@ namespace GoodAI.Core.Execution
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             long reportLastTicks = stopwatch.ElapsedTicks;
-            long reportIntervalTicks = ReportInterval * Stopwatch.Frequency / 1000;
 
             uint performedSteps = 0;  // During debug, this counts IMyExecutable steps as opposed to whole sim steps.
 
@@ -339,6 +338,8 @@ namespace GoodAI.Core.Execution
                         && (performedSteps % ReportIntervalSteps == 0);
 
                     runningAverage.AddTimePoint(SimulationStep, doReportThisStep);
+
+                    var reportIntervalTicks = ReportInterval * Stopwatch.Frequency / 1000;
 
                     if (doReportThisStep || ((stopwatch.ElapsedTicks - reportLastTicks) >= reportIntervalTicks))
                     {
