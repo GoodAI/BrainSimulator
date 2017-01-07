@@ -41,5 +41,11 @@
     <Setting Name="UndoHistorySize" Type="System.UInt32" Scope="User">
       <Value Profile="(Default)">100</Value>
     </Setting>
+    <Setting Name="MainFormState" Type="System.Windows.Forms.FormWindowState" Scope="User">
+      <Value Profile="(Default)">Normal</Value>
+    </Setting>
+    <Setting Name="MainFormPosition" Type="System.Drawing.Rectangle" Scope="User">
+      <Value Profile="(Default)">0, 0, 0, 0</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

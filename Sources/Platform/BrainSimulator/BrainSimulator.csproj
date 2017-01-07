@@ -282,6 +282,7 @@
     <Compile Include="Utils\Profiling.cs" />
     <Compile Include="Utils\UIPlugins.cs" />
     <Compile Include="Utils\UndoManager.cs" />
+    <Compile Include="Utils\WinApi.cs" />
     <EmbeddedResource Include="Forms\AboutDialog.resx">
       <DependentUpon>AboutDialog.cs</DependentUpon>
     </EmbeddedResource>
