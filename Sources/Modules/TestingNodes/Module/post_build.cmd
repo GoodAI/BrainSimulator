@@ -15,7 +15,8 @@ if not exist %BRAIN_SIM_DIR% (
 
 set TARGET_DIR=%BRAIN_SIM_DIR%\bin\%4\modules\%MODULE_NAME%
 
-echo Copying from: & echo  %2%3 & echo to: & echo  %TARGET_DIR%.
+rem Debug version: echo Copying from: & echo  %2%3 & echo to: & echo  %TARGET_DIR%.
+echo Copying module %MODULE_NAME% files to: & echo  %TARGET_DIR%.
 
 if not exist %TARGET_DIR% mkdir %TARGET_DIR%
 xcopy /y /s /q %2%3*.* %TARGET_DIR%
