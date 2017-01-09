@@ -62,8 +62,6 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.copySelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pasteSelectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runSimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.startToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,6 +119,8 @@
             this.openNodeFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveMemFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.openMemFileDialog = new System.Windows.Forms.OpenFileDialog();
+            this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuStrip.SuspendLayout();
             this.mainToolStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -137,8 +137,7 @@
             this.helpToolStripMenuItem});
             this.mainMenuStrip.Location = new System.Drawing.Point(0, 0);
             this.mainMenuStrip.Name = "mainMenuStrip";
-            this.mainMenuStrip.Padding = new System.Windows.Forms.Padding(9, 3, 0, 3);
-            this.mainMenuStrip.Size = new System.Drawing.Size(1276, 25);
+            this.mainMenuStrip.Size = new System.Drawing.Size(1184, 24);
             this.mainMenuStrip.TabIndex = 1;
             this.mainMenuStrip.Text = "menuStrip1";
             // 
@@ -159,7 +158,7 @@
             this.toolStripSeparator5,
             this.quitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 19);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // newProjectToolStripMenuItem
@@ -267,7 +266,7 @@
             this.undoToolStripMenuItem,
             this.redoToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 19);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // copySelectionToolStripMenuItem
@@ -286,25 +285,6 @@
             this.pasteSelectionToolStripMenuItem.Text = "Paste Selection";
             this.pasteSelectionToolStripMenuItem.Click += new System.EventHandler(this.pasteSelectionToolStripMenuItem_Click);
             // 
-            // undoToolStripMenuItem
-            // 
-            this.undoToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_UndoRevertRestore_16xLG;
-            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
-            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
-            this.undoToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.undoToolStripMenuItem.Text = "Undo";
-            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
-            // 
-            // redoToolStripMenuItem
-            // 
-            this.redoToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_RedoRetry_16xLG;
-            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
-            this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
-            | System.Windows.Forms.Keys.Z)));
-            this.redoToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
-            this.redoToolStripMenuItem.Text = "Redo";
-            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
-            // 
             // runSimToolStripMenuItem
             // 
             this.runSimToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -317,7 +297,7 @@
             this.stepIntoToolStripMenuItem,
             this.stepOutToolStripMenuItem});
             this.runSimToolStripMenuItem.Name = "runSimToolStripMenuItem";
-            this.runSimToolStripMenuItem.Size = new System.Drawing.Size(40, 19);
+            this.runSimToolStripMenuItem.Size = new System.Drawing.Size(40, 20);
             this.runSimToolStripMenuItem.Text = "Run";
             // 
             // startToolStripMenuItem
@@ -402,7 +382,7 @@
             // viewToolStripMenuItem
             // 
             this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.viewToolStripMenuItem.Text = "View";
             // 
             // toolsToolStripMenuItem
@@ -410,7 +390,7 @@
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.updateMemoryBlocksToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 19);
+            this.toolsToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.toolsToolStripMenuItem.Text = "Tools";
             // 
             // updateMemoryBlocksToolStripMenuItem
@@ -429,7 +409,7 @@
             this.guideToolStripMenuItem,
             this.aboutToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
             // 
             // guideToolStripMenuItem
@@ -498,10 +478,10 @@
             this.toolStripSeparator2,
             this.toolStripLabel1,
             this.worldList});
-            this.mainToolStrip.Location = new System.Drawing.Point(0, 25);
+            this.mainToolStrip.Location = new System.Drawing.Point(0, 24);
             this.mainToolStrip.Name = "mainToolStrip";
-            this.mainToolStrip.Padding = new System.Windows.Forms.Padding(15, 0, 2, 0);
-            this.mainToolStrip.Size = new System.Drawing.Size(1276, 35);
+            this.mainToolStrip.Padding = new System.Windows.Forms.Padding(10, 0, 1, 0);
+            this.mainToolStrip.Size = new System.Drawing.Size(1184, 23);
             this.mainToolStrip.TabIndex = 15;
             // 
             // newProjectToolButton
@@ -511,7 +491,7 @@
             this.newProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.newProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.newProjectToolButton.Name = "newProjectToolButton";
-            this.newProjectToolButton.Size = new System.Drawing.Size(23, 32);
+            this.newProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.newProjectToolButton.Text = "New Project";
             this.newProjectToolButton.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
             // 
@@ -522,7 +502,7 @@
             this.openProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.openProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.openProjectToolButton.Name = "openProjectToolButton";
-            this.openProjectToolButton.Size = new System.Drawing.Size(23, 32);
+            this.openProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.openProjectToolButton.Text = "Open Project";
             this.openProjectToolButton.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
             // 
@@ -533,14 +513,14 @@
             this.saveProjectToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveProjectToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveProjectToolButton.Name = "saveProjectToolButton";
-            this.saveProjectToolButton.Size = new System.Drawing.Size(23, 32);
+            this.saveProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.saveProjectToolButton.Text = "Save Project";
             this.saveProjectToolButton.Click += new System.EventHandler(this.saveProjectToolStripMenuItem_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 23);
             // 
             // undoButton
             // 
@@ -549,7 +529,7 @@
             this.undoButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_UndoRevertRestore_16xLG;
             this.undoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.undoButton.Name = "undoButton";
-            this.undoButton.Size = new System.Drawing.Size(23, 32);
+            this.undoButton.Size = new System.Drawing.Size(23, 20);
             this.undoButton.Text = "Undo";
             this.undoButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.undoButton_MouseUp);
             // 
@@ -560,7 +540,7 @@
             this.redoButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_RedoRetry_16xLG;
             this.redoButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.redoButton.Name = "redoButton";
-            this.redoButton.Size = new System.Drawing.Size(23, 32);
+            this.redoButton.Size = new System.Drawing.Size(23, 20);
             this.redoButton.Text = "Redo";
             this.redoButton.TextDirection = System.Windows.Forms.ToolStripTextDirection.Vertical90;
             this.redoButton.MouseUp += new System.Windows.Forms.MouseEventHandler(this.redoButton_MouseUp);
@@ -568,7 +548,7 @@
             // toolStripSeparator11
             // 
             this.toolStripSeparator11.Name = "toolStripSeparator11";
-            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator11.Size = new System.Drawing.Size(6, 23);
             // 
             // runToolButton
             // 
@@ -577,7 +557,7 @@
             this.runToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.runToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.runToolButton.Name = "runToolButton";
-            this.runToolButton.Size = new System.Drawing.Size(23, 32);
+            this.runToolButton.Size = new System.Drawing.Size(23, 20);
             this.runToolButton.Text = "Run Simulation";
             this.runToolButton.Click += new System.EventHandler(this.runToolButton_Click);
             // 
@@ -589,7 +569,7 @@
             this.stopToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stopToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stopToolButton.Name = "stopToolButton";
-            this.stopToolButton.Size = new System.Drawing.Size(23, 32);
+            this.stopToolButton.Size = new System.Drawing.Size(23, 20);
             this.stopToolButton.Text = "Stop Simulation";
             this.stopToolButton.Click += new System.EventHandler(this.stopToolButton_Click);
             // 
@@ -601,7 +581,7 @@
             this.pauseToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.pauseToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.pauseToolButton.Name = "pauseToolButton";
-            this.pauseToolButton.Size = new System.Drawing.Size(23, 32);
+            this.pauseToolButton.Size = new System.Drawing.Size(23, 20);
             this.pauseToolButton.Text = "Pause Simulation";
             this.pauseToolButton.Click += new System.EventHandler(this.pauseToolButton_Click);
             // 
@@ -612,7 +592,7 @@
             this.stepOverToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.stepOverToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.stepOverToolButton.Name = "stepOverToolButton";
-            this.stepOverToolButton.Size = new System.Drawing.Size(23, 32);
+            this.stepOverToolButton.Size = new System.Drawing.Size(23, 20);
             this.stepOverToolButton.Text = "Step Over";
             this.stepOverToolButton.Click += new System.EventHandler(this.stepOverToolButton_Click);
             // 
@@ -622,14 +602,14 @@
             this.debugToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.debug;
             this.debugToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.debugToolButton.Name = "debugToolButton";
-            this.debugToolButton.Size = new System.Drawing.Size(23, 32);
+            this.debugToolButton.Size = new System.Drawing.Size(23, 20);
             this.debugToolButton.Text = "Debug Simulation";
             this.debugToolButton.Click += new System.EventHandler(this.debugToolButton_Click);
             // 
             // toolStripSeparator10
             // 
             this.toolStripSeparator10.Name = "toolStripSeparator10";
-            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator10.Size = new System.Drawing.Size(6, 23);
             // 
             // profileToolButton
             // 
@@ -638,14 +618,14 @@
             this.profileToolButton.Image = global::GoodAI.BrainSimulator.Properties.Resources.performance;
             this.profileToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.profileToolButton.Name = "profileToolButton";
-            this.profileToolButton.Size = new System.Drawing.Size(23, 32);
+            this.profileToolButton.Size = new System.Drawing.Size(23, 20);
             this.profileToolButton.Text = "Enable/Disable Profiling";
             this.profileToolButton.CheckedChanged += new System.EventHandler(this.profileToolButton_CheckedChanged);
             // 
             // toolStripSeparator7
             // 
             this.toolStripSeparator7.Name = "toolStripSeparator7";
-            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator7.Size = new System.Drawing.Size(6, 23);
             // 
             // timerToolStripSplitButton
             // 
@@ -654,7 +634,7 @@
             this.timerToolStripSplitButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.timerToolStripSplitButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.timerToolStripSplitButton.Name = "timerToolStripSplitButton";
-            this.timerToolStripSplitButton.Size = new System.Drawing.Size(32, 32);
+            this.timerToolStripSplitButton.Size = new System.Drawing.Size(32, 20);
             this.timerToolStripSplitButton.Text = "Sleep Interval";
             // 
             // observerTimerToolButton
@@ -664,13 +644,13 @@
             this.observerTimerToolButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.observerTimerToolButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.observerTimerToolButton.Name = "observerTimerToolButton";
-            this.observerTimerToolButton.Size = new System.Drawing.Size(32, 32);
+            this.observerTimerToolButton.Size = new System.Drawing.Size(32, 20);
             this.observerTimerToolButton.Text = "Report Interval";
             // 
             // toolStripSeparator6
             // 
             this.toolStripSeparator6.Name = "toolStripSeparator6";
-            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator6.Size = new System.Drawing.Size(6, 23);
             // 
             // loadMemBlocksButton
             // 
@@ -680,7 +660,7 @@
             this.loadMemBlocksButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.loadMemBlocksButton.Margin = new System.Windows.Forms.Padding(0, 1, 1, 2);
             this.loadMemBlocksButton.Name = "loadMemBlocksButton";
-            this.loadMemBlocksButton.Size = new System.Drawing.Size(23, 32);
+            this.loadMemBlocksButton.Size = new System.Drawing.Size(23, 20);
             this.loadMemBlocksButton.Text = "Global Load on Start";
             this.loadMemBlocksButton.Click += new System.EventHandler(this.loadOnStartMenuItem_Click);
             // 
@@ -692,7 +672,7 @@
             this.saveMemBlocksButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.saveMemBlocksButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.saveMemBlocksButton.Name = "saveMemBlocksButton";
-            this.saveMemBlocksButton.Size = new System.Drawing.Size(23, 32);
+            this.saveMemBlocksButton.Size = new System.Drawing.Size(23, 20);
             this.saveMemBlocksButton.Text = "Global Save on Stop";
             this.saveMemBlocksButton.CheckedChanged += new System.EventHandler(this.saveOnStopMenuItem_CheckChanged);
             // 
@@ -703,7 +683,7 @@
             this.clearDataButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.clearDataButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.clearDataButton.Name = "clearDataButton";
-            this.clearDataButton.Size = new System.Drawing.Size(23, 32);
+            this.clearDataButton.Size = new System.Drawing.Size(23, 20);
             this.clearDataButton.Text = "Clear Stored Network State";
             this.clearDataButton.Click += new System.EventHandler(this.clearDataButton_Click);
             // 
@@ -714,14 +694,14 @@
             this.exportStateButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.exportStateButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.exportStateButton.Name = "exportStateButton";
-            this.exportStateButton.Size = new System.Drawing.Size(23, 32);
+            this.exportStateButton.Size = new System.Drawing.Size(23, 20);
             this.exportStateButton.Text = "Export Stored Network State";
             this.exportStateButton.Click += new System.EventHandler(this.exportStateButton_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 23);
             // 
             // autosaveButton
             // 
@@ -732,7 +712,7 @@
             this.autosaveButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.autosaveButton.Margin = new System.Windows.Forms.Padding(0, 1, 2, 2);
             this.autosaveButton.Name = "autosaveButton";
-            this.autosaveButton.Size = new System.Drawing.Size(23, 32);
+            this.autosaveButton.Size = new System.Drawing.Size(23, 20);
             this.autosaveButton.Text = "Autosave during simulation";
             this.autosaveButton.CheckedChanged += new System.EventHandler(this.autosaveButton_CheckedChanged);
             // 
@@ -742,7 +722,7 @@
             this.autosaveTextBox.Enabled = false;
             this.autosaveTextBox.MaxLength = 20;
             this.autosaveTextBox.Name = "autosaveTextBox";
-            this.autosaveTextBox.Size = new System.Drawing.Size(88, 23);
+            this.autosaveTextBox.Size = new System.Drawing.Size(60, 26);
             this.autosaveTextBox.Text = "10000";
             this.autosaveTextBox.TextBoxTextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.autosaveTextBox.ToolTipText = "Set autosave interval";
@@ -751,7 +731,7 @@
             // toolStripSeparator9
             // 
             this.toolStripSeparator9.Name = "toolStripSeparator9";
-            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator9.Size = new System.Drawing.Size(6, 23);
             // 
             // reloadButton
             // 
@@ -760,7 +740,7 @@
             this.reloadButton.ImageScaling = System.Windows.Forms.ToolStripItemImageScaling.None;
             this.reloadButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.reloadButton.Name = "reloadButton";
-            this.reloadButton.Size = new System.Drawing.Size(23, 32);
+            this.reloadButton.Size = new System.Drawing.Size(23, 20);
             this.reloadButton.Text = "Reload CUDA Kernels";
             this.reloadButton.Click += new System.EventHandler(this.reloadButton_Click);
             // 
@@ -774,17 +754,17 @@
             "CUDA",
             "CPU"});
             this.modeDropDownList.Name = "modeDropDownList";
-            this.modeDropDownList.Size = new System.Drawing.Size(103, 23);
+            this.modeDropDownList.Size = new System.Drawing.Size(70, 23);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 35);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 23);
             // 
             // toolStripLabel1
             // 
             this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(42, 32);
+            this.toolStripLabel1.Size = new System.Drawing.Size(42, 20);
             this.toolStripLabel1.Text = "World:";
             // 
             // worldList
@@ -792,17 +772,16 @@
             this.worldList.AutoSize = false;
             this.worldList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.worldList.Name = "worldList";
-            this.worldList.Size = new System.Drawing.Size(223, 23);
+            this.worldList.Size = new System.Drawing.Size(150, 23);
             this.worldList.SelectedIndexChanged += new System.EventHandler(this.worldList_SelectedIndexChanged);
             // 
             // dockPanel
             // 
             this.dockPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dockPanel.Location = new System.Drawing.Point(0, 60);
-            this.dockPanel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.dockPanel.Location = new System.Drawing.Point(0, 47);
             this.dockPanel.Name = "dockPanel";
             this.dockPanel.ShowDocumentIcon = true;
-            this.dockPanel.Size = new System.Drawing.Size(1276, 611);
+            this.dockPanel.Size = new System.Drawing.Size(1184, 593);
             dockPanelGradient1.EndColor = System.Drawing.SystemColors.ControlLight;
             dockPanelGradient1.StartColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(122)))), ((int)(((byte)(204)))));
             autoHideStripSkin1.DockStripGradient = dockPanelGradient1;
@@ -858,10 +837,9 @@
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.simStatusLabel,
             this.stepStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 671);
+            this.statusStrip.Location = new System.Drawing.Point(0, 640);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Padding = new System.Windows.Forms.Padding(2, 0, 21, 0);
-            this.statusStrip.Size = new System.Drawing.Size(1276, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1184, 22);
             this.statusStrip.TabIndex = 17;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -897,11 +875,30 @@
             this.openMemFileDialog.Filter = "Nework state files|*.state";
             this.openMemFileDialog.Title = "Open Network State...";
             // 
+            // undoToolStripMenuItem
+            // 
+            this.undoToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_UndoRevertRestore_16xLG;
+            this.undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            this.undoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Z)));
+            this.undoToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.undoToolStripMenuItem.Text = "Undo";
+            this.undoToolStripMenuItem.Click += new System.EventHandler(this.undoToolStripMenuItem_Click);
+            // 
+            // redoToolStripMenuItem
+            // 
+            this.redoToolStripMenuItem.Image = global::GoodAI.BrainSimulator.Properties.Resources.Arrow_RedoRetry_16xLG;
+            this.redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            this.redoToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.Z)));
+            this.redoToolStripMenuItem.Size = new System.Drawing.Size(195, 22);
+            this.redoToolStripMenuItem.Text = "Redo";
+            this.redoToolStripMenuItem.Click += new System.EventHandler(this.redoToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1276, 693);
+            this.ClientSize = new System.Drawing.Size(1184, 662);
             this.Controls.Add(this.dockPanel);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.mainToolStrip);
@@ -909,14 +906,11 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.mainMenuStrip;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "MainForm";
             this.Text = "Brain Simulator";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.mainMenuStrip.ResumeLayout(false);
             this.mainMenuStrip.PerformLayout();
             this.mainToolStrip.ResumeLayout(false);

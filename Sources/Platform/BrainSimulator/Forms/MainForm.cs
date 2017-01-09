@@ -26,12 +26,7 @@ namespace GoodAI.BrainSimulator.Forms
         private static Color STATUS_BAR_BLUE_BUILDING = Color.FromArgb(255, 14, 99, 156);
 
         private MruStripMenuInline m_recentMenu;
-
         private bool m_isClosing = false;
-
-        private bool m_handleFirstClickOnActivated = false;
-
-        private FormWindowState m_lastVisibleWindowState;
 
         public ISet<IMyExecutable> Breakpoints
         {
@@ -80,14 +75,16 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void RestoreWindowPlacement()
         {
-            var settings = Settings.Default;
+            var position = Settings.Default.MainFormPosition;
 
-            if ((settings.MainFormPosition.Width == 0) || (settings.MainFormPosition.Height == 0))
+            if ((position.Width == 0) || (position.Height == 0))
                 return;
 
             try
             {
-                WinApi.SetWindowPlacement(this, settings.MainFormState, settings.MainFormPosition);
+                WinApi.SetWindowPlacement(this,
+                    windowState: Settings.Default.MainFormState,
+                    position: Settings.Default.MainFormPosition);
             }
             catch (Exception ex)
             {
@@ -484,22 +481,16 @@ namespace GoodAI.BrainSimulator.Forms
         {
             try
             {
-                SaveWindowState();  // Window state can, in theory, be changed without FormResize being called.-)
+                var windowPlacement = WinApi.GetWindowPlacement(this);
 
-                Settings.Default.MainFormState = m_lastVisibleWindowState;
-                Settings.Default.MainFormPosition = WinApi.GetWindowPlacement(this).Position;
+                Settings.Default.MainFormState = windowPlacement.WindowState;
+                Settings.Default.MainFormPosition = windowPlacement.Position;
             }
             catch (Exception ex)
             {
                 // Too late to show in console.
                 MessageBox.Show("Failed to get main window placement: " + ex.Message, "Warning");
             }
-        }
-
-        private void SaveWindowState()
-        {
-            if (WindowState != FormWindowState.Minimized)
-                m_lastVisibleWindowState = WindowState;
         }
 
         private void reloadButton_Click(object sender, EventArgs e)
@@ -743,6 +734,8 @@ namespace GoodAI.BrainSimulator.Forms
             aboutDialog.ShowDialog();
         }
 
+        private bool handleFirstClickOnActivated = false;
+
         /// <summary>
         /// Raises the <see cref="E:System.Windows.Forms.Form.Activated" /> event.
         /// Handle WinForms bug for first click during activation
@@ -751,18 +744,18 @@ namespace GoodAI.BrainSimulator.Forms
         protected override void OnActivated(EventArgs e)
         {
             base.OnActivated(e);
-            if (this.m_handleFirstClickOnActivated)
+            if (this.handleFirstClickOnActivated)
             {
                 var cursorPosition = Cursor.Position;
                 var clientPoint = this.PointToClient(cursorPosition);
                 var child = this.GetChildAtPoint(clientPoint);
 
-                while (this.m_handleFirstClickOnActivated && child != null)
+                while (this.handleFirstClickOnActivated && child != null)
                 {
                     var toolStrip = child as ToolStrip;
                     if (toolStrip != null)
                     {
-                        this.m_handleFirstClickOnActivated = false;
+                        this.handleFirstClickOnActivated = false;
                         clientPoint = toolStrip.PointToClient(cursorPosition);
                         foreach (var item in toolStrip.Items)
                         {
@@ -786,7 +779,7 @@ namespace GoodAI.BrainSimulator.Forms
                         child = child.GetChildAtPoint(clientPoint);
                     }
                 }
-                this.m_handleFirstClickOnActivated = false;
+                this.handleFirstClickOnActivated = false;
             }
         }
 
@@ -801,7 +794,7 @@ namespace GoodAI.BrainSimulator.Forms
             const int WA_CLICKACTIVE = 0x0002;
             if (m.Msg == WM_ACTIVATE && Low16(m.WParam) == WA_CLICKACTIVE)
             {
-                m_handleFirstClickOnActivated = true;
+                handleFirstClickOnActivated = true;
             }
             base.WndProc(ref m);
         }
@@ -846,11 +839,6 @@ namespace GoodAI.BrainSimulator.Forms
         private void redoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Redo();
-        }
-
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            SaveWindowState();
         }
     }
 }
