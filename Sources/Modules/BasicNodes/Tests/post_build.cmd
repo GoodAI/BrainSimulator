@@ -2,6 +2,10 @@ rem $(SolutionDir) = %1, $(ProjectDir) = %2, $(OutDir) = %3, $(Configuration) = 
 
 echo Running %5 post_build.cmd, config: %4
 
+if %4 == "Fast" (
+	echo "Note: Fast build enabled, skipping module(s) copying."
+	exit
+)
 
 set MODULE_NAME=BasicNodes
 set TARGET_DIR=%2bin\%4\modules\GoodAI.%MODULE_NAME%
