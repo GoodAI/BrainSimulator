@@ -86,8 +86,8 @@ namespace GoodAI.Core.Dashboard
     public sealed class SingleProxyProperty : GroupableProxyProperty<DashboardNodeProperty>
     {
         private string m_description;
-        public PropertyInfo PropertyInfo { get; private set; }
-        public object Target { get; protected set; }
+        public PropertyInfo PropertyInfo { get; }
+        public object Target { get; }
 
         public SingleProxyProperty(DashboardNodeProperty sourceProperty, object target, PropertyInfo propertyInfo)
             : base(sourceProperty)

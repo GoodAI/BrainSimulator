@@ -57,7 +57,7 @@ namespace GoodAI.Core.Utils
 
                 return im;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MyLog.WARNING.WriteLine("Image resource '" + resourceName + "' load failed from assembly " + assembly.GetName().Name + "."); 
                 return null;

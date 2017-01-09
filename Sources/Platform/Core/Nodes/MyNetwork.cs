@@ -146,7 +146,7 @@ namespace GoodAI.Core.Nodes
                     connection.IsHidden = cp.IsHidden;
                     connection.Connect();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     MyLog.ERROR.WriteLine("Error during connection deserialization: From id " + cp.From +" to id " + cp.To);
                 }

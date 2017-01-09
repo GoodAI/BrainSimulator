@@ -216,6 +216,7 @@ namespace GoodAI.Modules.LTM
         /// </summary>
         /// <meta>vkl</meta>
         /// <param name="input">String to convert</param>
+        /// <param name="textWidth"></param>
         /// <returns>Converted string</returns>
         public static string RepeatWord(string input, int textWidth)
         {

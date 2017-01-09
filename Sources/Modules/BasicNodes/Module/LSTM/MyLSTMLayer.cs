@@ -2,7 +2,6 @@
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Signals;
 using GoodAI.Core.Utils;
-using GoodAI.Core.Signals;
 using GoodAI.Modules.NeuralNetwork;
 using GoodAI.Modules.NeuralNetwork.Group;
 using GoodAI.Modules.NeuralNetwork.Layers;

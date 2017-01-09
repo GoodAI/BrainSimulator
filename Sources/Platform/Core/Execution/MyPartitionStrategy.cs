@@ -4,7 +4,7 @@ namespace GoodAI.Core.Execution
 {
     public interface IMyPartitionStrategy
     {
-        MyExecutionPlan[] Divide(MyExecutionPlan executionPlan);    ///<Performs partitioning
+        MyExecutionPlan[] Divide(MyExecutionPlan executionPlan);    // Performs partitioning
     }
 
     /// Puts all tasks on one GPU

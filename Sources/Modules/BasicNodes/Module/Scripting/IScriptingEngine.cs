@@ -21,7 +21,7 @@ namespace GoodAI.Modules.Scripting
         void Compile(MyValidator validator);
         
         /// <summary>
-        /// Should return alphabetically ordered space delimited list of keywords for auto complete & syntax highlighting.
+        /// Should return alphabetically ordered space delimited list of keywords for auto complete and syntax highlighting.
         /// </summary>
         string DefaultKeywords { get; }
 

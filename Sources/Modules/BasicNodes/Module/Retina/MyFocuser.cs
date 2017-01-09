@@ -37,8 +37,8 @@ namespace GoodAI.Modules.Retina
     
 
         /// <summary>
-        /// Given the input and [x,y,scale] (<-1,1>,<-1,1>,<0,1>) the method returns part of the input image that is at that postion.
-        /// <br>
+        /// Given the input and [x,y,scale] ([-1,1],[-1,1],[0,1]) the method returns part of the input image that is at that postion.
+        /// <br/>
         /// If the pupil input is in the form of [N x 3] it returns multiple patches.
         /// </summary>
         [Description("Focus To Area")]

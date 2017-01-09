@@ -454,7 +454,8 @@ namespace GoodAI.Modules.SoundProcessing
             try
             {
                 m_stream.Close();
-            }catch(Exception e)
+            }
+            catch (Exception)
             {
                 m_stream = null;
             }

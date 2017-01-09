@@ -220,8 +220,10 @@ namespace GoodAI.Modules.VSA.Hashes
             /// <param name="seed">The seed used for the scattering the internal bins.</param>
             /// <param name="combineVectorsKernel">The kernel used for addition, modulo and integer division.</param>
             /// <param name="hashKernel">The kernel used for scattering the internal bins.</param>
-            /// <param name="doScattering">If true, each internal bin will be randomly scattered to an integer in [0, <paramref name="outputBinCount"/>).
-            /// Otherwise, the range of the output indices will be [0, internalBinCount)</param>
+            /// <param name="noHashKernel"></param>
+            /// <param name="doHashMapping"></param>
+            /// <param name="internalBinCount"></param>
+            /// <param name="stream"></param>
             public static void GetIndices(
                 CUdeviceptr input, CUdeviceptr output, CUdeviceptr misc, CUdeviceptr? offsets,
                 int vectorSize, int outputBinCount, int seed,

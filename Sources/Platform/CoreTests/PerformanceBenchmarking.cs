@@ -51,7 +51,6 @@ namespace CoreTests
             for (int i = 0; i < IterationCount; i++)
             {
                 int res = 0;
-                int j = 0;
                 foreach (var val in data)
                 {
                     res += val;

@@ -32,7 +32,7 @@ namespace GoodAI.Modules.Transforms
 
             /// <summary>
             /// Raw -> RGB, where color channels are extracted from the pixels and laid out sequentially:
-            /// First Red, then Green, then Blue. A single color value is encoded by one float in range <0,1>.
+            /// First Red, then Green, then Blue. A single color value is encoded by one float in range [0,1].
             /// The result is 3x times as big as the original because of use of floats (and no alpha)
             /// The correct rendering method to view the results is RGB
             /// </summary>
@@ -40,7 +40,7 @@ namespace GoodAI.Modules.Transforms
 
             /// <summary>
             /// Raw -> Grayscale, similar to RawBW, but with alpha discarded and luminance converted to a float.
-            /// The result pixel layout is 32 bits per pixel again, encoding a single float luminance in range <0,1>
+            /// The result pixel layout is 32 bits per pixel again, encoding a single float luminance in range [0,1]
             /// The correct rendering method to view the results is GrayScale or RedGreenScale
             /// </summary>
             Grayscale,

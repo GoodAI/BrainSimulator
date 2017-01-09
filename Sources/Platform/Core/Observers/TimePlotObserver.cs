@@ -535,8 +535,6 @@ namespace GoodAI.Core.Observers
 
             Target.SafeCopyToHost();
 
-            bool mustBeUpdated = false;
-
             var oldValueMin = m_plotCurrentValueMin;
             var oldValueMax = m_plotCurrentValueMax;
 

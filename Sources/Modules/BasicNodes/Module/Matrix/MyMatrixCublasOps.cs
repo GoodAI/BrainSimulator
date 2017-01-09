@@ -216,7 +216,7 @@ namespace GoodAI.Modules.Matrix
         }
 
 
-        public static MatOperation AvailableOperations()
+        public new static MatOperation AvailableOperations()
         {
             return MatOperation.Multiplication | MatOperation.AbsMinIndex | MatOperation.AbsMaxIndex | MatOperation.DotProd | MatOperation.Norm2 | MatOperation.Normalize | MatOperation.Minus | MatOperation.Copy;
         }

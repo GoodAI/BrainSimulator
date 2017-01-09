@@ -389,9 +389,9 @@ namespace GoodAI.Modules.Common
         }
 
 
-        [Description("Mode")]
         /// <summary>Returns the most frequent value for every element through time window, rows, columns or total.
         /// If used with Window > 1, first process rows/columns/all, then process over window.</summary>
+        [Description("Mode")]
         public class ModeTask : MyTask<StatisticsNode>
         {
             public enum MaxMin { Max, Min, Median }

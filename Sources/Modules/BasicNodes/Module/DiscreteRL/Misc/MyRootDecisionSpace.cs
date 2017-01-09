@@ -87,7 +87,6 @@ namespace GoodAI.Modules.Harm
         /// <summary>
         /// Works with only one variable
         /// </summary>
-        /// <param name="varIndex"></param>
         public void AddPromotedVariable(int varIndex, MyRootDecisionSpace rds)
         {
             m_myPromotedVariableInd = varIndex;

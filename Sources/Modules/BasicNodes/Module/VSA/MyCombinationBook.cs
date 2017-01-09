@@ -20,8 +20,8 @@ namespace GoodAI.Modules.VSA
     ///   Optionally, generates random combinations with either unique numbers or allowed duplicates.
     /// </summary>
     /// <description>
-    ///   A single cycle is created by applying the Sattolo's shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher–Yates_shuffle#Sattolo.27s_algorithm"/>). 
-    ///   Random cycles are created by using the Fisher-Yates shuffle (as seen on <seealso cref="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm"/>).
+    ///   A single cycle is created by applying the Sattolo's shuffle (as seen <a href="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#Sattolo.27s_algorithm">here</a>). 
+    ///   Random cycles are created by using the Fisher-Yates shuffle (as seen <a href="http://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_.22inside-out.22_algorithm">here</a>).
     ///   Use the <see cref="Power"/> property to pre-compute a desired power of the base permutation.
     /// </description>
     public class MyCombinationBook : MyCombinationBase

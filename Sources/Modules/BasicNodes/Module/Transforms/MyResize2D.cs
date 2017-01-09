@@ -172,7 +172,7 @@ namespace GoodAI.Modules.Transforms
         }
 
 
-        /// <description>Uses bilinear resampling for perfroming resize</a></description>
+        /// <description>Uses bilinear resampling for perfroming resize.</description>
         [Description("Image Scale"), MyTaskInfo(OneShot = false)]
         public class MyImageScaleTask : MyTask<MyResize2D>
         {

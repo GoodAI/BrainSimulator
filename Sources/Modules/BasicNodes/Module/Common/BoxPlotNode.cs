@@ -104,7 +104,6 @@ namespace GoodAI.Modules.Common
             private int elementsCount { get; set; }
             private int columnsN, rowsN, elementsN, outputRowsN;
             MyCudaKernel m_sumKernel;
-            private readonly int HOST_DEVICE_THRSHD = 1 << 13;
 
             private bool firstExec;
 

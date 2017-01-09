@@ -16,15 +16,14 @@ namespace GoodAI.Core.Nodes
         event EventHandler<MyPropertyChangedEventArgs<string>> ScriptChanged;
 
         string Script { get; set; }
-        string Name { get; }
 
         /// <summary>
-        /// Should return alphabetically ordered space delimited list of name expressions for auto complete & syntax highlighting.
+        /// Should return alphabetically ordered space delimited list of name expressions for auto complete and syntax highlighting.
         /// </summary>
         string NameExpressions { get; }
 
         /// <summary>
-        /// Should return alphabetically ordered space delimited list of keywords for auto complete & syntax highlighting.
+        /// Should return alphabetically ordered space delimited list of keywords for auto complete and syntax highlighting.
         /// </summary>
         string Keywords { get; }
 

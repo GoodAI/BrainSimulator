@@ -147,7 +147,7 @@ namespace GoodAI.Modules.Matrix
         }
 
 
-        public static MatOperation AvailableOperations()
+        public new static MatOperation AvailableOperations()
         {
             return (MatOperation) (1 << Enum.GetValues(typeof(MatOperation)).Length); // it is integer of binary repre of the last one which is one moved n-times :)
         }

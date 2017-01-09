@@ -209,7 +209,7 @@ namespace GoodAI.Modules.Matrix
 
 
 
-        public static MatOperation AvailableOperations()
+        public new static MatOperation AvailableOperations()
         {
             return MatOperation.GetRow | MatOperation.GetCol | MatOperation.Exp | MatOperation.MultiplElemntWise | MatOperation.Addition | MatOperation.Log | MatOperation.Pow | MatOperation.Exp | MatOperation.Round | MatOperation.Floor | MatOperation.Ceil | MatOperation.Abs | MatOperation.Substraction | MatOperation.Transpose | MatOperation.PermuteRows;
         }

@@ -67,7 +67,6 @@ namespace GoodAI.Modules.NeuralNetwork.Tasks
 
                 case RandomDistribution.Default:
                     float stdDev = 1.0f;
-                    float Mean = 0.0f;
                     if (Owner.Input != null)
                         stdDev = 1.0f / (float)Math.Sqrt(Owner.Input.Count / Owner.ParentNetwork.BatchSize + 1);
 
