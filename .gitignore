@@ -22,8 +22,9 @@ doc.xml
 *.VC.db
 
 /Sources/Modules/InternalNodes
+/Sources/Modules/InternalModules
 /Sources/Modules/SeMeIntModule
 /Sources/Modules/SeMeIntegrationModule
 /Sources/packages
-Sources/Modules/EmguNodes/
+/Sources/Modules/EmguNodes/
 /Sources/Modules/School/Module/conf/doc.xml
