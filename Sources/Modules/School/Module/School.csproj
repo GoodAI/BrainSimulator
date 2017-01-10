@@ -71,6 +71,8 @@
     <Compile Include="Common\TrainingSetHints.cs" />
     <Compile Include="Learning tasks\AvatarsActions.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy2.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelTransducerRL.cs" />
     <Compile Include="Learning tasks\LTSinglePixelRL2.cs" />
     <Compile Include="Learning tasks\LTSinglePixelRL.cs" />
     <Compile Include="Learning tasks\Ltsct1Fp.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Learning tasks\ScConstants.cs" />
     <Compile Include="Learning tasks\ScFixColors.cs" />
     <Compile Include="Learning tasks\ScFixPositions.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\FiniteStateTransducer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
     <Compile Include="Worlds\ManInWorld.cs">
