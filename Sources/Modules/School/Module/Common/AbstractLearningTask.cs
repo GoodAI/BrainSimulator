@@ -42,6 +42,7 @@ namespace GoodAI.Modules.School.Common
 
         void ExecuteStep();
         TrainingResult EvaluateStep();
+        void ExecuteStepAfterEvaluation();
         void PresentNewTrainingUnitCommon();
         void IncreaseLevel();
 
@@ -227,6 +228,8 @@ namespace GoodAI.Modules.School.Common
 
             return TrainingResult.FinishedLevel;
         }
+
+        public virtual void ExecuteStepAfterEvaluation() { }
 
         public string GetTypeName()
         {

@@ -612,6 +612,8 @@ namespace GoodAI.Modules.School.Worlds
                 // this also partially sets LTStatus
                 TaskResult = CurrentLearningTask.EvaluateStep();
 
+                CurrentLearningTask.ExecuteStepAfterEvaluation();
+
                 switch (TaskResult)
                 {
                     case TrainingResult.TUInProgress:
