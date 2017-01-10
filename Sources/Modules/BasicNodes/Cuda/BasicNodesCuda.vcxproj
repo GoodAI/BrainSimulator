@@ -301,6 +301,7 @@
       <CompileOut>$(OutDir)%(RelativeDir)%(Filename).ptx</CompileOut>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <NvccCompilation>ptx</NvccCompilation>
+      <CodeGeneration>compute_30,sm_30</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
