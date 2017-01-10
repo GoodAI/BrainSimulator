@@ -84,7 +84,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
         }
 
-        public override void ExecuteStep()
+        public override void ExecuteStepBeforeEvaluation()
         {
             if (m_currentStep >= m_timeplan.Length)
             {
@@ -92,7 +92,7 @@ namespace GoodAI.Modules.School.LearningTasks
             }
 
             m_currentStep++;
-            base.ExecuteStep();
+            base.ExecuteStepBeforeEvaluation();
             WrappedWorld.GameObjects.Clear();
             if (m_timeplan[m_currentStep] == TimeActions.GiveHint)
             {

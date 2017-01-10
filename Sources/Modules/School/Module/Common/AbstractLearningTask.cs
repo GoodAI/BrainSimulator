@@ -40,7 +40,7 @@ namespace GoodAI.Modules.School.Common
         int CurrentNumberOfAttempts { get; set; }
         int CurrentNumberOfSuccesses { get; set; }
 
-        void ExecuteStep();
+        void ExecuteStepBeforeEvaluation();
         TrainingResult EvaluateStep();
         void ExecuteStepAfterEvaluation();
         void PresentNewTrainingUnitCommon();
@@ -173,7 +173,7 @@ namespace GoodAI.Modules.School.Common
             IsInitialized = false;
         }
 
-        public virtual void ExecuteStep() { }
+        public virtual void ExecuteStepBeforeEvaluation() { }
 
         public virtual TrainingResult EvaluateStep()
         {

@@ -61,7 +61,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_currentObjectType = ObjectType.None;
             m_object = null;
 
-            ExecuteStep();
+            ExecuteStepBeforeEvaluation();
         }
 
         public override void Init()
@@ -70,7 +70,7 @@ namespace GoodAI.Modules.School.LearningTasks
             base.Init();
         }
 
-        public override void ExecuteStep()
+        public override void ExecuteStepBeforeEvaluation()
         {
             if (m_object != null)
                 WrappedWorld.RemoveGameObject(m_object);

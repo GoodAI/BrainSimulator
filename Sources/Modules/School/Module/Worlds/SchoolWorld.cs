@@ -605,10 +605,9 @@ namespace GoodAI.Modules.School.Worlds
             }
             else
             {
-                // evaluate previus step
-                CurrentLearningTask.ExecuteStep();
+                CurrentLearningTask.ExecuteStepBeforeEvaluation();
 
-                // set new level, training unit or step
+                // evaluation may also set new level, training unit or step
                 // this also partially sets LTStatus
                 TaskResult = CurrentLearningTask.EvaluateStep();
 

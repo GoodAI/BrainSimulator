@@ -91,7 +91,7 @@ namespace GoodAI.Modules.School.LearningTasks
             WrappedWorld.UpdateTask.RandomBallDir = true;
         }
 
-        public override void ExecuteStep()
+        public override void ExecuteStepBeforeEvaluation()
         {
             ballHitSum += WrappedWorld.BinaryEvent.Host[0];
             ballMissSum += WrappedWorld.BinaryEvent.Host[2];

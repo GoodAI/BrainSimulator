@@ -88,7 +88,7 @@ namespace GoodAI.Modules.School.LearningTasks
             });
         }
 
-        public override void ExecuteStep()                                  // UpdateState calls base's equivalent and then its own additional functions
+        public override void ExecuteStepBeforeEvaluation()                                  // UpdateState calls base's equivalent and then its own additional functions
         {
             m_stepsTakenForOneCircle = (int)TSHints[STEPS_TAKEN_FOR_ONE_CIRCLE];
 

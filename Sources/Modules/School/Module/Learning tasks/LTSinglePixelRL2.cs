@@ -43,7 +43,7 @@ namespace GoodAI.Modules.School.LearningTasks
             m_targetWithAction = doAction;
         }
 
-        public override void ExecuteStep()
+        public override void ExecuteStepBeforeEvaluation()
         {
             if (m_object != null)
                 WrappedWorld.RemoveGameObject(m_object);
