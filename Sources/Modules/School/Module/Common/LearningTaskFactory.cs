@@ -1,6 +1,7 @@
 ﻿using GoodAI.Modules.School.Worlds;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -24,8 +25,10 @@ namespace GoodAI.Modules.School.Common
                 {
                     IEnumerable<Type> tasks = Assembly.GetAssembly(typeof(AbstractLearningTask<>))
                         .GetTypes()
-                        .Where(x => !x.IsGenericType &&
+                        .Where(x => !x.IsGenericType && !x.IsAbstract &&
                             IsSubclassOfRawGeneric(typeof(AbstractLearningTask<>), x));
+
+                    tasks = tasks.OrderBy(s => (s.GetCustomAttributes(typeof(DisplayNameAttribute), true).FirstOrDefault() as DisplayNameAttribute).DisplayName);
 
                     m_knownLearningTasks = new Dictionary<Type, List<Type>>();
                     foreach (Type taskType in tasks)
