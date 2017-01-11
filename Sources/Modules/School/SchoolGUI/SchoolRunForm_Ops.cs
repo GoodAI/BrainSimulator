@@ -343,6 +343,7 @@ namespace GoodAI.School.GUI
                         m_observer.MaximizeBox = false;
                         m_observer.Size = dockPanelObserver.Size + new System.Drawing.Size(16, 38);
                         m_observer.Location = new System.Drawing.Point(-8, -30);
+                        m_observer.DoUpdateIfHidden = true;
 
                         m_observer.Show();
                     }

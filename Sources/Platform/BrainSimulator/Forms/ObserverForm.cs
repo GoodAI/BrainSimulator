@@ -26,6 +26,11 @@ namespace GoodAI.BrainSimulator.Forms
         protected bool m_initialized;        
 
         public bool Active { get; set; }        
+        
+        /// <summary>
+        /// When true, reacts on simulation ProgressChanged even if IsHidden == true. Useful for School GUI.
+        /// </summary>
+        public bool DoUpdateIfHidden { get; set; }
 
         public MyAbstractObserver Observer { get; private set; }
 
@@ -281,7 +286,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         void SimulationHandler_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (IsDisposed || IsHidden)
+            if (IsDisposed || (IsHidden && !DoUpdateIfHidden))
                 return;
 
             uint simulationStep = (sender as MySimulationHandler).SimulationStep;
