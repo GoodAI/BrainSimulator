@@ -135,18 +135,18 @@ namespace World.Lua
         private void PrintHelp()
         {
             PrintLines(@"Type 'help [object]' for list of accessible methods.
-If you want to stop a method, press Esc key
+If you want to stop an execution, press <Esc> key
 
 Useful objects:
-\ttle - LuaExecutor
-\tlc - LuaConsole (lc:PrintLines('toPrint'))
-\tac - AvatarControl
-\tam - Atlas manipulator
-\tavatar - current Avatar
-\tatlas - Atlas
+    le - LuaExecutor
+    lc - LuaConsole (lc:Print('toPrint'))
+    ac - AvatarControl
+    am - Atlas manipulator
+    avatar - current Avatar
+    atlas - Atlas
 
-To acces a property, type '[object].[propery]'.
-To run a method, type '[object]:[method]([arguments])'
+To access a property, type '[object].[property]'.
+To execute a method, type '[object]:[method]([arguments])'
 
 You can use assignments and standard Lua control mechanisms.");
         }
