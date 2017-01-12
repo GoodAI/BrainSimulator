@@ -4,12 +4,15 @@ echo Running %MODULE_NAME% post_build.cmd, config: %4
 
 rem $(SolutionDir) = %1, $(ProjectDir) = %2, $(OutDir) = %3 $(Configuration) = %4
 
-set BRAIN_SIM_DIR=%2..\..\..\Platform\BrainSimulator
+set PLATFORM_DIR=%2..\..\..\Platform
+set BRAIN_SIM_DIR=%PLATFORM_DIR%\BrainSimulator
 
 if not exist %BRAIN_SIM_DIR% (
 	echo Error: Target directory %BRAIN_SIM_DIR% not found. Please check paths.
 	exit /B 2
 )
+
+call %PLATFORM_DIR%\Core\update_file.cmd "%~2\bin\doc_new.xml" "%~2\conf\doc.xml"
 
 set TARGET_DIR=%BRAIN_SIM_DIR%\bin\%4\modules\%MODULE_NAME%
 
@@ -24,3 +27,4 @@ if %ERRORLEVEL% GEQ 1 exit /B 3
 echo Module '%MODULE_NAME%' post_build: copying successful.
 
 rem The files that are copied above are removed in case of clean (see BasicNodes.csproj, target "AfterClean").
+

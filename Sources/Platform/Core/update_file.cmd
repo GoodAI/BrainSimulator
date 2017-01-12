@@ -1,3 +1,6 @@
+rem If you modify this file, please rebuild the Core project. Otherwise, it might unnecessarily rebuild every time because of this:
+rem Project 'Core' is not up to date. Input file '...\update_file.cmd' is modified rem after output file '...\GoodAI.Platform.Core.pdb'.
+
 rem Prints file name without the path.
 echo Running %~n0%~x0
 
