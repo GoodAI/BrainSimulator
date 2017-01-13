@@ -1,5 +1,8 @@
 set MODULE_NAME=GoodAI.BasicNodes
 
+rem If you modify this file, please rebuild the project or delete obj/*.pdb to cause rebuild.
+rem Becase this file is considered an input file and might cause eternal unnecessary rebuilds.
+
 echo Running %MODULE_NAME% post_build.cmd, config: %4
 
 rem $(SolutionDir) = %1, $(ProjectDir) = %2, $(OutDir) = %3 $(Configuration) = %4
@@ -13,6 +16,7 @@ if not exist %BRAIN_SIM_DIR% (
 )
 
 call %PLATFORM_DIR%\Core\update_file.cmd "%~2\bin\doc_new.xml" "%~2\conf\doc.xml"
+if %ERRORLEVEL% GEQ 1 exit /B 4
 
 set TARGET_DIR=%BRAIN_SIM_DIR%\bin\%4\modules\%MODULE_NAME%
 
