@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
 {
-    [DisplayName("Single pixel - Difficulty 5 RL")]
+    [DisplayName("Single pixel - Difficulty 4.1 RL")]
     public class LTSinglePixelTransducerDivBy5 : LTSinglePixelTransducerRL
     {
 
