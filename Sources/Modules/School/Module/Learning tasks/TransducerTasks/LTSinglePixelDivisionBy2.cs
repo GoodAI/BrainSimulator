@@ -4,12 +4,12 @@ using System.ComponentModel;
 namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
 {
     [DisplayName("Single pixel - Difficulty 1 RL")]
-    public class LTSinglePixelFABackedDivBy2 : LTSinglePixelTransducerRL
+    public class LTSinglePixelTransducerDivBy2 : LTSinglePixelTransducerRL
     {
 
-        public LTSinglePixelFABackedDivBy2() : this(null) { }
+        public LTSinglePixelTransducerDivBy2() : this(null) { }
 
-        public LTSinglePixelFABackedDivBy2(SchoolWorld w)
+        public LTSinglePixelTransducerDivBy2(SchoolWorld w)
             : base(w)
         {
 

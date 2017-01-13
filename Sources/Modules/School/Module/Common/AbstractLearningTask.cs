@@ -213,8 +213,8 @@ namespace GoodAI.Modules.School.Common
 
             MyLog.Writer.WriteLine(
                 MyLogLevel.INFO,
-                GetTypeName() +
-                " unit ends with result: " +
+                GetTypeName() + ", Level: " +CurrentLevel+" TU: " + CurrentNumberOfAttempts + 
+                " Unit ends with result: " +
                 (wasUnitSuccessful ? "success" : "fail") +
                 ". " +
                 CurrentNumberOfSuccesses + " successful attempts in row, " +

@@ -71,6 +71,13 @@
     <Compile Include="Common\TrainingSetHints.cs" />
     <Compile Include="Learning tasks\AvatarsActions.cs" />
     <Compile Include="Learning tasks\LT2BackBinaryTest.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy5Rem03.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy5.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelGrayDisruptingBlackAndWhite.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelTwoSequences.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelGrayPrecedingWhite.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy4.cs" />
+    <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy3.cs" />
     <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelDivisionBy2.cs" />
     <Compile Include="Learning tasks\TransducerTasks\LTSinglePixelTransducerRL.cs" />
     <Compile Include="Learning tasks\LTSinglePixelRL2.cs" />

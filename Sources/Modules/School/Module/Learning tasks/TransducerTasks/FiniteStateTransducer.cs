@@ -90,7 +90,7 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
             List<FiniteTransducerTransition> options = new List<FiniteTransducerTransition>(NumOfStates); // some default capacity
             for (int i = 0; i < NumOfStates; i++)
             {
-                for (int j = 0; j < NumOfActions; j++)
+                for (int j = 0; j < NumOfSymbols; j++)
                 {
                     if (m_transitionTable[m_currentState, i, j] != null)
                         options.Add(m_transitionTable[m_currentState, i, j]);

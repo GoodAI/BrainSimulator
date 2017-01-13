@@ -19,10 +19,8 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
 
         protected FiniteTransducerTransition m_lastTransition;
         protected bool m_stepIsCorrect;
-        protected int m_importantActionsOffered;
         protected int m_importantActionsTaken;
         protected int m_importantActionsToTake;
-        protected bool m_madeMistake;
         protected HashSet<int> m_importantActions;
 
         // graphics
@@ -50,14 +48,18 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
             };
 
             TSProgression.Add(TSHints.Clone());
-            TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
+            //TSProgression.Add(TSHintAttributes.IS_VARIABLE_COLOR, 1);
         }
 
         public override void Init()
         {
             m_importantActions = new HashSet<int>();
-            m_ft = null;
+
             CreateTransducer();
+            m_ft.Start();
+            m_stepIsCorrect = true;
+            m_currentObject = null;
+            m_lastTransition = null;
 
             base.Init();
         }
@@ -66,19 +68,22 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
 
         public override int NumberOfSuccessesRequired
         {
-            get { return 2; }  // the training unit is hard enough so that two successes in a row are enough (it has a 1 in 2^(10*2) chance of being solved randomly)
+            get { return 20; }
         }
 
+        // the school framework will paint the FOV black before PresentNewTrainingUnit is called - I need to re-paint
+        // what ExecuteStepAfterEvaluation painted into the FOV.
         public override void PresentNewTrainingUnit()
         {
-            m_ft.Start();
-
-            m_lastTransition = null;
-            m_madeMistake = false;
-            m_importantActionsToTake = 10;
-            m_importantActionsOffered = 0;
+            m_importantActionsToTake = 1;
             m_importantActionsTaken = 0;
-            m_currentObject = null;
+            if(m_lastTransition == null) // true for the very first training unit
+            {
+                FiniteTransducerTransition t = m_ft.pickNextTransitionRandomly();
+                m_ft.UseTransition(t);
+                m_lastTransition = t;
+            }
+            DisplayLastTransitionSymbol();
         }
 
         public override void ExecuteStepAfterEvaluation()
@@ -90,12 +95,17 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
             m_ft.UseTransition(t);
             m_lastTransition = t;
 
-            CreateObject(GetSymbolColor(t.symbol));
+            DisplayLastTransitionSymbol();
+        }
+
+        void DisplayLastTransitionSymbol()
+        {
+            CreateObject(GetSymbolColor(m_lastTransition.symbol));
         }
 
         protected void CreateObject(int color)
         {
-            m_currentObject = new Shape(Shape.Shapes.Square, new PointF(0f, 0f), new SizeF(WrappedWorld.Scene.Width/2, WrappedWorld.Scene.Height/2));
+            m_currentObject = new Shape(Shape.Shapes.Square, new PointF(0f, 0f), new SizeF(WrappedWorld.Scene.Width, WrappedWorld.Scene.Height));
             WrappedWorld.AddGameObject(m_currentObject);
 
             SetObjectColor(color);
@@ -143,8 +153,7 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
             if (m_lastTransition != null)
             {
                 expectedAction = m_lastTransition.action;
-                if (m_importantActions.Contains(expectedAction))
-                    m_importantActionsOffered++;
+                //MyLog.WARNING.WriteLine("Action taken: " + action+" expected action: "+expectedAction);
             }
 
             if (m_lastTransition == null)
@@ -176,13 +185,13 @@ namespace GoodAI.Modules.School.LearningTasks.TransducerTasks
         {
             EvaluateSinglePixelRLStep();
 
-            if(!m_madeMistake && m_importantActionsTaken >= m_importantActionsToTake)
+            if(m_stepIsCorrect && m_importantActionsTaken >= m_importantActionsToTake)
             {
                 wasUnitSuccessful = true;
                 return true;
             }
 
-            if(m_madeMistake && m_importantActionsOffered >= m_importantActionsToTake)
+            if(!m_stepIsCorrect)
             {
                 wasUnitSuccessful = false;
                 return true;
