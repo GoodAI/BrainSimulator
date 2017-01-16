@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -44,11 +45,13 @@ namespace GoodAI.Core.Dashboard
         public abstract void Restore(MyProject project);
 
         public abstract override bool Equals(object obj);
+
+        public abstract override int GetHashCode();
     }
 
     public abstract class DashboardNodePropertyBase : DashboardProperty
     {
-        public MyNode Node { get; set; }
+        public MyNode Node { get; protected set; }
 
         public abstract object Target { get; }
         private DashboardPropertyGroup m_group;
@@ -58,7 +61,7 @@ namespace GoodAI.Core.Dashboard
             set
             {
                 m_group = value;
-                GroupId = value == null ? null : value.PropertyId;
+                GroupId = value?.PropertyId;
             }
         }
 
@@ -101,6 +104,9 @@ namespace GoodAI.Core.Dashboard
         public virtual bool IsReadOnly { get; set; }
     }
 
+    /// <summary>
+    /// Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+    /// </summary>
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public class DashboardNodeProperty : DashboardNodePropertyBase
     {
@@ -164,6 +170,19 @@ namespace GoodAI.Core.Dashboard
             return false;
         }
 
+        /// <summary>
+        /// GetHashCode override for consistency with the Equals override. Returns a constant!
+        /// </summary>
+        /// <returns>Returns a constant degrading performance in hash-based containers to linear time.</returns>
+        public override int GetHashCode()
+        {
+            // We have no immutable fields, and we must return same hash for two objects for which x.Equals(y)
+            // When we are sure that we don't use this class in hash-based containers and change the fileds used
+            // in the Equals override at the same time, we can implement the hash based on those fiedls.
+            // http://stackoverflow.com/questions/19710028/what-to-return-when-overriding-object-gethashcode-in-classes-with-no-immutable
+            return 1000;
+        }
+
         public override string PropertyName
         {
             get { return PropertyInfo.Name; }
@@ -188,6 +207,9 @@ namespace GoodAI.Core.Dashboard
         }
     }
 
+    /// <summary>
+    /// Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+    /// </summary>
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public class DashboardTaskGroupProperty : DashboardNodePropertyBase
     {
@@ -259,8 +281,21 @@ namespace GoodAI.Core.Dashboard
 
             return false;
         }
+
+        /// <summary>
+        /// GetHashCode override for consistency with the Equals override. Returns a constant!
+        /// See the comments inside DashboardNodeProperty.GetHashCode for details.
+        /// </summary>
+        /// <returns>Returns a constant.</returns>
+        public override int GetHashCode()
+        {
+            return 2000;
+        }
     }
 
+    /// <summary>
+    /// Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+    /// </summary>
     [YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
     public class DashboardTaskProperty : DashboardNodeProperty
     {
@@ -319,6 +354,16 @@ namespace GoodAI.Core.Dashboard
                 return Task == o.Task && PropertyName == o.PropertyName;
 
             return false;
+        }
+
+        /// <summary>
+        /// GetHashCode override for consistency with the Equals override. Returns a constant!
+        /// See the comments inside DashboardNodeProperty.GetHashCode for details.
+        /// </summary>
+        /// <returns>Returns a constant.</returns>
+        public override int GetHashCode()
+        {
+            return 3000;
         }
     }
 
@@ -413,6 +458,12 @@ namespace GoodAI.Core.Dashboard
         public override bool Equals(object obj)
         {
             return this == obj;
+        }
+
+        public override int GetHashCode()
+        {
+            // Fall back to the reference based hash.
+            return RuntimeHelpers.GetHashCode(this);
         }
     }
 }
