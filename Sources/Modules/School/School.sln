@@ -66,6 +66,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "..\ToyWorld\Utils\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World", "..\ToyWorld\World\World.csproj", "{3831266C-24FE-4DD6-A4CC-39D0EF33C299}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldConversation", "..\BrainSimToyWorld\ToyWorldConversation\ToyWorldConversation.csproj", "{99EEE01B-4697-415C-969B-3767139473D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -248,6 +250,14 @@ Global
 		{3831266C-24FE-4DD6-A4CC-39D0EF33C299}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{3831266C-24FE-4DD6-A4CC-39D0EF33C299}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{3831266C-24FE-4DD6-A4CC-39D0EF33C299}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{99EEE01B-4697-415C-969B-3767139473D3}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -268,5 +278,6 @@ Global
 		{272A6B2F-921A-4AC2-ACED-A3E0F487954C} = {30C2C486-2844-423B-A86A-20F1651924AA}
 		{772B1188-A00D-45FC-B352-834227ADAE96} = {30C2C486-2844-423B-A86A-20F1651924AA}
 		{3831266C-24FE-4DD6-A4CC-39D0EF33C299} = {30C2C486-2844-423B-A86A-20F1651924AA}
+		{99EEE01B-4697-415C-969B-3767139473D3} = {30C2C486-2844-423B-A86A-20F1651924AA}
 	EndGlobalSection
 EndGlobal
