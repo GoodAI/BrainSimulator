@@ -240,7 +240,7 @@ namespace GoodAI.SoundWorld
                                 break;
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         MyLog.ERROR.WriteLine("Not a valid sound device!");
                     }

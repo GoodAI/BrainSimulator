@@ -72,7 +72,6 @@ namespace GoodAI.Modules.Observers
     public class MyArrayOfPointsForNNGroupHelperShape : MyShape
     {
         float[] m_data; // postions of neurons (x,y,z for each)
-        float[] m_data_input; // postions of neurons (x,y,z for each)
         int m_dataDim = 3; /// jsut x,y,z :)
         Random rnd = new Random();
         MyAbstractLayer m_firstLayer; // poniter to first layer in the NNGRoup

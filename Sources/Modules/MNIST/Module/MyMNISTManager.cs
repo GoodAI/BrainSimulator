@@ -67,7 +67,6 @@ namespace MNIST
         /// Constructor
         /// </summary>
         /// <param name="baseFolder">Base folder with MNIST dataset files</param>
-        /// <param name="imagesCnt">How many images to load</param>
         /// <param name="exact">If TRUE, you will get exactly imagesCnt images. If FALSE, you will get AT MOST imagesCnt images. It's here for performance reason and BC</param>
         /// <param name="afterLastImage">What to do, after the last values has been sent</param>
         public MyMNISTManager(string baseFolder, int trainingExamplesPerDigitCnt = int.MaxValue, int testExamplesPerDigitCnt = int.MaxValue,
@@ -392,7 +391,7 @@ namespace MNIST
 
         /// <summary>
         /// Alternative optimized constructor; Directly reads from referenced BinaryReaders into inner data store m_data.
-        /// The normalization into <0, 1> is also performed right away with respect to min = 0, max = 255 of the read byte value.
+        /// The normalization into [0, 1] is also performed right away with respect to min = 0, max = 255 of the read byte value.
         /// </summary>
         public MyMNISTImage(BinaryReader brImages, BinaryReader brLabels, int width = 28, int height = 28)
         {

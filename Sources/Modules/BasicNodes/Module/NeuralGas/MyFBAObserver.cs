@@ -93,21 +93,15 @@ namespace GoodAI.Modules.NeuralGas
 
         bool initializedFlag;
         Random randomNumber;
-        float actualVelocity;
 
         private int maxConnections;
 
         // physics kernels
 
         private MyCudaKernel m_setForcesToZeroKernel;
-        private MyCudaKernel m_computeSpringsKernel;
-        private MyCudaKernel m_computeElectricRepulsionKernel;
         private MyCudaKernel m_useForceKernel;
 
         private MyCudaKernel m_centerOfGravityKernel;
-
-        private MyCudaKernel m_cSpringsKernel;
-        private MyCudaKernel m_cRepulsiveKernel;
 
         private MyCudaKernel m_springKernel;
         private MyCudaKernel m_repulsionKernel;
@@ -126,7 +120,6 @@ namespace GoodAI.Modules.NeuralGas
 
         private MyBufferedPrimitive m_Connections;
         private MyBufferedPrimitive m_ReferenceFields;
-        private MyBufferedPrimitive m_Winners;
         private MyBufferedPrimitive m_WinnerOne;
         private MyBufferedPrimitive m_WinnerTwo;
         private Vector3 m_Translation;
@@ -174,7 +167,6 @@ namespace GoodAI.Modules.NeuralGas
             m_copyAndProcessTextureKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"GrowingNeuralGas\FBAObserverKernel", "CopyAndProcessTextureKernel");
             m_winnersKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"GrowingNeuralGas\FBAObserverKernel", "WinnersKernel");
             m_zeroTextureKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"GrowingNeuralGas\FBAObserverKernel", "ZeroTextureKernel");
-            actualVelocity = 1.00f;
 
             m_h_ActiveConnectionsCount = new int[1];
         }
