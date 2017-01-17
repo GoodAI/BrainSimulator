@@ -82,7 +82,7 @@ __device__ void hsv_to_rgb(float h, float s, float v, float &r, float &g, float 
 __device__ unsigned int hsva_to_uint_rgba(float h, float s, float v, float a) {
 	float r, g, b;	
 
-    hsv_to_rgb(h, s, v, r, g, b);
+	hsv_to_rgb(h, s, v, r, g, b);
 
 	unsigned char red = (unsigned char) __float2uint_rn(255.0f * r);
 	unsigned char green = (unsigned char) __float2uint_rn(255.0f * g);
@@ -95,7 +95,7 @@ __device__ unsigned int hsva_to_uint_rgba(float h, float s, float v, float a) {
 __device__ float hsva_to_float(float h, float s, float v) {
 	float r, g, b;	
 
-    hsv_to_rgb(h, s, v, r, g, b);
+	hsv_to_rgb(h, s, v, r, g, b);
 
 	return  RGB2GRAY_AVERAGE(r,g,b);			
 }
