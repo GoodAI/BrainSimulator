@@ -70,7 +70,7 @@ namespace Graph.Items
             {
                 res = converter.ConvertFromString(text);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

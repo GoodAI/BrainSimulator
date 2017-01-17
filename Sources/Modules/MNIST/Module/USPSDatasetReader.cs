@@ -18,8 +18,6 @@ namespace MNIST
 
         private StreamReader _sr;
 
-        private int _nExamplesLeft;
-
         public int NumClasses { get { return NumberOfClasses; } }
 
         public USPSDatasetReader(string filePath)

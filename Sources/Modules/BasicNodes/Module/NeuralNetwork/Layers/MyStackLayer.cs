@@ -30,7 +30,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
         }
 
         // pointer to both layers
-        new internal MyAbstractLayer[] PreviousLayer { get; set; }
+        internal MyAbstractLayer[] PreviousLayer { get; set; }
 
         public override ConnectionType Connection
         {

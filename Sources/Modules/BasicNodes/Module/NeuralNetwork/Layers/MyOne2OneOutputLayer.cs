@@ -58,7 +58,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             }
         }
 
-        public void CreateTasks()
+        public new void CreateTasks()
         {
             ForwardTask = new MyOneToOneForwardTask();
             DeltaBackTask = new MyOneToOneDeltaBackTask();

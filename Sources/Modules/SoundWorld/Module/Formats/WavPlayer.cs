@@ -258,7 +258,6 @@ namespace GoodAI.Modules.SoundProcessing
         /// </summary>
         /// <param name="filename">File name</param>
         /// <param name="data">Dat to write in byte format</param>
-        /// <param name="format">Wave format of RIFF file</param>
         public void Save(string filename, short[] data)
         {
             byte[] buff = ToByte(data);
@@ -324,7 +323,7 @@ namespace GoodAI.Modules.SoundProcessing
         /// <summary>
         /// Attach transcription of audio file.
         /// </summary>
-        /// <param name="filename">File name.</param>
+        /// <param name="transcription">Transcription text.</param>
         public void AttachTranscription(string transcription)
         {
             if (transcription == "")
@@ -346,7 +345,6 @@ namespace GoodAI.Modules.SoundProcessing
         /// <summary>
         /// Search transcription file and return current feature
         /// </summary>
-        /// <param name="ax">Index in audio file.</param>
         /// <returns>Current feature.</returns>
         public char GetTranscription(int x, int y)
         {

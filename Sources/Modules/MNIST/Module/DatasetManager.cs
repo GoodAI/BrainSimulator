@@ -16,12 +16,9 @@ namespace MNIST
 
         List<int> _nExamplesPerClass;
     
-        private bool _needReIndex;
-
         public DatasetManager(DatasetReaderFactory readerFactory)
         {
             _readerFactory = readerFactory;
-            _needReIndex = true;
 
             using (IDatasetReader r = _readerFactory.CreateReader())
             {

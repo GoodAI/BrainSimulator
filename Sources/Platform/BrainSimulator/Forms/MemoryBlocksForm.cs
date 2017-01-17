@@ -15,8 +15,6 @@ namespace GoodAI.BrainSimulator.Forms
     {
         private readonly MainForm m_mainForm;
         private MyNode m_target;
-        private bool m_escapeOrEnterPressed;
-        private bool m_errorInfoShown = true;
 
         public MemoryBlocksForm(MainForm mainForm)
         {

@@ -22,9 +22,18 @@ namespace GoodAI.Core.Memory
 
         //TODO: Find if MyWorkingNode is possible here
         public virtual MyNode Owner { get; set; }
+
+        /// <summary>
+        /// Obsolete: ColumnHint is deprecated, please use Dims instead. 
+        /// </summary>
+        /// We are not using the annotation, because that would generate a sh*tload of warnings.
+        /// [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
         public abstract int ColumnHint { get; set; }
+
         public abstract TensorDimensions Dims { get; set; }
+
         public IMemoryBlockMetadata Metadata { get; private set; }
+
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
 
@@ -107,7 +116,11 @@ namespace GoodAI.Core.Memory
             }
         }
 
-        [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
+        /// <summary>
+        /// Obsolete: ColumnHint is deprecated, please use Dims instead. 
+        /// </summary>
+        /// We are not using the annotation, because that would generate a sh*tload of warnings.
+        /// [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
         public override int ColumnHint
         {
             get { return (Dims[0] > 0) ? Dims[0] : m_columnHint; }

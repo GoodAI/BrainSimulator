@@ -18,12 +18,13 @@ namespace CustomModels.NeuralNetwork.Layers
         {
             get { return ConnectionType.ONE_TO_ONE; }
         }
-
+        
+        // new or override?
         [YAXSerializableField(DefaultValue = ActivationFunctionType.SIGMOID)]
         [MyBrowsable, Category("\tLayer")]
-        public ActivationFunctionType ActivationFunction { get; set; }
+        public new ActivationFunctionType ActivationFunction { get; set; }
 
-        public MyMemoryBlock<float> Delta { get; protected set; }
+        public new MyMemoryBlock<float> Delta { get; protected set; }
 
         public override void UpdateMemoryBlocks()
         {

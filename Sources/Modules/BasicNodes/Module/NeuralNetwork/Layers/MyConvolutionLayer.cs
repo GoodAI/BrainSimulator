@@ -302,7 +302,7 @@ namespace GoodAI.Modules.NeuralNetwork.Layers
             if (memoryBlock == null)
                 return 0;
 
-            return dimension >= memoryBlock.Dims.Count ? 1 : memoryBlock.Dims[dimension];
+            return dimension >= memoryBlock.Dims.Rank ? 1 : memoryBlock.Dims[dimension];
 
         }
 

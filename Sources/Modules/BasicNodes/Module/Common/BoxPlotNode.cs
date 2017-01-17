@@ -102,8 +102,7 @@ namespace GoodAI.Modules.Common
         {
             private int windowIdx { get; set; }
             private int elementsCount { get; set; }
-            private int columnsN, rowsN, elementsN, outputRowsN;
-            MyCudaKernel m_sumKernel;
+            private int columnsN, rowsN, elementsN;
 
             private bool firstExec;
 
