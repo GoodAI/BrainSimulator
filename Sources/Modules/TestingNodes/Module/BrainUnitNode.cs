@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Text;
 using YAXLib;
 
-// TODO: resolve duplicate code, this is mostly copy of the CSharpNode
+// TODO(Premek): resolve duplicate code, this is mostly copy of the CSharpNode
 namespace GoodAI.Modules.TestingNodes
 {
     /// <author>GoodAI</author>
@@ -122,7 +122,7 @@ namespace GoodAI.Modules.TestingNodes
             return null;
         }
 
-        private void CopyInputBlocksToHost()
+        private new void CopyInputBlocksToHost()
         {
             for (int i = 0; i < InputBranches; i++)
             {
