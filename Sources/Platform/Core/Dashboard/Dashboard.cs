@@ -24,7 +24,7 @@ namespace GoodAI.Core.Dashboard
         [YAXSerializableField]
         public IList<TProperty> Properties { get; set; }
 
-        public DashboardBase()
+        protected DashboardBase()
         {
             Properties = new List<TProperty>();
         }

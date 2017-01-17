@@ -254,6 +254,7 @@ namespace YAXLib
         /// <param name="location">The location string.</param>
         /// <param name="attrName">Name of the attribute.</param>
         /// <param name="attrValue">The value to be assigned to the attribute.</param>
+        /// <param name="documentDefaultNamespace"></param>
         /// <returns>returns the attribute with the given name in the location 
         /// specified by the given location string in the given XML element.</returns>
         public static XAttribute CreateAttribute(XElement baseElement, string location, XName attrName, object attrValue, XNamespace documentDefaultNamespace)

@@ -1588,7 +1588,8 @@ namespace YAXLib
             else
                 o = m_type.InvokeMember(string.Empty, BindingFlags.CreateInstance, null, null, new object[0]);
 
-            bool foundAnyOfMembers = false;
+            // this var is not used, see below (commenting out to prevent warnings)
+            //bool foundAnyOfMembers = false;
             foreach (var member in GetFieldsToBeSerialized())
             {
                 if (!member.CanWrite)
@@ -1632,7 +1633,7 @@ namespace YAXLib
                     }
                     else
                     {
-                        foundAnyOfMembers = true;
+                        //foundAnyOfMembers = true;
                         elemValue = attr.Value;
                         xattrValue = attr;
                     }
@@ -1666,7 +1667,7 @@ namespace YAXLib
                         }
                         else
                         {
-                            foundAnyOfMembers = true;
+                            //foundAnyOfMembers = true;
                             elemValue = values[0].Value;
                             values[0].Remove();
                         }
@@ -1685,7 +1686,7 @@ namespace YAXLib
                             {
                                 elem = baseElement;
                                 canContinue = true;
-                                foundAnyOfMembers = true;
+                                //foundAnyOfMembers = true;
                             }
                             else
                             {
@@ -1703,7 +1704,7 @@ namespace YAXLib
                                 if (AtLeastOneOfMembersExists(fakeElem, member.MemberType))
                                 {
                                     canContinue = true;
-                                    foundAnyOfMembers = true;
+                                    //foundAnyOfMembers = true;
                                     elem = fakeElem;
                                     elemValue = elem.Value;
                                 }
@@ -1719,7 +1720,7 @@ namespace YAXLib
                     }
                     else
                     {
-                        foundAnyOfMembers = true;
+                        //foundAnyOfMembers = true;
                         elemValue = elem.Value;
                     }
 
@@ -1802,8 +1803,8 @@ namespace YAXLib
                 else if (elemValue != null)
                 {
                     RetreiveElementValue(o, member, elemValue, xelemValue);
-                    if (createdFakeElement && !m_exceptionOccurredDuringMemberDeserialization)
-                        foundAnyOfMembers = true;
+                    //if (createdFakeElement && !m_exceptionOccurredDuringMemberDeserialization)
+                    //    foundAnyOfMembers = true;
                 }
 
                 if (createdFakeElement && xelemValue != null)
