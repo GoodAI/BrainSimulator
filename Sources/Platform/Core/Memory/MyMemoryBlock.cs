@@ -22,9 +22,14 @@ namespace GoodAI.Core.Memory
 
         //TODO: Find if MyWorkingNode is possible here
         public virtual MyNode Owner { get; set; }
+
+        [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
         public abstract int ColumnHint { get; set; }
+
         public abstract TensorDimensions Dims { get; set; }
+
         public IMemoryBlockMetadata Metadata { get; private set; }
+
         public float MinValueHint { get; set; }
         public float MaxValueHint { get; set; }
 

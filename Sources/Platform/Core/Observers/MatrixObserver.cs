@@ -150,8 +150,6 @@ namespace GoodAI.Core.Observers
         private int m_characterMargin;
         private Bitmap m_bitmap;
         private int m_frameMarginPx;
-        private int m_characterMarginRightPx;
-        private int m_characterMarginTopPx;
         private Brush m_backgroundBrush;
         private Brush m_textBrush;
         private Brush m_negativeTextBrush;
@@ -165,8 +163,6 @@ namespace GoodAI.Core.Observers
             TargetChanged += MyMatrixObserver_TargetChanged;
             m_characterMargin = 1; // In characters.
             m_frameMarginPx = 10;
-            m_characterMarginRightPx = 2;
-            m_characterMarginTopPx = 2;
         }
 
         void MyMatrixObserver_TargetChanged(object sender, PropertyChangedEventArgs e)

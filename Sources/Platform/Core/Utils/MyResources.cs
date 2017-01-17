@@ -118,7 +118,7 @@ namespace GoodAI.Core.Utils
             {
                 return assembly.GetManifestResourceStream(assembly.GetName().Name + "." + resourceDir + "." + PathToResourceName(resourceName) + ".ptx");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MyLog.ERROR.WriteLine("PTX resource '" + resourceName + "' load failed from assembly " + assembly.GetName().Name + ".");
                 return null;
