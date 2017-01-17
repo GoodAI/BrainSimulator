@@ -34,6 +34,9 @@
     <DocumentationFile>bin\doc_new.xml</DocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="CudaFFT">
       <HintPath>..\..\..\packages\ManagedCuda-CUFFT.8.0.13\lib\net45\CudaFFT.dll</HintPath>
