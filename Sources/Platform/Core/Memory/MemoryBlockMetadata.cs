@@ -77,14 +77,15 @@ namespace GoodAI.Core.Memory
         }
     }
 
+    // Never change the numbers, they are used in CUDA sources as raw integers. (Only append items.)
     public enum RenderingMethod
     {
-        RedGreenScale,
-        GrayScale,
-        ColorScale,
-        BlackWhite,
-        Vector,
-        Raw,
-        RGB
+        RedGreenScale = 0,
+        GrayScale = 1,
+        ColorScale = 2,
+        BlackWhite = 3,
+        Vector = 4,
+        Raw = 5,
+        RGB = 6
     }
 }

@@ -11,6 +11,7 @@
 #include <float.h>
 
 #include "ColorHelpers.cu"
+#include "../Common/helper_math.h"
 
 extern "C"  
 {	
@@ -83,8 +84,11 @@ extern "C"
 		if (pixels_id < numOfPixels)
 		{
 			id = TileObserverGetIdInPixels (method, tw, th, pw, pixels_id, tilesInRow, noBlocksEffective);
-			if (id<0) // in the space between tiles
+			if (id < 0) // in the space between tiles
 			{
+				// red-green scale (0) grid for grayscale or black-and-white (3) method, and grayscale (1) grid otherwise
+				int gridMethod = static_cast<int>(!(method == 1 || method == 3));
+				pixels[pixels_id] = float_to_uint_rgba(0.85f, gridMethod, /*scale*/ 0, /*min*/ 0.0f, /*max*/ 1.0f);
 				return;
 			}
 			pixels[pixels_id] = float_to_uint_rgba(values[id], method, scale, minValue, maxValue);
