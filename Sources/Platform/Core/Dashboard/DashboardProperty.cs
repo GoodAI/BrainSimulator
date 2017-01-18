@@ -179,6 +179,7 @@ namespace GoodAI.Core.Dashboard
             // We have no immutable fields, and we must return same hash for two objects for which x.Equals(y)
             // When we are sure that we don't use this class in hash-based containers and change the fileds used
             // in the Equals override at the same time, we can implement the hash based on those fiedls.
+            // TODO(Premek): Reconsider this when there are some perfomance concerns.
             // http://stackoverflow.com/questions/19710028/what-to-return-when-overriding-object-gethashcode-in-classes-with-no-immutable
             return 1000;
         }
