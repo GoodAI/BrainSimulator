@@ -40,13 +40,13 @@ namespace MNIST
         [YAXSerializableField(DefaultValue = false)]
         public bool OneHot { get; set; }
 
-        [MyBrowsable, Category("Random"), DisplayName("Seed"), Description("Used to shuffle the order in which examples get presented. 0 = use random seed")]
+        [MyBrowsable, Category("Random"), DisplayName("Seed"), Description("Used to set initial state randomness generator. 0 = use random seed")]
         [YAXSerializableField(DefaultValue = 0)]
         public int RandomSeed { get; set; }
 
-        [MyBrowsable, Category("Random"), Description("Reshuffle dataset after each epoch.")]
-        [YAXSerializableField(DefaultValue = true)]
-        public bool Reshuffle { get; set; }
+        [MyBrowsable, Category("Example Order"), DisplayName("Mode"), Description("")] //TODO: fill in description
+        [YAXSerializableField(DefaultValue = ExampleOrderOption.Shuffle)]
+        public ExampleOrderOption ExampleOrder { get; set; }
 
         #endregion
 
@@ -73,10 +73,12 @@ namespace MNIST
         }
     }
 
-    [Description("Send Training Data"), MyTaskInfo(OneShot = false)]
     public abstract class SendDataTask : MyTask<ImageWorld>
     {
         protected DatasetManager _dataset;
+        protected ClassOrderOption _classOrderOption;
+        protected bool _useClassFilter;
+        protected string _classFilter;
 
 
         [MyBrowsable, Category("Params")]
@@ -89,16 +91,61 @@ namespace MNIST
          Description("For how many time steps should blank be presented before real examples start to appear")]
         public int ExpositionTimeOffset { get; set; }
 
-        //[MyBrowsable, Category("Params"), DisplayName("Send numbers")]
-        //[YAXSerializableField(DefaultValue = "All"),
-        // Description("Choose data to be sent by class number, use 'All' or e.g. '1,3,5'")]
-        //public string SendNumbers { get; set; }
+        private void UpdateManagerClassSettings()
+        {
+            if (_dataset != null)
+            {
+                if (UseClassFilter)
+                {
+                    _dataset.SetClassOrder(ClassOrder, ClassFilter);
+                }
+                else
+                {
+                    _dataset.SetClassOrder(ClassOrder);
+                }
+            }
+        }
 
-        //[MyBrowsable, Category("Params"), DisplayName("Sequence ordered"),
-        //Description("Send data ordered according to their labels (that is: 0,1,2,3,4..)?")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool SequenceOrdered { get; set; }
+        [MyBrowsable, Category("Class order"), DisplayName("Mode")]
+        [YAXSerializableField(DefaultValue = ClassOrderOption.Random),
+         Description("")]
+        public ClassOrderOption ClassOrder
+        {
+            get { return _classOrderOption; }
+            set
+            {
+                _classOrderOption = value;
+                UpdateManagerClassSettings();
+            }
+        }
 
+
+        [MyBrowsable, Category("Class filter"), DisplayName("Enabled")]
+        [YAXSerializableField(DefaultValue = false),
+         Description("Filter classes")]
+        public bool UseClassFilter
+        {
+            get { return _useClassFilter; }
+
+            set
+            {
+                _useClassFilter = value;
+                UpdateManagerClassSettings();
+            }
+        }
+
+        [MyBrowsable, Category("Class filter"), DisplayName("Filter")]
+        [YAXSerializableField(DefaultValue = "1,3,5"),
+         Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
+        public string ClassFilter
+        {
+            get { return _classFilter;  }
+            set
+            {
+                _classFilter = value;
+                UpdateManagerClassSettings();
+            }
+        }
 
         protected abstract DatasetReaderFactory CreateFactory(string basePath);
 
@@ -106,7 +153,8 @@ namespace MNIST
         {
             string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
             DatasetReaderFactory factory = CreateFactory(basePath);
-            _dataset = new DatasetManager(factory, Owner.RandomSeed, Owner.Reshuffle);
+            _dataset = new DatasetManager(factory, Owner.ExampleOrder, Owner.RandomSeed);
+            UpdateManagerClassSettings();
         }
 
         public override void Execute()
