@@ -79,6 +79,7 @@ namespace MNIST
         protected ClassOrderOption _classOrderOption;
         protected bool _useClassFilter;
         protected string _classFilter;
+        protected int _nExamplesPerClass;
 
 
         [MyBrowsable, Category("Params")]
@@ -91,31 +92,16 @@ namespace MNIST
          Description("For how many time steps should blank be presented before real examples start to appear")]
         public int ExpositionTimeOffset { get; set; }
 
-        private void UpdateManagerClassSettings()
-        {
-            if (_dataset != null)
-            {
-                if (UseClassFilter)
-                {
-                    _dataset.SetClassOrder(ClassOrder, ClassFilter);
-                }
-                else
-                {
-                    _dataset.SetClassOrder(ClassOrder);
-                }
-            }
-        }
-
         [MyBrowsable, Category("Class order"), DisplayName("Mode")]
         [YAXSerializableField(DefaultValue = ClassOrderOption.Random),
-         Description("")]
+         Description("")] //TODO: write description?
         public ClassOrderOption ClassOrder
         {
             get { return _classOrderOption; }
             set
             {
                 _classOrderOption = value;
-                UpdateManagerClassSettings();
+                _dataset.ClassOrder = value;
             }
         }
 
@@ -126,11 +112,10 @@ namespace MNIST
         public bool UseClassFilter
         {
             get { return _useClassFilter; }
-
             set
             {
                 _useClassFilter = value;
-                UpdateManagerClassSettings();
+                _dataset.UseClassFilter(value);
             }
         }
 
@@ -143,18 +128,39 @@ namespace MNIST
             set
             {
                 _classFilter = value;
-                UpdateManagerClassSettings();
+                _dataset.SetClassFilter(value);
+            }
+        }
+
+        [MyBrowsable, Category("Params")]
+        [YAXSerializableField(DefaultValue = 5000),
+        DisplayName("Examples per class"),
+        Description("Limit numer of examples per class")]
+        public int ExamplesPerClass
+        {
+            get { return _nExamplesPerClass; }
+            set
+            {
+                _nExamplesPerClass = _dataset.SetExampleLimit(value);
             }
         }
 
         protected abstract DatasetReaderFactory CreateFactory(string basePath);
 
-        public override void Init(int nGPU)
+        public SendDataTask()
         {
             string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            DatasetReaderFactory factory = CreateFactory(basePath);
-            _dataset = new DatasetManager(factory, Owner.ExampleOrder, Owner.RandomSeed);
-            UpdateManagerClassSettings();
+            _dataset = new DatasetManager(CreateFactory(basePath));
+            Console.WriteLine("Init task");
+        }
+
+        public override void Init(int nGPU)
+        {
+            _dataset.Init(Owner.RandomSeed, Owner.ExampleOrder);
+            _dataset.ClassOrder = ClassOrder;
+            _dataset.UseClassFilter(UseClassFilter);
+            _dataset.SetClassFilter(ClassFilter);
+            _dataset.SetExampleLimit(ExamplesPerClass);
         }
 
         public override void Execute()

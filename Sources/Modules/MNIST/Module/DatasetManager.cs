@@ -19,14 +19,15 @@ namespace MNIST
             _index = 0;
         }
 
-        public void Resize(int n)
+        public void Resize(int length)
         {
-            _length = n;
-
-            if (_length < 1 || _length > _array.Length)
+            if (length < 1 || length > _array.Length)
             {
                 throw new InvalidOperationException("Size of Indexer must fall within range [1, array.Length]");
             }
+
+            Reset();
+            _length = length; //TODO: get rid of side effect of ShuffleIndexer reshuffling itself before length is set
         }
 
         public int SampleRandom(Random random)
@@ -41,7 +42,7 @@ namespace MNIST
 
         public int GetNext()
         {
-            if (_index == _length)
+            if (_index >= _length)
             {
                 Reset();
             }
@@ -100,16 +101,43 @@ namespace MNIST
         protected int[] _nExamplesPerClass;
         protected int _nClasses;
 
+        protected int[] _classFilter;
+        protected bool _useClassFilter;
 
-        public DatasetManager(DatasetReaderFactory readerFactory, ExampleOrderOption exampleOrder, int seed)
+        protected bool _needLoad;
+
+        public ClassOrderOption ClassOrder
+        {
+            get { return _classOrder; }
+            set { _classOrder = value; }
+        }
+
+        public DatasetManager(DatasetReaderFactory readerFactory)
         {
             _readerFactory = readerFactory;
+            _needLoad = true;
+            _useClassFilter = false;
+        }
+
+        public void Init(int seed, ExampleOrderOption exampleOrder)
+        {
+            _random = seed == 0 ? new Random() : new Random(seed);
             _exampleOrder = exampleOrder;
 
-            _random = seed == 0 ? new Random() : new Random(seed);
+            if (_needLoad)
+            {
+                LoadDataset();
+                _needLoad = false;
+            }
 
-            //System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            //sw.Start();
+            Reindex();
+        }
+
+        private void LoadDataset()
+        {
+            Console.WriteLine("Dataset loading...");
+            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+            sw.Start();
             using (IDatasetReader r = _readerFactory.CreateReader())
             {
                 _nClasses = r.NumClasses;
@@ -130,25 +158,24 @@ namespace MNIST
                 throw new Exception("Dataset is empty!"); //TODO: better exception?
             }
 
-            CreateIndexers();
-            //sw.Stop();
-            //Console.WriteLine("Elapsed={0}", sw.Elapsed);
+            sw.Stop();
+            Console.WriteLine("took: {0}", sw.Elapsed);
         }
 
-        private void CreateIndexers()
+        private void Reindex()
         {
-            int[][] dsIndices = new int[_nClasses][];
-            int[] indices2 = Enumerable.Repeat(0, _nClasses).ToArray(); //read as indices^2
+            int[][] datasetIndices = new int[_nClasses][];
 
             for (int i = 0; i < _nClasses; ++i)
             {
-                dsIndices[i] = new int[_nExamplesPerClass[i]];
+                datasetIndices[i] = new int[_nExamplesPerClass[i]];
             }
 
+            int[] idxs = Enumerable.Repeat(0, _nClasses).ToArray();
             for (int i = 0; i < _examples.Count; ++i)
             {
                 int t = _examples[i].Target;
-                dsIndices[t][indices2[t]++] = i;
+                datasetIndices[t][idxs[t]++] = i;
             }
 
             _indexers = new Indexer[_nClasses];
@@ -156,66 +183,93 @@ namespace MNIST
             {
                 if (_exampleOrder == ExampleOrderOption.Shuffle)
                 {
-                    _indexers[i] = new ShuffleIndexer(dsIndices[i], _random);
+                    _indexers[i] = new ShuffleIndexer(datasetIndices[i], _random);
                 }
                 else
                 {
-                    _indexers[i] = new Indexer(dsIndices[i]);
+                    _indexers[i] = new Indexer(datasetIndices[i]);
                 }
             }
         }
 
-        public int GetMaxNumberPerClass()
+        public void UseClassFilter(bool doUse)
         {
-            return _nExamplesPerClass.Min();
-        }
-
-        public void SetClassOrder(ClassOrderOption classOrder, string filter = null)
-        {
-            int[] classes;
-            _classOrder = classOrder;
-
-            if (filter == null)
+            if (_needLoad)
             {
-                classes = Enumerable.Range(0, _nClasses).ToArray();
+                return;
+            }
+
+            _useClassFilter = doUse;
+
+            if (_useClassFilter)
+            {
+                _classIndexer = new Indexer(_classFilter);
             }
             else
             {
-                string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                // TODO: check all classes >= 0 && < _nClasses
-                classes = Array.ConvertAll(strClasses, int.Parse);
+                _classIndexer = new Indexer(Enumerable.Range(0, _nClasses).ToArray());
             }
+        }
 
-            if (_classOrder == ClassOrderOption.Increasing)
+        public void SetClassFilter(string filter)
+        {
+            string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            // TODO: check all classes >= 0 && < _nClasses
+            _classFilter = Array.ConvertAll(strClasses, int.Parse);
+            Array.Sort(_classFilter);
+
+            UseClassFilter(_useClassFilter);
+        }
+
+        public int SetExampleLimit(int limit)
+        {
+            if (_needLoad)
             {
-                Array.Sort(classes);
+                return limit;
             }
 
-            _classIndexer = new Indexer(classes);
+            limit = Math.Min(limit, _nExamplesPerClass.Max());
+
+            for (int i = 0; i < _indexers.Length; ++i)
+            {
+                if (limit < _nExamplesPerClass[i])
+                {
+                    _indexers[i].Resize(limit);
+                }
+            }
+
+            return limit;
         }
 
         public IExample GetNext()
         {
+            int classNum;
             if (_classOrder == ClassOrderOption.Random)
             {
-                return GetNext(_classIndexer.SampleRandom(_random));
+                classNum = _classIndexer.SampleRandom(_random);
             }
             else
             {
-                return GetNext(_classIndexer.GetNext());
+                classNum = _classIndexer.GetNext();
             }
+
+            return GetNext(classNum);
         }
 
         public IExample GetNext(int classNum)
         {
+            int idx;
             if (_exampleOrder == ExampleOrderOption.RandomSample)
             {
-                return _examples[_indexers[classNum].SampleRandom(_random)];
+                idx = _indexers[classNum].SampleRandom(_random);
             }
             else
             {
-                return _examples[_indexers[classNum].GetNext()];
+                idx = _indexers[classNum].GetNext();
             }
+
+            Console.WriteLine("Exaple id: {0}", idx);
+            return _examples[idx];
         }
     }
 }
