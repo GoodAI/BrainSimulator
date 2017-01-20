@@ -192,10 +192,10 @@ namespace GoodAI.Core.Memory
 
                     if (!Unmanaged)
                     {
-                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T).ToString() + ", " + Count * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T)));
+                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T) + ", " + Count * Marshal.SizeOf(typeof(T)));
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
-                           Count * System.Runtime.InteropServices.Marshal.SizeOf(typeof(T))));
+                           Count * Marshal.SizeOf(typeof(T))));
 
                         Fill(0);
                     }
@@ -203,11 +203,12 @@ namespace GoodAI.Core.Memory
                     {
                         if (ExternalPointer != 0)
                         {
-                            Device[Owner.GPU] = new CudaDeviceVariable<T>(new CUdeviceptr(ExternalPointer), Count * sizeof(float));
+                            Device[Owner.GPU] = new CudaDeviceVariable<T>(
+                                new CUdeviceptr(ExternalPointer), Count * Marshal.SizeOf(typeof(T)));
                         }
                         else
                         {
-                            throw new ArgumentOutOfRangeException("External Pointer not set for Unmanaged memory block.");
+                            throw new InvalidOperationException("ExternalPointer not set for Unmanaged memory block.");
                         }
                     }
                 }
