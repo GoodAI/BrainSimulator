@@ -7,6 +7,11 @@ using YAXLib;
 
 namespace GoodAI.Core.Configuration
 {
+    internal class ResourceNotFoundException : Exception
+    {
+        public ResourceNotFoundException(string message) : base(message) {}
+    }
+
     [YAXSerializeAs("Configuration"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AllFields)]
     public class MyModuleConfig
     {
@@ -57,11 +62,11 @@ namespace GoodAI.Core.Configuration
         public static MyModuleConfig LoadModuleConfig(FileInfo assemblyFile)
         {
             Assembly assembly = Assembly.LoadFrom(assemblyFile.FullName);
-            string xml = MyResources.GetTextFromAssembly(assembly, MODULE_CONFIG_FILE);
 
+            string xml = MyResources.GetTextFromAssembly(assembly, MODULE_CONFIG_FILE);
             if (string.IsNullOrEmpty(xml))
             {
-                throw new FileNotFoundException("Module config not found (resource \"nodes.xml\" missing for module " + assemblyFile.Name + ").");
+                throw new ResourceNotFoundException("Module config not found (missing resource \"nodes.xml\").");
             }
 
             YAXSerializer serializer = new YAXSerializer(typeof(MyModuleConfig),

@@ -85,7 +85,7 @@ namespace GoodAI.Tests.BrainTestRunner
             }
             else
             {
-                projectRunner.OpenProject(FindBrainFile(test));
+                projectRunner.OpenProject(FindBrainFile(test), strict: true);
             }
         }
 

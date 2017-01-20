@@ -179,9 +179,16 @@ namespace GoodAI.Core.Configuration
                     throw new MyModuleLoadingException("Core module loading failed (" + e.Message + ")", e);
                 }
 
-                // We don't report the nodes.xml missing - the dll could still contain UI extensions.
-                if (!(e is FileNotFoundException))
-                    MyLog.ERROR.WriteLine("Module loading failed: " + e.Message);
+                if (e is ResourceNotFoundException)
+                {
+                    // Missing nodes.xml is OK for UI extensions.
+                    if (!file.Name.EndsWith(".GUI.dll"))
+                        MyLog.WARNING.WriteLine($"Module {file.Name} not loaded (OK for UI extensions): " + e.Message);
+                }
+                else
+                {
+                    MyLog.ERROR.WriteLine($"Module {file.Name} loading failed: " + e.Message);
+                }
             }
         }
     }

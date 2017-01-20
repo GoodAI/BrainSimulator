@@ -296,7 +296,8 @@ namespace GoodAI.Core.Execution
         /// Loads project from file
         /// </summary>
         /// <param name="path">Path to .brain/.brainz file</param>
-        public void OpenProject(string path)
+        /// <param name="strict">Fails when a referenced module is not found</param>
+        public void OpenProject(string path, bool strict = false)
         {
             MyLog.INFO.WriteLine("Loading project: " + path);
 
@@ -311,7 +312,7 @@ namespace GoodAI.Core.Execution
 
                 using (MyMemoryManager.Backup backup = MyMemoryManager.GetBackup())
                 {
-                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(path));
+                    Project = MyProject.Deserialize(content, Path.GetDirectoryName(path), strict: strict);
                     backup.Forget();
                 }
 

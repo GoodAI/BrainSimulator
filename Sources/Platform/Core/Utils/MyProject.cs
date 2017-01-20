@@ -345,23 +345,19 @@ namespace GoodAI.Core.Utils
 
             foreach (MyUsedModuleInfo usedModule in usedModules)
             {
-                if (moduleLookup.ContainsKey(usedModule.Name))
-                {
-                    MyModuleConfig moduleConfig = moduleLookup[usedModule.Name];
+                if (!moduleLookup.ContainsKey(usedModule.Name))
+                    throw new InvalidOperationException("Referenced module not available: " + usedModule.Name);
+                
+                MyModuleConfig moduleConfig = moduleLookup[usedModule.Name];
 
-                    if (moduleConfig.Conversion != null)
-                    {
-                        convertedXml = moduleConfig.Conversion.ApplyConversionsIfNeeed(convertedXml, usedModule.Version);
-                    }
-                }
-                else
+                if (moduleConfig.Conversion != null)
                 {
-                    MyLog.ERROR.WriteLine("Referenced module not available: " + usedModule.Name);
+                    convertedXml = moduleConfig.Conversion.ApplyConversionsIfNeeed(convertedXml, usedModule.Version);
                 }
             }
 
             return convertedXml;
-        }        
+        }
 
         /// <summary>
         /// Deserializes the project from a given string.
@@ -369,13 +365,25 @@ namespace GoodAI.Core.Utils
         /// <param name="xml">The input string for deserialization.</param>
         /// <param name="projectPath">Project path for correct lookup of items like state data.</param>
         /// <param name="restoreModelOnly">If set to true, only the model is deserialized, but not observers etc.</param>
+        /// <param name="strict">Fails when referenced modules are not found</param>
         /// <returns>A deserialized project.</returns>
-        public static MyProject Deserialize(string xml, string projectPath, bool restoreModelOnly = false)
+        public static MyProject Deserialize(string xml, string projectPath, bool restoreModelOnly = false,
+            bool strict = false)
         {            
             xml = MyBaseConversion.ConvertOldFileVersioning(xml);
             xml = MyBaseConversion.ConvertOldModuleNames(xml);
 
-            xml = CheckUsedModulesAndConvert(xml);
+            try
+            {
+                xml = CheckUsedModulesAndConvert(xml);
+            }
+            catch (Exception e)
+            {
+                if (strict)
+                    throw;
+
+                MyLog.ERROR.WriteLine(e.Message);
+            }
             
             YAXSerializer serializer = MyProject.GetSerializer();
             MyPathSerializer.ReferencePath = projectPath;

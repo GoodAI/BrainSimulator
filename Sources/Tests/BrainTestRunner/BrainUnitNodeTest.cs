@@ -62,7 +62,7 @@ namespace GoodAI.Tests.BrainTestRunner
         {
             try
             {
-                projectRunner.OpenProject(BrainFileName);
+                projectRunner.OpenProject(BrainFileName, strict: true);
 
                 List<MyNode> brainUnitNodes = projectRunner.Filter(node => (node.GetType().Name == "BrainUnitNode"));
                 if (brainUnitNodes.Count != 1)
