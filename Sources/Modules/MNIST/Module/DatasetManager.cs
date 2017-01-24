@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 
 namespace MNIST
 {
@@ -15,7 +14,7 @@ namespace MNIST
         private Random m_random;
         private bool m_doShuffle;
 
-        public Indexer(int[] array, Random r, bool shuffleAtEnd, bool initShuffle)
+        public Indexer(int[] array, Random r, bool shuffleAtEnd = false, bool initShuffle = false)
         {
             m_array = array;
             m_length = array.Length;
@@ -51,7 +50,7 @@ namespace MNIST
         {
             if (length < 1 || length > m_array.Length)
             {
-                throw new InvalidOperationException("Size of Indexer must fall within range [1, array.Length]");
+                throw new ArgumentOutOfRangeException("Size of Indexer must fall within range <1, array.Length>");
             }
 
             m_length = length;
@@ -136,14 +135,11 @@ namespace MNIST
                 m_needLoad = false;
             }
 
-            Reindex();
+            InitIndexers();
         }
 
         private void LoadDataset()
         {
-            Console.WriteLine("Dataset loading...");
-            System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
-            sw.Start();
             using (IDatasetReader r = m_readerFactory.CreateReader())
             {
                 m_nClasses = r.NumClasses;
@@ -161,34 +157,32 @@ namespace MNIST
 
             if (m_examples.Count == 0)
             {
-                throw new Exception("Dataset is empty!"); //TODO: better exception?
+                throw new FileLoadException("The loaded dataset is empty");
             }
-
-            sw.Stop();
-            Console.WriteLine("took: {0}", sw.Elapsed);
         }
 
-        private void Reindex()
+        private void InitIndexers()
         {
-            int[][] datasetIndices = new int[m_nClasses][];
+            // for each class contains indices of m_examples with that class
+            List<int>[] datasetIndices = new List<int>[m_nClasses];
+            m_indexers = new Indexer[m_nClasses];
 
             for (int i = 0; i < m_nClasses; ++i)
             {
-                datasetIndices[i] = new int[m_nExamplesPerClass[i]];
+                datasetIndices[i] = new List<int>(m_nExamplesPerClass[i]);
             }
 
-            int[] idxs = new int[m_nClasses];
             for (int i = 0; i < m_examples.Count; ++i)
             {
                 int t = m_examples[i].Target;
-                datasetIndices[t][idxs[t]++] = i;
+                datasetIndices[t].Add(i);
             }
 
             bool shuffleAtEnd = (m_exampleOrder == ExampleOrderOption.Shuffle);
-            m_indexers = new Indexer[m_nClasses];
+            bool initShuffle = true;
             for (int i = 0; i < m_nClasses; ++i)
             {
-                m_indexers[i] = new Indexer(datasetIndices[i], m_random, shuffleAtEnd, true);
+                m_indexers[i] = new Indexer(datasetIndices[i].ToArray(), m_random, shuffleAtEnd, initShuffle);
             }
         }
 
@@ -203,18 +197,25 @@ namespace MNIST
 
             if (m_useClassFilter)
             {
-                m_classIndexer = new Indexer(m_classFilter, m_random, false, false);
+                foreach (int c in m_classFilter)
+                {
+                    if (c < 0 || c >= m_nClasses)
+                    {
+                        throw new ArgumentOutOfRangeException(string.Format("Class filter must contain only numbers <0, {0}>", m_nClasses-1));
+                    }
+                }
+
+                m_classIndexer = new Indexer(m_classFilter, m_random);
             }
             else
             {
-                m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random, false, false);
+                m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random);
             }
         }
 
         public void SetClassFilter(string filter)
         {
             string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            // TODO: check all classes >= 0 && < m_nClasses
             m_classFilter = Array.ConvertAll(strClasses, int.Parse);
             Array.Sort(m_classFilter);
 
@@ -244,6 +245,7 @@ namespace MNIST
         public IExample GetNext()
         {
             int classNum;
+
             if (m_classOrder == ClassOrderOption.Random)
             {
                 classNum = m_classIndexer.SampleRandom();
@@ -259,6 +261,7 @@ namespace MNIST
         public IExample GetNext(int classNum)
         {
             int idx;
+
             if (m_exampleOrder == ExampleOrderOption.RandomSample)
             {
                 idx = m_indexers[classNum].SampleRandom();
@@ -268,7 +271,6 @@ namespace MNIST
                 idx = m_indexers[classNum].GetNext();
             }
 
-            Console.WriteLine("Exaple id: {0}", idx);
             return m_examples[idx];
         }
     }

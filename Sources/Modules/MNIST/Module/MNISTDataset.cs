@@ -78,8 +78,8 @@ namespace MNIST
 
         public void Dispose()
         {
-            ((IDisposable)m_brImages).Dispose();
-            ((IDisposable)m_brLabels).Dispose();
+            m_brImages.Dispose();
+            m_brLabels.Dispose();
         }
     }
 

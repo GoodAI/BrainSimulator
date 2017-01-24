@@ -17,24 +17,31 @@ namespace MNIST
         public const int ImageColumns = 16;
 
         private StreamReader m_sr;
+        private string m_filePath;
 
         public int NumClasses { get { return NumberOfClasses; } }
 
         public USPSDatasetReader(string filePath)
         {
             m_sr = new StreamReader(filePath);
+            m_filePath = filePath;
         }
 
         public IExample ReadNext()
         {
             const int nPixels = ImageRows * ImageColumns;
             string line = m_sr.ReadLine();
+
+            if (line == null)
+            {
+                throw new EndOfStreamException("Reached end of the USPS file \"" + m_filePath + "\" while trying to read next example");
+            }
+
             string[] numbers = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             if (numbers.Length != nPixels + 1)
             {
-                //TODO: include path of the file?
-                throw new InvalidDataException("Invalid USPS file: invalid number of elements on line");
+                throw new InvalidDataException("Invalid USPS file \"" + m_filePath + "\": invalid number of elements per line");
             }
 
             CultureInfo ci = new CultureInfo("en-US");
@@ -56,7 +63,7 @@ namespace MNIST
 
         public void Dispose()
         {
-            ((IDisposable)m_sr).Dispose();
+            m_sr.Dispose();
         }
     }
 

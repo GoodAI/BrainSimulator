@@ -18,21 +18,9 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendUSPSTestDataTask SendTestUSPSData { get; protected set; }
 
-        protected override TensorDimensions InputDims
-        {
-            get
-            {
-                return new TensorDimensions(USPSDatasetReader.ImageRows, USPSDatasetReader.ImageColumns, USPSDatasetReader.ImageChannels);
-            }
-        }
-
-        protected override int NumberOfClasses
-        {
-            get
-            {
-                return USPSDatasetReader.NumberOfClasses;
-            }
-        }
+        protected override TensorDimensions InputDims =>
+            new TensorDimensions(USPSDatasetReader.ImageRows, USPSDatasetReader.ImageColumns, USPSDatasetReader.ImageChannels);
+        protected override int NumberOfClasses => USPSDatasetReader.NumberOfClasses;
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]

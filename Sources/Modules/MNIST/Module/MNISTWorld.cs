@@ -18,21 +18,9 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendMNISTTestDataTask SendTestMNISTData { get; protected set; }
 
-        protected override TensorDimensions InputDims
-        {
-            get
-            {
-                return new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
-            }
-        }
-
-        protected override int NumberOfClasses
-        {
-            get
-            {
-                return MNISTDatasetReader.NumberOfClasses;
-            }
-        }
+        protected override TensorDimensions InputDims =>
+            new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
+        protected override int NumberOfClasses => MNISTDatasetReader.NumberOfClasses;
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]

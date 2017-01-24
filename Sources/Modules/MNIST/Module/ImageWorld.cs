@@ -32,21 +32,25 @@ namespace MNIST
         #endregion
 
         #region World settings
-        [MyBrowsable, Category("Input"), Description("Binarize Input images with threshold = 0.5")]
+        [MyBrowsable, Category("Input")]
         [YAXSerializableField(DefaultValue = false)]
+        [Description("Binarize Input images with threshold = 0.5")]
         public bool Binarize { get; set; }
 
-        [MyBrowsable, Category("Target"), Description("Present target in one-hot encoding instead of class number")]
-        [YAXSerializableField(DefaultValue = false)]
-        public bool OneHot { get; set; }
-
-        [MyBrowsable, Category("Random"), DisplayName("Seed"), Description("Used to set initial state randomness generator. 0 = use random seed")]
+        [MyBrowsable, Category("Random"), DisplayName("Seed")]
         [YAXSerializableField(DefaultValue = 0)]
+        [Description("The initial state of randomness generator, 0 = use random seed")]
         public int RandomSeed { get; set; }
 
-        [MyBrowsable, Category("Example Order"), DisplayName("Mode"), Description("")] //TODO: fill in description
+        [MyBrowsable, Category("Random"), DisplayName("Example Order")]
         [YAXSerializableField(DefaultValue = ExampleOrderOption.Shuffle)]
+        [Description("The order in which examples are presented")]
         public ExampleOrderOption ExampleOrder { get; set; }
+
+        [MyBrowsable, Category("Target")]
+        [YAXSerializableField(DefaultValue = false)]
+        [Description("Present target in one-hot encoding instead of class number")]
+        public bool OneHot { get; set; }
 
         #endregion
 
@@ -81,34 +85,9 @@ namespace MNIST
         private string m_classFilter;
         private int m_nExamplesPerClass;
 
-
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 50),
-         Description("How many time steps is each sample shown.")]
-        public int ExpositionTime { get; set; }
-
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 0),
-         Description("For how many time steps should blank be presented before real examples start to appear")]
-        public int ExpositionTimeOffset { get; set; }
-
-        [MyBrowsable, Category("Class order"), DisplayName("Mode")]
-        [YAXSerializableField(DefaultValue = ClassOrderOption.Random),
-         Description("")] //TODO: write description?
-        public ClassOrderOption ClassOrder
-        {
-            get { return m_classOrderOption; }
-            set
-            {
-                m_classOrderOption = value;
-                m_dataset.ClassOrder = value;
-            }
-        }
-
-
-        [MyBrowsable, Category("Class filter"), DisplayName("Enabled")]
-        [YAXSerializableField(DefaultValue = false),
-         Description("Filter classes")]
+        [MyBrowsable, Category("Class Filter"), DisplayName("Enabled")]
+        [YAXSerializableField(DefaultValue = false)]
+        [Description("Filter classes")]
         public bool UseClassFilter
         {
             get { return m_useClassFilter; }
@@ -119,9 +98,9 @@ namespace MNIST
             }
         }
 
-        [MyBrowsable, Category("Class filter"), DisplayName("Filter")]
-        [YAXSerializableField(DefaultValue = "1,3,5"),
-         Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
+        [MyBrowsable, Category("Class Filter"), DisplayName("Filter")]
+        [YAXSerializableField(DefaultValue = "1,3,5")]
+        [Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
         public string ClassFilter
         {
             get { return m_classFilter;  }
@@ -132,10 +111,9 @@ namespace MNIST
             }
         }
 
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 5000),
-        DisplayName("Examples per class"),
-        Description("Limit numer of examples per class")]
+        [MyBrowsable, Category("Class Settings"), DisplayName("Examples per class")]
+        [YAXSerializableField(DefaultValue = 5000)]
+        [Description("Limit numer of examples per class")]
         public int ExamplesPerClass
         {
             get { return m_nExamplesPerClass; }
@@ -145,10 +123,33 @@ namespace MNIST
             }
         }
 
+        [MyBrowsable, Category("Class Settings"), DisplayName("Class Order")]
+        [YAXSerializableField(DefaultValue = ClassOrderOption.Random)]
+        [Description("The order of class from which examples are chosen")]
+        public ClassOrderOption ClassOrder
+        {
+            get { return m_classOrderOption; }
+            set
+            {
+                m_classOrderOption = value;
+                m_dataset.ClassOrder = value;
+            }
+        }
+
+        [MyBrowsable, Category("Params"), DisplayName("Exposition Time")]
+        [YAXSerializableField(DefaultValue = 50)]
+        [Description("How many time steps is each sample shown.")]
+        public int ExpositionTime { get; set; }
+
+        [MyBrowsable, Category("Params"), DisplayName("Exposition Time Offset")]
+        [YAXSerializableField(DefaultValue = 0)]
+        [Description("For how many time steps should blank be presented before real examples start to appear")]
+        public int ExpositionTimeOffset { get; set; }
+
+
         public SendDataTask(AbstractDatasetReaderFactory abstractFactory)
         {
             m_dataset = new DatasetManager(abstractFactory);
-            Console.WriteLine("Init task");
         }
 
         public override void Init(int nGPU)

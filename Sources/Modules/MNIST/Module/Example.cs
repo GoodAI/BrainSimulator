@@ -31,6 +31,9 @@ namespace MNIST
 
             float divBy = max - min;
 
+            if (divBy == 0 || float.IsInfinity(divBy) || float.IsNaN(divBy))
+                return;
+
             for (int i = 0; i < input.Length; i++)
             {
                 Input[i] = (Input[i] - min) / divBy;
@@ -55,6 +58,9 @@ namespace MNIST
             }
 
             float divBy = max - min;
+
+            if (divBy == 0 || float.IsInfinity(divBy) || float.IsNaN(divBy))
+                return;
 
             for (int i = 0; i < input.Length; i++)
             {
