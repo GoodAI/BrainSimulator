@@ -145,12 +145,9 @@ namespace MNIST
             }
         }
 
-        protected abstract DatasetReaderFactory CreateFactory(string basePath);
-
-        public SendDataTask()
+        public SendDataTask(AbstractDatasetReaderFactory abstractFactory)
         {
-            string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            m_dataset = new DatasetManager(CreateFactory(basePath));
+            m_dataset = new DatasetManager(abstractFactory);
             Console.WriteLine("Init task");
         }
 

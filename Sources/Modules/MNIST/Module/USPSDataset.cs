@@ -60,27 +60,35 @@ namespace MNIST
         }
     }
 
-    public class USPSDatasetReaderFactory : DatasetReaderFactory
+    public class USPSDatasetTrainReaderFactory : AbstractDatasetReaderFactory
     {
+        private const string FileName = "zip.train";
         private string m_baseDir;
 
-        private const string TrainSetName = "zip.train";
-        private const string TestSetName = "zip.test";
-        
-        public USPSDatasetReaderFactory(string baseDir, DatasetReaderFactoryType type)
-            : base(type)
+        public USPSDatasetTrainReaderFactory(string baseDir)
         {
             m_baseDir = baseDir;
         }
 
-        protected override IDatasetReader CreateTrainReader()
+        public override IDatasetReader CreateReader()
         {
-            return new USPSDatasetReader(m_baseDir + TrainSetName);
+            return new USPSDatasetReader(m_baseDir + FileName);
+        }
+    }
+
+    public class USPSDatasetTestReaderFactory : AbstractDatasetReaderFactory
+    {
+        private const string FileName = "zip.test";
+        private string m_baseDir;
+
+        public USPSDatasetTestReaderFactory(string baseDir)
+        {
+            m_baseDir = baseDir;
         }
 
-        protected override IDatasetReader CreateTestReader()
+        public override IDatasetReader CreateReader()
         {
-            return new USPSDatasetReader(m_baseDir + TestSetName);
+            return new USPSDatasetReader(m_baseDir + FileName);
         }
     }
 }

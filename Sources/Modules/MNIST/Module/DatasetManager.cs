@@ -94,7 +94,7 @@ namespace MNIST
 
     public class DatasetManager
     {
-        private DatasetReaderFactory m_readerFactory;
+        private AbstractDatasetReaderFactory m_readerFactory;
         private List<IExample> m_examples;
 
         private ClassOrderOption m_classOrder;
@@ -118,7 +118,7 @@ namespace MNIST
             set { m_classOrder = value; }
         }
 
-        public DatasetManager(DatasetReaderFactory readerFactory)
+        public DatasetManager(AbstractDatasetReaderFactory readerFactory)
         {
             m_readerFactory = readerFactory;
             m_needLoad = true;

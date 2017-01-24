@@ -39,7 +39,7 @@ namespace MNIST
             {
                 throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" magic number mismatch");
             }
-            
+
             if (readInt(m_brLabels) != LabelMagicNumber)
             {
                 throw new InvalidDataException("MNIST file \"" + labelFilePath + "\" magic number mismatch");
@@ -83,29 +83,40 @@ namespace MNIST
         }
     }
 
-    public class MNISTDatasetReaderFactory : DatasetReaderFactory
+    public class MNISTDatasetTrainReaderFactory : AbstractDatasetReaderFactory
     {
+        private const string ImageFileName = "train-images.idx3-ubyte";
+        private const string LabelFileName = "train-labels.idx1-ubyte";
+
         private string m_baseDir;
 
-        private const string TrainSetImageName = "train-images.idx3-ubyte";
-        private const string TrainSetLabelName = "train-labels.idx1-ubyte";
-        private const string TestSetImageName = "t10k-images.idx3-ubyte";
-        private const string TestSetLabelName = "t10k-labels.idx1-ubyte";
-        
-        public MNISTDatasetReaderFactory(string baseDir, DatasetReaderFactoryType type)
-            : base(type)
+        public MNISTDatasetTrainReaderFactory(string baseDir)
         {
             m_baseDir = baseDir;
         }
 
-        protected override IDatasetReader CreateTrainReader()
+        public override IDatasetReader CreateReader()
         {
-            return new MNISTDatasetReader(m_baseDir + TrainSetImageName, m_baseDir + TrainSetLabelName);
+            return new MNISTDatasetReader(m_baseDir + ImageFileName, m_baseDir + LabelFileName);
+        }
+    }
+
+    public class MNISTDatasetTestReaderFactory : AbstractDatasetReaderFactory
+    {
+        private const string ImageFileName = "t10k-images.idx3-ubyte";
+        private const string LabelFileName = "t10k-labels.idx1-ubyte";
+
+        private string m_baseDir;
+
+        public MNISTDatasetTestReaderFactory(string baseDir)
+        {
+            m_baseDir = baseDir;
         }
 
-        protected override IDatasetReader CreateTestReader()
+        public override IDatasetReader CreateReader()
         {
-            return new MNISTDatasetReader(m_baseDir + TestSetImageName, m_baseDir + TestSetLabelName);
+            return new MNISTDatasetReader(m_baseDir + ImageFileName, m_baseDir + LabelFileName);
         }
+
     }
 }

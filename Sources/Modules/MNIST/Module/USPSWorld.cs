@@ -38,18 +38,18 @@ namespace MNIST
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTrainDataTask : SendDataTask
     {
-        protected override DatasetReaderFactory CreateFactory(string basePath)
+        public SendUSPSTrainDataTask() :
+            base(new USPSDatasetTestReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
         {
-            return new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Train);
         }
     }
 
     [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTestDataTask : SendDataTask
     {
-        protected override DatasetReaderFactory CreateFactory(string basePath)
+        public SendUSPSTestDataTask() :
+            base(new USPSDatasetTestReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
         {
-            return new USPSDatasetReaderFactory(basePath, DatasetReaderFactoryType.Test);
         }
     }
 }
