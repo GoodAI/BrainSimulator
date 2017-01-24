@@ -16,19 +16,19 @@ namespace MNIST
         public const int ImageRows = 16;
         public const int ImageColumns = 16;
 
-        private StreamReader _sr;
+        private StreamReader m_sr;
 
         public int NumClasses { get { return NumberOfClasses; } }
 
         public USPSDatasetReader(string filePath)
         {
-            _sr = new StreamReader(filePath);
+            m_sr = new StreamReader(filePath);
         }
 
         public IExample ReadNext()
         {
             const int nPixels = ImageRows * ImageColumns;
-            string line = _sr.ReadLine();
+            string line = m_sr.ReadLine();
             string[] numbers = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
             if (numbers.Length != nPixels + 1)
@@ -51,18 +51,18 @@ namespace MNIST
 
         public bool HasNext()
         {
-            return !_sr.EndOfStream;
+            return !m_sr.EndOfStream;
         }
 
         public void Dispose()
         {
-            ((IDisposable)_sr).Dispose();
+            ((IDisposable)m_sr).Dispose();
         }
     }
 
     public class USPSDatasetReaderFactory : DatasetReaderFactory
     {
-        private string _baseDir;
+        private string m_baseDir;
 
         private const string TrainSetName = "zip.train";
         private const string TestSetName = "zip.test";
@@ -70,17 +70,17 @@ namespace MNIST
         public USPSDatasetReaderFactory(string baseDir, DatasetReaderFactoryType type)
             : base(type)
         {
-            _baseDir = baseDir;
+            m_baseDir = baseDir;
         }
 
         protected override IDatasetReader CreateTrainReader()
         {
-            return new USPSDatasetReader(_baseDir + TrainSetName);
+            return new USPSDatasetReader(m_baseDir + TrainSetName);
         }
 
         protected override IDatasetReader CreateTestReader()
         {
-            return new USPSDatasetReader(_baseDir + TestSetName);
+            return new USPSDatasetReader(m_baseDir + TestSetName);
         }
     }
 }

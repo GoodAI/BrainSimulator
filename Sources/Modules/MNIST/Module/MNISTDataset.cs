@@ -15,10 +15,10 @@ namespace MNIST
         private const int ImageMagicNumber = 2051;
         private const int LabelMagicNumber = 2049;
 
-        private BinaryReader _brImages;
-        private BinaryReader _brLabels;
+        private BinaryReader m_brImages;
+        private BinaryReader m_brLabels;
 
-        private int _nExamplesLeft;
+        private int m_nExamplesLeft;
 
         public int NumClasses { get { return NumberOfClasses; } }
 
@@ -32,32 +32,32 @@ namespace MNIST
             FileStream ifsImages = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read);
             FileStream ifsLabels = new FileStream(labelFilePath, FileMode.Open, FileAccess.Read);
 
-            _brImages = new BinaryReader(ifsImages);
-            _brLabels = new BinaryReader(ifsLabels);
+            m_brImages = new BinaryReader(ifsImages);
+            m_brLabels = new BinaryReader(ifsLabels);
 
-            if (readInt(_brImages) != ImageMagicNumber)
+            if (readInt(m_brImages) != ImageMagicNumber)
             {
                 throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" magic number mismatch");
             }
             
-            if (readInt(_brLabels) != LabelMagicNumber)
+            if (readInt(m_brLabels) != LabelMagicNumber)
             {
                 throw new InvalidDataException("MNIST file \"" + labelFilePath + "\" magic number mismatch");
             }
 
-            _nExamplesLeft = readInt(_brImages);
+            m_nExamplesLeft = readInt(m_brImages);
 
-            if (_nExamplesLeft != readInt(_brLabels))
+            if (m_nExamplesLeft != readInt(m_brLabels))
             {
                 throw new InvalidDataException("Number of examples does not match number of labels in MNIST dataset");
             }
 
-            if (readInt(_brImages) != ImageRows)
+            if (readInt(m_brImages) != ImageRows)
             {
                 throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" rows number mismatch");
             }
 
-            if (readInt(_brImages) != ImageColumns)
+            if (readInt(m_brImages) != ImageColumns)
             {
                 throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" columns number mismatch");
             }
@@ -65,27 +65,27 @@ namespace MNIST
 
         public IExample ReadNext()
         {
-            byte[] imageData = _brImages.ReadBytes(ImageRows * ImageColumns);
-            int label = _brLabels.ReadByte();
-            _nExamplesLeft--;
+            byte[] imageData = m_brImages.ReadBytes(ImageRows * ImageColumns);
+            int label = m_brLabels.ReadByte();
+            m_nExamplesLeft--;
             return new NormalizedExample(imageData, label);
         }
 
         public bool HasNext()
         {
-            return _nExamplesLeft > 0;
+            return m_nExamplesLeft > 0;
         }
 
         public void Dispose()
         {
-            ((IDisposable)_brImages).Dispose();
-            ((IDisposable)_brLabels).Dispose();
+            ((IDisposable)m_brImages).Dispose();
+            ((IDisposable)m_brLabels).Dispose();
         }
     }
 
     public class MNISTDatasetReaderFactory : DatasetReaderFactory
     {
-        private string _baseDir;
+        private string m_baseDir;
 
         private const string TrainSetImageName = "train-images.idx3-ubyte";
         private const string TrainSetLabelName = "train-labels.idx1-ubyte";
@@ -95,17 +95,17 @@ namespace MNIST
         public MNISTDatasetReaderFactory(string baseDir, DatasetReaderFactoryType type)
             : base(type)
         {
-            _baseDir = baseDir;
+            m_baseDir = baseDir;
         }
 
         protected override IDatasetReader CreateTrainReader()
         {
-            return new MNISTDatasetReader(_baseDir + TrainSetImageName, _baseDir + TrainSetLabelName);
+            return new MNISTDatasetReader(m_baseDir + TrainSetImageName, m_baseDir + TrainSetLabelName);
         }
 
         protected override IDatasetReader CreateTestReader()
         {
-            return new MNISTDatasetReader(_baseDir + TestSetImageName, _baseDir + TestSetLabelName);
+            return new MNISTDatasetReader(m_baseDir + TestSetImageName, m_baseDir + TestSetLabelName);
         }
     }
 }

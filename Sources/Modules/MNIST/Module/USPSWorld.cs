@@ -18,7 +18,7 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendUSPSTestDataTask SendTestUSPSData { get; protected set; }
 
-        protected override TensorDimensions _inputDims
+        protected override TensorDimensions InputDims
         {
             get
             {
@@ -26,7 +26,7 @@ namespace MNIST
             }
         }
 
-        protected override int _nClasses
+        protected override int NumberOfClasses
         {
             get
             {

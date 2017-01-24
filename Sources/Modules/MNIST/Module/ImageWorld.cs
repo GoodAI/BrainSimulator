@@ -11,8 +11,8 @@ namespace MNIST
     public abstract class ImageWorld : MyWorld
     {
         #region Abstract Properties
-        protected abstract TensorDimensions _inputDims { get; }
-        protected abstract int _nClasses { get; }
+        protected abstract TensorDimensions InputDims { get; }
+        protected abstract int NumberOfClasses { get; }
         #endregion
 
         #region Memory Blocks
@@ -52,11 +52,11 @@ namespace MNIST
 
         public override void UpdateMemoryBlocks()
         {
-            Input.Dims = _inputDims;
+            Input.Dims = InputDims;
 
             if (OneHot)
             {
-                Target.Dims = new TensorDimensions(_nClasses);
+                Target.Dims = new TensorDimensions(NumberOfClasses);
                 Target.MinValueHint = 0;
                 Target.MaxValueHint = 1;
             }
@@ -64,7 +64,7 @@ namespace MNIST
             {
                 Target.Dims = new TensorDimensions(1);
                 Target.MinValueHint = 0;
-                Target.MaxValueHint = _nClasses - 1;
+                Target.MaxValueHint = NumberOfClasses - 1;
             }
 
             //because values are normalized
@@ -75,11 +75,11 @@ namespace MNIST
 
     public abstract class SendDataTask : MyTask<ImageWorld>
     {
-        protected DatasetManager _dataset;
-        protected ClassOrderOption _classOrderOption;
-        protected bool _useClassFilter;
-        protected string _classFilter;
-        protected int _nExamplesPerClass;
+        protected DatasetManager m_dataset;
+        protected ClassOrderOption m_classOrderOption;
+        protected bool m_useClassFilter;
+        protected string m_classFilter;
+        protected int m_nExamplesPerClass;
 
 
         [MyBrowsable, Category("Params")]
@@ -97,11 +97,11 @@ namespace MNIST
          Description("")] //TODO: write description?
         public ClassOrderOption ClassOrder
         {
-            get { return _classOrderOption; }
+            get { return m_classOrderOption; }
             set
             {
-                _classOrderOption = value;
-                _dataset.ClassOrder = value;
+                m_classOrderOption = value;
+                m_dataset.ClassOrder = value;
             }
         }
 
@@ -111,11 +111,11 @@ namespace MNIST
          Description("Filter classes")]
         public bool UseClassFilter
         {
-            get { return _useClassFilter; }
+            get { return m_useClassFilter; }
             set
             {
-                _useClassFilter = value;
-                _dataset.UseClassFilter(value);
+                m_useClassFilter = value;
+                m_dataset.UseClassFilter(value);
             }
         }
 
@@ -124,11 +124,11 @@ namespace MNIST
          Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
         public string ClassFilter
         {
-            get { return _classFilter;  }
+            get { return m_classFilter;  }
             set
             {
-                _classFilter = value;
-                _dataset.SetClassFilter(value);
+                m_classFilter = value;
+                m_dataset.SetClassFilter(value);
             }
         }
 
@@ -138,10 +138,10 @@ namespace MNIST
         Description("Limit numer of examples per class")]
         public int ExamplesPerClass
         {
-            get { return _nExamplesPerClass; }
+            get { return m_nExamplesPerClass; }
             set
             {
-                _nExamplesPerClass = _dataset.SetExampleLimit(value);
+                m_nExamplesPerClass = m_dataset.SetExampleLimit(value);
             }
         }
 
@@ -150,24 +150,24 @@ namespace MNIST
         public SendDataTask()
         {
             string basePath = MyResources.GetMyAssemblyPath() + @"\res\";
-            _dataset = new DatasetManager(CreateFactory(basePath));
+            m_dataset = new DatasetManager(CreateFactory(basePath));
             Console.WriteLine("Init task");
         }
 
         public override void Init(int nGPU)
         {
-            _dataset.Init(Owner.RandomSeed, Owner.ExampleOrder);
-            _dataset.ClassOrder = ClassOrder;
-            _dataset.UseClassFilter(UseClassFilter);
-            _dataset.SetClassFilter(ClassFilter);
-            _dataset.SetExampleLimit(ExamplesPerClass);
+            m_dataset.Init(Owner.RandomSeed, Owner.ExampleOrder);
+            m_dataset.ClassOrder = ClassOrder;
+            m_dataset.UseClassFilter(UseClassFilter);
+            m_dataset.SetClassFilter(ClassFilter);
+            m_dataset.SetExampleLimit(ExamplesPerClass);
         }
 
         public override void Execute()
         {
             if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
-                IExample ex = _dataset.GetNext();
+                IExample ex = m_dataset.GetNext();
 
                 if (Owner.Binarize)
                 {

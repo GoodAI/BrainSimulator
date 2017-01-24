@@ -12,31 +12,31 @@ namespace MNIST
 
     public class NormalizedExample : IExample
     {
-        private float[] _input;
-        private int _target;
+        private float[] m_input;
+        private int m_target;
 
-        public float[] Input { get { return _input; } }
-        public int Target { get { return _target; } }
+        public float[] Input { get { return m_input; } }
+        public int Target { get { return m_target; } }
 
         public NormalizedExample(float[] input, int target)
         {
             float min = float.MaxValue;
             float max = float.MinValue;
-            _input = input;
-            _target = target;
+            m_input = input;
+            m_target = target;
 
 
             for (int i = 0; i < input.Length; i++)
             {
-                if (max < _input[i]) max = _input[i];
-                if (min > _input[i]) min = _input[i];
+                if (max < m_input[i]) max = m_input[i];
+                if (min > m_input[i]) min = m_input[i];
             }
 
             float divBy = max - min;
 
             for (int i = 0; i < input.Length; i++)
             {
-                _input[i] = (_input[i] - min) / divBy;
+                m_input[i] = (m_input[i] - min) / divBy;
             }
         }
 
@@ -47,8 +47,8 @@ namespace MNIST
         {
             byte min = byte.MaxValue;
             byte max = byte.MinValue;
-            _input = new float[input.Length];
-            _target = target;
+            m_input = new float[input.Length];
+            m_target = target;
 
 
             for (int i = 0; i < input.Length; i++)
@@ -61,7 +61,7 @@ namespace MNIST
 
             for (int i = 0; i < input.Length; i++)
             {
-                _input[i] = (input[i] - min) / divBy;
+                m_input[i] = (input[i] - min) / divBy;
             }
         }
     }

@@ -17,16 +17,16 @@ namespace MNIST
 
     public abstract class DatasetReaderFactory
     {
-        private DatasetReaderFactoryType _type;
+        private DatasetReaderFactoryType m_type;
 
         public DatasetReaderFactory(DatasetReaderFactoryType type)
         {
-            _type = type;
+            m_type = type;
         }
 
         public IDatasetReader CreateReader()
         {
-            switch (_type)
+            switch (m_type)
             {
                 case DatasetReaderFactoryType.Train:
                     return CreateTrainReader();
