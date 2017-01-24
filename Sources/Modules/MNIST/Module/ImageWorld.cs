@@ -75,11 +75,11 @@ namespace MNIST
 
     public abstract class SendDataTask : MyTask<ImageWorld>
     {
-        protected DatasetManager m_dataset;
-        protected ClassOrderOption m_classOrderOption;
-        protected bool m_useClassFilter;
-        protected string m_classFilter;
-        protected int m_nExamplesPerClass;
+        private DatasetManager m_dataset;
+        private ClassOrderOption m_classOrderOption;
+        private bool m_useClassFilter;
+        private string m_classFilter;
+        private int m_nExamplesPerClass;
 
 
         [MyBrowsable, Category("Params")]

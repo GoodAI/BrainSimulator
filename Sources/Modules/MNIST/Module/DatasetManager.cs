@@ -94,23 +94,23 @@ namespace MNIST
 
     public class DatasetManager
     {
-        protected DatasetReaderFactory m_readerFactory;
-        protected List<IExample> m_examples;
+        private DatasetReaderFactory m_readerFactory;
+        private List<IExample> m_examples;
 
-        protected ClassOrderOption m_classOrder;
-        protected ExampleOrderOption m_exampleOrder;
-        protected Random m_random;
+        private ClassOrderOption m_classOrder;
+        private ExampleOrderOption m_exampleOrder;
+        private Random m_random;
 
-        protected Indexer[] m_indexers;
-        protected Indexer m_classIndexer;
+        private Indexer[] m_indexers;
+        private Indexer m_classIndexer;
 
-        protected int[] m_nExamplesPerClass;
-        protected int m_nClasses;
+        private int[] m_nExamplesPerClass;
+        private int m_nClasses;
 
-        protected int[] m_classFilter;
-        protected bool m_useClassFilter;
+        private int[] m_classFilter;
+        private bool m_useClassFilter;
 
-        protected bool m_needLoad;
+        private bool m_needLoad;
 
         public ClassOrderOption ClassOrder
         {
@@ -147,7 +147,7 @@ namespace MNIST
             using (IDatasetReader r = m_readerFactory.CreateReader())
             {
                 m_nClasses = r.NumClasses;
-                m_nExamplesPerClass = Enumerable.Repeat(0, m_nClasses).ToArray();
+                m_nExamplesPerClass = new int[m_nClasses];
 
                 m_examples = new List<IExample>();
                 while (r.HasNext())
@@ -177,7 +177,7 @@ namespace MNIST
                 datasetIndices[i] = new int[m_nExamplesPerClass[i]];
             }
 
-            int[] idxs = Enumerable.Repeat(0, m_nClasses).ToArray();
+            int[] idxs = new int[m_nClasses];
             for (int i = 0; i < m_examples.Count; ++i)
             {
                 int t = m_examples[i].Target;
