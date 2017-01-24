@@ -8,16 +8,44 @@ namespace MNIST
 {
     public class Indexer
     {
-        protected int[] m_array;
-        protected int m_length;
-        protected int m_index;
+        private int[] m_array;
+        private int m_length;
+        private int m_index;
 
-        public Indexer(int[] array)
+        private Random m_random;
+        private bool m_doShuffle;
+
+        public Indexer(int[] array, Random r, bool shuffleAtEnd, bool initShuffle)
         {
             m_array = array;
             m_length = array.Length;
+            m_random = r;
+            m_doShuffle = shuffleAtEnd;
+
+            if (initShuffle)
+            {
+                Shuffle();
+            }
+
+            Reset();
+        }
+
+        private void Reset()
+        {
             m_index = 0;
         }
+
+        private void Shuffle()
+        {
+            for (int n = m_length; n > 1; --n)
+            {
+                int i = m_random.Next(n);
+                int tmp = m_array[i];
+                m_array[i] = m_array[n - 1];
+                m_array[n - 1] = tmp;
+            }
+        }
+
 
         public void Resize(int length)
         {
@@ -26,50 +54,28 @@ namespace MNIST
                 throw new InvalidOperationException("Size of Indexer must fall within range [1, array.Length]");
             }
 
+            m_length = length;
             Reset();
-            m_length = length; //TODO: get rid of side effect of ShuffleIndexer reshuffling itself before length is set
         }
 
-        public int SampleRandom(Random random)
+        public int SampleRandom()
         {
-            return m_array[random.Next(m_length)];
-        }
-
-        protected virtual void Reset()
-        {
-            m_index = 0;
+            return m_array[m_random.Next(m_length)];
         }
 
         public int GetNext()
         {
             if (m_index >= m_length)
             {
+                if (m_doShuffle)
+                {
+                    Shuffle();
+                }
+
                 Reset();
             }
 
             return m_array[m_index++];
-        }
-    }
-
-    public class ShuffleIndexer : Indexer
-    {
-        private Random m_random;
-        public ShuffleIndexer(int[] array, Random random) : base(array)
-        {
-            m_random = random;
-        }
-
-        protected override void Reset()
-        {
-            base.Reset();
-
-            for (int n = m_length; n > 1; --n)
-            {
-                int i = m_random.Next(n);
-                int tmp = m_array[i];
-                m_array[i] = m_array[n - 1];
-                m_array[n - 1] = tmp;
-            }
         }
     }
 
@@ -178,17 +184,11 @@ namespace MNIST
                 datasetIndices[t][idxs[t]++] = i;
             }
 
+            bool shuffleAtEnd = (m_exampleOrder == ExampleOrderOption.Shuffle);
             m_indexers = new Indexer[m_nClasses];
             for (int i = 0; i < m_nClasses; ++i)
             {
-                if (m_exampleOrder == ExampleOrderOption.Shuffle)
-                {
-                    m_indexers[i] = new ShuffleIndexer(datasetIndices[i], m_random);
-                }
-                else
-                {
-                    m_indexers[i] = new Indexer(datasetIndices[i]);
-                }
+                m_indexers[i] = new Indexer(datasetIndices[i], m_random, shuffleAtEnd, true);
             }
         }
 
@@ -203,11 +203,11 @@ namespace MNIST
 
             if (m_useClassFilter)
             {
-                m_classIndexer = new Indexer(m_classFilter);
+                m_classIndexer = new Indexer(m_classFilter, m_random, false, false);
             }
             else
             {
-                m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray());
+                m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random, false, false);
             }
         }
 
@@ -246,7 +246,7 @@ namespace MNIST
             int classNum;
             if (m_classOrder == ClassOrderOption.Random)
             {
-                classNum = m_classIndexer.SampleRandom(m_random);
+                classNum = m_classIndexer.SampleRandom();
             }
             else
             {
@@ -261,7 +261,7 @@ namespace MNIST
             int idx;
             if (m_exampleOrder == ExampleOrderOption.RandomSample)
             {
-                idx = m_indexers[classNum].SampleRandom(m_random);
+                idx = m_indexers[classNum].SampleRandom();
             }
             else
             {
