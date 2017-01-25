@@ -4,6 +4,7 @@
     <World type="MNIST.MyMNISTWorld" />
     <World type="MNIST.MNISTWorld" />
     <World type="MNIST.USPSWorld" />
+    <World type="MNIST.CIFAR10World" />
     <World type="BrainSimulator.Retina.MyMovingObjectsWorld" />
   </KnownWorlds>
 </Configuration>

@@ -48,6 +48,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CIFAR10Dataset.cs" />
+    <Compile Include="CIFAR10World.cs" />
     <Compile Include="DatasetManager.cs" />
     <Compile Include="DatasetReader.cs" />
     <Compile Include="Example.cs" />
@@ -103,6 +105,9 @@
     <None Include="res\USPS\zip.train">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="res\CIFAR-10\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
