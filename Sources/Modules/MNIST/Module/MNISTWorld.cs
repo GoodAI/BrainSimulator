@@ -27,7 +27,7 @@ namespace MNIST
     public class SendMNISTTrainDataTask : SendDataTask
     {
         public SendMNISTTrainDataTask() :
-            base(new MNISTDatasetTrainReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
+            base(new MNISTDatasetReaderFactory(MNISTDatasetReader.DefaultTrainImagePath, MNISTDatasetReader.DefaultTrainLabelPath))
         {
         }
     }
@@ -36,7 +36,7 @@ namespace MNIST
     public class SendMNISTTestDataTask : SendDataTask
     {
         public SendMNISTTestDataTask() :
-            base(new MNISTDatasetTestReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
+            base(new MNISTDatasetReaderFactory(MNISTDatasetReader.DefaultTestImagePath, MNISTDatasetReader.DefaultTestLabelPath))
         {
         }
     }

@@ -143,7 +143,7 @@ namespace MNIST
 
         private void LoadDataset()
         {
-            using (IDatasetReader r = m_readerFactory.CreateReader())
+            using (DatasetReader r = m_readerFactory.CreateReader())
             {
                 m_nClasses = r.NumClasses;
                 m_nExamplesPerClass = new int[m_nClasses];

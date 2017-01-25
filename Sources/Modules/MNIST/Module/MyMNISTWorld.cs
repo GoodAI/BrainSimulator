@@ -133,7 +133,7 @@ namespace MNIST
 
         public override void Init(int nGPU)
         {
-            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\",
+            Owner.MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\MNIST\",
                 TrainingExamplesPerDigit, TestExamplesPerDigit, false, AfterLastImage, Owner.RandomSeed);
         }
 

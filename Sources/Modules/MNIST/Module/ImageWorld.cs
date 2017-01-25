@@ -147,9 +147,9 @@ namespace MNIST
         public int ExpositionTimeOffset { get; set; }
 
 
-        public SendDataTask(AbstractDatasetReaderFactory abstractFactory)
+        public SendDataTask(AbstractDatasetReaderFactory datasetReaderFactory)
         {
-            m_dataset = new DatasetManager(abstractFactory);
+            m_dataset = new DatasetManager(datasetReaderFactory);
         }
 
         public override void Init(int nGPU)

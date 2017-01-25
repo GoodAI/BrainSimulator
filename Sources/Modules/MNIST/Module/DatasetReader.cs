@@ -1,17 +1,20 @@
 ﻿using System;
-using System.ComponentModel;
+using GoodAI.Core.Utils;
 
 namespace MNIST
 {
-    public interface IDatasetReader : IDisposable
+    public abstract class DatasetReader : IDisposable
     {
-        IExample ReadNext();
-        bool HasNext();
-        int NumClasses { get; }
+        public abstract IExample ReadNext();
+        public abstract bool HasNext();
+        public abstract void Dispose();
+
+        public abstract int NumClasses { get; }
+        protected static string BaseDir => MyResources.GetMyAssemblyPath() + @"\res\";
     }
 
     public abstract class AbstractDatasetReaderFactory
     {
-        public abstract IDatasetReader CreateReader();
+        public abstract DatasetReader CreateReader();
     }
 }

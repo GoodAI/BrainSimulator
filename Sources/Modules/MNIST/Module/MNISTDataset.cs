@@ -4,8 +4,16 @@ using System.Linq;
 
 namespace MNIST
 {
-    public class MNISTDatasetReader : IDatasetReader
+    public class MNISTDatasetReader : DatasetReader
     {
+        public new static string BaseDir => DatasetReader.BaseDir + @"MNIST\";
+
+        public static string DefaultTrainImagePath => BaseDir + "train-images.idx3-ubyte";
+        public static string DefaultTestImagePath => BaseDir + "t10k-images.idx3-ubyte";
+        public static string DefaultTrainLabelPath => BaseDir + "train-labels.idx1-ubyte";
+        public static string DefaultTestLabelPath => BaseDir + "t10k-labels.idx1-ubyte";
+        public static string[] DefaultNeededPaths => new string[] { DefaultTrainImagePath, DefaultTrainLabelPath, DefaultTestImagePath, DefaultTestLabelPath };
+
         public const int NumberOfClasses = 10;
 
         public const int ImageChannels = 1;
@@ -21,7 +29,7 @@ namespace MNIST
         private string m_imageFilePath;
         private string m_labelFilePath;
 
-        public int NumClasses { get { return NumberOfClasses; } }
+        public override int NumClasses { get { return NumberOfClasses; } }
 
         private static int readInt(BinaryReader br)
         {
@@ -66,7 +74,7 @@ namespace MNIST
             }
         }
 
-        public IExample ReadNext()
+        public override IExample ReadNext()
         {
             if (!HasNextImage())
             {
@@ -99,51 +107,32 @@ namespace MNIST
             return HasBytesToRead(m_brLabels, 1);
         }
 
-        public bool HasNext()
+        public override bool HasNext()
         {
             return HasNextImage() && HasNextLabel();
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             m_brImages.Dispose();
             m_brLabels.Dispose();
         }
     }
 
-    public class MNISTDatasetTrainReaderFactory : AbstractDatasetReaderFactory
+    public class MNISTDatasetReaderFactory : AbstractDatasetReaderFactory
     {
-        private const string ImageFileName = "train-images.idx3-ubyte";
-        private const string LabelFileName = "train-labels.idx1-ubyte";
+        private string m_imageFilePath;
+        private string m_labelFilePath;
 
-        private string m_baseDir;
-
-        public MNISTDatasetTrainReaderFactory(string baseDir)
+        public MNISTDatasetReaderFactory(string imageFilePath, string labelFilePath)
         {
-            m_baseDir = baseDir;
+            m_imageFilePath = imageFilePath;
+            m_labelFilePath = labelFilePath;
         }
 
-        public override IDatasetReader CreateReader()
+        public override DatasetReader CreateReader()
         {
-            return new MNISTDatasetReader(m_baseDir + ImageFileName, m_baseDir + LabelFileName);
-        }
-    }
-
-    public class MNISTDatasetTestReaderFactory : AbstractDatasetReaderFactory
-    {
-        private const string ImageFileName = "t10k-images.idx3-ubyte";
-        private const string LabelFileName = "t10k-labels.idx1-ubyte";
-
-        private string m_baseDir;
-
-        public MNISTDatasetTestReaderFactory(string baseDir)
-        {
-            m_baseDir = baseDir;
-        }
-
-        public override IDatasetReader CreateReader()
-        {
-            return new MNISTDatasetReader(m_baseDir + ImageFileName, m_baseDir + LabelFileName);
+            return new MNISTDatasetReader(m_imageFilePath, m_labelFilePath);
         }
     }
 }

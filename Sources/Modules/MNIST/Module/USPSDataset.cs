@@ -8,8 +8,14 @@ using System.Threading.Tasks;
 
 namespace MNIST
 {
-    public class USPSDatasetReader : IDatasetReader
+    public class USPSDatasetReader : DatasetReader
     {
+        public new static string BaseDir => DatasetReader.BaseDir + @"USPS\";
+
+        public static string DefaultTrainPath => BaseDir + "zip.train";
+        public static string DefaultTestPath => BaseDir + "zip.test";
+        public static string[] DefaultNeededPaths => new string[] { DefaultTrainPath, DefaultTestPath };
+
         public const int NumberOfClasses = 10;
 
         public const int ImageChannels = 1;
@@ -19,7 +25,7 @@ namespace MNIST
         private StreamReader m_sr;
         private string m_filePath;
 
-        public int NumClasses { get { return NumberOfClasses; } }
+        public override int NumClasses { get { return NumberOfClasses; } }
 
         public USPSDatasetReader(string filePath)
         {
@@ -27,7 +33,7 @@ namespace MNIST
             m_filePath = filePath;
         }
 
-        public IExample ReadNext()
+        public override IExample ReadNext()
         {
             if (!HasNext())
             {
@@ -55,46 +61,29 @@ namespace MNIST
             return new NormalizedExample(imageData, label);
         }
 
-        public bool HasNext()
+        public override bool HasNext()
         {
             return !m_sr.EndOfStream;
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             m_sr.Dispose();
         }
     }
 
-    public class USPSDatasetTrainReaderFactory : AbstractDatasetReaderFactory
+    public class USPSDatasetReaderFactory : AbstractDatasetReaderFactory
     {
-        private const string FileName = "zip.train";
-        private string m_baseDir;
+        private string m_filePath;
 
-        public USPSDatasetTrainReaderFactory(string baseDir)
+        public USPSDatasetReaderFactory(string filePath)
         {
-            m_baseDir = baseDir;
+            m_filePath = filePath;
         }
 
-        public override IDatasetReader CreateReader()
+        public override DatasetReader CreateReader()
         {
-            return new USPSDatasetReader(m_baseDir + FileName);
-        }
-    }
-
-    public class USPSDatasetTestReaderFactory : AbstractDatasetReaderFactory
-    {
-        private const string FileName = "zip.test";
-        private string m_baseDir;
-
-        public USPSDatasetTestReaderFactory(string baseDir)
-        {
-            m_baseDir = baseDir;
-        }
-
-        public override IDatasetReader CreateReader()
-        {
-            return new USPSDatasetReader(m_baseDir + FileName);
+            return new USPSDatasetReader(m_filePath);
         }
     }
 }
