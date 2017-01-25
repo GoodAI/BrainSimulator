@@ -29,13 +29,13 @@ namespace MNIST
 
         public IExample ReadNext()
         {
-            const int nPixels = ImageRows * ImageColumns;
-            string line = m_sr.ReadLine();
-
-            if (line == null)
+            if (!HasNext())
             {
                 throw new EndOfStreamException("Reached end of the USPS file \"" + m_filePath + "\" while trying to read next example");
             }
+
+            const int nPixels = ImageRows * ImageColumns;
+            string line = m_sr.ReadLine();
 
             string[] numbers = line.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -44,13 +44,12 @@ namespace MNIST
                 throw new InvalidDataException("Invalid USPS file \"" + m_filePath + "\": invalid number of elements per line");
             }
 
-            CultureInfo ci = new CultureInfo("en-US");
-            int label = (int) float.Parse(numbers[0], ci);
+            int label = (int) float.Parse(numbers[0], CultureInfo.InvariantCulture);
 
             float[] imageData = new float[nPixels];
             for (int i = 0; i < nPixels; ++i)
             {
-                imageData[i] = float.Parse(numbers[i + 1], ci);
+                imageData[i] = float.Parse(numbers[i + 1], CultureInfo.InvariantCulture);
             }
 
             return new NormalizedExample(imageData, label);

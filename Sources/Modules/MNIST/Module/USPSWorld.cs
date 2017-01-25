@@ -27,7 +27,7 @@ namespace MNIST
     public class SendUSPSTrainDataTask : SendDataTask
     {
         public SendUSPSTrainDataTask() :
-            base(new USPSDatasetTestReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
+            base(new USPSDatasetTrainReaderFactory(MyResources.GetMyAssemblyPath() + @"\res\"))
         {
         }
     }

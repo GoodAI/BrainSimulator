@@ -18,7 +18,8 @@ namespace MNIST
         private BinaryReader m_brImages;
         private BinaryReader m_brLabels;
 
-        private int m_nExamplesLeft;
+        private string m_imageFilePath;
+        private string m_labelFilePath;
 
         public int NumClasses { get { return NumberOfClasses; } }
 
@@ -29,6 +30,9 @@ namespace MNIST
 
         public MNISTDatasetReader(string imageFilePath, string labelFilePath)
         {
+            m_imageFilePath = imageFilePath;
+            m_labelFilePath = labelFilePath;
+
             FileStream ifsImages = new FileStream(imageFilePath, FileMode.Open, FileAccess.Read);
             FileStream ifsLabels = new FileStream(labelFilePath, FileMode.Open, FileAccess.Read);
 
@@ -45,9 +49,8 @@ namespace MNIST
                 throw new InvalidDataException("MNIST file \"" + labelFilePath + "\" magic number mismatch");
             }
 
-            m_nExamplesLeft = readInt(m_brImages);
-
-            if (m_nExamplesLeft != readInt(m_brLabels))
+            int nExamples = readInt(m_brImages);
+            if (readInt(m_brLabels) != nExamples)
             {
                 throw new InvalidDataException("Number of examples does not match number of labels in MNIST dataset");
             }
@@ -65,15 +68,40 @@ namespace MNIST
 
         public IExample ReadNext()
         {
+            if (!HasNextImage())
+            {
+                throw new EndOfStreamException("Reached end of the MNIST file \"" + m_imageFilePath + "\" while trying to read next example");
+            }
+
+            if (!HasNextLabel())
+            {
+                throw new EndOfStreamException("Reached end of the MNIST file \"" + m_labelFilePath + "\" while trying to read next example");
+            }
+
             byte[] imageData = m_brImages.ReadBytes(ImageRows * ImageColumns);
             int label = m_brLabels.ReadByte();
-            m_nExamplesLeft--;
             return new NormalizedExample(imageData, label);
+        }
+
+        private static bool HasBytesToRead(BinaryReader br, int nBytes)
+        {
+            Stream s = br.BaseStream;
+            return (s.Length - s.Position) >= nBytes;
+        }
+
+        private bool HasNextImage()
+        {
+            return HasBytesToRead(m_brImages, ImageRows * ImageColumns);
+        }
+
+        private bool HasNextLabel()
+        {
+            return HasBytesToRead(m_brLabels, 1);
         }
 
         public bool HasNext()
         {
-            return m_nExamplesLeft > 0;
+            return HasNextImage() && HasNextLabel();
         }
 
         public void Dispose()
@@ -117,6 +145,5 @@ namespace MNIST
         {
             return new MNISTDatasetReader(m_baseDir + ImageFileName, m_baseDir + LabelFileName);
         }
-
     }
 }

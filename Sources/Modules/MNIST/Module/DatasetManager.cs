@@ -110,6 +110,7 @@ namespace MNIST
         private bool m_useClassFilter;
 
         private bool m_needLoad;
+        private bool m_needInit;
 
         public ClassOrderOption ClassOrder
         {
@@ -120,8 +121,9 @@ namespace MNIST
         public DatasetManager(AbstractDatasetReaderFactory readerFactory)
         {
             m_readerFactory = readerFactory;
-            m_needLoad = true;
             m_useClassFilter = false;
+            m_needLoad = true;
+            m_needInit = true;
         }
 
         public void Init(int seed, ExampleOrderOption exampleOrder)
@@ -136,6 +138,7 @@ namespace MNIST
             }
 
             InitIndexers();
+            m_needInit = false;
         }
 
         private void LoadDataset()
@@ -244,6 +247,11 @@ namespace MNIST
 
         public IExample GetNext()
         {
+            if (m_needInit)
+            {
+                throw new InvalidOperationException("DatasetManager is not initialized");
+            }
+
             int classNum;
 
             if (m_classOrder == ClassOrderOption.Random)
@@ -260,6 +268,11 @@ namespace MNIST
 
         public IExample GetNext(int classNum)
         {
+            if (m_needInit)
+            {
+                throw new InvalidOperationException("DatasetManager is not initialized");
+            }
+
             int idx;
 
             if (m_exampleOrder == ExampleOrderOption.RandomSample)
