@@ -1,8 +1,7 @@
-﻿
-using GoodAI.Core.Memory;
+﻿using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
+using System.IO;
 using System.ComponentModel;
-using System;
 
 namespace MNIST
 {
@@ -21,6 +20,12 @@ namespace MNIST
         protected override TensorDimensions InputDims =>
             new TensorDimensions(USPSDatasetReader.ImageRows, USPSDatasetReader.ImageColumns, USPSDatasetReader.ImageChannels);
         protected override int NumberOfClasses => USPSDatasetReader.NumberOfClasses;
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+            ValidateWorldSources(validator, USPSDatasetReader.DefaultNeededPaths, USPSDatasetReader.BaseDir, "USPS", "http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#usps");
+        }
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]

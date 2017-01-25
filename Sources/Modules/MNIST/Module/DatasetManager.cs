@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using GoodAI.Core.Utils;
+using System.Diagnostics;
 
 namespace MNIST
 {
@@ -143,6 +145,9 @@ namespace MNIST
 
         private void LoadDataset()
         {
+            Stopwatch stopWatch = new Stopwatch();
+
+            stopWatch.Start();
             using (DatasetReader r = m_readerFactory.CreateReader())
             {
                 m_nClasses = r.NumClasses;
@@ -157,6 +162,9 @@ namespace MNIST
                     m_nExamplesPerClass[ex.Target]++;
                 }
             }
+            stopWatch.Stop();
+
+            MyLog.INFO.WriteLine("Loaded {0} examples in {1} s", m_examples.Count, stopWatch.ElapsedMilliseconds / 1000f);
 
             if (m_examples.Count == 0)
             {

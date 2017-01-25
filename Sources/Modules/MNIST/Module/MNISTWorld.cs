@@ -2,6 +2,7 @@
 using GoodAI.Core.Memory;
 using GoodAI.Core.Utils;
 using System;
+using System.IO;
 using System.ComponentModel;
 
 namespace MNIST
@@ -21,6 +22,12 @@ namespace MNIST
         protected override TensorDimensions InputDims =>
             new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
         protected override int NumberOfClasses => MNISTDatasetReader.NumberOfClasses;
+
+        public override void Validate(MyValidator validator)
+        {
+            base.Validate(validator);
+            ValidateWorldSources(validator, MNISTDatasetReader.DefaultNeededPaths, MNISTDatasetReader.BaseDir, "MNIST", "http://yann.lecun.com/exdb/mnist/");
+        }
     }
 
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]

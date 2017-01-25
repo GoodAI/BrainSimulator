@@ -4,6 +4,7 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.IO;
 using YAXLib;
 
 namespace MNIST
@@ -47,9 +48,9 @@ namespace MNIST
         [Description("The order in which examples are presented")]
         public ExampleOrderOption ExampleOrder { get; set; }
 
-        [MyBrowsable, Category("Target")]
+        [MyBrowsable, Category("Target"), DisplayName("One-hot encoding")]
         [YAXSerializableField(DefaultValue = false)]
-        [Description("Present target in one-hot encoding instead of class number")]
+        [Description("Present target in the one-hot encoding instead of a class number")]
         public bool OneHot { get; set; }
 
         #endregion
@@ -74,6 +75,27 @@ namespace MNIST
             //because values are normalized
             Input.MinValueHint = 0;
             Input.MaxValueHint = 1;
+        }
+
+        public void ValidateWorldSources(MyValidator validator, string[] paths, string baseDir, string datasetName, string url)
+        {
+            bool fail = false;
+            foreach (string path in paths)
+            {
+                if (!File.Exists(path))
+                {
+                    validator.AddError(this, string.Format("Missing {0} dataset file \"{1}\". Check log (INFO level) for further information.", datasetName, Path.GetFileName(path)));
+                    fail = true;
+                }
+            }
+
+            if (fail)
+            {
+                MyLog.INFO.WriteLine("In order to use the {0} dataset, please visit:", datasetName);
+                MyLog.INFO.WriteLine(url);
+                MyLog.INFO.WriteLine("Then place the extracted files into:");
+                MyLog.INFO.WriteLine(baseDir);
+            }
         }
     }
 
