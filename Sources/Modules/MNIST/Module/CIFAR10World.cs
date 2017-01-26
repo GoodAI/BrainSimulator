@@ -25,7 +25,14 @@ namespace MNIST
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            ValidateWorldSources(validator, CIFAR10DatasetReader.DefaultNeededPaths, CIFAR10DatasetReader.BaseDir, "CIFAR-10", "https://www.cs.toronto.edu/~kriz/cifar.html");
+
+            if (!WorldSourcesExist(CIFAR10DatasetReader.DefaultNeededPaths, validator))
+            {
+                MyLog.INFO.WriteLine("In order to use the CIFAR-10 dataset, please visit:");
+                MyLog.INFO.WriteLine("https://www.cs.toronto.edu/~kriz/cifar.html");
+                MyLog.INFO.WriteLine("And download the binary version and extract the files into:");
+                MyLog.INFO.WriteLine(CIFAR10DatasetReader.BaseDir);
+            }
         }
     }
 

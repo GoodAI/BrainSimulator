@@ -77,25 +77,19 @@ namespace MNIST
             Input.MaxValueHint = 1;
         }
 
-        public void ValidateWorldSources(MyValidator validator, string[] paths, string baseDir, string datasetName, string url)
+        protected bool WorldSourcesExist(string[] paths, MyValidator validator)
         {
-            bool fail = false;
+            bool exist = true;
             foreach (string path in paths)
             {
                 if (!File.Exists(path))
                 {
-                    validator.AddError(this, string.Format("Missing {0} dataset file \"{1}\". Check log (INFO level) for further information.", datasetName, Path.GetFileName(path)));
-                    fail = true;
+                    validator.AddError(this, string.Format("Missing dataset file \"{1}\". Check log (INFO level) for further information.", Path.GetFileName(path)));
+                    exist = false;
                 }
             }
 
-            if (fail)
-            {
-                MyLog.INFO.WriteLine("In order to use the {0} dataset, please visit:", datasetName);
-                MyLog.INFO.WriteLine(url);
-                MyLog.INFO.WriteLine("Then place the extracted files into:");
-                MyLog.INFO.WriteLine(baseDir);
-            }
+            return exist;
         }
     }
 

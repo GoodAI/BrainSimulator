@@ -37,7 +37,7 @@ namespace MNIST
 
             if (!HasNextBatch())
             {
-                throw new ArgumentException("Must provide at least one filepath for CIFAR-10 reader");
+                throw new ArgumentException("Must provide at least one filepath for the CIFAR-10 reader");
             }
 
             m_br = OpenNextDatasetpart();

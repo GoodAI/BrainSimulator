@@ -26,7 +26,14 @@ namespace MNIST
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            ValidateWorldSources(validator, MNISTDatasetReader.DefaultNeededPaths, MNISTDatasetReader.BaseDir, "MNIST", "http://yann.lecun.com/exdb/mnist/");
+
+            if (!WorldSourcesExist(MNISTDatasetReader.DefaultNeededPaths, validator))
+            {
+                MyLog.INFO.WriteLine("In order to use the MNIST dataset, please visit:");
+                MyLog.INFO.WriteLine("http://yann.lecun.com/exdb/mnist/");
+                MyLog.INFO.WriteLine("And download and extract the files into:");
+                MyLog.INFO.WriteLine(MNISTDatasetReader.BaseDir);
+            }
         }
     }
 

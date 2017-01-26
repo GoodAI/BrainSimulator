@@ -37,7 +37,7 @@ namespace MNIST
         {
             if (!HasNext())
             {
-                throw new EndOfStreamException("Reached end of the USPS file \"" + m_filePath + "\" while trying to read next example");
+                throw new EndOfStreamException("EOF occurred While trying to read a next example from the USPS file \"" + m_filePath + "\"");
             }
 
             const int nPixels = ImageRows * ImageColumns;
@@ -47,7 +47,7 @@ namespace MNIST
 
             if (numbers.Length != nPixels + 1)
             {
-                throw new InvalidDataException("Invalid USPS file \"" + m_filePath + "\": invalid number of elements per line");
+                throw new InvalidDataException("Invalid number of elements per line in the USPS file \"" + m_filePath + "\"");
             }
 
             int label = (int) float.Parse(numbers[0], CultureInfo.InvariantCulture);

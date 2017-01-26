@@ -20,8 +20,8 @@ namespace MNIST
         public const int ImageRows = 28;
         public const int ImageColumns = 28;
 
-        private const int ImageMagicNumber = 2051;
-        private const int LabelMagicNumber = 2049;
+        public const int ImageMagicNumber = 0x00000803;
+        public const int LabelMagicNumber = 0x00000801;
 
         private BinaryReader m_brImages;
         private BinaryReader m_brLabels;
@@ -47,14 +47,24 @@ namespace MNIST
             m_brImages = new BinaryReader(ifsImages);
             m_brLabels = new BinaryReader(ifsLabels);
 
+            if (!HasBytesToRead(m_brImages, 4*4))
+            {
+                throw new EndOfStreamException("EOF occurred While trying to read header of the MNIST file \"" + m_imageFilePath + "\"");
+            }
+
+            if (!HasBytesToRead(m_brLabels, 2*4))
+            {
+                throw new EndOfStreamException("EOF occurred While trying to read header of the MNIST file \"" + m_labelFilePath + "\"");
+            }
+
             if (readInt(m_brImages) != ImageMagicNumber)
             {
-                throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" magic number mismatch");
+                throw new InvalidDataException("Magic number mismatch in the MNIST file \"" + m_imageFilePath + "\"");
             }
 
             if (readInt(m_brLabels) != LabelMagicNumber)
             {
-                throw new InvalidDataException("MNIST file \"" + labelFilePath + "\" magic number mismatch");
+                throw new InvalidDataException("Magic number mismatch in the MNIST file \"" + m_labelFilePath + "\"");
             }
 
             int nExamples = readInt(m_brImages);
@@ -65,12 +75,12 @@ namespace MNIST
 
             if (readInt(m_brImages) != ImageRows)
             {
-                throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" rows number mismatch");
+                throw new InvalidDataException("Rows number mismatch in the MNIST file \"" + m_imageFilePath + "\"");
             }
 
             if (readInt(m_brImages) != ImageColumns)
             {
-                throw new InvalidDataException("MNIST file \"" + imageFilePath + "\" columns number mismatch");
+                throw new InvalidDataException("Columns number mismatch in the MNIST file \"" + m_imageFilePath + "\"");
             }
         }
 
@@ -78,12 +88,12 @@ namespace MNIST
         {
             if (!HasNextImage())
             {
-                throw new EndOfStreamException("Reached end of the MNIST file \"" + m_imageFilePath + "\" while trying to read next example");
+                throw new EndOfStreamException("EOF occurred While trying to read a next example from the MNIST file \"" + m_imageFilePath + "\"");
             }
 
             if (!HasNextLabel())
             {
-                throw new EndOfStreamException("Reached end of the MNIST file \"" + m_labelFilePath + "\" while trying to read next example");
+                throw new EndOfStreamException("EOF occurred While trying to read a next example from the MNIST file \"" + m_labelFilePath + "\"");
             }
 
             byte[] imageData = m_brImages.ReadBytes(ImageRows * ImageColumns);

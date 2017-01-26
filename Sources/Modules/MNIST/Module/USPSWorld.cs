@@ -24,7 +24,14 @@ namespace MNIST
         public override void Validate(MyValidator validator)
         {
             base.Validate(validator);
-            ValidateWorldSources(validator, USPSDatasetReader.DefaultNeededPaths, USPSDatasetReader.BaseDir, "USPS", "http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#usps");
+
+            if (!WorldSourcesExist(USPSDatasetReader.DefaultNeededPaths, validator))
+            {
+                MyLog.INFO.WriteLine("In order to use the USPS dataset, please visit:");
+                MyLog.INFO.WriteLine("http://www.csie.ntu.edu.tw/~cjlin/libsvmtools/datasets/multiclass.html#usps");
+                MyLog.INFO.WriteLine("And download both dataset files and extract them into:");
+                MyLog.INFO.WriteLine(USPSDatasetReader.BaseDir);
+            }
         }
     }
 
