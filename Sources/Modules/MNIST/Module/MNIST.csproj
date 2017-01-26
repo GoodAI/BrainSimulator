@@ -56,8 +56,6 @@
     <Compile Include="ImageWorld.cs" />
     <Compile Include="MNISTDataset.cs" />
     <Compile Include="MNISTWorld.cs" />
-    <Compile Include="MyMNISTManager.cs" />
-    <Compile Include="MyMNISTWorld.cs" />
     <Compile Include="MyMovingObjectsWorld.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="USPSDataset.cs" />

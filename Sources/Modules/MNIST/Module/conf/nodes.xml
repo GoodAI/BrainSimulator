@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
   <Configuration RootNamespace="MNIST">
     <KnownWorlds>
-    <World type="MNIST.MyMNISTWorld" />
     <World type="MNIST.MNISTWorld" />
     <World type="MNIST.USPSWorld" />
     <World type="MNIST.CIFAR10World" />

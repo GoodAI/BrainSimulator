@@ -52,7 +52,6 @@ namespace BrainSimulator.Retina
         [YAXSerializableField(DefaultValue = 5)]
         public int MaxObjects { get; set; }
 
-        private MyMNISTManager m_MNISTManager;
         private static int IMG_WIDTH = 28;
 
         public MyUpdateObjectsTask UpdateObjects { get; private set; }
@@ -60,8 +59,6 @@ namespace BrainSimulator.Retina
 
         public MyMovingObjectsWorld()
         {
-            m_MNISTManager = new MyMNISTManager(MyResources.GetMyAssemblyPath() + @"\res\", 1000);
-            m_MNISTManager.RandomEnumerate = true;
         }
 
         public override void UpdateMemoryBlocks()
@@ -112,6 +109,22 @@ namespace BrainSimulator.Retina
             private Random m_random = new Random();
             private int[] m_validNumbers = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
+            private DatasetManager m_dataset;
+
+            public MyUpdateObjectsTask()
+            {
+                AbstractDatasetReaderFactory readerFactory = new MNISTDatasetReaderFactory(MNISTDatasetReader.DefaultTrainImagePath, MNISTDatasetReader.DefaultTrainLabelPath);
+                m_dataset = new DatasetManager(readerFactory);
+            }
+
+            public override void Init(int nGPU)
+            {
+                m_dataset.Init(ExampleOrderOption.Shuffle);
+                m_dataset.ClassOrder = ClassOrderOption.Random;
+                m_dataset.UseClassFilter(true, m_validNumbers);
+                m_dataset.SetExampleLimit(1000);
+            }
+
             public override void Execute()
             {
                 bool copyBitmaps = false;
@@ -154,8 +167,8 @@ namespace BrainSimulator.Retina
                             newObject.velocity *= velocitySize;
                         }
 
-                        MyMNISTImage image = Owner.m_MNISTManager.GetNextImage(m_validNumbers, MNIST.MNISTSetType.Training);
-                        Array.Copy(image.Data1D, 0, Owner.Bitmaps.Host, i * IMG_WIDTH * IMG_WIDTH, IMG_WIDTH * IMG_WIDTH);
+                        IExample example = m_dataset.GetNext();
+                        Array.Copy(example.Input, 0, Owner.Bitmaps.Host, i * IMG_WIDTH * IMG_WIDTH, IMG_WIDTH * IMG_WIDTH);
                         copyBitmaps = true;
                         CudaDeviceVariable<float> devBitmaps = Owner.Bitmaps.GetDevice(Owner);
 
@@ -171,10 +184,6 @@ namespace BrainSimulator.Retina
                 {
                     Owner.Bitmaps.SafeCopyToDevice();
                 }
-            }
-
-            public override void Init(int nGPU)
-            {
             }
         };
 

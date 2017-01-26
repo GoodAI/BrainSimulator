@@ -34,7 +34,7 @@ namespace BasicNodesTests
         {
             using (var runner = new MyProjectRunner())
             {
-                MyProject project = runner.CreateProject(typeof(MyMNISTWorld));
+                MyProject project = runner.CreateProject(typeof(MNISTWorld));
 
                 MyWorld world = project.World;
 
@@ -67,10 +67,10 @@ namespace BasicNodesTests
 
                 MyTask sendMnistData = world.GetTaskByPropertyName("SendTrainingMNISTData");
                 Assert.NotNull(sendMnistData);
-                sendMnistData.GetType().GetProperty("RandomEnumerate").SetValue(sendMnistData, true);
                 sendMnistData.GetType().GetProperty("ExpositionTime").SetValue(sendMnistData, 1);
 
-                world.GetType().GetProperty("Binary").SetValue(world, true);
+                world.GetType().GetProperty("ExampleOrder").SetValue(world, ExampleOrderOption.Shuffle);
+                world.GetType().GetProperty("OneHot").SetValue(world, true);
 
                 hiddenLayer.Neurons = 40;
 
