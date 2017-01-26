@@ -1,0 +1,816 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.Platform.Core</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.Platform.Core.Observers.ICustomPeekLabelProducingObserver">
+            <author>GoodAI</author>
+            <meta>jv</meta>
+            <status>working</status>
+            <summary>
+            An observer which is able to produce custom peek labels (values shown when clicking onto the MemoryBlock).
+            </summary>
+        </member>
+        <member name="M:GoodAI.Platform.Core.Observers.ICustomPeekLabelProducingObserver.GetPeekLabelAt(System.Int32,System.Int32)">
+            <summary>
+            Given the absolute coordinates of the click in the observer, return some custom text to be shown on the right corner.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns>Custom String to be shown on the top right corner, null if the label should not be shown.</returns>
+        </member>
+        <member name="P:GoodAI.Platform.Core.Profiling.LoggingStopwatch.TimeSegment.AvgTicks">
+            <summary>
+            Returns average number of ticks, but 0 when IterCount == 0 (to prevent div by zero).
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Dashboard.GroupDashboard.CanChangeName(GoodAI.Core.Dashboard.DashboardPropertyGroup,System.String)">
+            <summary>
+            Checks if the given group can set its name to the given parameter.
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Dashboard.DashboardProperty.PropertyId">
+            <summary>
+            This is only used for serialization, do not access it otherwise.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Dashboard.DashboardNodeProperty">
+            <summary>
+            Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Dashboard.DashboardNodeProperty.GetHashCode">
+            <summary>
+            GetHashCode override for consistency with the Equals override. Returns a constant!
+            </summary>
+            <returns>Returns a constant degrading performance in hash-based containers to linear time.</returns>
+        </member>
+        <member name="T:GoodAI.Core.Dashboard.DashboardTaskGroupProperty">
+            <summary>
+            Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Dashboard.DashboardTaskGroupProperty.GetHashCode">
+            <summary>
+            GetHashCode override for consistency with the Equals override. Returns a constant!
+            See the comments inside DashboardNodeProperty.GetHashCode for details.
+            </summary>
+            <returns>Returns a constant.</returns>
+        </member>
+        <member name="T:GoodAI.Core.Dashboard.DashboardTaskProperty">
+            <summary>
+            Should not be used in hash-based containers if you need better than linear performance, see GetHashCode doc.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Dashboard.DashboardTaskProperty.GetHashCode">
+            <summary>
+            GetHashCode override for consistency with the Equals override. Returns a constant!
+            See the comments inside DashboardNodeProperty.GetHashCode for details.
+            </summary>
+            <returns>Returns a constant.</returns>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyExecutionBlock">
+            Container for multiple IMyExecutable objects
+        </member>
+        <member name="P:GoodAI.Core.Execution.MyExecutionBlock.CurrentChild">
+            Element which is to be run next
+        </member>
+        <member name="P:GoodAI.Core.Execution.MyExecutionBlock.Children">
+            All child elements
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyExecutionBlock.#ctor(GoodAI.Core.Task.IMyExecutable[])">
+            <summary>
+            Creates MyExecutionBlock from given IMyExecutable elements
+            </summary>
+            <param name="children">List of elements</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyExecutionBlock.ExecuteStep">
+            Executes current IMyExecutable children and moves to next one
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyExecutionBlock.Reset">
+            Go back to first element of MyExecutionBlock
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyExecutionBlock.Execute">
+            Executes all children elements
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyExecutionBlock.Iterate(System.Boolean,GoodAI.Core.Execution.MyExecutionBlock.IteratorAction)">
+            <summary>
+            Iterates over all children and performs action on all of them
+            </summary>
+            <param name="recursive">Iterate recursively if set to true</param>
+            <param name="action">Action to perform on iterated elements</param>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyIfBlock">
+            <summary>
+            Execution block with IF condition. Block is run, only when condition is met
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyIfBlock.#ctor(System.Func{System.Boolean},GoodAI.Core.Task.IMyExecutable[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="condition">Condition to be met</param>
+            <param name="children">Children of MyExecutionBlock</param>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyLoopBlock">
+            <summary>
+            Execution block which can be run multiple times
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyLoopBlock.#ctor(System.Func{System.Int32,System.Boolean},GoodAI.Core.Task.IMyExecutable[])">
+            <summary>
+            Constructor
+            </summary>
+            <param name="condition">Function controlling the run</param>
+            <param name="children">Children of MyExecutionBlock</param>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyProjectRunner">
+            <summary>
+            Alternative to BrainSimulator GUI used to run brains through scripting
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyProjectRunner.FilterFunc">
+            <summary>
+            Definition for filtering function
+            </summary>
+            <param name="node">Node, which is being processed for filtering</param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.DumpNodes">
+            <summary>
+            Prints info about nodes to DEBUG
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Filter(GoodAI.Core.Execution.MyProjectRunner.FilterFunc)">
+            <summary>
+            Filter all nodes in project recursively. Returns list of nodes, for which the filter function returned True.
+            </summary>
+            <param name="filterFunc">User-defined function for filtering</param>
+            <returns>Node list</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.GetNodesOfType(System.Type)">
+            <summary>
+            Returns list of nodes of given type
+            </summary>
+            <param name="type">Node type</param>
+            <returns>Node list</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.GetTaskByType(GoodAI.Core.Nodes.MyWorkingNode,System.Type)">
+            <summary>
+            Return task of given type from given node
+            </summary>
+            <param name="node">Node</param>
+            <param name="type">Type of task</param>
+            <returns>Task</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.GetValues(System.Int32,System.String)">
+            <summary>
+            Returns float array of value from memory block of given node
+            </summary>
+            <param name="nodeId">Node ID</param>
+            <param name="blockName">Memory block name</param>
+            <returns>Retrieved values</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.SetValues(System.Int32,System.Single[],System.String)">
+            <summary>
+            Set values of memory block
+            </summary>
+            <param name="nodeId">Node ID</param>
+            <param name="values">Values to be set</param>
+            <param name="blockName">Name of memory block</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Shutdown">
+            <summary>
+            Shutdown the runner and the underlaying simulation infrastructure
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.OpenProject(System.String,System.Boolean)">
+            <summary>
+            Loads project from file
+            </summary>
+            <param name="path">Path to .brain/.brainz file</param>
+            <param name="strict">Fails when a referenced module is not found</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.SaveProject(System.String)">
+            <summary>
+            Saves project to given path
+            </summary>
+            <param name="path">Path for saving .brain/.brainz file</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Set(System.Int32,System.String,System.Object)">
+            <summary>
+            Sets property of given node. Support Enums - enter enum value as a string
+            </summary>
+            <param name="nodeId">Node ID</param>
+            <param name="propName">Property name</param>
+            <param name="value">Value to be set</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Set(System.Int32,System.Type,System.String,System.Object)">
+            <summary>
+            Sets property of given task. Support Enums
+            </summary>
+            <param name="nodeId">Node ID</param>
+            <param name="taskType">Task type</param>
+            <param name="propName">Property name</param>
+            <param name="value">New property value</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.TrackValue(System.Int32,System.String,System.Int32,System.UInt32)">
+            <summary>
+            Track a value
+            </summary>
+            <param name="nodeId">Node ID</param>
+            <param name="blockName">Memory block name</param>
+            <param name="blockOffset">Offset in given memory block</param>
+            <param name="trackInterval">Track value each x steps</param>
+            <returns>Result ID</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Results">
+            <summary>
+            Returns hashtable with results (list of float arrays)
+            </summary>
+            <returns>Results</returns>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.SaveResults(System.Int32,System.String)">
+            <summary>
+            Save result to a file
+            </summary>
+            <param name="resultId">Result ID</param>
+            <param name="outputPath">Path to file in C# format, e.g. C:\path\to\file</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.PlotResults(System.Int32[],System.String,System.String[],System.Int32[])">
+            <summary>
+            Plot results to a file
+            </summary>
+            <param name="resultIds">IDs of results</param>
+            <param name="outputPath">Path to file in gnuplot format, e.g. C:/path/to/file</param>
+            <param name="lineTitles">Titles of the lines</param>
+            <param name="dimensionSizes">Sizes of plot dimensions</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.RunAndPause(System.UInt32,System.UInt32)">
+            <summary>
+            Runs simulation for a given number of steps. Simulation will be left in PAUSED state after
+            this function returns, allowing to inspect content of memory blocks and then perhaps
+            resume the simulation by calling this function again.
+            </summary>
+            <param name="stepCount">Number of steps to perform</param>
+            <param name="reportInterval">Step count between printing out simulation info (e.g. speed)</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyProjectRunner.Reset">
+            <summary>
+            Stops the paused simulation and flushes memory
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Execution.MySimulation.IsStepFinished">
+            <summary>
+            Indicates that the simulation is in between two simulation steps.
+            This should be true after each PerformStep run during normal simulation, and can be false during debug.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyLocalSimulation.PerformStep(System.Boolean)">
+            <summary>
+            Performs one step of simulation
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyLocalSimulation.PerformModelChanges">
+            <summary>
+            Go through the topologically ordered model changing groups and allow them to restructure.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MySimulationHandler">
+            Managers MySimulation run
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.#ctor(GoodAI.Core.Execution.MySimulation)">
+            <summary>
+            Constructor
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.StartSimulation">
+            <summary>
+            Starts simulation.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.StartSimulation(System.UInt32)">
+            <summary>
+            Starts simulation for specified number of steps.
+            </summary>
+            <param name="stepCount">How many steps of simulation shall be performed (0 means unlimited).</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.Finish(System.Action)">
+            <summary>
+            The closeCallback action is invoked after all of the cleanup is done.
+            This is because the background thread cleanup cannot be done synchronously.
+            </summary>
+            <param name="closeCallback"></param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.WaitUntilStepsPerformed">
+            <summary>
+            Blocks until the requested number of simulation steps had been performed.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MySimulationHandler.UpdateMemoryModel">
+            <summary>
+            Update the whole memory model - all blocks will get their memory block sizes updated correctly.
+            Since this might not converge, only a set number of iterations is done.
+            </summary>
+            <returns>true if the model did not converge (error), false if it did.</returns>
+        </member>
+        <member name="E:GoodAI.Core.Execution.MySimulationHandler.StateChanged">
+            <summary>
+            Emmited when simulation changes its SimulationState
+            </summary>
+        </member>
+        <member name="E:GoodAI.Core.Execution.MySimulationHandler.ProgressChanged">
+            <summary>
+            Emmited each ReportInterval/ReportIntervalSteps, or after the requested number of simulation steps had been performed
+            </summary>
+        </member>
+        <member name="E:GoodAI.Core.Execution.MySimulationHandler.StepPerformed">
+            <summary>
+            Emmited after each simulation step
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyExecutionPlan">
+            Plan for executing the tasks on GPUs
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyDefaultExecutionPlanner.CreateExecutionPlan(GoodAI.Core.Utils.MyProject,System.Collections.Generic.IEnumerable{GoodAI.Core.Nodes.MyWorkingNode})">
+            <summary>
+            Creates the execution plan.
+            </summary>
+            <param name="project">The whole project from which the standard execution plan will be built.</param>
+            <param name="initNodes">Ordered list of new nodes from which the initialization plan will be built.</param>
+            <returns>The created execution plan.</returns>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyAllInOneGPUPartitioning">
+            Puts all tasks on one GPU
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyAllInOneGPUPartitioning.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="numGPUs">Number of available GPUs</param>
+            <param name="selected">ID of GPU where tasks will run</param>
+        </member>
+        <member name="M:GoodAI.Core.Execution.MyAllInOneGPUPartitioning.Divide(GoodAI.Core.Execution.MyExecutionPlan)">
+            <summary>
+            Performs partitioning
+            </summary>
+            <param name="executionPlan">Generic execution plan</param>
+            <returns>Execution plans for all GPUs</returns>
+        </member>
+        <member name="T:GoodAI.Core.Execution.MyThreadPool">
+            Run the tasks
+        </member>
+        <member name="T:GoodAI.Core.Execution.ThreadExecInfo">
+            Stores information about thread
+        </member>
+        <member name="M:GoodAI.Core.Memory.CustomDimensionsHint.TryToApply(GoodAI.Core.Memory.TensorDimensions,System.String@)">
+            <summary>
+            In case of error, returns the originalDimensions and a non-empty error message in the output argument.
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Memory.MemBlockAttribute.IsCustom">
+            <summary>
+            Has a non-default value. Attribute with a default value will not be saved, only custom values will be.
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Memory.TensorDimensionsBase.Count">
+            <summary>
+            Rank synonym. (This is required by tests because this class has an the indexer. Please use Rank if possible.)
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Memory.MyAbstractMemoryBlock.ColumnHint">
+            <summary>
+            Obsolete: ColumnHint is deprecated, please use Dims instead. 
+            </summary>
+            We are not using the annotation, because that would generate a sh*tload of warnings.
+            [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
+        </member>
+        <member name="P:GoodAI.Core.Memory.MyMemoryBlock`1.ColumnHint">
+            <summary>
+            Obsolete: ColumnHint is deprecated, please use Dims instead. 
+            </summary>
+            We are not using the annotation, because that would generate a sh*tload of warnings.
+            [Obsolete("ColumnHint is deprecated, please use Dims instead.")]
+        </member>
+        <member name="T:GoodAI.Core.Memory.MyMemoryManager.Backup">
+            <summary>
+            A disposable backup of a MyMemoryManager instance.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Memory.MyMemoryManager.Backup.Forget">
+            <summary>
+            Forget any backup so that Dispose doesn't use it.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Memory.MyMemoryManager.Backup.Dispose">
+            <summary>
+            Restore the backup unless it's been explicitely forgotten.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Memory.MyMemoryManager.GetBackup">
+            <summary>
+            Get a backup of the memory manager.
+            </summary>
+            <returns>A disposable backup that auto-restores when not forgotten.</returns>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.DeviceInput">
+            <author>GoodAI</author>
+            <status>Working</status>
+            <summary>DeviceInput node takes inputs from Keyboard.</summary>
+            <description>The node has an output of size 1*256, the values are mapped from Keyboard device <br />  
+            <b>Note:</b> To use inputs from Keyboard while the simulation is running, DeviceInput node needs to be selected in BrainSim <br />  <br /> 
+            In "SchoolWorld", the environments "Pong", "Tetris", "ToyWorld" and "RogueLike" allow you to interact with the world by using the WASD Keyboard mapping (and Q+E keys for Tetris)
+            </description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.DeviceInput.DeviceInputTask">
+            <summary>
+            When key presses are detected, copies values to output
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.IMyVariableBranchViewWithNamesNode">
+            <summary>
+            Implement this if custom names of variable input/output branches in GUI are desired (rather than default numbering).
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Nodes.IMyVariableBranchViewWithNamesNode.GetInputBranchName(System.Int32)">
+            <summary>
+            Get name (for GUI) of a given input branch
+            </summary>
+            <param name="index"></param>
+            <returns>name or null</returns>
+        </member>
+        <member name="M:GoodAI.Core.Nodes.IMyVariableBranchViewWithNamesNode.GetOutputBranchName(System.Int32)">
+            <summary>
+            Get name (for GUI) of a given output branch
+            </summary>
+            <param name="index"></param>
+            <returns>name or null</returns>
+        </member>
+        <member name="P:GoodAI.Core.Nodes.IScriptableNode.NameExpressions">
+            <summary>
+            Should return alphabetically ordered space delimited list of name expressions for auto complete and syntax highlighting.
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Nodes.IScriptableNode.Keywords">
+            <summary>
+            Should return alphabetically ordered space delimited list of keywords for auto complete and syntax highlighting.
+            </summary>
+        </member>
+        <member name="P:GoodAI.Core.Nodes.IScriptableNode.Language">
+            <summary>
+            Should return language name. Temporaly used for syntax highlighting settings.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyConditionalGroup">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Groups several nodes to one entity. Inside of a group is executed only on specific incoming signal.</summary>
+            <description>Enables nodes to be put inside a group, which makes model more structured. 
+            Nodes inside are executed only when appropriate signal is present.</description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyDataGate">
+            <author>GoodAI</author>
+            <status>Working</status>
+            <summary>A node for gating signals from two input branches based on the value in the third branch</summary>
+            <description>
+            The node let you mix two inputs together proportionally to value in the Weight input.
+            </description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyDataGate.MyGateTask">
+            <summary>
+            Performs the gating.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyGateInput">
+            <author>GoodAI</author>
+            <status>Working</status>
+            <summary>A node for gating signals from two input branches</summary>
+            <description>
+            The node let you mix two inputs together proportionally to the slider location.
+            The slider value is from zero to one.
+            </description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyGateInput.MyGateTask">
+            <summary>
+            Performs the gating.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyJoin">
+            <author>GoodAI</author>
+            <tag>#mm</tag>
+            <status>Working</status>
+            <summary>
+              Performs an element-wise join operation on the input vectors. This can be arithmetic (addition, multiplication,...), 
+              binary (AND, XOR,...), permutation, distance measurement or stacking the inputs.
+            </summary>
+            <description>This node is OBSOLETE and exists only because of the need for backward compatibility. It is to be removed in a future update.</description>
+        </member>
+        <member name="F:GoodAI.Core.Nodes.MyJoin.MyJoinOperation.Addition">
+            DON'T CHANGE ORDERING OF THESE!!!!
+        </member>
+        <member name="F:GoodAI.Core.Nodes.MyJoin.MyJoinOperation.AddToIdcs">
+            DON'T CHANGE ORDERING OF THESE!!!!
+        </member>
+        <member name="F:GoodAI.Core.Nodes.MyJoin.MyJoinOperation.StackInputs">
+            Matrix multiplication
+        </member>
+        <member name="M:GoodAI.Core.Nodes.MyJoin.ComputeLastDimension(GoodAI.Core.Memory.TensorDimensions,System.Int32)">
+            <summary>
+            Computes new TensorDimensions which have all dimensions except for the last dimension equal to the input TensorDimensions. The last dimension is computed based on the count. 
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyJoin.MyInitTask">
+            <summary>
+              Initializes any memory needed to perform the join operation.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyJoin.MyStackInputsTask">
+            <summary>
+              Performs the desired join operation.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyUserInput">
+            <author>GoodAI</author>
+            <status>Working</status>
+            <summary>UserInputNode provides variable number of sliders for manual user input.</summary>
+            <description>You can set the number of sliders by setting the <b>OutputSize</b> property.
+            If you set the <b>ConvertToBinary</b> property then only the forst slider is used for the output and one value of the output block will be set to one proportionally to the slider location.
+            You can control bounds of your inputs with <b>MinValue</b> and <b>MaxValue</b> properties.</description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyUserInput.MyTransferTask">
+            <summary>
+            This task will generate your inputs into the output memory block.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyFork">
+            <author>GoodAI</author>
+            <meta>df,mb</meta>
+            <status>Working</status>
+            <summary>Splits input to several outputs</summary>
+            <description>Use Branches property to specify splitting.
+            Sizes are specified as comma separated list. You can use '*', in places which should be
+            calculated automatically. </description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyFork.MyForkTask">
+            <summary>
+            The input is split and copied to outputs according the given output sizes.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Nodes.MyNode.UpdateAfterDeserialization">
+            <summary>
+            This method is called after deserialization.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.MyNodeGroup">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Groups several nodes to one entity.</summary>
+            <description>Enables nodes to be put inside a group, which makes model more structured.</description>
+        </member>
+        <member name="T:GoodAI.Core.Nodes.TaskGroup">
+            <summary>
+            This encapsulates a task group.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Nodes.MyWorkingNode.OnSimulationStateChanged(GoodAI.Core.Execution.MySimulationHandler.StateEventArgs)">
+            <summary>
+            This allows the node implementations to react to the simulation's state.
+            This is useful for e.g. resource management.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Observers.MyTextObserver.#ctor">
+            <summary>
+            /Constructor with node parameter
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Observers.MyTextObserver.Clear">
+            <summary>
+            Clear screen kernel
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Utils.MyProject.Deserialize(System.String,System.String,System.Boolean,System.Boolean)">
+            <summary>
+            Deserializes the project from a given string.
+            </summary>
+            <param name="xml">The input string for deserialization.</param>
+            <param name="projectPath">Project path for correct lookup of items like state data.</param>
+            <param name="restoreModelOnly">If set to true, only the model is deserialized, but not observers etc.</param>
+            <param name="strict">Fails when referenced modules are not found</param>
+            <returns>A deserialized project.</returns>
+        </member>
+        <member name="M:GoodAI.Core.Utils.MyProject.ShortenNodeTypeName(System.Type)">
+            <summary>Strips "My" prefix (only when it is followed by a capital letter)</summary>
+        </member>
+        <member name="M:GoodAI.Core.Utils.MyResources.GetAssemblyDirectory(System.Reflection.Assembly)">
+            <summary>
+            This works even if the assembly is run from a temporary directory (e.g. in unit tests)
+            </summary>
+            @see http://stackoverflow.com/questions/52797/how-do-i-get-the-path-of-the-assembly-the-code-is-in
+        </member>
+        <member name="M:GoodAI.Core.MyCudaKernel.Run(System.Object[])">
+            <summary>
+            Runs the kernel asynchronously when a non-null CudaStream was injected via the constructor
+            or synchronously when it was not.
+            </summary>
+            <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
+        </member>
+        <member name="M:GoodAI.Core.MyCudaKernel.RunSync(System.Object[])">
+            <summary>Runs the kernel in synchronous mode.</summary>
+            <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
+        </member>
+        <member name="M:GoodAI.Core.MyCudaKernel.RunAsync(ManagedCuda.CudaStream,System.Object[])">
+            <summary> Runs the kernel in asynchronous mode. </summary>
+            <param name="stream">If the stream is null, the default per-thread stream is used.</param>
+            <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
+        </member>
+        <member name="M:GoodAI.Core.MyKernelFactory.ContextsCreate">
+            Creates all CUDA contexts
+        </member>
+        <member name="M:GoodAI.Core.MyKernelFactory.ContextsDispose">
+            Destroys all CUDA contexts
+        </member>
+        <member name="P:GoodAI.Core.Task.MyTask.Forbidden">
+            <summary>
+            The task will not run when this is true and it will also be made readonly in the UI.
+            Use this when a task cannot run based on other node settings (e.g. its run would break the behavior).
+            </summary>
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert2To3(System.String)">
+            <summary>
+            Pascal's refactoring of MultiLayer Network Node (new namespace and location of tasks).
+            </summary>  
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert3To4(System.String)">
+            <summary>
+            Permutation class' member name changes
+            Author: Martin Milota
+            </summary>  
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert4To5(System.String)">
+            <summary>
+            Moving gameboy to a standalone module
+            </summary>  
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert5To6(System.String)">
+            <summary>
+            MyHiddenlayer and MyOutputLayer rename
+            </summary>        
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert6To7(System.String)">
+            <summary>
+            convert BrainSimulator.FeedForward namespace to XmlFeedForwardNet
+            </summary>        
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert7To8(System.String)">
+            <summary>
+            convert QMatrix observer name
+            </summary>        
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert8To9(System.String)">
+            <summary>
+            ControllerNode renamed to PIDController
+            </summary>        
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert9To10(System.String)">
+            <summary>
+            HostMatrix and HostTimePlot observers removed to Matrix* and TimePlot*
+            </summary>        
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert12To13(System.String)">
+            <summary>
+            Remove TensorDimensions and the whole MemoryBlockAttributes section.
+            </summary>
+            <param name="xml"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.Core.Versioning.MyConversion.Convert13To14(System.String)">
+            <summary>
+            Adds "IsHidden" attribute to all connections
+            </summary>
+            <param name="xml"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.Modules.Testing.MyTestingWorld">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Default world implementation. It does not do anything useful. It is here for default compatibility and testing reasons only.</summary>
+            <description>The node can generate random output of arbitrary size. If <b>PatternCount</b> property is set then the node will generate a seqence of random patterns. If <b>PatternGroups</b> property is set then the node will assign an ascending label to each pattern within the group.</description>
+        </member>
+        <member name="T:GoodAI.Modules.Testing.MyTestingWorld.MyCUDAGenerateInputTask">
+            <summary>
+            This taks generates next random output. Exposition time and order can be set.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyAbsoluteValue">
+            <author>GoodAI</author>
+            <meta>mb</meta>
+            <status>Working</status>
+            <summary>Returns absolute for each element in the input memory block.</summary>
+            <description>
+            
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyAbsoluteValue.MyAbsoluteValueTask">
+            <summary>
+            The node also provides couple of normalizations such as vector normalization and the scalar normalization.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyReduction">
+            <author>GoodAI</author>
+            <meta>xx</meta>
+            <status>Working</status>
+            
+            <summary>Reduction of the input.</summary>
+            
+            <description>
+             The node applies several reduction rechniques to scale down the input memory block.
+             
+             <h3> Operation </h3>
+               The desired reduction technique is always in the form "input"_"operation type"_"output". So "f_MinIdx_fi" means that the input is a float memory block on which
+               the Min function is applied and the output is: minimal value as a float, and its index as integer.  "i_MinIdxMaxIdx_4i" takes integer as an input and the output is four integers: minimal value of the
+               input, index of the min-value, maximum value of the input and the max-value index
+             
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyReduction.MyReductionTask">
+            <summary>
+            Performs the reduction operation.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyThreshold">
+            <author>GoodAI</author>
+            <meta>mb</meta>
+            <status>Working</status>
+            <summary>For each input indicates (by 1.0f) wheather its value is in an interval.</summary>
+            <description>
+            Set <b>Levels</b> to number of interval you want to indicate. 
+            The size of output equals size of input times number of selected levels.
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyThreshold.MyThresholdTask">
+            <summary>
+            Set <b>Minimum</b> and <b>Maximum</b> for interval which is to be indicated.<br/>
+            1.0f is then assigned to the i-th position if the value falls into i-th interval
+            of length (Maximum - Minimum) / Levels; 0.0f is assigned otherwise.
+            If <b>StrictThreshold</b> is true, then values that fall outside of interval
+            &lt;Minimum, Maximum&gt; will not be in any of the Levels intervals. Otherwise
+            input values less than Minimum are internally changed to Minimum and vice versa for Maximum.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyGoniometricFunction">
+            <author>GoodAI</author>
+            <meta>mb</meta>
+            <status>Working</status>
+            <summary>Goniometric function</summary>
+            <description>
+            The node applies user specified goniometric function on each element of the input memory block.
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyGoniometricFunction.MyGoniometricTask">
+            <summary>
+            The node contains sine, cosine, tangent and their hyperbolic and inverse equivalents. Atan2 takes pairs of floats on input.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyPolynomialFunction">
+            <author>GoodAI</author>
+            <meta>df</meta>
+            <status>Working</status>
+            <summary>Applies polynomial function on each member of input array.</summary>
+            <description>f(x) = a<sub>3</sub>x<sup>3</sup> + a<sub>2</sub>x<sup>2</sup> + a<sub>1</sub>x + a<sub>0</sub></description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyPolynomialFunction.MyPolynomialFunctionTask">
+            <summary>Applies polynomial function with given coeffitients (up to third degree) on all input values.</summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyLowHighFilter">
+            <author>GoodAI</author>
+            <meta>mb,jk,df</meta>
+            <status>Working</status>
+            <summary>Filter.</summary>
+            <description>
+              Node to apply a filter to each element of the input memory block.
+            </description>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyLowHighFilter.MyLowHighFilterTask">
+            <summary>Node to restrict the range of each element of the input memory block.
+              There are two methods to apply:
+              <ul>
+               <li> Standard: simply cuts all values higher or lower. </li> 
+               <li> Modulo: apllies the <b>modulus operator</b> that computes the remainder from the integer division. So the result is: ''value % Maximum + Minimum''</li> 
+              </ul>
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyLowHighFilter.MyFindMaxTask">
+            <summary> Returns index of the max value in the mem. block </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyLowHighFilter.MyRoundTask">
+            <summary> Rounds elements in the mem. block. </summary>
+        </member>
+        <member name="T:GoodAI.Modules.Transforms.MyLowHighFilter.MyFloorTask">
+            <summary> Rounds elemetns in the input mem. block. downwards. </summary>
+        </member>
+    </members>
+</doc>

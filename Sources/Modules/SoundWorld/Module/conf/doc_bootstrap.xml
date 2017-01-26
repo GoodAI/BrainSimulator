@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.SoundWorld</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.Modules.SoundProcessing.Features.LPC">
+            <summary>
+            Exracts linear predictive coeficients. These are commonly used as feature vectors for speech recognition.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.LPC.Compute(System.Single[],System.Int32)">
+            <summary>
+            Algorithm for generation of autocorelation LPC coeficients invented by
+            N. Levinsonom in 1947, modified by J. Durbinom in 1959.
+            </summary>
+            <param name="x">PCM data.</param>
+            <param name="p">Number of LPC coeficients.</param>
+            <returns>LPC coeficients.</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.LPC.Error(System.Single[],System.Single[])">
+            <summary>
+            Algorithm for generation of LPC coeficients error.
+            </summary>
+            <param name="data">PCM data.</param>
+            <param name="lpc">LPC coeficients.</param>
+            <returns>Error vector of LPC.</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.LPC.Reverse(System.Single[],System.Single[])">
+            <summary>
+            Reverse synthesis of PCM signal using LPC coeficients and LPC error.
+            </summary>
+            <param name="error">LPC error.</param>
+            <param name="lpc">LPC coeficients.</param>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.Modules.SoundProcessing.Features.MFCC">
+            <summary>
+            Exracts mel-frequency cepstral coeficients. These are commonly used as feature vectors for speech recognition.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.MFCC.Compute(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Compute mel-frequency cepstral coeficients for given frequency spectrum.
+            </summary>
+            <param name="fft">Frequency spectrum.</param>
+            <param name="sample_rate">Sample rate of input audio.</param>
+            <param name="coefCount">Number of coeficients to compute.</param>
+            <returns>Mel-frequency cepstral coeficients.</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.MFCC.DCT(System.Single[])">
+            <summary>
+            Forward Discrete Cosine Transform.
+            </summary>
+            
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.Features.MFCC.Line(GoodAI.Modules.SoundProcessing.Features.MFCC.Point,GoodAI.Modules.SoundProcessing.Features.MFCC.Point)">
+            <summary>
+            Compute all samples of the line from point A to point B
+            </summary>
+            <param name="A">Left point</param>
+            <param name="B">Right point</param>
+            <returns>Array of line values</returns>
+        </member>
+        <member name="T:GoodAI.Modules.SoundProcessing.WavPlayer.Intervals">
+            <summary>
+            Internal class for storing interval data from transcription file
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.#ctor(System.String)">
+            <summary>
+            Low-level .wav format audio player.
+            </summary>
+            <param name="filename">Path to audio file to play.</param>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.#ctor(System.IO.Stream)">
+            <summary>
+            Low level Audio player.
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.ReadHeader">
+            <summary>
+            Read RIFF header from current stream
+            </summary>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.WriteHeader(System.IO.Stream,System.Int64)">
+            <summary>
+            Write RIFF header to the stream.
+            </summary>
+            <param name="stream">Source stream.</param>
+            <param name="stream_length">Stream length.</param>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.ReadBytes(System.Int32)">
+            <summary>
+            Read wave samples
+            </summary>
+            <param name="count">Number of samples</param>
+            <returns>Samples in byte format</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.ReadShort(System.Int32)">
+            <summary>
+            Read wave samples
+            </summary>
+            <param name="count">Number of samples</param>
+            <returns>Samples in integer format</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.ReadFloat(System.Int32)">
+            <summary>
+            Read wave samples.
+            </summary>
+            <param name="count">Number of samples.</param>
+            <returns>Samples in floating point format.</returns>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.Save(System.String,System.Int16[])">
+            <summary>
+            Write data into RIFF wave file
+            </summary>
+            <param name="filename">File name</param>
+            <param name="data">Dat to write in byte format</param>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.AttachTranscriptionFile(System.String)">
+            <summary>
+            Attach transcription of audio file.
+            </summary>
+            <param name="filename">File name.</param>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.AttachTranscription(System.String)">
+            <summary>
+            Attach transcription of audio file.
+            </summary>
+            <param name="transcription">Transcription text.</param>
+        </member>
+        <member name="M:GoodAI.Modules.SoundProcessing.WavPlayer.GetTranscription(System.Int32,System.Int32)">
+            <summary>
+            Search transcription file and return current feature
+            </summary>
+            <returns>Current feature.</returns>
+        </member>
+        <member name="T:GoodAI.SoundWorld.MySoundWorld">
+            <author>GoodAI</author>
+            <meta>mv</meta>
+            <status>Working</status>
+            <summary>Provides default or custom dataset audio input in various feature types.</summary>
+            <description></description>
+        </member>
+        <member name="T:GoodAI.SoundWorld.MySoundWorld.MyCUDAGenerateInputTask">
+            <summary>Reads a sound input from SampleSound or custom source defined by user.</summary>
+        </member>
+        <member name="T:GoodAI.SoundWorld.WindowFunction">
+            <summary>Widow functions for low pass filtering of sound input.</summary>
+        </member>
+        <member name="T:GoodAI.SoundWorld.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:GoodAI.SoundWorld.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:GoodAI.SoundWorld.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:GoodAI.SoundWorld.Properties.Resources.Digits_en_txt">
+             <summary>
+               Looks up a localized string similar to  	0.00	0.80
+            1	0.50	0.90
+            2	1.35	1.80
+            3	2.30	2.70
+            4	3.20	3.70
+            5	4.20	4.70
+            6	5.15	5.80
+            7	6.20	6.90
+            8	7.42	7.85
+            9	8.50	9.00
+            1	9.55	10.00
+            2	10.55	11.00
+            3	11.55	12.00
+            4	12.55	13.50
+            5	13.50	14.50
+            6	14.50	15.15
+            7	15.55	16.20
+            8	16.80	17.25
+            9	17.75	18.30
+            .
+             </summary>
+        </member>
+        <member name="P:GoodAI.SoundWorld.Properties.Resources.Digits_en_wav">
+            <summary>
+              Looks up a localized resource of type System.IO.UnmanagedMemoryStream similar to System.IO.MemoryStream.
+            </summary>
+        </member>
+    </members>
+</doc>

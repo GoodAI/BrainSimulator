@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.MNIST</name>
+    </assembly>
+    <members>
+        <member name="T:MNIST.MNISTWorld">
+            <author>GoodAI</author>
+            <meta>mn</meta>
+            <status>Work in progress</status>
+            <summary>New version of MNIST World (2017)</summary>
+            <description>There is 60000 (roughly 6000 for each class) and training and 10000 testing images.</description>
+        </member>
+        <member name="M:MNIST.MyMNISTManager.ReverseBytes(System.Int32)">
+            <summary>
+            Converts between little-endian and big-endian
+            </summary>
+            <param name="value">Value to convert</param>
+            <returns></returns>
+        </member>
+        <member name="M:MNIST.MyMNISTManager.#ctor(System.String,System.Int32,System.Int32,System.Boolean,MNIST.MNISTLastImageMethod,System.Int32)">
+            <summary>
+            Constructor
+            </summary>
+            <param name="baseFolder">Base folder with MNIST dataset files</param>
+            <param name="exact">If TRUE, you will get exactly imagesCnt images. If FALSE, you will get AT MOST imagesCnt images. It's here for performance reason and BC</param>
+            <param name="afterLastImage">What to do, after the last values has been sent</param>
+        </member>
+        <member name="M:MNIST.MyMNISTManager.GetNextImage(System.Int32[],MNIST.MNISTSetType)">
+            <summary>
+            Gets the next values
+            </summary>
+            <param name="validNumbers">Array of integers, you want the selection restrict to.</param>
+            <returns>Array of arrays of floats, in which the values is encoded.</returns>
+        </member>
+        <member name="M:MNIST.MyMNISTImage.#ctor(System.IO.BinaryReader,System.IO.BinaryReader,System.Int32,System.Int32)">
+            <summary>
+            Alternative optimized constructor; Directly reads from referenced BinaryReaders into inner data store m_data.
+            The normalization into [0, 1] is also performed right away with respect to min = 0, max = 255 of the read byte value.
+            </summary>
+        </member>
+        <member name="T:MNIST.MyMNISTWorld">
+            <author>GoodAI</author>
+            <meta>mv</meta>
+            <status>Working</status>
+            <summary>Provides MNIST dataset images.</summary>
+            <description>There is 60000 (roughly 6000 for each class) and training and 10000 testing images.</description>
+        </member>
+        <member name="T:MNIST.MyInitMNISTTask">
+            <summary>
+            Initializes the MNIST world node. Subset size and repeating strategy can be set here.
+            </summary>
+        </member>
+        <member name="T:MNIST.MySendTrainingMNISTTask">
+            <summary>
+            Sends MNIST TRAINING image patch to the world output.
+            <ul>
+            <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output.</li>
+            <li><b>Send Numbers</b> - Sends numbers from all classes ('All') or only from classes enumerated in the field (e.g. '1,2,3').</li>
+            <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file.</li>
+            <li><b>Sequence Ordered</b> - Order the images by their class labels (i.e. sends sequence of images with labels '0,1,2,3,4...')?</li>
+            </ul>
+            </summary>
+        </member>
+        <member name="T:MNIST.MySendTestMNISTTask">
+            <summary>
+            Sends MNIST TESTING image patch to the world output.
+            <ul>
+            <li><b>Exposition time</b> - For how many simulation steps each number is presented on the output.</li>
+            <li><b>Send Numbers</b> - Sends numbers from all classes ('All') or only from classes enumerated in the field (e.g. '1,2,3').</li>
+            <li><b>Random Order</b> - Sends patches in random order regardless to order in the dataset file.</li>
+            <li><b>Sequence Ordered</b> - Order the images by their class labels (i.e. sends sequence of images with labels '0,1,2,3,4...')?</li>
+            </ul>
+            </summary>
+        </member>
+        <member name="T:MNIST.USPSWorld">
+            <author>GoodAI</author>
+            <meta>mn</meta>
+            <status>Work in progress</status>
+            <summary>USPS dataset world</summary>
+            <description>The world provides images from USPS dataset just like MNIST world does for MNIST dataset.</description>
+        </member>
+        <member name="M:MNIST.Versioning.MyConversion.Convert1To2(System.String)">
+            <summary>
+            Convert MNISTWorld brains for the training and testing tasks. 
+            Enable training by default, so that the functionality is preserved.
+            Author: jv
+            </summary>
+        </member>
+        <member name="T:BrainSimulator.Retina.MyMovingObjectsWorld">
+             <author>GoodAI</author>
+             <meta>df</meta>
+            <status>Working</status>
+            <summary>MNIST numbers moving accross the screen.
+            Number of objects, sizes, durations and velocities can be adjusted.</summary>
+            <description></description>
+        </member>
+    </members>
+</doc>

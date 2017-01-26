@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.TestingNodes</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.Modules.TestingNodes.BrainUnitNode">
+             <author>GoodAI</author>
+             <status>Working</status>
+             <summary>Experimental C# scripting node</summary>
+             <description>Node allows user to write C# code directly and run it during simulation. Example code:
+             TODO
+            
+             </description>    
+        </member>
+        <member name="T:GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicOutputNode">
+            <summary>
+            A node that reallocates the output block in each step to a random size and fills it with random data.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicOutputTask">
+            <summary>
+            See DynamicOutputNode.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputNode">
+            <summary>
+            A node that takes dynamic input, reallocates the output to match the input, copies the data
+            using the GPU and prints out control sums.
+            </summary>
+        </member>
+        <member name="T:GoodAI.Modules.TestingNodes.DynamicBlocks.DynamicInputTask">
+            <summary>
+            See DynamicInputNode.
+            </summary>
+        </member>
+    </members>
+</doc>

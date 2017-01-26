@@ -88,6 +88,9 @@
   <PropertyGroup>
     <PostBuildEvent>"$(ProjectDir)post_build.cmd" "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if not exist "$(ProjectDir)\conf\doc.xml" copy "$(ProjectDir)\conf\doc_bootstrap.xml" "$(ProjectDir)\conf\doc.xml"</PreBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
