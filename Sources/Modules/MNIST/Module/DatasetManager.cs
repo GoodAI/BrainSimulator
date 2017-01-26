@@ -104,8 +104,10 @@ namespace MNIST
 
         private Indexer[] m_indexers;
         private Indexer m_classIndexer;
+        private int[] m_classFilter;
 
         private int[] m_nExamplesPerClass;
+        private int m_exampleLimit;
         private int m_nClasses;
 
         private bool m_needLoad;
@@ -161,6 +163,7 @@ namespace MNIST
             }
             stopWatch.Stop();
 
+            m_exampleLimit = m_nExamplesPerClass.Max();
             MyLog.INFO.WriteLine("Loaded {0} examples in {1} s", m_examples.Count, stopWatch.ElapsedMilliseconds / 1000f);
 
             if (m_examples.Count == 0)
@@ -196,7 +199,22 @@ namespace MNIST
 
         private void InitClassIndexer()
         {
-            m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random);
+            m_classFilter = Enumerable.Range(0, m_nClasses).ToArray();
+            m_classIndexer = new Indexer(m_classFilter, m_random);
+        }
+
+        private void CheckWarnExampleLimit()
+        {
+            int max = int.MinValue;
+            foreach (int classIdx in m_classFilter)
+            {
+                max = Math.Max(max, m_nExamplesPerClass[classIdx]);
+            }
+
+            if (m_exampleLimit > max)
+            {
+                MyLog.WARNING.WriteLine("Requested number of examples per class is higher than current highest number of examples per class ({0})", max);
+            }
         }
 
         public void UseClassFilter(bool doUse, int[] filter = null)
@@ -217,10 +235,10 @@ namespace MNIST
                     throw new ArgumentNullException("When using filter, the filter must be provided");
                 }
 
-                filter = (int[]) filter.Clone();
-                Array.Sort(filter);
+                m_classFilter = (int[]) filter.Clone();
+                Array.Sort(m_classFilter);
 
-                foreach (int c in filter)
+                foreach (int c in m_classFilter)
                 {
                     if (c < 0 || c >= m_nClasses)
                     {
@@ -228,7 +246,8 @@ namespace MNIST
                     }
                 }
 
-                m_classIndexer = new Indexer(filter, m_random);
+                m_classIndexer = new Indexer(m_classFilter, m_random);
+                CheckWarnExampleLimit();
             }
         }
 
@@ -239,17 +258,18 @@ namespace MNIST
                 return limit;
             }
 
-            limit = Math.Min(limit, m_nExamplesPerClass.Max());
+            m_exampleLimit = Math.Min(limit, m_nExamplesPerClass.Max());
 
             for (int i = 0; i < m_indexers.Length; ++i)
             {
-                if (limit < m_nExamplesPerClass[i])
+                if (m_exampleLimit < m_nExamplesPerClass[i])
                 {
-                    m_indexers[i].Resize(limit);
+                    m_indexers[i].Resize(m_exampleLimit);
                 }
             }
 
-            return limit;
+            CheckWarnExampleLimit();
+            return m_exampleLimit;
         }
 
         public IExample GetNext()
