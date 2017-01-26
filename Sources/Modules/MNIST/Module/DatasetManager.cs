@@ -108,9 +108,6 @@ namespace MNIST
         private int[] m_nExamplesPerClass;
         private int m_nClasses;
 
-        private int[] m_classFilter;
-        private bool m_useClassFilter;
-
         private bool m_needLoad;
         private bool m_needInit;
 
@@ -123,12 +120,11 @@ namespace MNIST
         public DatasetManager(AbstractDatasetReaderFactory readerFactory)
         {
             m_readerFactory = readerFactory;
-            m_useClassFilter = false;
             m_needLoad = true;
             m_needInit = true;
         }
 
-        public void Init(int seed, ExampleOrderOption exampleOrder)
+        public void Init(ExampleOrderOption exampleOrder, int seed = 0)
         {
             m_random = seed == 0 ? new Random() : new Random(seed);
             m_exampleOrder = exampleOrder;
@@ -139,7 +135,8 @@ namespace MNIST
                 m_needLoad = false;
             }
 
-            InitIndexers();
+            InitExampleIndexers();
+            InitClassIndexer();
             m_needInit = false;
         }
 
@@ -172,7 +169,7 @@ namespace MNIST
             }
         }
 
-        private void InitIndexers()
+        private void InitExampleIndexers()
         {
             // for each class contains indices of m_examples with that class
             List<int>[] datasetIndices = new List<int>[m_nClasses];
@@ -197,18 +194,33 @@ namespace MNIST
             }
         }
 
-        public void UseClassFilter(bool doUse)
+        private void InitClassIndexer()
+        {
+            m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random);
+        }
+
+        public void UseClassFilter(bool doUse, int[] filter = null)
         {
             if (m_needLoad)
             {
                 return;
             }
 
-            m_useClassFilter = doUse;
-
-            if (m_useClassFilter)
+            if (!doUse)
             {
-                foreach (int c in m_classFilter)
+                InitClassIndexer();
+            }
+            else
+            {
+                if (filter == null)
+                {
+                    throw new ArgumentNullException("When using filter, the filter must be provided");
+                }
+
+                filter = (int[]) filter.Clone();
+                Array.Sort(filter);
+
+                foreach (int c in filter)
                 {
                     if (c < 0 || c >= m_nClasses)
                     {
@@ -216,21 +228,8 @@ namespace MNIST
                     }
                 }
 
-                m_classIndexer = new Indexer(m_classFilter, m_random);
+                m_classIndexer = new Indexer(filter, m_random);
             }
-            else
-            {
-                m_classIndexer = new Indexer(Enumerable.Range(0, m_nClasses).ToArray(), m_random);
-            }
-        }
-
-        public void SetClassFilter(string filter)
-        {
-            string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            m_classFilter = Array.ConvertAll(strClasses, int.Parse);
-            Array.Sort(m_classFilter);
-
-            UseClassFilter(m_useClassFilter);
         }
 
         public int SetExampleLimit(int limit)

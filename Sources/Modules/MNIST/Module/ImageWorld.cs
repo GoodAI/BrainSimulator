@@ -43,7 +43,7 @@ namespace MNIST
         [Description("The initial state of randomness generator, 0 = use random seed")]
         public int RandomSeed { get; set; }
 
-        [MyBrowsable, Category("Random"), DisplayName("Example Order")]
+        [MyBrowsable, Category("Random"), DisplayName("Example order")]
         [YAXSerializableField(DefaultValue = ExampleOrderOption.Shuffle)]
         [Description("The order in which examples are presented")]
         public ExampleOrderOption ExampleOrder { get; set; }
@@ -101,19 +101,6 @@ namespace MNIST
         private string m_classFilter;
         private int m_nExamplesPerClass;
 
-        [MyBrowsable, Category("Class Filter"), DisplayName("Enabled")]
-        [YAXSerializableField(DefaultValue = false)]
-        [Description("Filter classes")]
-        public bool UseClassFilter
-        {
-            get { return m_useClassFilter; }
-            set
-            {
-                m_useClassFilter = value;
-                m_dataset.UseClassFilter(value);
-            }
-        }
-
         [MyBrowsable, Category("Class Filter"), DisplayName("Filter")]
         [YAXSerializableField(DefaultValue = "1,3,5")]
         [Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
@@ -123,9 +110,23 @@ namespace MNIST
             set
             {
                 m_classFilter = value;
-                m_dataset.SetClassFilter(value);
+                m_dataset.UseClassFilter(UseClassFilter, ConvertFilter(value));
             }
         }
+
+        [MyBrowsable, Category("Class Filter"), DisplayName("Enabled")]
+        [YAXSerializableField(DefaultValue = false)]
+        [Description("Filter classes")]
+        public bool UseClassFilter
+        {
+            get { return m_useClassFilter; }
+            set
+            {
+                m_useClassFilter = value;
+                m_dataset.UseClassFilter(value, ConvertFilter(ClassFilter));
+            }
+        }
+
 
         [MyBrowsable, Category("Class Settings"), DisplayName("Examples per class")]
         [YAXSerializableField(DefaultValue = 5000)]
@@ -139,7 +140,7 @@ namespace MNIST
             }
         }
 
-        [MyBrowsable, Category("Class Settings"), DisplayName("Class Order")]
+        [MyBrowsable, Category("Class Settings"), DisplayName("Class order")]
         [YAXSerializableField(DefaultValue = ClassOrderOption.Random)]
         [Description("The order of class from which examples are chosen")]
         public ClassOrderOption ClassOrder
@@ -162,6 +163,11 @@ namespace MNIST
         [Description("For how many time steps should blank be presented before real examples start to appear")]
         public int ExpositionTimeOffset { get; set; }
 
+        private static int[] ConvertFilter(string filter)
+        {
+            string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            return Array.ConvertAll(strClasses, int.Parse);
+        }
 
         public SendDataTask(AbstractDatasetReaderFactory datasetReaderFactory)
         {
@@ -170,11 +176,10 @@ namespace MNIST
 
         public override void Init(int nGPU)
         {
-            m_dataset.Init(Owner.RandomSeed, Owner.ExampleOrder);
+            m_dataset.Init(Owner.ExampleOrder, Owner.RandomSeed);
             m_dataset.ClassOrder = ClassOrder;
-            m_dataset.UseClassFilter(UseClassFilter);
-            m_dataset.SetClassFilter(ClassFilter);
-            m_dataset.SetExampleLimit(ExamplesPerClass);
+            m_dataset.UseClassFilter(UseClassFilter, ConvertFilter(ClassFilter));
+            m_nExamplesPerClass = m_dataset.SetExampleLimit(ExamplesPerClass); // TODO: user has to select property first before it visually updates its value
         }
 
         public override void Execute()

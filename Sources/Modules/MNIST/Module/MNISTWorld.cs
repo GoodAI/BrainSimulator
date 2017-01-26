@@ -15,9 +15,9 @@ namespace MNIST
     public class MNISTWorld : ImageWorld
     {
         [MyTaskGroup("SendData")]
-        public SendMNISTTrainDataTask SendTrainMNISTData { get; protected set; }
+        public SendMNISTTrainDataTask SendMNISTTrainData { get; protected set; }
         [MyTaskGroup("SendData")]
-        public SendMNISTTestDataTask SendTestMNISTData { get; protected set; }
+        public SendMNISTTestDataTask SendMNISTTestData { get; protected set; }
 
         protected override TensorDimensions InputDims =>
             new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
