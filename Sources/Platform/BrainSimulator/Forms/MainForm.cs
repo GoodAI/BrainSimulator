@@ -212,18 +212,21 @@ namespace GoodAI.BrainSimulator.Forms
             RefreshUndoRedoButtons();
         }    
 
-        private void openProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openProjectEventHandler(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog(this) == DialogResult.OK)
             {
                 OpenProjectAndAddToRecentMenu(openFileDialog.FileName);
-            }            
+            }
         }
 
         private void OpenProjectAndAddToRecentMenu(string fileName)
         {
             try
             {
+                if (AskToSaveProjectAndForwardDialogResult() == DialogResult.Cancel)
+                    return;
+
                 OpenProject(fileName);
                 m_recentMenu.AddFile(fileName);
             }
@@ -445,18 +448,8 @@ namespace GoodAI.BrainSimulator.Forms
                 }
             }           
 
-            if (!Project.HasBeenNamed || !IsProjectSaved())
-            {
-                var dialogResult = MessageBox.Show("Save project changes?",
-                    "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                // Do not close.
-                if (dialogResult == DialogResult.Cancel)
-                    return;
-
-                if (dialogResult == DialogResult.Yes)
-                    SaveProjectOrSaveAs();
-            }
+            if (AskToSaveProjectAndForwardDialogResult() == DialogResult.Cancel)
+                return;
 
             SaveWindowPlacement();
 
@@ -464,6 +457,20 @@ namespace GoodAI.BrainSimulator.Forms
             m_isClosing = true;
 
             SimulationHandler.Finish(Close);
+        }
+
+        private DialogResult AskToSaveProjectAndForwardDialogResult()
+        {
+            if (Project.HasBeenNamed && IsProjectSaved())
+                return DialogResult.No;
+
+            var dialogResult = MessageBox.Show("Save project changes?",
+                "Save Changes", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+
+            if (dialogResult == DialogResult.Yes)
+                SaveProjectOrSaveAs();
+
+            return dialogResult;
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)

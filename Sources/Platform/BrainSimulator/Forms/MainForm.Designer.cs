@@ -178,7 +178,7 @@
             this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
             this.openProjectToolStripMenuItem.Text = "Open Project...";
-            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectEventHandler);
             // 
             // importProjectToolStripMenuItem
             // 
@@ -504,7 +504,7 @@
             this.openProjectToolButton.Name = "openProjectToolButton";
             this.openProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.openProjectToolButton.Text = "Open Project";
-            this.openProjectToolButton.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
+            this.openProjectToolButton.Click += new System.EventHandler(this.openProjectEventHandler);
             // 
             // saveProjectToolButton
             // 
