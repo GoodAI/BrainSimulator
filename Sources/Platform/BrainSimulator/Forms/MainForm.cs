@@ -56,7 +56,7 @@ namespace GoodAI.BrainSimulator.Forms
 
             if (!TryOpenStartupProject())
             {
-                OpenGraphLayout(Project.Network);
+                OpenNewProjectGraphLayout();
             }
 
             m_recentMenu = new MruStripMenuInline(fileToolStripMenuItem, recentFilesMenuItem , RecentFiles_Click, 5);
@@ -71,6 +71,13 @@ namespace GoodAI.BrainSimulator.Forms
                 recentFilesList.CopyTo(tmp, 0);
                 m_recentMenu.AddFiles(tmp);
             }
+        }
+
+        private void OpenNewProjectGraphLayout()
+        {
+            OpenGraphLayout(Project.Network);
+
+            m_savedProjectRepresentation = GetSerializedProject();
         }
 
         private void RestoreWindowPlacement()
@@ -352,13 +359,16 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void newProjectEventHandler(object sender, EventArgs e)
         {
+            if (AskToSaveProjectAndForwardDialogResult() == DialogResult.Cancel)
+                return;
+
             CloseCurrentProjectWindows();
             CreateNewProject();            
 
             CreateNetworkView();
-            OpenGraphLayout(Project.Network);
+            OpenNewProjectGraphLayout();
 
-            AppSettings.SaveSettings(settings => settings.LastProject = String.Empty);
+            AppSettings.SaveSettings(settings => settings.LastProject = string.Empty);
         }
 
         public void runToolButton_Click(object sender, EventArgs e)
@@ -461,7 +471,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private DialogResult AskToSaveProjectAndForwardDialogResult()
         {
-            if (Project.HasBeenNamed && IsProjectSaved())
+            if (IsProjectSaved())
                 return DialogResult.No;
 
             var dialogResult = MessageBox.Show("Save project changes?",

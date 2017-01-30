@@ -265,7 +265,7 @@ namespace GoodAI.BrainSimulator.Forms
                 return;
 
             var changeIdx = current.Zip(saved, (a, b) => (a == b)).TakeWhile(same => same).Count();
-            MyLog.DEBUG.WriteLine($"Change at index: {changeIdx}");
+            MyLog.DEBUG.WriteLine($"Change at index {changeIdx}");
 
             var contextIdx = Math.Max(0, changeIdx - 10);
             const int changeLength = 20;
