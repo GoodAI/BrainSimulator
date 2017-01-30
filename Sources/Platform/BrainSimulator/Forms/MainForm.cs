@@ -350,7 +350,7 @@ namespace GoodAI.BrainSimulator.Forms
             this.Close();
         }
 
-        private void newProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void newProjectEventHandler(object sender, EventArgs e)
         {
             CloseCurrentProjectWindows();
             CreateNewProject();            
