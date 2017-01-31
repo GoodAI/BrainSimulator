@@ -169,7 +169,7 @@
             this.newProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newProjectToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
             this.newProjectToolStripMenuItem.Text = "New Project";
-            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
+            this.newProjectToolStripMenuItem.Click += new System.EventHandler(this.newProjectEventHandler);
             // 
             // openProjectToolStripMenuItem
             // 
@@ -178,7 +178,7 @@
             this.openProjectToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
             this.openProjectToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
             this.openProjectToolStripMenuItem.Text = "Open Project...";
-            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
+            this.openProjectToolStripMenuItem.Click += new System.EventHandler(this.openProjectEventHandler);
             // 
             // importProjectToolStripMenuItem
             // 
@@ -493,7 +493,7 @@
             this.newProjectToolButton.Name = "newProjectToolButton";
             this.newProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.newProjectToolButton.Text = "New Project";
-            this.newProjectToolButton.Click += new System.EventHandler(this.newProjectToolStripMenuItem_Click);
+            this.newProjectToolButton.Click += new System.EventHandler(this.newProjectEventHandler);
             // 
             // openProjectToolButton
             // 
@@ -504,7 +504,7 @@
             this.openProjectToolButton.Name = "openProjectToolButton";
             this.openProjectToolButton.Size = new System.Drawing.Size(23, 20);
             this.openProjectToolButton.Text = "Open Project";
-            this.openProjectToolButton.Click += new System.EventHandler(this.openProjectToolStripMenuItem_Click);
+            this.openProjectToolButton.Click += new System.EventHandler(this.openProjectEventHandler);
             // 
             // saveProjectToolButton
             // 

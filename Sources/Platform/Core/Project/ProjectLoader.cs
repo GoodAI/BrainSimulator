@@ -16,13 +16,13 @@ namespace GoodAI.Core.Project
     
         public static void SaveProject(string fileName, string fileContent, string dataStoragePath)
         {
-            if (fileName == null) throw new ArgumentNullException("fileName");
-            if (fileContent == null) throw new ArgumentNullException("fileContent");
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+            if (fileContent == null) throw new ArgumentNullException(nameof(fileContent));
 
             if (fileName.EndsWith(".brainz"))
             {
                 if (dataStoragePath == null)
-                    throw new ArgumentNullException("dataStoragePath", "required for .brainz");
+                    throw new ArgumentNullException(nameof(dataStoragePath), "required for .brainz");
 
                 if (!Directory.Exists(dataStoragePath))
                 {
@@ -47,14 +47,14 @@ namespace GoodAI.Core.Project
 
         public static string LoadProject(string fileName, string dataStoragePath)
         {
-            if (fileName == null) throw new ArgumentNullException("fileName");
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
 
             string brainFileName = fileName;
 
             if (fileName.EndsWith(".brainz"))
             {
                 if (dataStoragePath == null)
-                    throw new ArgumentNullException("dataStoragePath", "required for .brainz");
+                    throw new ArgumentNullException(nameof(dataStoragePath), "required for .brainz");
 
                 if (Directory.Exists(dataStoragePath))
                 {

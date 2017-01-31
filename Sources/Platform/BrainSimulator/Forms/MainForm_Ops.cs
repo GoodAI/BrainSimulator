@@ -251,7 +251,26 @@ namespace GoodAI.BrainSimulator.Forms
                 return false;
             }
 
+            DebugPrintChanges(currentRepresentation, m_savedProjectRepresentation);
+
             return m_savedProjectRepresentation.Equals(currentRepresentation);
+        }
+
+        private void DebugPrintChanges(string current, string saved)
+        {
+            if (MyLog.Level > MyLogLevel.DEBUG)
+                return;
+
+            if (m_savedProjectRepresentation.Equals(current))
+                return;
+
+            var changeIdx = current.Zip(saved, (a, b) => (a == b)).TakeWhile(same => same).Count();
+            MyLog.DEBUG.WriteLine($"Change at index {changeIdx}");
+
+            var contextIdx = Math.Max(0, changeIdx - 10);
+            const int changeLength = 20;
+            MyLog.DEBUG.WriteLine($"Saved  : '{saved.Substring(contextIdx, changeLength)}'");
+            MyLog.DEBUG.WriteLine($"Current: '{current.Substring(contextIdx, changeLength)}'");
         }
 
         private string GetSerializedProject()
