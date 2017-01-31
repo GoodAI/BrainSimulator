@@ -643,7 +643,7 @@ namespace Graph
             if ((state & RenderState.Connected) != 0)
             {
                 if ((state & RenderState.Backward) != 0)
-                    return Color.Maroon;
+                    return Color.PapayaWhip;
 
                 return Color.Black;
             } else
