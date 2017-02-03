@@ -134,6 +134,9 @@
     <ClInclude Include="Common\Reduction\i_Sum_i.cuh" />
     <ClInclude Include="Common\Reduction\SharedMemory.cuh" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="cuda_post_build.cmd" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{72423431-4A15-4E8D-B987-8E684BD730FE}</ProjectGuid>
     <RootNamespace>BasicNodesCuda</RootNamespace>
@@ -237,8 +240,7 @@
       <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>"$(ProjectDir)"cuda_post_build.cmd "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
@@ -293,8 +295,7 @@
       <AdditionalDependencies>cudart.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>"$(ProjectDir)"cuda_post_build.cmd "$(SolutionDir)" "$(ProjectDir)" "$(OutDir)" "$(Configuration)"</Command>
     </PostBuildEvent>
     <CudaCompile>
       <TargetMachinePlatform>64</TargetMachinePlatform>
