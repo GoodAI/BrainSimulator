@@ -97,7 +97,7 @@ namespace GoodAI.Core.Execution
                 node.OnSimulationStateChanged(args);
         }
 
-        public MySimulation(MyValidator validator)
+        protected MySimulation(MyValidator validator)
         {
             AutoSaveInterval = 0;
             GlobalDataFolder = String.Empty;

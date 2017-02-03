@@ -1200,8 +1200,7 @@ namespace GoodAI.BrainSimulator.Forms
 
                 MyValidator validator = SimulationHandler.Simulation.Validator;
 
-                if (ObserverViews != null)
-                    ObserverViews.ForEach(view => view.Observer.Validate(validator));
+                ObserverViews?.ForEach(view => view.Observer.Validate(validator));
 
                 validator.AssertError(!anyOutputChanged, Project.Network, "Possible infinite loop in memory block sizes.");
 
