@@ -18,14 +18,14 @@ namespace MNIST
 
         #region Memory Blocks
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Input
+        public MyMemoryBlock<float> Bitmap
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Target
+        public MyMemoryBlock<float> Class
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
@@ -43,10 +43,13 @@ namespace MNIST
         [Description("The initial state of randomness generator, 0 = use random seed")]
         public int RandomSeed { get; set; }
 
-        [MyBrowsable, Category("Random"), DisplayName("Example order")]
+        [MyBrowsable, Category("Random"), DisplayName("Bitmap order")]
         [YAXSerializableField(DefaultValue = ExampleOrderOption.Shuffle)]
-        [Description("The order in which examples are presented")]
-        public ExampleOrderOption ExampleOrder { get; set; }
+        [Description(@"The order in which bitmaps are presented. Bitmaps are always shuffled before start.
+NoShuffle = the order of bitmaps within each class then remains fixed
+Shuffle = once last bitmap of the requested class has been served, the bitmaps within this class get shuffled again
+RandomSample = sample random bitmap from the requested class")]
+        public ExampleOrderOption BitmapOrder { get; set; }
 
         [MyBrowsable, Category("Target"), DisplayName("One-hot encoding")]
         [YAXSerializableField(DefaultValue = false)]
@@ -57,24 +60,24 @@ namespace MNIST
 
         public override void UpdateMemoryBlocks()
         {
-            Input.Dims = InputDims;
+            Bitmap.Dims = InputDims;
 
             if (OneHot)
             {
-                Target.Dims = new TensorDimensions(NumberOfClasses);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = 1;
+                Class.Dims = new TensorDimensions(NumberOfClasses);
+                Class.MinValueHint = 0;
+                Class.MaxValueHint = 1;
             }
             else
             {
-                Target.Dims = new TensorDimensions(1);
-                Target.MinValueHint = 0;
-                Target.MaxValueHint = NumberOfClasses - 1;
+                Class.Dims = new TensorDimensions(1);
+                Class.MinValueHint = 0;
+                Class.MaxValueHint = NumberOfClasses - 1;
             }
 
             //because values are normalized
-            Input.MinValueHint = 0;
-            Input.MaxValueHint = 1;
+            Bitmap.MinValueHint = 0;
+            Bitmap.MaxValueHint = 1;
         }
 
         protected bool WorldSourcesExist(string[] paths, MyValidator validator)
@@ -99,11 +102,11 @@ namespace MNIST
         private ClassOrderOption m_classOrderOption;
         private bool m_useClassFilter;
         private string m_classFilter;
-        private int m_nExamplesPerClass;
+        private int m_nBitmapsPerClass;
 
         [MyBrowsable, Category("Class Filter"), DisplayName("Filter")]
         [YAXSerializableField(DefaultValue = "1,3,5")]
-        [Description("Choose examples to be sent by the class number, e.g. '1,3,5'.")]
+        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'.")]
         public string ClassFilter
         {
             get { return m_classFilter;  }
@@ -128,21 +131,21 @@ namespace MNIST
         }
 
 
-        [MyBrowsable, Category("Class Settings"), DisplayName("Examples per class")]
+        [MyBrowsable, Category("Class Settings"), DisplayName("Bitmaps per class")]
         [YAXSerializableField(DefaultValue = 5000)]
-        [Description("Limit numer of examples per class")]
-        public int ExamplesPerClass
+        [Description("Limit numer of bitmaps per class")]
+        public int BitmapsPerClass
         {
-            get { return m_nExamplesPerClass; }
+            get { return m_nBitmapsPerClass; }
             set
             {
-                m_nExamplesPerClass = m_dataset.SetExampleLimit(value);
+                m_nBitmapsPerClass = m_dataset.SetExampleLimit(value);
             }
         }
 
         [MyBrowsable, Category("Class Settings"), DisplayName("Class order")]
         [YAXSerializableField(DefaultValue = ClassOrderOption.Random)]
-        [Description("The order of class from which examples are chosen")]
+        [Description("The order of class from which bitmaps are chosen")]
         public ClassOrderOption ClassOrder
         {
             get { return m_classOrderOption; }
@@ -160,7 +163,7 @@ namespace MNIST
 
         [MyBrowsable, Category("Params"), DisplayName("Exposition Time Offset")]
         [YAXSerializableField(DefaultValue = 0)]
-        [Description("For how many time steps should blank be presented before real examples start to appear")]
+        [Description("For how many time steps should blank be presented before bitmaps from dataset start to appear")]
         public int ExpositionTimeOffset { get; set; }
 
         private static int[] ConvertFilter(string filter)
@@ -176,10 +179,10 @@ namespace MNIST
 
         public override void Init(int nGPU)
         {
-            m_dataset.Init(Owner.ExampleOrder, Owner.RandomSeed);
+            m_dataset.Init(Owner.BitmapOrder, Owner.RandomSeed);
             m_dataset.ClassOrder = ClassOrder;
             m_dataset.UseClassFilter(UseClassFilter, ConvertFilter(ClassFilter));
-            m_nExamplesPerClass = m_dataset.SetExampleLimit(ExamplesPerClass); // TODO: user has to select property first before it visually updates its value
+            m_nBitmapsPerClass = m_dataset.SetExampleLimit(BitmapsPerClass); // TODO: user has to select property first before it visually updates its value
         }
 
         public override void Execute()
@@ -192,26 +195,26 @@ namespace MNIST
                 {
                     for (int i = 0; i < ex.Input.Length; i++)
                     {
-                        Owner.Input.Host[i] = ex.Input[i] >= 0.5 ? 1 : 0;
+                        Owner.Bitmap.Host[i] = ex.Input[i] >= 0.5 ? 1 : 0;
                     }
                 }
                 else
                 {
-                    Array.Copy(ex.Input, Owner.Input.Host, ex.Input.Length);
+                    Array.Copy(ex.Input, Owner.Bitmap.Host, ex.Input.Length);
                 }
 
                 if (Owner.OneHot)
                 {
-                    Array.Clear(Owner.Target.Host, 0, 10);
-                    Owner.Target.Host[ex.Target] = 1;
+                    Array.Clear(Owner.Class.Host, 0, 10);
+                    Owner.Class.Host[ex.Target] = 1;
                 }
                 else
                 {
-                    Owner.Target.Host[0] = ex.Target;
+                    Owner.Class.Host[0] = ex.Target;
                 }
 
-                Owner.Input.SafeCopyToDevice();
-                Owner.Target.SafeCopyToDevice();
+                Owner.Bitmap.SafeCopyToDevice();
+                Owner.Class.SafeCopyToDevice();
             }
         }
     }

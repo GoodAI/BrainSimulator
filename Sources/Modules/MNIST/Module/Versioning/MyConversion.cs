@@ -61,10 +61,10 @@ namespace MNIST.Versioning
                     }
                     #endregion
 
-                    int? trainExamplesPerClass = null;
-                    int? testExamplesPerClass = null;
+                    int? trainBitmapsPerClass = null;
+                    int? testBitmapsPerClass = null;
 
-                    // Get number of examples per class from Init task
+                    // Get number of bitmaps per class from Init task
                     #region 
                     foreach (XElement taskNode in worldNode.Descendants("Task"))
                     {
@@ -73,12 +73,12 @@ namespace MNIST.Versioning
                         {
                             foreach (XElement node in taskNode.Descendants("TrainingExamplesPerDigit"))
                             {
-                                trainExamplesPerClass = int.Parse(node.Value);
+                                trainBitmapsPerClass = int.Parse(node.Value);
                             }
 
                             foreach (XElement node in taskNode.Descendants("TestExamplesPerDigit"))
                             {
-                                testExamplesPerClass = int.Parse(node.Value);
+                                testBitmapsPerClass = int.Parse(node.Value);
                             }
                             taskNode.Remove();
                             break;
@@ -153,23 +153,23 @@ namespace MNIST.Versioning
                         }
                         #endregion
 
-                        // example order conversion (from the train task)
+                        // bitmap order conversion (from the train task)
                         #region
                         foreach (XElement node in taskNode.Descendants("RandomEnumerate"))
                         {
-                            ExampleOrderOption exampleOrder; 
+                            ExampleOrderOption bitmapOrder; 
                             if (node.Value == "True")
                             {
-                                exampleOrder = ExampleOrderOption.Shuffle;
+                                bitmapOrder = ExampleOrderOption.Shuffle;
                             }
                             else
                             {
-                                exampleOrder = ExampleOrderOption.NoShuffle;
+                                bitmapOrder = ExampleOrderOption.NoShuffle;
                             }
 
                             if (isTrain)
                             {
-                                worldNode.Add(new XElement("ExampleOrder", exampleOrder));
+                                worldNode.Add(new XElement("BitmapOrder", bitmapOrder));
                             }
 
                             node.Remove();
@@ -177,20 +177,20 @@ namespace MNIST.Versioning
                         }
                         #endregion
 
-                        // examples per class conversion (from previously read values from Init task)
+                        // bitmaps per class conversion (from previously read values from Init task)
                         #region
                         if (isTrain)
                         {
-                            if (trainExamplesPerClass != null)
+                            if (trainBitmapsPerClass != null)
                             {
-                                taskNode.Add(new XElement("ExamplesPerClass", trainExamplesPerClass));
+                                taskNode.Add(new XElement("BitmapsPerClass", trainBitmapsPerClass));
                             }
                         }
                         else
                         {
-                            if (trainExamplesPerClass != null)
+                            if (trainBitmapsPerClass != null)
                             {
-                                taskNode.Add(new XElement("ExamplesPerClass", testExamplesPerClass));
+                                taskNode.Add(new XElement("BitmapsPerClass", testBitmapsPerClass));
                             }
 
                         }
