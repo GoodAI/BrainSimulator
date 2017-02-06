@@ -217,24 +217,19 @@ namespace MNIST
             }
         }
 
-        public void UseClassFilter(bool doUse, int[] filter = null)
+        public void SetClassFilter(int[] filter)
         {
             if (m_needLoad)
             {
                 return;
             }
 
-            if (!doUse)
+            if (filter == null || filter.Length == 0)
             {
                 InitClassIndexer();
             }
             else
             {
-                if (filter == null)
-                {
-                    throw new ArgumentNullException("When using filter, the filter must be provided");
-                }
-
                 m_classFilter = (int[]) filter.Clone();
                 Array.Sort(m_classFilter);
 

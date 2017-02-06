@@ -121,7 +121,7 @@ namespace BrainSimulator.Retina
             {
                 m_dataset.Init(ExampleOrderOption.Shuffle);
                 m_dataset.ClassOrder = ClassOrderOption.Random;
-                m_dataset.UseClassFilter(true, m_validNumbers);
+                m_dataset.SetClassFilter(m_validNumbers);
                 m_dataset.SetExampleLimit(1000);
             }
 

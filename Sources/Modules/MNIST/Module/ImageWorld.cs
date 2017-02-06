@@ -87,7 +87,7 @@ RandomSample = sample random bitmap from the requested class")]
             {
                 if (!File.Exists(path))
                 {
-                    validator.AddError(this, string.Format("Missing dataset file \"{1}\". Check log (INFO level) for further information.", Path.GetFileName(path)));
+                    validator.AddError(this, string.Format("Missing dataset file \"{0}\". Check log (INFO level) for further information.", Path.GetFileName(path)));
                     exist = false;
                 }
             }
@@ -99,37 +99,11 @@ RandomSample = sample random bitmap from the requested class")]
     public abstract class SendDataTask : MyTask<ImageWorld>
     {
         private DatasetManager m_dataset;
-        private ClassOrderOption m_classOrderOption;
-        private bool m_useClassFilter;
-        private string m_classFilter;
         private int m_nBitmapsPerClass;
-
-        [MyBrowsable, Category("Class Filter"), DisplayName("Filter")]
-        [YAXSerializableField(DefaultValue = "1,3,5")]
-        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'.")]
-        public string ClassFilter
-        {
-            get { return m_classFilter;  }
-            set
-            {
-                m_classFilter = value;
-                m_dataset.UseClassFilter(UseClassFilter, ConvertFilter(value));
-            }
-        }
-
-        [MyBrowsable, Category("Class Filter"), DisplayName("Enabled")]
-        [YAXSerializableField(DefaultValue = false)]
-        [Description("Filter classes")]
-        public bool UseClassFilter
-        {
-            get { return m_useClassFilter; }
-            set
-            {
-                m_useClassFilter = value;
-                m_dataset.UseClassFilter(value, ConvertFilter(ClassFilter));
-            }
-        }
-
+        private ClassOrderOption m_classOrderOption;
+        private string m_classFilter;
+        private int m_expositionTime;
+        private int m_expositionTimeOffset;
 
         [MyBrowsable, Category("Class Settings"), DisplayName("Bitmaps per class")]
         [YAXSerializableField(DefaultValue = 5000)]
@@ -156,15 +130,35 @@ RandomSample = sample random bitmap from the requested class")]
             }
         }
 
+        [MyBrowsable, Category("Class Settings"), DisplayName("Filter")]
+        [YAXSerializableField(DefaultValue = "1,3,5")]
+        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'. Empty filter = no filter (use all classes)")]
+        public string ClassFilter
+        {
+            get { return m_classFilter;  }
+            set
+            {
+                m_classFilter = value;
+                m_dataset.SetClassFilter(ConvertFilter(value));
+            }
+        }
+
         [MyBrowsable, Category("Params"), DisplayName("Exposition Time")]
         [YAXSerializableField(DefaultValue = 50)]
-        [Description("How many time steps is each sample shown.")]
-        public int ExpositionTime { get; set; }
+        [Description("How many time steps is each sample shown. 0 = show the current example forever")]
+        public int ExpositionTime {
+            get { return m_expositionTime; }
+            set { m_expositionTime = Math.Max(0, value); }
+        }
 
         [MyBrowsable, Category("Params"), DisplayName("Exposition Time Offset")]
         [YAXSerializableField(DefaultValue = 0)]
         [Description("For how many time steps should blank be presented before bitmaps from dataset start to appear")]
-        public int ExpositionTimeOffset { get; set; }
+        public int ExpositionTimeOffset
+        {
+            get { return m_expositionTimeOffset; }
+            set { m_expositionTimeOffset = Math.Max(0, value); }
+        }
 
         private static int[] ConvertFilter(string filter)
         {
@@ -181,12 +175,18 @@ RandomSample = sample random bitmap from the requested class")]
         {
             m_dataset.Init(Owner.BitmapOrder, Owner.RandomSeed);
             m_dataset.ClassOrder = ClassOrder;
-            m_dataset.UseClassFilter(UseClassFilter, ConvertFilter(ClassFilter));
+            m_dataset.SetClassFilter(ConvertFilter(ClassFilter));
             m_nBitmapsPerClass = m_dataset.SetExampleLimit(BitmapsPerClass); // TODO: user has to select property first before it visually updates its value
         }
 
         public override void Execute()
         {
+            // show the current Bitmap forever
+            if (ExpositionTime == 0)
+            {
+                return;
+            }
+
             if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
             {
                 IExample ex = m_dataset.GetNext();
