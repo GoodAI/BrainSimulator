@@ -18,7 +18,7 @@ namespace GoodAI.Core
 {
     public class MyCudaKernel
     {
-        public int MAX_THREADS { get; protected set;  }
+        public int MAX_THREADS { get; protected set; }
 
         protected CudaKernel m_kernel;
         protected int m_GPU;
@@ -26,17 +26,17 @@ namespace GoodAI.Core
         private CudaStream m_stream;
 
         public string KernelName { get { return m_kernel.KernelName; } }
-        public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set {m_kernel.BlockDimensions = value; } }
-        public dim3 GridDimensions { get { return m_kernel.GridDimensions; } set {m_kernel.GridDimensions = value; } }
-        public uint DynamicSharedMemory { get {return m_kernel.DynamicSharedMemory;} set {m_kernel.DynamicSharedMemory = value; } }
+        public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set { m_kernel.BlockDimensions = value; } }
+        public dim3 GridDimensions { get { return m_kernel.GridDimensions; } set { m_kernel.GridDimensions = value; } }
+        public uint DynamicSharedMemory { get { return m_kernel.DynamicSharedMemory; } set { m_kernel.DynamicSharedMemory = value; } }
 
         // TODO, there are 109 overloaded versions of this :(
         // now listing only those we use
-        public void SetConstantVariable(string name, int value) { m_kernel.SetConstantVariable(name, value); } 
-        public void SetConstantVariable(string name, int[] value) { m_kernel.SetConstantVariable(name, value); } 
+        public void SetConstantVariable(string name, int value) { m_kernel.SetConstantVariable(name, value); }
+        public void SetConstantVariable(string name, int[] value) { m_kernel.SetConstantVariable(name, value); }
         public void SetConstantVariable(string name, uint value) { m_kernel.SetConstantVariable(name, value); }
         public void SetConstantVariable(string name, uint[] value) { m_kernel.SetConstantVariable(name, value); }
-        public void SetConstantVariable(string name, float value) { m_kernel.SetConstantVariable(name, value); } 
+        public void SetConstantVariable(string name, float value) { m_kernel.SetConstantVariable(name, value); }
         public void SetConstantVariable(string name, float[] value) { m_kernel.SetConstantVariable(name, value); }
         public void SetConstantVariable(string name, double value) { m_kernel.SetConstantVariable(name, value); }
 
@@ -44,18 +44,18 @@ namespace GoodAI.Core
         public void SetConstantVariable<T>(string name, T value) where T : struct { m_kernel.SetConstantVariable<T>(name, value); }
         //public void SetConstantVariable(string name, CUdeviceptr value) { m_kernel.SetConstantVariable(name, value); } 
 
-        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStream stream)
+        public MyCudaKernel(CudaKernel kernel, int GPU, CudaStream stream)
         {
             m_GPU = GPU;
             m_stream = stream;
 
-            m_kernel = new CudaKernel(kernelName, module, cuda);
+            m_kernel = kernel;
             MAX_THREADS = m_kernel.MaxThreadsPerBlock;
         }
 
-        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU)
-            : this(kernelName, module, cuda, GPU, null)
-        {}
+        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStream stream = null)
+            : this(new CudaKernel(kernelName, module, cuda), GPU, stream)
+        { }
 
         /// <summary>
         /// Runs the kernel asynchronously when a non-null CudaStream was injected via the constructor
@@ -118,8 +118,8 @@ namespace GoodAI.Core
                 if (!(args[i] is MyAbstractMemoryBlock))
                     continue;
 
-                args[i] = ((MyAbstractMemoryBlock) args[i]).GetDevicePtr(m_GPU);
-                if (((CUdeviceptr) args[i]).Pointer == 0)
+                args[i] = ((MyAbstractMemoryBlock)args[i]).GetDevicePtr(m_GPU);
+                if (((CUdeviceptr)args[i]).Pointer == 0)
                 {
                     throw new InvalidOperationException(
                         "Memory block resolved to null device ptr (not allocated on device?).");
@@ -150,7 +150,7 @@ namespace GoodAI.Core
         // Track whether Dispose has been called. 
         private Boolean m_disposed = false;
 
-        private Dictionary<string, CUmodule>[] m_ptxModules;
+        private readonly Dictionary<string, CudaKernel>[] m_ptxModules;
 
         private int m_devCount; // number of CUDA-enabled devices
         private CudaContext[] m_contexts;
@@ -166,11 +166,11 @@ namespace GoodAI.Core
         protected MyKernelFactory()
         {
             ContextsCreate();
-            m_ptxModules = new Dictionary<string, CUmodule>[DevCount];
+            m_ptxModules = new Dictionary<string, CudaKernel>[DevCount];
 
             for (int i = 0; i < DevCount; i++)
             {
-                m_ptxModules[i] = new Dictionary<string, CUmodule>();
+                m_ptxModules[i] = new Dictionary<string, CudaKernel>();
             }
         }
 
@@ -193,26 +193,55 @@ namespace GoodAI.Core
             m_disposed = true;
         }
 
-        private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        private CudaKernel LoadPtxLinker(int GPU, string ptxFileName, string kernelName, string additionalLinkDependencyPath)
         {
-            if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
-            {
-                return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
-            }
+            CudaJitOptionCollection options = new CudaJitOptionCollection();
+            CudaJOErrorLogBuffer err = new CudaJOErrorLogBuffer(1024);
+            options.Add(new CudaJOLogVerbose(true));
+            options.Add(err);
 
             try
             {
-                FileInfo ptxFile = new FileInfo(ptxFileName);
+                CudaLinker linker = new CudaLinker(options);
+                linker.AddFile(ptxFileName, CUJITInputType.PTX, null);
+                //important: add the device runtime library!
+                linker.AddFile(additionalLinkDependencyPath, CUJITInputType.Library, null);
+                var tempArray = linker.Complete();
 
-                if (ptxFile.Exists)
-                {
-                    CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
-                    m_ptxModules[GPU][ptxFileName] = ptxModule;
+                return m_contexts[GPU].LoadKernelPTX(tempArray, kernelName);
+            }
+            catch (Exception e)
+            {
+                throw new CudaException(err.Value);
+            }
+        }
 
-                    return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
-                }
+        private CudaKernel LoadPtx(int GPU, string ptxFileName, string kernelName)
+        {
+            CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
+            CudaKernel kernel = new CudaKernel(kernelName, ptxModule, m_contexts[GPU]);
+            return kernel;
+        }
 
+        private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance = false, string additionalLinkDependencyPath = null)
+        {
+            if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
+                return new MyCudaKernel(m_ptxModules[GPU][ptxFileName], GPU, m_streams[GPU]);
+
+            if (!File.Exists(ptxFileName))
                 return null;
+
+            try
+            {
+                CudaKernel kernel = null;
+
+                if (additionalLinkDependencyPath == null)
+                    kernel = LoadPtx(GPU, ptxFileName, kernelName);
+                else
+                    kernel = LoadPtxLinker(GPU, ptxFileName, kernelName, additionalLinkDependencyPath);
+
+                m_ptxModules[GPU][ptxFileName] = kernel;
+                return new MyCudaKernel(kernel, GPU, m_streams[GPU]);
             }
             catch (Exception e)
             {
@@ -220,13 +249,49 @@ namespace GoodAI.Core
             }
         }
 
-        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        private string GetCudaLibPath(string fileName)
         {
-            MyCudaKernel kernel = TryLoadPtx(GPU, ptxFolder + ptxFileName + ".ptx", kernelName, forceNewInstance);
+            if (File.Exists(fileName))
+                return Path.GetFullPath(fileName);
+
+
+            MyLog.WARNING.WriteLine($"Trying to access a kernel with an extended linkage (which requires the {fileName} library), but could not locate the {fileName} library. Trying CUDA toolkit path.");
+
+            // Try searching in the cuda toolkit, if it is installed
+            var cudaPath = Environment.GetEnvironmentVariable(@"CUDA_PATH");
+
+            if (cudaPath == null)
+            {
+                MyLog.WARNING.WriteLine("Could not locate the CUDA toolkit, because but the CUDA_PATH environment variable is not defined. Please install the CUDA toolkit.");
+                MyLog.WARNING.WriteLine("Trying to omit extended linkage...");
+                return null;
+            }
+
+            string libPath = Path.Combine(cudaPath, "lib", "x64", fileName);
+
+            if (!File.Exists(libPath))
+            {
+                libPath = Path.Combine(cudaPath, "bin", fileName);
+
+                if (!File.Exists(libPath))
+                    throw new CudaException($"Cannot locate the {fileName} library in cuda toolkit.");
+            }
+
+            return libPath;
+        }
+
+        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
+        {
+            string cudaRtPath = null;
+
+            if (extendedLinkage)
+                cudaRtPath = GetCudaLibPath("cudadevrt.lib");
+
+            MyCudaKernel kernel = TryLoadPtx(GPU, ptxFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath);
 
             if (kernel == null)
-            {                
-                kernel = TryLoadPtx(GPU, MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx", kernelName, forceNewInstance);
+            {
+                kernel = TryLoadPtx(GPU, MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath);
             }
 
             if (kernel == null)
@@ -237,12 +302,12 @@ namespace GoodAI.Core
             return kernel;
         }
 
-        private MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        private MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
         {
             FileInfo assemblyFile = GetAssemblyFile(callingAssembly);
             string ptxFolder = assemblyFile.DirectoryName + @"\ptx\";
 
-            return Kernel(GPU, ptxFolder, ptxFileName, kernelName, forceNewInstance);
+            return Kernel(GPU, ptxFolder, ptxFileName, kernelName, forceNewInstance, extendedLinkage);
         }
 
         private static FileInfo GetAssemblyFile(Assembly callingAssembly)
@@ -256,15 +321,15 @@ namespace GoodAI.Core
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public MyCudaKernel Kernel(int nGPU, string ptxFileName, string kernelName, bool forceNewInstance = false)
+        public MyCudaKernel Kernel(int nGPU, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
         {
-            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, kernelName, forceNewInstance);
+            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, kernelName, forceNewInstance, extendedLinkage);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false)
+        public MyCudaKernel Kernel(int nGPU, string ptxFileName, bool forceNewInstance = false, bool extendedLinkage = false)
         {
-            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance);            
+            return Kernel(nGPU, Assembly.GetCallingAssembly(), ptxFileName, GetKernelNameFromPtx(ptxFileName), forceNewInstance, extendedLinkage);
         }
 
         public MyReductionKernel<T> KernelReduction<T>(MyNode owner, int nGPU, ReductionMode mode,
@@ -282,14 +347,14 @@ namespace GoodAI.Core
         public MyCudaKernel KernelVector(int nGPU, KernelVector kernelName)
         {
             //Because the method Kernel is called from this method, it will look (via the Assembly.GetCallingAssembly()) for the kernels in BasicNodesCuda and not in the place from where the method KernelVector is called.
-            return Instance.Kernel(nGPU, @"Transforms\KernelVector", kernelName.ToString()); 
+            return Instance.Kernel(nGPU, @"Transforms\KernelVector", kernelName.ToString());
         }
 
         // !!! Warning: This is for testing purposes only.
         [MethodImpl(MethodImplOptions.NoInlining)]
         public MyCudaKernel Kernel(string name, bool forceNewInstance = false)
         {
-            return Kernel(DevCount - 1, Assembly.GetCallingAssembly(), name, GetKernelNameFromPtx(name), forceNewInstance);                        
+            return Kernel(DevCount - 1, Assembly.GetCallingAssembly(), name, GetKernelNameFromPtx(name), forceNewInstance);
         }
 
 
