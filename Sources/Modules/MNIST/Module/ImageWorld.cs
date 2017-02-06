@@ -105,6 +105,9 @@ RandomSample = sample random bitmap from the requested class")]
         private int m_expositionTime;
         private int m_expositionTimeOffset;
 
+        private uint m_simulationStepOffset;
+        private bool m_hasSentExample;
+
         [MyBrowsable, Category("Class Settings"), DisplayName("Bitmaps per class")]
         [YAXSerializableField(DefaultValue = 5000)]
         [Description("Limit numer of bitmaps per class")]
@@ -113,7 +116,7 @@ RandomSample = sample random bitmap from the requested class")]
             get { return m_nBitmapsPerClass; }
             set
             {
-                m_nBitmapsPerClass = m_dataset.SetExampleLimit(value);
+                m_nBitmapsPerClass = m_dataset.SetExampleLimit(Math.Max(1, value));
             }
         }
 
@@ -125,8 +128,8 @@ RandomSample = sample random bitmap from the requested class")]
             get { return m_classOrderOption; }
             set
             {
-                m_classOrderOption = value;
                 m_dataset.SetClassOrder(value);
+                m_classOrderOption = value;
             }
         }
 
@@ -138,8 +141,8 @@ RandomSample = sample random bitmap from the requested class")]
             get { return m_classFilter;  }
             set
             {
-                m_classFilter = value;
                 m_dataset.SetClassFilter(ConvertFilter(value));
+                m_classFilter = value;
             }
         }
 
@@ -181,21 +184,14 @@ RandomSample = sample random bitmap from the requested class")]
         public override void Init(int nGPU)
         {
             m_dataset.Init(Owner.BitmapOrder, Owner.RandomSeed);
-            m_dataset.SetClassOrder(ClassOrder);
-            m_dataset.SetClassFilter(ConvertFilter(ClassFilter));
-            m_nBitmapsPerClass = m_dataset.SetExampleLimit(BitmapsPerClass); // TODO: user has to select property first before it visually updates its value
+            m_nBitmapsPerClass = m_dataset.GetExampleLimit();
+
+            m_simulationStepOffset = (uint) m_expositionTimeOffset;
+            m_hasSentExample = false;
         }
 
-        public override void Execute()
+        private void SendExample()
         {
-            // show the current Bitmap forever
-            if (ExpositionTime == 0)
-            {
-                return;
-            }
-
-            if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
-            {
                 IExample ex = m_dataset.GetNext();
 
                 if (Owner.Binarize)
@@ -222,6 +218,30 @@ RandomSample = sample random bitmap from the requested class")]
 
                 Owner.Bitmap.SafeCopyToDevice();
                 Owner.Class.SafeCopyToDevice();
+
+                m_hasSentExample = true;
+        }
+
+        public override void Execute()
+        {
+            if (SimulationStep < m_expositionTimeOffset)
+            {
+                return;
+            }
+            
+            if (ExpositionTime == 0) // show the current Bitmap forever
+            {
+                if (!m_hasSentExample)
+                {
+                    SendExample();
+                }
+
+                // +1 for the case when ExpositionTime gets > 0 -> the NEXT step should (SimulationStep - m_simulationStepOffset) % ExpositionTime == 0
+                m_simulationStepOffset = SimulationStep + 1;
+            }
+            else if ((SimulationStep - m_simulationStepOffset) % ExpositionTime == 0)
+            {
+                SendExample();
             }
         }
     }

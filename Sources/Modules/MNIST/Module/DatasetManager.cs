@@ -112,13 +112,13 @@ namespace MNIST
         private int m_nClasses;
 
         private bool m_needLoad;
-        private bool m_needInit;
 
         public DatasetManager(AbstractDatasetReaderFactory readerFactory)
         {
             m_readerFactory = readerFactory;
             m_needLoad = true;
-            m_needInit = true;
+            m_classOrder = ClassOrderOption.Random;
+            m_exampleLimit = int.MinValue;
         }
 
         public void Init(ExampleOrderOption exampleOrder, int seed = 0)
@@ -132,9 +132,16 @@ namespace MNIST
                 m_needLoad = false;
             }
 
+            // if example limit has not been set
+            if (m_exampleLimit == int.MinValue)
+            {
+                m_exampleLimit = GetMaxExampleLimit();
+            }
+
             InitExampleIndexers();
-            InitClassIndexer();
-            m_needInit = false;
+            SetClassFilter(m_classFilter);
+            SetClassOrder(m_classOrder);
+            SetExampleLimit(m_exampleLimit);
         }
 
         private void LoadDataset()
@@ -158,7 +165,6 @@ namespace MNIST
             }
             stopWatch.Stop();
 
-            m_exampleLimit = m_nExamplesPerClass.Max();
             MyLog.INFO.WriteLine("Loaded {0} examples in {1} s", m_examples.Count, stopWatch.ElapsedMilliseconds / 1000f);
 
             if (m_examples.Count == 0)
@@ -190,12 +196,6 @@ namespace MNIST
             {
                 m_indexers[i] = new Indexer(datasetIndices[i].ToArray(), m_random, shuffleAtEnd, initShuffle);
             }
-        }
-
-        private void InitClassIndexer()
-        {
-            m_classFilter = CreateDefaultFilter();
-            m_classIndexer = CreateClassIndexer();
         }
 
         private void CheckWarnExampleLimit()
@@ -232,12 +232,15 @@ namespace MNIST
 
         public void SetClassOrder(ClassOrderOption order)
         {
+
+            m_classOrder = order;
+
             if (m_needLoad)
             {
+                // just save for later when called from Init
                 return;
             }
 
-            m_classOrder = order;
             m_classIndexer = CreateClassIndexer();
         }
 
@@ -245,6 +248,8 @@ namespace MNIST
         {
             if (m_needLoad)
             {
+                // just save for later when called from Init
+                m_classFilter = filter;
                 return;
             }
 
@@ -265,17 +270,35 @@ namespace MNIST
                 }
             }
 
+            CheckWarnExampleLimit();
             m_classIndexer = CreateClassIndexer();
+        }
+
+        private int GetMaxExampleLimit()
+        {
+            if (m_nExamplesPerClass != null)
+            {
+                return m_nExamplesPerClass.Max();
+            }
+
+            return int.MaxValue;
+        }
+
+        public int GetExampleLimit()
+        {
+            return m_exampleLimit;
         }
 
         public int SetExampleLimit(int limit)
         {
             if (m_needLoad)
             {
+                // just save for later when called from Init
+                m_exampleLimit = limit;
                 return limit;
             }
 
-            m_exampleLimit = Math.Min(limit, m_nExamplesPerClass.Max());
+            m_exampleLimit = Math.Min(limit, GetMaxExampleLimit());
 
             for (int i = 0; i < m_indexers.Length; ++i)
             {
@@ -291,7 +314,7 @@ namespace MNIST
 
         public IExample GetNext()
         {
-            if (m_needInit)
+            if (m_needLoad)
             {
                 throw new InvalidOperationException("DatasetManager is not initialized");
             }
@@ -312,7 +335,7 @@ namespace MNIST
 
         public IExample GetNext(int classNum)
         {
-            if (m_needInit)
+            if (m_needLoad)
             {
                 throw new InvalidOperationException("DatasetManager is not initialized");
             }
