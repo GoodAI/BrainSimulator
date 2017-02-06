@@ -131,8 +131,8 @@ RandomSample = sample random bitmap from the requested class")]
         }
 
         [MyBrowsable, Category("Class Settings"), DisplayName("Filter")]
-        [YAXSerializableField(DefaultValue = "1,3,5")]
-        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'. Empty filter = no filter (use all classes)")]
+        [YAXSerializableField(DefaultValue = "all")]
+        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'. 'all' = '' (empty filter) = use all classes")]
         public string ClassFilter
         {
             get { return m_classFilter;  }
@@ -162,6 +162,13 @@ RandomSample = sample random bitmap from the requested class")]
 
         private static int[] ConvertFilter(string filter)
         {
+            filter.Trim();
+
+            if (filter.ToLower().Equals("all"))
+            {
+                return new int[0];
+            }
+
             string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             return Array.ConvertAll(strClasses, int.Parse);
         }

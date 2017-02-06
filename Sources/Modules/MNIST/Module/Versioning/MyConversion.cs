@@ -117,24 +117,10 @@ namespace MNIST.Versioning
 
                         // class filter conversion
                         #region
-                        bool useClassFilter = false;
                         foreach (XElement node in taskNode.Descendants("SendNumbers"))
                         {
-                            if (node.Value == "All")
-                            {
-                                node.Remove();
-                                useClassFilter = false;
-                                break;
-                            }
-                            else
-                            {
-                                node.Name = "ClassFilter";
-                                useClassFilter = true;
-                                break;
-                            }
-
+                            node.Name = "ClassFilter";
                         }
-                        taskNode.Add(new XElement("UseClassFilter", useClassFilter));
                         #endregion
 
                         // class order conversion
