@@ -120,7 +120,7 @@ namespace BrainSimulator.Retina
             public override void Init(int nGPU)
             {
                 m_dataset.Init(ExampleOrderOption.Shuffle);
-                m_dataset.ClassOrder = ClassOrderOption.Random;
+                m_dataset.SetClassOrder(ClassOrderOption.Random);
                 m_dataset.SetClassFilter(m_validNumbers);
                 m_dataset.SetExampleLimit(1000);
             }

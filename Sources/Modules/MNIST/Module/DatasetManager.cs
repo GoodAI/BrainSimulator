@@ -89,8 +89,9 @@ namespace MNIST
 
     public enum ClassOrderOption
     {
-        Random,
+        AsInFilter,
         Increasing,
+        Random,
     }
 
     public class DatasetManager
@@ -112,12 +113,6 @@ namespace MNIST
 
         private bool m_needLoad;
         private bool m_needInit;
-
-        public ClassOrderOption ClassOrder
-        {
-            get { return m_classOrder; }
-            set { m_classOrder = value; }
-        }
 
         public DatasetManager(AbstractDatasetReaderFactory readerFactory)
         {
@@ -199,8 +194,8 @@ namespace MNIST
 
         private void InitClassIndexer()
         {
-            m_classFilter = Enumerable.Range(0, m_nClasses).ToArray();
-            m_classIndexer = new Indexer(m_classFilter, m_random);
+            m_classFilter = CreateDefaultFilter();
+            m_classIndexer = CreateClassIndexer();
         }
 
         private void CheckWarnExampleLimit()
@@ -217,6 +212,35 @@ namespace MNIST
             }
         }
 
+        private int[] CreateDefaultFilter()
+        {
+            return Enumerable.Range(0, m_nClasses).ToArray();
+        }
+
+        public Indexer CreateClassIndexer()
+        {
+            int[] arrayForIndexer = m_classFilter;
+
+            if (m_classOrder == ClassOrderOption.Increasing)
+            {
+                arrayForIndexer = (int[])arrayForIndexer.Clone();
+                Array.Sort(arrayForIndexer);
+            }
+
+            return new Indexer(arrayForIndexer, m_random);
+        }
+
+        public void SetClassOrder(ClassOrderOption order)
+        {
+            if (m_needLoad)
+            {
+                return;
+            }
+
+            m_classOrder = order;
+            m_classIndexer = CreateClassIndexer();
+        }
+
         public void SetClassFilter(int[] filter)
         {
             if (m_needLoad)
@@ -226,12 +250,11 @@ namespace MNIST
 
             if (filter == null || filter.Length == 0)
             {
-                InitClassIndexer();
+                m_classFilter = CreateDefaultFilter();
             }
             else
             {
                 m_classFilter = (int[]) filter.Clone();
-                Array.Sort(m_classFilter);
 
                 foreach (int c in m_classFilter)
                 {
@@ -240,10 +263,9 @@ namespace MNIST
                         throw new ArgumentOutOfRangeException(string.Format("Class filter must contain only numbers <0, {0}>", m_nClasses-1));
                     }
                 }
-
-                m_classIndexer = new Indexer(m_classFilter, m_random);
-                CheckWarnExampleLimit();
             }
+
+            m_classIndexer = CreateClassIndexer();
         }
 
         public int SetExampleLimit(int limit)

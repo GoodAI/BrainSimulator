@@ -126,7 +126,7 @@ RandomSample = sample random bitmap from the requested class")]
             set
             {
                 m_classOrderOption = value;
-                m_dataset.ClassOrder = value;
+                m_dataset.SetClassOrder(value);
             }
         }
 
@@ -181,7 +181,7 @@ RandomSample = sample random bitmap from the requested class")]
         public override void Init(int nGPU)
         {
             m_dataset.Init(Owner.BitmapOrder, Owner.RandomSeed);
-            m_dataset.ClassOrder = ClassOrder;
+            m_dataset.SetClassOrder(ClassOrder);
             m_dataset.SetClassFilter(ConvertFilter(ClassFilter));
             m_nBitmapsPerClass = m_dataset.SetExampleLimit(BitmapsPerClass); // TODO: user has to select property first before it visually updates its value
         }
