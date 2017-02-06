@@ -10,7 +10,11 @@ namespace MNIST
     /// <meta>mn</meta>
     /// <status>Work in progress</status>
     /// <summary>CIFAR-10 dataset world</summary>
-    /// <description>The world provides images from the CIFAR-10 dataset just like MNIST world does for MNIST dataset.</description>
+    /// <description>
+    /// The world provides RGB images from the CIFAR-10 dataset.<br/>
+    /// There is 50000 training images and 10000 test images split equally within 10 classes.<br/>
+    /// The 10 classes are (in this order of increasing class number): airplane, automobile, bird, cat, deer, dog, frog horse, ship and truck.
+    /// </description>
     public class CIFAR10World : ImageWorld
     {
         [MyTaskGroup("SendData")]
@@ -36,6 +40,7 @@ namespace MNIST
         }
     }
 
+    /// <summary>Sends data from the train part of the CIFAR-10 dataset</summary>
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]
     public class SendCIFAR10TrainDataTask : SendDataTask
     {
@@ -45,6 +50,7 @@ namespace MNIST
         }
     }
 
+    /// <summary>Sends data from the test part of the CIFAR-10 dataset</summary>
     [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
     public class SendCIFAR10TestDataTask : SendDataTask
     {

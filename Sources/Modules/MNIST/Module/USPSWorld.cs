@@ -9,7 +9,18 @@ namespace MNIST
     /// <meta>mn</meta>
     /// <status>Work in progress</status>
     /// <summary>USPS dataset world</summary>
-    /// <description>The world provides images from USPS dataset just like MNIST world does for MNIST dataset.</description>
+    /// <description>
+    /// This world provides grayscale images from the USPS dataset of handwritten digits with the following distribution of images among classes:<br/>
+    /// <table>
+    /// <thead>
+    /// <tr> <th></th> <th>0</th> <th>1</th> <th>2</th> <th>3</th> <th>4</th> <th>5</th> <th>6</th> <th>7</th> <th>8</th> <th>9</th> <th>Total</th> </tr>
+    /// </thead>
+    /// <tbody>
+    /// <tr> <td>Train</td> <td>1194</td> <td>1005</td> <td>731</td> <td>658</td> <td>652</td> <td>556</td> <td>664</td> <td>645</td> <td>542</td> <td>644</td> <td>7291</td> </tr>
+    /// <tr> <td>Test</td> <td>359</td> <td>264</td> <td>198</td> <td>166</td> <td>200</td> <td>160</td> <td>170</td> <td>147</td> <td>166</td> <td>177</td> <td>2007</td> </tr>
+    /// </tbody>
+    /// </table>
+    /// </description>
     public class USPSWorld : ImageWorld
     {
         [MyTaskGroup("SendData")]
@@ -35,6 +46,7 @@ namespace MNIST
         }
     }
 
+    /// <summary>Sends data from the train part of the USPS dataset</summary>
     [Description("Send Train Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTrainDataTask : SendDataTask
     {
@@ -44,6 +56,7 @@ namespace MNIST
         }
     }
 
+    /// <summary>Sends data from the test part of the USPS dataset</summary>
     [Description("Send Test Data"), MyTaskInfo(OneShot = false)]
     public class SendUSPSTestDataTask : SendDataTask
     {
