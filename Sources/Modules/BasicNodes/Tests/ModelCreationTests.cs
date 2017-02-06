@@ -36,7 +36,7 @@ namespace BasicNodesTests
             {
                 MyProject project = runner.CreateProject(typeof(MNISTWorld));
 
-                MyWorld world = project.World;
+                var world = project.World as MNISTWorld;
 
                 var neuralGroup = project.CreateNode<MyNeuralNetworkGroup>();
                 project.Network.AddChild(neuralGroup);
@@ -65,12 +65,12 @@ namespace BasicNodesTests
 
                 // Setup the nodes.
 
-                MyTask sendMnistData = world.GetTaskByPropertyName("SendTrainingMNISTData");
+                var sendMnistData = world.SendMNISTTrainData;
                 Assert.NotNull(sendMnistData);
-                sendMnistData.GetType().GetProperty("ExpositionTime").SetValue(sendMnistData, 1);
+                sendMnistData.ExpositionTime = 1;
 
-                world.GetType().GetProperty("ExampleOrder").SetValue(world, ExampleOrderOption.Shuffle);
-                world.GetType().GetProperty("OneHot").SetValue(world, true);
+                world.BitmapOrder = ExampleOrderOption.Shuffle;
+                world.OneHot = true;
 
                 hiddenLayer.Neurons = 40;
 
