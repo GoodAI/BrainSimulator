@@ -22,7 +22,7 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendCIFAR10TestDataTask SendTestCIFAR10Data { get; protected set; }
 
-        protected override TensorDimensions InputDims =>
+        protected override TensorDimensions BitmapDims =>
             new TensorDimensions(CIFAR10DatasetReader.ImageRows, CIFAR10DatasetReader.ImageColumns, CIFAR10DatasetReader.ImageChannels);
         protected override int NumberOfClasses => CIFAR10DatasetReader.NumberOfClasses;
 

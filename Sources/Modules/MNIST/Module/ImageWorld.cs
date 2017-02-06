@@ -12,7 +12,7 @@ namespace MNIST
     public abstract class ImageWorld : MyWorld
     {
         #region Abstract Properties
-        protected abstract TensorDimensions InputDims { get; }
+        protected abstract TensorDimensions BitmapDims { get; }
         protected abstract int NumberOfClasses { get; }
         #endregion
 
@@ -33,9 +33,9 @@ namespace MNIST
         #endregion
 
         #region World settings
-        [MyBrowsable, Category("Input")]
+        [MyBrowsable, Category("Bitmap")]
         [YAXSerializableField(DefaultValue = false)]
-        [Description("Binarize Input images with threshold = 0.5")]
+        [Description("Binarize bitmaps using threshold = 0.5")]
         public bool Binarize { get; set; }
 
         [MyBrowsable, Category("Random"), DisplayName("Seed")]
@@ -51,16 +51,16 @@ Shuffle = once last bitmap of the requested class has been served, the bitmaps w
 RandomSample = sample random bitmap from the requested class")]
         public ExampleOrderOption BitmapOrder { get; set; }
 
-        [MyBrowsable, Category("Target"), DisplayName("One-hot encoding")]
+        [MyBrowsable, Category("Class"), DisplayName("One-hot encoding")]
         [YAXSerializableField(DefaultValue = false)]
-        [Description("Present target in the one-hot encoding instead of a class number")]
+        [Description("Present classes in the one-hot encoding instead of a class number")]
         public bool OneHot { get; set; }
 
         #endregion
 
         public override void UpdateMemoryBlocks()
         {
-            Bitmap.Dims = InputDims;
+            Bitmap.Dims = BitmapDims;
 
             if (OneHot)
             {

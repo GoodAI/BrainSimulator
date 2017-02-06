@@ -31,7 +31,7 @@ namespace MNIST
         [MyTaskGroup("SendData")]
         public SendMNISTTestDataTask SendMNISTTestData { get; protected set; }
 
-        protected override TensorDimensions InputDims =>
+        protected override TensorDimensions BitmapDims =>
             new TensorDimensions(MNISTDatasetReader.ImageRows, MNISTDatasetReader.ImageColumns, MNISTDatasetReader.ImageChannels);
         protected override int NumberOfClasses => MNISTDatasetReader.NumberOfClasses;
 
