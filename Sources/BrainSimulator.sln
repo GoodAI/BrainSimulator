@@ -5,7 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BrainSimulator", "Platform\BrainSimulator\BrainSimulator.csproj", "{E45FA5B2-15E6-49E5-ABE5-18FE9A7D027D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C8A4992F-F2CB-40E7-92AA-7D4239653517} = {C8A4992F-F2CB-40E7-92AA-7D4239653517}
+		{EDC96485-A8A9-414C-A7D9-65EC0B817732} = {EDC96485-A8A9-414C-A7D9-65EC0B817732}
 		{31919B86-921F-4C36-A4F9-3A7BC37928A0} = {31919B86-921F-4C36-A4F9-3A7BC37928A0}
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1} = {AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Platform\Core\Core.csproj", "{91324E64-9B84-4312-9E55-5A77DF07DA1B}"
@@ -70,6 +72,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastru
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{8CAD80EE-667F-4B17-8BC6-C0F3B24F244E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MNISTTests", "Modules\MNIST\Tests\MNISTTests\MNISTTests.csproj", "{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|0 Default (x64 CUDA) = Debug|0 Default (x64 CUDA)
@@ -132,7 +136,6 @@ Global
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|2 Fast (skip modules).ActiveCfg = Release|Any CPU
-		{EDC96485-A8A9-414C-A7D9-65EC0B817732}.Release|2 Fast (skip modules).Build.0 = Release|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
 		{A0084F22-B436-4068-8F18-EC182EE78927}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
@@ -256,10 +259,20 @@ Global
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Debug|2 Fast (skip modules).ActiveCfg = Debug|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Debug|2 Fast (skip modules).Build.0 = Debug|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|1 Skip CUDA.Build.0 = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|2 Fast (skip modules).ActiveCfg = Release|Any CPU
 		{86955C47-2A02-41A4-AB32-C9E592EB2971}.Release|2 Fast (skip modules).Build.0 = Release|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Debug|0 Default (x64 CUDA).ActiveCfg = Debug|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Debug|0 Default (x64 CUDA).Build.0 = Debug|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Debug|1 Skip CUDA.ActiveCfg = Debug|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Debug|1 Skip CUDA.Build.0 = Debug|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Debug|2 Fast (skip modules).ActiveCfg = Debug|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Release|0 Default (x64 CUDA).ActiveCfg = Release|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Release|0 Default (x64 CUDA).Build.0 = Release|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Release|1 Skip CUDA.ActiveCfg = Release|Any CPU
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1}.Release|2 Fast (skip modules).ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -279,5 +292,6 @@ Global
 		{86955C47-2A02-41A4-AB32-C9E592EB2971} = {D1D0B4A9-9F7F-452D-872A-05FFFBFA40C6}
 		{D35B9D3A-4D1C-4B5A-8EC5-9BFB023DF356} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
 		{8CAD80EE-667F-4B17-8BC6-C0F3B24F244E} = {772FEA22-0714-4097-9D81-8BE4D607E6E7}
+		{AC869EE5-33BD-40F9-A475-E77DE0A6AEA1} = {8CAD80EE-667F-4B17-8BC6-C0F3B24F244E}
 	EndGlobalSection
 EndGlobal

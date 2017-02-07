@@ -4,22 +4,28 @@ using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System;
 using System.ComponentModel;
+using System.IO;
 using YAXLib;
 
 namespace MNIST
 {
     public abstract class ImageWorld : MyWorld
     {
+        #region Abstract Properties
+        protected abstract TensorDimensions BitmapDims { get; }
+        protected abstract int NumberOfClasses { get; }
+        #endregion
+
         #region Memory Blocks
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Input
+        public MyMemoryBlock<float> Bitmap
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
         [MyOutputBlock(1)]
-        public MyMemoryBlock<float> Target
+        public MyMemoryBlock<float> Class
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
@@ -27,76 +33,215 @@ namespace MNIST
         #endregion
 
         #region World settings
-        //[MyBrowsable, Category("Input"), Description("Binarize Input images with threshold = 0.5")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool Binarize { get; set; }
-
-        [MyBrowsable, Category("Target"), Description("Present target in one-hot encoding instead of class number")]
+        [MyBrowsable, Category("Bitmap")]
         [YAXSerializableField(DefaultValue = false)]
+        [Description("Binarize bitmaps using threshold = 0.5")]
+        public bool Binarize { get; set; }
+
+        [MyBrowsable, Category("Random"), DisplayName("Seed")]
+        [YAXSerializableField(DefaultValue = 0)]
+        [Description("The initial state of randomness generator, 0 = use random seed")]
+        public int RandomSeed { get; set; }
+
+        [MyBrowsable, Category("Random"), DisplayName("Bitmap order")]
+        [YAXSerializableField(DefaultValue = ExampleOrderOption.Shuffle)]
+        [Description(@"The order in which bitmaps are presented. Bitmaps are always shuffled before start.
+NoShuffle = the order of bitmaps within each class then remains fixed
+Shuffle = once last bitmap of the requested class has been served, the bitmaps within this class get shuffled again
+RandomSample = sample random bitmap from the requested class")]
+        public ExampleOrderOption BitmapOrder { get; set; }
+
+        [MyBrowsable, Category("Class"), DisplayName("One-hot encoding")]
+        [YAXSerializableField(DefaultValue = false)]
+        [Description("Present classes in the one-hot encoding instead of a class number")]
         public bool OneHot { get; set; }
 
-        //[MyBrowsable, Category("Random"), Description("Used to shuffle the order in which examples get presented.\n0 = use random RandomSeed")]
-        //[YAXSerializableField(DefaultValue = 0)]
-        //public int RandomSeed { get; set; }
         #endregion
+
+        public override void UpdateMemoryBlocks()
+        {
+            Bitmap.Dims = BitmapDims;
+
+            if (OneHot)
+            {
+                Class.Dims = new TensorDimensions(NumberOfClasses);
+                Class.MinValueHint = 0;
+                Class.MaxValueHint = 1;
+            }
+            else
+            {
+                Class.Dims = new TensorDimensions(1);
+                Class.MinValueHint = 0;
+                Class.MaxValueHint = NumberOfClasses - 1;
+            }
+
+            //because values are normalized
+            Bitmap.MinValueHint = 0;
+            Bitmap.MaxValueHint = 1;
+        }
+
+        protected bool WorldSourcesExist(string[] paths, MyValidator validator)
+        {
+            bool exist = true;
+            foreach (string path in paths)
+            {
+                if (!File.Exists(path))
+                {
+                    validator.AddError(this, string.Format("Missing dataset file \"{0}\". Check log (INFO level) for further information.", Path.GetFileName(path)));
+                    exist = false;
+                }
+            }
+
+            return exist;
+        }
     }
 
-    [Description("Send Training Data"), MyTaskInfo(OneShot = false)]
     public abstract class SendDataTask : MyTask<ImageWorld>
     {
-        protected DatasetManager _dataset;
+        private DatasetManager m_dataset;
+        private int m_nBitmapsPerClass;
+        private ClassOrderOption m_classOrderOption;
+        private string m_classFilter;
+        private int m_expositionTime;
+        private int m_expositionTimeOffset;
 
+        private uint m_simulationStepOffset;
+        private bool m_hasSentExample;
 
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 50),
-         Description("How many time steps is each sample shown.")]
-        public int ExpositionTime { get; set; }
-
-        [MyBrowsable, Category("Params")]
-        [YAXSerializableField(DefaultValue = 0),
-         Description("For how many time steps should blank be presented before real examples start to appear")]
-        public int ExpositionTimeOffset { get; set; }
-
-        //[MyBrowsable, Category("Params"), DisplayName("Send numbers")]
-        //[YAXSerializableField(DefaultValue = "All"),
-        // Description("Choose data to be sent by class number, use 'All' or e.g. '1,3,5'")]
-        //public string SendNumbers { get; set; }
-
-        //[MyBrowsable, Category("Params"), DisplayName("Sequence ordered"),
-        //Description("Send data ordered according to their labels (that is: 0,1,2,3,4..)?")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool SequenceOrdered { get; set; }
-
-
-        //[MyBrowsable, Category("Params"), DisplayName("Random order"),
-        //Description("Reshuffle dataset after each epoch.")]
-        //[YAXSerializableField(DefaultValue = false)]
-        //public bool Reshuffle { get; set; }
-
-        public override void Execute()
+        [MyBrowsable, Category("Class Settings"), DisplayName("Bitmaps per class")]
+        [YAXSerializableField(DefaultValue = 5000)]
+        [Description("Limit numer of bitmaps per class")]
+        public int BitmapsPerClass
         {
-            if ((SimulationStep + ExpositionTimeOffset) % ExpositionTime == 0)
+            get { return m_nBitmapsPerClass; }
+            set
             {
-                IExample ex = _dataset.GetNext();
-                Array.Copy(ex.Input, Owner.Input.Host, ex.Input.Length);
+                m_nBitmapsPerClass = m_dataset.SetExampleLimit(Math.Max(1, value));
+            }
+        }
 
-                //if (Owner.Binarize)
-                //{
-                //    //Owner.Input.Host.ForEach(v => v >= 127 ? 255 : 0);
-                //}
+        [MyBrowsable, Category("Class Settings"), DisplayName("Class order")]
+        [YAXSerializableField(DefaultValue = ClassOrderOption.Random)]
+        [Description("The order of class from which bitmaps are chosen")]
+        public ClassOrderOption ClassOrder
+        {
+            get { return m_classOrderOption; }
+            set
+            {
+                m_dataset.SetClassOrder(value);
+                m_classOrderOption = value;
+            }
+        }
 
-                if (Owner.OneHot)
+        [MyBrowsable, Category("Class Settings"), DisplayName("Filter")]
+        [YAXSerializableField(DefaultValue = "all")]
+        [Description("Choose bitmaps to be sent by the class number, e.g. '1,3,5'. 'all' = '' (empty filter) = use all classes")]
+        public string ClassFilter
+        {
+            get { return m_classFilter;  }
+            set
+            {
+                m_dataset.SetClassFilter(ConvertFilter(value));
+                m_classFilter = value;
+            }
+        }
+
+        [MyBrowsable, Category("Params"), DisplayName("Exposition Time")]
+        [YAXSerializableField(DefaultValue = 50)]
+        [Description("How many time steps is each sample shown. 0 = show the current example forever")]
+        public int ExpositionTime {
+            get { return m_expositionTime; }
+            set { m_expositionTime = Math.Max(0, value); }
+        }
+
+        [MyBrowsable, Category("Params"), DisplayName("Exposition Time Offset")]
+        [YAXSerializableField(DefaultValue = 0)]
+        [Description("For how many time steps should blank be presented before bitmaps from dataset start to appear")]
+        public int ExpositionTimeOffset
+        {
+            get { return m_expositionTimeOffset; }
+            set { m_expositionTimeOffset = Math.Max(0, value); }
+        }
+
+        private static int[] ConvertFilter(string filter)
+        {
+            filter.Trim();
+
+            if (filter.ToLower().Equals("all"))
+            {
+                return new int[0];
+            }
+
+            string[] strClasses = filter.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            return Array.ConvertAll(strClasses, int.Parse);
+        }
+
+        public SendDataTask(AbstractDatasetReaderFactory datasetReaderFactory)
+        {
+            m_dataset = new DatasetManager(datasetReaderFactory);
+        }
+
+        public override void Init(int nGPU)
+        {
+            m_dataset.Init(Owner.BitmapOrder, Owner.RandomSeed);
+            m_nBitmapsPerClass = m_dataset.GetExampleLimit();
+
+            m_simulationStepOffset = (uint) m_expositionTimeOffset;
+            m_hasSentExample = false;
+        }
+
+        private void SendExample()
+        {
+                IExample ex = m_dataset.GetNext();
+
+                if (Owner.Binarize)
                 {
-                    Array.Clear(Owner.Target.Host, 0, 10);
-                    Owner.Target.Host[ex.Target] = 1;
+                    for (int i = 0; i < ex.Input.Length; i++)
+                    {
+                        Owner.Bitmap.Host[i] = ex.Input[i] >= 0.5 ? 1 : 0;
+                    }
                 }
                 else
                 {
-                    Owner.Target.Host[0] = ex.Target;
+                    Array.Copy(ex.Input, Owner.Bitmap.Host, ex.Input.Length);
                 }
 
-                Owner.Input.SafeCopyToDevice();
-                Owner.Target.SafeCopyToDevice();
+                if (Owner.OneHot)
+                {
+                    Array.Clear(Owner.Class.Host, 0, 10);
+                    Owner.Class.Host[ex.Target] = 1;
+                }
+                else
+                {
+                    Owner.Class.Host[0] = ex.Target;
+                }
+
+                Owner.Bitmap.SafeCopyToDevice();
+                Owner.Class.SafeCopyToDevice();
+
+                m_hasSentExample = true;
+        }
+
+        public override void Execute()
+        {
+            if (SimulationStep < m_expositionTimeOffset)
+            {
+                return;
+            }
+            
+            if (ExpositionTime == 0) // show the current Bitmap forever
+            {
+                if (!m_hasSentExample)
+                {
+                    SendExample();
+                }
+
+                // +1 for the case when ExpositionTime gets > 0 -> the NEXT step should (SimulationStep - m_simulationStepOffset) % ExpositionTime == 0
+                m_simulationStepOffset = SimulationStep + 1;
+            }
+            else if ((SimulationStep - m_simulationStepOffset) % ExpositionTime == 0)
+            {
+                SendExample();
             }
         }
     }

@@ -190,14 +190,15 @@ extern "C"
 		}
 	}
 
-	///Adds two vectores elementwise result = (1-bScale)*a+bScale*b. bounding each element of the result
+	///Adds two vectores elementwise result = weightA*a+weightB*b. bounding each element of the result
 	__global__ void ElementwiseAdd_BoundedWeighted(
+		float* result,
 		float* a,
 		float* b,
-		float bScale,
+		float weightA,
+		float weightB,
 		float minBound,
 		float maxBound,
-		float* result,
 		int count
 	)
 	{
@@ -205,7 +206,7 @@ extern "C"
 
 		if (id < count)
 		{
-			result[id] = (1 - bScale) * a[id] + bScale * b[id];
+			result[id] = weightA * a[id] + weightB * b[id];
 			if (result[id] < minBound) {
 				result[id] = minBound;
 			}

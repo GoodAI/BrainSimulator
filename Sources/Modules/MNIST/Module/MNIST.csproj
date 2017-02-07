@@ -48,17 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CIFAR10Dataset.cs" />
+    <Compile Include="CIFAR10World.cs" />
     <Compile Include="DatasetManager.cs" />
     <Compile Include="DatasetReader.cs" />
     <Compile Include="Example.cs" />
     <Compile Include="ImageWorld.cs" />
-    <Compile Include="MNISTDatasetReader.cs" />
+    <Compile Include="MNISTDataset.cs" />
     <Compile Include="MNISTWorld.cs" />
-    <Compile Include="MyMNISTManager.cs" />
-    <Compile Include="MyMNISTWorld.cs" />
     <Compile Include="MyMovingObjectsWorld.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="USPSDatasetReader.cs" />
+    <Compile Include="USPSDataset.cs" />
     <Compile Include="USPSWorld.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>
@@ -85,24 +85,27 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="post_build.cmd" />
-    <Content Include="res\t10k-images.idx3-ubyte">
+    <None Include="res\MNIST\t10k-images.idx3-ubyte">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\t10k-labels.idx1-ubyte">
+    </None>
+    <None Include="res\MNIST\t10k-labels.idx1-ubyte">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\train-images.idx3-ubyte">
+    </None>
+    <None Include="res\MNIST\train-images.idx3-ubyte">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\train-labels.idx1-ubyte">
+    </None>
+    <None Include="res\MNIST\train-labels.idx1-ubyte">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\zip.test">
+    </None>
+    <None Include="res\USPS\zip.test">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="res\zip.train">
+    </None>
+    <None Include="res\USPS\zip.train">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="res\CIFAR-10\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
