@@ -219,17 +219,13 @@ namespace GoodAI.Core
         private CudaKernel LoadPtx(int GPU, string ptxFileName, string kernelName)
         {
             CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
-            CudaKernel kernel = new CudaKernel(kernelName, ptxModule, m_contexts[GPU]);
-            return kernel;
+            return new CudaKernel(kernelName, ptxModule, m_contexts[GPU]);
         }
 
-        private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance = false, string additionalLinkDependencyPath = null)
+        private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance, string additionalLinkDependencyPath, bool isFallback = false)
         {
             if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
                 return new MyCudaKernel(m_ptxModules[GPU][ptxFileName], GPU, m_streams[GPU]);
-
-            if (!File.Exists(ptxFileName))
-                return null;
 
             try
             {
@@ -245,7 +241,15 @@ namespace GoodAI.Core
             }
             catch (Exception e)
             {
-                throw new CudaException(e.Message + " (" + ptxFileName + ")", e);
+                if (!isFallback && additionalLinkDependencyPath == null)
+                {
+                    // Simple loading failed, try extended linkage
+                    MyLog.WARNING.WriteLine("Kernel loading failed. Trying extended linkage.");
+                    return KernelInternal(GPU, ptxFileName, kernelName, forceNewInstance, true, true);
+                }
+                // Fallback to simple wouldn't make much sense, so we don't do it..
+
+                throw new CudaException($"{e.Message} ({ptxFileName})", e);
             }
         }
 
@@ -255,7 +259,7 @@ namespace GoodAI.Core
                 return Path.GetFullPath(fileName);
 
 
-            MyLog.WARNING.WriteLine($"Trying to access a kernel with an extended linkage (which requires the {fileName} library), but could not locate the {fileName} library. Trying CUDA toolkit path.");
+            MyLog.INFO.WriteLine($"Trying to access a kernel with an extended linkage (which requires the {fileName} library), but could not locate the {fileName} library. Trying CUDA toolkit path.");
 
             // Try searching in the cuda toolkit, if it is installed
             var cudaPath = Environment.GetEnvironmentVariable(@"CUDA_PATH");
@@ -263,7 +267,6 @@ namespace GoodAI.Core
             if (cudaPath == null)
             {
                 MyLog.WARNING.WriteLine("Could not locate the CUDA toolkit, because but the CUDA_PATH environment variable is not defined. Please install the CUDA toolkit.");
-                MyLog.WARNING.WriteLine("Trying to omit extended linkage...");
                 return null;
             }
 
@@ -280,26 +283,43 @@ namespace GoodAI.Core
             return libPath;
         }
 
-        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
+        private MyCudaKernel KernelInternal(int GPU, string ptxFileName, string kernelName, bool forceNewInstance, bool extendedLinkage, bool isFallback = false)
         {
             string cudaRtPath = null;
 
             if (extendedLinkage)
+            {
                 cudaRtPath = GetCudaLibPath("cudadevrt.lib");
 
-            MyCudaKernel kernel = TryLoadPtx(GPU, ptxFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath);
+                if (cudaRtPath == null)
+                {
+                    // Lib loading failed
+                    if (isFallback)
+                        // Don't fallback to anything, if this is already a fallback
+                        throw new CudaException($"Failed to load ptx: {ptxFileName}");
 
-            if (kernel == null)
-            {
-                kernel = TryLoadPtx(GPU, MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath);
+                    // Fallback to simple load
+                    MyLog.WARNING.WriteLine("Trying to omit extended linkage...");
+                    isFallback = true;
+                }
             }
 
-            if (kernel == null)
+            return TryLoadPtx(GPU, MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath, isFallback);
+        }
+
+        public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
+        {
+            string ptxPath = ptxFolder + ptxFileName + ".ptx";
+
+            if (!File.Exists(ptxPath))
             {
-                throw new CudaException("Cannot find ptx: " + ptxFileName);
+                ptxPath = MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx";
+
+                if (!File.Exists(ptxPath))
+                    throw new CudaException("Cannot find ptx: " + ptxFileName);
             }
 
-            return kernel;
+            return KernelInternal(GPU, ptxPath, kernelName, forceNewInstance, extendedLinkage);
         }
 
         private MyCudaKernel Kernel(int GPU, Assembly callingAssembly, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
