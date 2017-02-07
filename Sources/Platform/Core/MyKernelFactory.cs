@@ -266,7 +266,7 @@ namespace GoodAI.Core
 
             if (cudaPath == null)
             {
-                MyLog.WARNING.WriteLine("Could not locate the CUDA toolkit, because but the CUDA_PATH environment variable is not defined. Please install the CUDA toolkit.");
+                MyLog.WARNING.WriteLine("Could not locate the CUDA toolkit, because but the CUDA_PATH environment variable is not defined or the content is invalid. Please re-install the CUDA toolkit.");
                 return null;
             }
 
@@ -304,16 +304,16 @@ namespace GoodAI.Core
                 }
             }
 
-            return TryLoadPtx(GPU, MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx", kernelName, forceNewInstance, cudaRtPath, isFallback);
+            return TryLoadPtx(GPU, ptxFileName, kernelName, forceNewInstance, cudaRtPath, isFallback);
         }
 
         public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
         {
-            string ptxPath = ptxFolder + ptxFileName + ".ptx";
+            string ptxPath = Path.Combine(ptxFolder, $"{ptxFileName}.ptx");
 
             if (!File.Exists(ptxPath))
             {
-                ptxPath = MyConfiguration.GlobalPTXFolder + ptxFileName + ".ptx";
+                ptxPath = Path.Combine(MyConfiguration.GlobalPTXFolder, $"{ptxFileName}.ptx");
 
                 if (!File.Exists(ptxPath))
                     throw new CudaException("Cannot find ptx: " + ptxFileName);
