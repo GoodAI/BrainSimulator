@@ -103,6 +103,7 @@
     <Compile Include="Nodes\MyForkTests.cs" />
     <Compile Include="Observers\TextureSizeTests.cs" />
     <Compile Include="PerformanceBenchmarking.cs" />
+    <Compile Include="KernelFactoryTests.cs" />
     <Compile Include="ProjectLoaderTests.cs" />
     <Compile Include="ReleaseDeserializationTests.cs" />
     <Compile Include="SerializationTests.cs" />
