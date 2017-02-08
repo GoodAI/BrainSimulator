@@ -72,8 +72,8 @@ namespace CoreTests
         // Ptx names
         private readonly string m_ptxBase = Path.Combine(Directory.GetCurrentDirectory(), "Data", "Ptx");
 
-        private const string BasicPtxName = "BasicTest";
-        private const string DynParaPtxName = "DynParaTest";
+        protected const string BasicPtxName = "BasicTest";
+        protected const string DynParaPtxName = "DynParaTest";
 
         private const string EntryName = "Test";
 
@@ -101,9 +101,8 @@ namespace CoreTests
 
         #region Helpers
 
-        protected MyCudaKernel GetKernel(bool dynamic, bool extendedLinkage)
+        protected MyCudaKernel GetKernel(string ptxName, bool extendedLinkage)
         {
-            string ptxName = dynamic ? DynParaPtxName : BasicPtxName;
             return MyKernelFactory.Instance.Kernel(0, m_ptxBase, ptxName, EntryName, true, extendedLinkage);
         }
 
@@ -114,21 +113,21 @@ namespace CoreTests
         [Fact]
         public void LoadBasicSimple()
         {
-            var k = GetKernel(false, false);
+            var k = GetKernel(BasicPtxName, false);
             Assert.NotNull(k);
         }
 
         [Fact]
         public void LoadBasicExtended()
         {
-            var k = GetKernel(false, true);
+            var k = GetKernel(BasicPtxName, true);
             Assert.NotNull(k);
         }
 
         [Fact]
         public virtual void LoadDynamicExtended()
         {
-            var k = GetKernel(true, true);
+            var k = GetKernel(DynParaPtxName, true);
             Assert.NotNull(k);
         }
 
@@ -136,7 +135,7 @@ namespace CoreTests
         public virtual void LoadDynamicBasic()
         {
             // The loading should fall back to extended linkage and should not fail
-            var k = GetKernel(true, false);
+            var k = GetKernel(DynParaPtxName, false);
             Assert.NotNull(k);
         }
 
@@ -191,12 +190,12 @@ namespace CoreTests
 
         public override void LoadDynamicExtended()
         {
-            Assert.Throws<CudaException>(() => GetKernel(true, true));
+            Assert.Throws<CudaException>(() => GetKernel(DynParaPtxName, true));
         }
 
         public override void LoadDynamicBasic()
         {
-            Assert.Throws<CudaException>(() => GetKernel(true, false));
+            Assert.Throws<CudaException>(() => GetKernel(DynParaPtxName, false));
         }
 
         #endregion

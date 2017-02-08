@@ -193,10 +193,10 @@ namespace GoodAI.Core
             m_disposed = true;
         }
 
-        private CudaKernel LoadPtxLinker(int GPU, string ptxFileName, string kernelName, string additionalLinkDependencyPath)
+        private CudaKernel LoadPtxWithLinker(int GPU, string ptxFileName, string kernelName, string additionalLinkDependencyPath)
         {
-            CudaJitOptionCollection options = new CudaJitOptionCollection();
-            CudaJOErrorLogBuffer err = new CudaJOErrorLogBuffer(1024);
+            var options = new CudaJitOptionCollection();
+            var err = new CudaJOErrorLogBuffer(1024);
             options.Add(new CudaJOLogVerbose(true));
             options.Add(err);
 
@@ -204,15 +204,15 @@ namespace GoodAI.Core
             {
                 CudaLinker linker = new CudaLinker(options);
                 linker.AddFile(ptxFileName, CUJITInputType.PTX, null);
-                //important: add the device runtime library!
+                // Add the requested additional library
                 linker.AddFile(additionalLinkDependencyPath, CUJITInputType.Library, null);
-                var tempArray = linker.Complete();
+                byte[] cubin = linker.Complete();
 
-                return m_contexts[GPU].LoadKernelPTX(tempArray, kernelName);
+                return m_contexts[GPU].LoadKernelPTX(cubin, kernelName);
             }
             catch (Exception e)
             {
-                throw new CudaException(err.Value);
+                throw new CudaException($"CUDA JIT linker error {err.Value}", e);
             }
         }
 
@@ -234,7 +234,7 @@ namespace GoodAI.Core
                 if (additionalLinkDependencyPath == null)
                     kernel = LoadPtx(GPU, ptxFileName, kernelName);
                 else
-                    kernel = LoadPtxLinker(GPU, ptxFileName, kernelName, additionalLinkDependencyPath);
+                    kernel = LoadPtxWithLinker(GPU, ptxFileName, kernelName, additionalLinkDependencyPath);
 
                 m_ptxModules[GPU][ptxFileName] = kernel;
                 return new MyCudaKernel(kernel, GPU, m_streams[GPU]);
