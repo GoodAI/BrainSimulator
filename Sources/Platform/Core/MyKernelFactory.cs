@@ -244,8 +244,8 @@ namespace GoodAI.Core
                 if (!isFallback && additionalLinkDependencyPath == null)
                 {
                     // Simple loading failed, try extended linkage
-                    MyLog.WARNING.WriteLine("Kernel loading failed. Trying extended linkage.");
-                    return KernelInternal(GPU, ptxFileName, kernelName, forceNewInstance, true, true);
+                    MyLog.WARNING.WriteLine("Kernel loading failed. Fallback to extended linkage...");
+                    return KernelInternal(GPU, ptxFileName, kernelName, forceNewInstance, extendedLinkage: true, isFallback: true);
                 }
                 // Fallback to simple wouldn't make much sense, so we don't do it..
 
@@ -298,8 +298,8 @@ namespace GoodAI.Core
                         // Don't fallback to anything, if this is already a fallback
                         throw new CudaException($"Failed to load ptx: {ptxFileName}");
 
-                    // Fallback to simple load
-                    MyLog.WARNING.WriteLine("Trying to omit extended linkage...");
+                    // Try to omit the extended linkage
+                    MyLog.WARNING.WriteLine("Kernel loading failed. Fallback to simple loading...");
                     isFallback = true;
                 }
             }
