@@ -113,6 +113,7 @@ namespace CoreTests
         [Fact]
         public void LoadBasicSimple()
         {
+            // Non-dynamic kernel, simple loading
             var k = GetKernel(BasicPtxName, false);
             Assert.NotNull(k);
         }
@@ -120,6 +121,7 @@ namespace CoreTests
         [Fact]
         public void LoadBasicExtended()
         {
+            // Non-dynamic kernel, extended linking
             var k = GetKernel(BasicPtxName, true);
             Assert.NotNull(k);
         }
@@ -127,6 +129,7 @@ namespace CoreTests
         [Fact]
         public virtual void LoadDynamicExtended()
         {
+            // Dynamic kernel, extended linking
             var k = GetKernel(DynParaPtxName, true);
             Assert.NotNull(k);
         }
@@ -134,6 +137,7 @@ namespace CoreTests
         [Fact]
         public virtual void LoadDynamicBasic()
         {
+            // Dynamic kernel, basic loading
             // The loading should fall back to extended linkage and should not fail
             var k = GetKernel(DynParaPtxName, false);
             Assert.NotNull(k);
@@ -142,6 +146,7 @@ namespace CoreTests
         #endregion
     }
 
+    // Tests for gathering the cudadevrt.lib from CUDA tools during extended linking
     public class KernelFactoryToolsLibTests
         : KernelFactoryTestBase
     {
@@ -150,6 +155,7 @@ namespace CoreTests
         { }
     }
 
+    // Tests for gathering the cudadevrt.lib from working dir during extended linking
     public class KernelFactoryLocalLibTests
         : KernelFactoryTestBase, IDisposable
     {
@@ -168,6 +174,7 @@ namespace CoreTests
         }
     }
 
+    // Tests for extended linking with the cudadevrt.lib missing (from working dir and with invalid cuda path)
     public class KernelFactoryNoLibTests
         : KernelFactoryTestBase, IDisposable
     {
