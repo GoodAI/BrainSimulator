@@ -264,7 +264,7 @@ namespace GoodAI.Core
             // Try searching in the cuda toolkit, if it is installed
             var cudaPath = Environment.GetEnvironmentVariable(@"CUDA_PATH");
 
-            if (cudaPath == null)
+            if (cudaPath == null || !Directory.Exists(cudaPath))
             {
                 MyLog.WARNING.WriteLine("Could not locate the CUDA toolkit, because but the CUDA_PATH environment variable is not defined or the content is invalid. Please re-install the CUDA toolkit.");
                 return null;
