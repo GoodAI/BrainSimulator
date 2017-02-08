@@ -228,6 +228,25 @@ extern "C"
 		device_ElementwiseAdd_Weighted(a, b, out, weightA, weightB, count);
 	}
 
+
+	__global__ void ElementwiseAdd_Offsetted(
+		float* result,
+		float* a,
+		float* b,
+		int resultOffset,	// offset in the result
+		int aOffset,		// offset in a indexes (0 means no offset)
+		int bOffset,		// offset in b indexses
+		int countSubtracted	// number of values to be added
+	)
+	{
+		int id = GetId();
+
+		if (id < countSubtracted)
+		{
+			result[id + resultOffset] = a[id + aOffset] + b[id + bOffset];
+		}
+	}
+
 	// output is wa*a + wb*b, zero otherwise. a and b can be offsetted
 	__global__ void ElementwiseAdd_WeightedOffsetted(
 		float* a,
@@ -323,6 +342,7 @@ extern "C"
 			result[id] = a[id] - b[id];
 		}
 	}
+
 
 	//multiplies two vectors as matrices so that result is a matrix where output_ij = a_i * b_j
 	__global__ void CrossMult(

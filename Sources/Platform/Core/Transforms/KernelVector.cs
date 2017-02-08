@@ -12,6 +12,7 @@ namespace GoodAI.Modules.Transforms
         ElementwiseAbs,
         ElementwiseThreshold,
         ElementwiseAdd,
+        ElementwiseAdd_Offsetted,
         ElementwiseAdd_Bounded,
         ElementwiseAdd_BoundedWeighted,
         ElementwiseAdd_Weighted,
