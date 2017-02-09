@@ -304,24 +304,5 @@ namespace GoodAI.Core.Memory
 
             IterateBlocks(holder, true, action);
         }
-
-        // TODO: remove?
-        private IDictionary<string, MyAbstractMemoryBlock> CollectMemoryBlocks()
-        {
-            var memBlocks = new Dictionary<string, MyAbstractMemoryBlock>();
-
-            foreach (var memoryBlockList in m_memoryBlocks.Values)
-            {
-                foreach (MyAbstractMemoryBlock memoryBlock in memoryBlockList)
-                {
-                    string memBlockName = MyMemoryBlockSerializer.GetUniqueName(memoryBlock);
-
-                    if (!memBlocks.ContainsKey(memBlockName))
-                        memBlocks.Add(memBlockName, memoryBlock);
-                }
-            }
-
-            return memBlocks;
-        }
     }
 }
