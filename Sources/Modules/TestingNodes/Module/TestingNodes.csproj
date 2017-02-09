@@ -55,6 +55,7 @@
     <Compile Include="BrainUnitNode.cs" />
     <Compile Include="BrainUnitNodeSelfTests.cs" />
     <Compile Include="DynamicBlockNode.cs" />
+    <Compile Include="NestedMemBlocksNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Versioning\MyConversion.cs" />
   </ItemGroup>

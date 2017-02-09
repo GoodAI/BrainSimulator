@@ -52,9 +52,31 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        protected void CreateMemoryBlocks()
+        private void CreateMemoryBlocks()
         {
-            foreach (PropertyInfo pInfo in GetInfo().OwnedMemoryBlocks)
+            CreateMemoryBlocksInner(this, GetInfo().OwnedMemoryBlocks);
+
+            CreateNestedMemoryBlocks();
+        }
+
+        private void CreateNestedMemoryBlocks()
+        {
+            foreach (var nestedBlocksPair in GetInfo().NestedMemoryBlocks)
+            {
+                var memBlockOwner = nestedBlocksPair.Key.GetValue(this);  // Get instance using property info
+                if (memBlockOwner == null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested mem. block instance for {nestedBlocksPair.Key.Name} not found.");
+                    continue;
+                }
+
+                CreateMemoryBlocksInner(memBlockOwner, nestedBlocksPair.Value);
+            }
+        }
+
+        private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos)
+        {
+            foreach (PropertyInfo pInfo in listOfBlockInfos)
             {
                 MyAbstractMemoryBlock mb = MyMemoryManager.Instance.CreateMemoryBlock(this, pInfo.PropertyType);
                 mb.Name = pInfo.Name;
@@ -63,8 +85,19 @@ namespace GoodAI.Core.Nodes
                 mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
                 mb.IsDynamic = pInfo.GetCustomAttribute<DynamicBlockAttribute>(true) != null;
 
-                pInfo.SetValue(this, mb);
+                pInfo.SetValue(memBlockOwner, mb);
             }
+        }
+
+        protected void CreateNestedMemoryBlocks(object memBlockOwner)
+        {
+            List<PropertyInfo> memBlocksInfo = MyNodeInfo.CollectNestedMemBlocks(memBlockOwner.GetType());
+            if (!memBlocksInfo.Any())
+            {
+                MyLog.WARNING.WriteLine($"Nested memory blocks not found on type '{memBlockOwner.GetType().Name}'");
+            }
+
+            CreateMemoryBlocksInner(memBlockOwner, memBlocksInfo);
         }
 
         #endregion
