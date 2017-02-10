@@ -258,7 +258,7 @@ namespace GoodAI.Core
             if (File.Exists(fileName))
                 return Path.GetFullPath(fileName);
 
-            MyLog.INFO.WriteLine($"Trying to access a kernel with an extended linkage (which requires the {fileName} library), but could not locate the {fileName} library. Trying CUDA toolkit path.");
+            MyLog.INFO.WriteLine($"Trying to access a kernel with an extended linkage, but could not locate the {fileName} library. Trying CUDA toolkit path.");
 
             // Try searching in the cuda toolkit, if it is installed
             var cudaPath = Environment.GetEnvironmentVariable(@"CUDA_PATH");
