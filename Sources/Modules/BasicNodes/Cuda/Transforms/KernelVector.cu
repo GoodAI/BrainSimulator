@@ -258,12 +258,12 @@ extern "C"
 		int offsetB,
 		int countA,
 		int countB,
-		int count
+		int outputCount
 	)
 	{
 		int id = GetId();
 
-		if (id < count)
+		if (id < outputCount)
 		{
 			out[id] = 0.0f;
 
