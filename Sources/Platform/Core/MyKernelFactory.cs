@@ -158,6 +158,8 @@ namespace GoodAI.Core
         private CudaStream[] m_streams;
         private bool[] m_contextAlive;
 
+        public string ExtendedLinkageLibFolder { get; set; } = string.Empty;
+
         public CudaRandDevice GetRandDevice(MyNode callee)
         {
             return m_randDevices[callee.GPU];
@@ -255,8 +257,13 @@ namespace GoodAI.Core
 
         private string GetCudaLibPath(string fileName)
         {
-            if (File.Exists(fileName))
-                return Path.GetFullPath(fileName);
+            // Try the local lib first
+            {
+                string localPath = Path.Combine(ExtendedLinkageLibFolder, fileName);
+
+                if (File.Exists(localPath))
+                    return Path.GetFullPath(localPath);
+            }
 
             MyLog.INFO.WriteLine($"Trying to access a kernel with an extended linkage, but could not locate the {fileName} library. Trying CUDA toolkit path.");
 

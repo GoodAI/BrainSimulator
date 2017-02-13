@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using GoodAI.Core;
 using GoodAI.Core.Utils;
@@ -16,23 +15,22 @@ namespace CoreTests
         protected class TempFileLoader
             : IDisposable
         {
-            private readonly string m_tempFolderName;
-            private readonly string m_targetPath;
+            public string TempFolderName { get; }
+            public string TargetPath { get; }
 
             public TempFileLoader(string filePath)
             {
-                m_tempFolderName = Path.GetRandomFileName();
-                Directory.CreateDirectory(m_tempFolderName);
-                m_targetPath = Path.Combine(m_tempFolderName, Path.GetFileName(filePath));
-                File.Copy(filePath, m_targetPath);
-                Directory.SetCurrentDirectory(m_tempFolderName);
+                TempFolderName = Path.GetRandomFileName();
+                Directory.CreateDirectory(TempFolderName);
+                TargetPath = Path.Combine(TempFolderName, Path.GetFileName(filePath));
+
+                File.Copy(filePath, TargetPath);
             }
 
             public void Dispose()
             {
-                Directory.SetCurrentDirectory("..");
-                File.Delete(m_targetPath);
-                Directory.Delete(m_tempFolderName);
+                File.Delete(TargetPath);
+                Directory.Delete(TempFolderName);
             }
         }
 
@@ -94,7 +92,7 @@ namespace CoreTests
 
         public KernelFactoryTestBase(ITestOutputHelper output)
         {
-            MyLog.Writer = new DebugLogWriter(output);
+            //MyLog.Writer = new DebugLogWriter(output);
         }
 
         #endregion
@@ -159,16 +157,21 @@ namespace CoreTests
     public class KernelFactoryLocalLibTests
         : KernelFactoryTestBase, IDisposable
     {
+        private string m_libFolderBackup;
         private TempFileLoader m_libLoader;
 
         public KernelFactoryLocalLibTests(ITestOutputHelper output)
             : base(output)
         {
-            m_libLoader = new TempFileLoader(RtLibPath); // NOTE: sets working dir in a temp folder (might cause issues in the future)
+            m_libLoader = new TempFileLoader(RtLibPath);
+            m_libFolderBackup = MyKernelFactory.Instance.ExtendedLinkageLibFolder;
+            MyKernelFactory.Instance.ExtendedLinkageLibFolder = m_libLoader.TempFolderName;
         }
 
         public void Dispose()
         {
+            MyKernelFactory.Instance.ExtendedLinkageLibFolder = m_libFolderBackup;
+            m_libFolderBackup = null;
             m_libLoader.Dispose();
             m_libLoader = null;
         }
