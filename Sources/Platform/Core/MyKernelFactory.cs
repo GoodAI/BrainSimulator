@@ -150,7 +150,7 @@ namespace GoodAI.Core
         // Track whether Dispose has been called. 
         private Boolean m_disposed = false;
 
-        private readonly Dictionary<string, CudaKernel>[] m_ptxModules;
+        private readonly Dictionary<string, CUmodule>[] m_ptxModules;
 
         private int m_devCount; // number of CUDA-enabled devices
         private CudaContext[] m_contexts;
@@ -168,11 +168,11 @@ namespace GoodAI.Core
         protected MyKernelFactory()
         {
             ContextsCreate();
-            m_ptxModules = new Dictionary<string, CudaKernel>[DevCount];
+            m_ptxModules = new Dictionary<string, CUmodule>[DevCount];
 
             for (int i = 0; i < DevCount; i++)
             {
-                m_ptxModules[i] = new Dictionary<string, CudaKernel>();
+                m_ptxModules[i] = new Dictionary<string, CUmodule>();
             }
         }
 
@@ -195,7 +195,7 @@ namespace GoodAI.Core
             m_disposed = true;
         }
 
-        private CudaKernel LoadPtxWithLinker(int GPU, string ptxFileName, string kernelName, string additionalLinkDependencyPath)
+        private CUmodule LoadPtxWithLinker(int GPU, string ptxFileName, string additionalLinkDependencyPath)
         {
             var options = new CudaJitOptionCollection();
             var err = new CudaJOErrorLogBuffer(1024);
@@ -210,7 +210,7 @@ namespace GoodAI.Core
                 linker.AddFile(additionalLinkDependencyPath, CUJITInputType.Library, null);
                 byte[] cubin = linker.Complete();
 
-                return m_contexts[GPU].LoadKernelPTX(cubin, kernelName);
+                return m_contexts[GPU].LoadModulePTX(cubin);
             }
             catch (Exception e)
             {
@@ -218,28 +218,22 @@ namespace GoodAI.Core
             }
         }
 
-        private CudaKernel LoadPtx(int GPU, string ptxFileName, string kernelName)
-        {
-            CUmodule ptxModule = m_contexts[GPU].LoadModule(ptxFileName);
-            return new CudaKernel(kernelName, ptxModule, m_contexts[GPU]);
-        }
-
         private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance, string additionalLinkDependencyPath, bool isFallback = false)
         {
             if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
-                return new MyCudaKernel(m_ptxModules[GPU][ptxFileName], GPU, m_streams[GPU]);
+                return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
 
             try
             {
-                CudaKernel kernel = null;
+                CUmodule module;
 
                 if (additionalLinkDependencyPath == null)
-                    kernel = LoadPtx(GPU, ptxFileName, kernelName);
+                    module = m_contexts[GPU].LoadModule(ptxFileName);
                 else
-                    kernel = LoadPtxWithLinker(GPU, ptxFileName, kernelName, additionalLinkDependencyPath);
+                    module = LoadPtxWithLinker(GPU, ptxFileName, additionalLinkDependencyPath);
 
-                m_ptxModules[GPU][ptxFileName] = kernel;
-                return new MyCudaKernel(kernel, GPU, m_streams[GPU]);
+                m_ptxModules[GPU][ptxFileName] = module;
+                return new MyCudaKernel(kernelName, module, m_contexts[GPU], GPU, m_streams[GPU]);
             }
             catch (Exception e)
             {
