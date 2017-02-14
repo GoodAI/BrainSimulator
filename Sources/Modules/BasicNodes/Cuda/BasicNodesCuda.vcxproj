@@ -197,7 +197,8 @@
     <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
     <IntDir>bin\$(Configuration)-$(Platform)\</IntDir>
     <TargetExt />
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CudaToolkitDir)\include;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CudaToolkitDir)include</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(CudaToolkitDir)include</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
@@ -206,6 +207,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)\..\Module\bin\$(Configuration)\ptx\</OutDir>
     <IntDir>bin\$(Configuration)-$(Platform)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(CudaToolkitDir)include</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(CudaToolkitDir)include</SourcePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -302,7 +305,7 @@
       <CompileOut>$(OutDir)%(RelativeDir)%(Filename).ptx</CompileOut>
       <GenerateRelocatableDeviceCode>true</GenerateRelocatableDeviceCode>
       <NvccCompilation>ptx</NvccCompilation>
-      <CodeGeneration>compute_30,sm_30</CodeGeneration>
+      <CodeGeneration>compute_35,sm_35</CodeGeneration>
     </CudaCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
