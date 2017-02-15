@@ -15,4 +15,12 @@ namespace GoodAI.Core.Memory
         // You should have a method to do UpdateMemoryBlocks (with any params)
         // And probably some Execute method(s) called from tasks
     }
+
+    /// <summary>
+    /// TODO(Premek)
+    /// </summary>
+    public interface IMemBlockOwnerUpdatable : IMemBlockOwner
+    {
+        void UpdateMemoryBlocks();
+    }
 }

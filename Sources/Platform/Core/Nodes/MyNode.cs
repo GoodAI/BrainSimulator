@@ -91,13 +91,36 @@ namespace GoodAI.Core.Nodes
 
         protected void CreateNestedMemoryBlocks(object memBlockOwner)
         {
-            List<PropertyInfo> memBlocksInfo = MyNodeInfo.CollectNestedMemBlocks(memBlockOwner.GetType());
+            CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()));
+        }
+
+        protected void DestroyNestedMemoryBlocks(object memBlockOwner)
+        {
+            var memBlocksInfo = FindNestedMemoryBlocks(memBlockOwner.GetType());
+
+            foreach (var pInfo in memBlocksInfo)
+            {
+                var memBlock = pInfo.GetValue(memBlockOwner) as MyAbstractMemoryBlock;
+                if (memBlock == null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested memory block '{pInfo.Name}'"
+                        + $" instance not found on type {memBlockOwner.GetType().Name}.");
+                    continue;
+                }
+
+                MyMemoryManager.Instance.RemoveBlock(this, memBlock);
+            }
+        }
+
+        private static List<PropertyInfo> FindNestedMemoryBlocks(Type memBlockOwnerType)
+        {
+            List<PropertyInfo> memBlocksInfo = MyNodeInfo.CollectNestedMemBlocks(memBlockOwnerType);
             if (!memBlocksInfo.Any())
             {
-                MyLog.WARNING.WriteLine($"Nested memory blocks not found on type '{memBlockOwner.GetType().Name}'");
+                MyLog.WARNING.WriteLine($"Nested memory blocks not found on type '{memBlockOwnerType.Name}'");
             }
 
-            CreateMemoryBlocksInner(memBlockOwner, memBlocksInfo);
+            return memBlocksInfo;
         }
 
         #endregion
