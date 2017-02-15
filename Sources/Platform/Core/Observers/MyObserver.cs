@@ -52,6 +52,7 @@ namespace GoodAI.Core.Observers
         public bool Active { get; set; }        
 
         private object m_target;
+
         public object GenericTarget
         {
             get { return m_target; }
@@ -63,7 +64,9 @@ namespace GoodAI.Core.Observers
             }
         }
 
+
         protected virtual void Reset() { }
+        protected virtual void PrepareExecution() { }
         protected abstract void Execute();
 
         protected MyAbstractObserver()
@@ -122,15 +125,8 @@ namespace GoodAI.Core.Observers
                 CreateVertexVBO();
             }
 
-            if (m_cudaTextureSource != null)
-            {
-                m_cudaTextureSource.Map();
-            }
-
-            if (m_cudaVertexSource != null)
-            {
-                m_cudaVertexSource.Map();
-            }
+            m_cudaTextureSource?.Map();
+            m_cudaVertexSource?.Map();
 
             try
             {
@@ -171,8 +167,6 @@ namespace GoodAI.Core.Observers
             GL.UnmapBuffer(bufferTarget);
             GL.BindBuffer(bufferTarget, 0);
         }
-
-        protected virtual void PrepareExecution() { }
 
         #endregion
 

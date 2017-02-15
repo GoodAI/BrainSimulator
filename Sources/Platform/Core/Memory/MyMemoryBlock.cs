@@ -34,8 +34,8 @@ namespace GoodAI.Core.Memory
 
         public IMemoryBlockMetadata Metadata { get; private set; }
 
-        public float MinValueHint { get; set; }
-        public float MaxValueHint { get; set; }
+        public float MinValueHint { get; set; } = float.NegativeInfinity;
+        public float MaxValueHint { get; set; } = float.PositiveInfinity;
 
         public bool Persistable { get; internal set; }
         public bool Shared { get; protected set; }
@@ -110,7 +110,7 @@ namespace GoodAI.Core.Memory
             set
             {
                 if (value < 0)
-                    throw new ArgumentOutOfRangeException("value", "Count must not be negative");
+                    throw new ArgumentOutOfRangeException(nameof(value), "Count must not be negative");
 
                 Dims = TensorDimensions.GetBackwardCompatibleDims(value, m_columnHint);
             }
@@ -140,31 +140,11 @@ namespace GoodAI.Core.Memory
         }
         private int m_columnHint = 1;
 
-        public override TensorDimensions Dims { get; set; }
+        public override TensorDimensions Dims { get; set; } = TensorDimensions.Empty;
 
-        public bool OnDevice
-        {
-            get
-            {
-                return Device != null && Device[Owner.GPU] != null;
-            }
-        }
+        public bool OnDevice => (Device != null) && (Device[Owner.GPU] != null);
 
-        public bool OnHost
-        {
-            get
-            {
-                return Host != null;
-            }
-        }
-
-        public MyMemoryBlock()
-        {
-            Dims = TensorDimensions.Empty;
-
-            MinValueHint = float.NegativeInfinity;
-            MaxValueHint = float.PositiveInfinity;
-        }
+        public bool OnHost => (Host != null);
 
         public override void AllocateHost()
         {
