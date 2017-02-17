@@ -426,6 +426,7 @@ namespace GoodAI.Core.Observers
         private MyCudaKernel m_cycleKernel;
         private MyCudaKernel m_verticalLineKernel;
 
+        protected override bool IsTargetReady => Target?.IsAllocated ?? false;
 
         public MyTimePlotObserver() //constructor with node parameter
         {

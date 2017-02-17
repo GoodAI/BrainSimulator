@@ -68,10 +68,17 @@ namespace GoodAI.Core.Memory
     }
         public SizeT ExternalPointer { get; set; }
 
+        public abstract bool IsAllocated { get; }
+
         public abstract void AllocateHost();
         public abstract void AllocateDevice();
         public abstract void FreeHost();
         public abstract void FreeDevice();
+
+        /// <summary>
+        /// Should not fail even if already deallocated. IsAllocated sould be false after this call.
+        /// </summary>
+        public abstract void FreeMemory();
 
         public abstract bool Reallocate(int newCount, bool copyData = true);
 
@@ -146,6 +153,21 @@ namespace GoodAI.Core.Memory
 
         public bool OnHost => (Host != null);
 
+        /// <summary>Is allocated at least on one of the sides (host or device).</summary>
+        public override bool IsAllocated => (OnDevice || OnHost);
+
+        public void AllocateMemory()
+        {
+            AllocateDevice();
+            AllocateHost();
+        }
+
+        public override void FreeMemory()
+        {
+            FreeDevice();
+            FreeHost();
+        }
+
         public override void AllocateHost()
         {
             Host = new T[Count];
@@ -154,12 +176,6 @@ namespace GoodAI.Core.Memory
         public override void FreeHost()
         {
             Host = null;
-        }
-
-        public void AllocateMemory()
-        {
-            AllocateDevice();
-            AllocateHost();
         }
 
         public override void AllocateDevice()

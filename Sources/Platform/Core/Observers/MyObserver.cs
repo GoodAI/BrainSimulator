@@ -39,6 +39,7 @@ namespace GoodAI.Core.Observers
             m_userResetNeeded = true;
         }
 
+
         public bool ViewResetNeeded { get; set; }
 
         public void TriggerViewReset()
@@ -46,10 +47,20 @@ namespace GoodAI.Core.Observers
             ViewResetNeeded = true;
         }
 
+
         public uint SimulationStep { get; private set; }
 
         public bool Initialized { get; set; }
-        public bool Active { get; set; }        
+
+        /// <summary>
+        /// Is set from outside for example when the observer is not visible. (Compare with IsReady.)
+        /// </summary>
+        public bool Active { get; set; }
+
+        /// <summary>
+        /// Indicate if the observer is able to render anything. (Compare with Active.)
+        /// </summary>
+        public virtual bool IsReady => IsTargetReady;
 
         private object m_target;
 
@@ -64,6 +75,10 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        /// <summary>
+        /// Observers should override this if their target can be disposed. For example check MyAbstractMemoryBlock.IsAllocated.
+        /// </summary>
+        protected virtual bool IsTargetReady => true;
 
         protected virtual void Reset() { }
         protected virtual void PrepareExecution() { }
@@ -131,7 +146,11 @@ namespace GoodAI.Core.Observers
             try
             {
                 PrepareExecution();
-                Execute();
+
+                if (IsTargetReady)
+                {
+                    Execute();
+                }
             }
             finally
             {

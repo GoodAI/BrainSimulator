@@ -9,6 +9,8 @@ namespace GoodAI.Core.Observers
     {
         private int m_lastCount = 0;
 
+        protected override bool IsTargetReady => Target?.IsAllocated ?? false;
+
         protected override void PrepareExecution()
         {
             if (Target.Count != m_lastCount)

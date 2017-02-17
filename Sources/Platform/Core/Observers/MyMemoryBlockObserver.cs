@@ -261,6 +261,7 @@ namespace GoodAI.Core.Observers
                 MyLog.ERROR.WriteLine("Observer: could find the target MemoryBlock, so not opening this one.");
                 return;
             }
+
             Type type = Target.GetType().GenericTypeArguments[0];
             m_kernel = MyKernelFactory.Instance.Kernel(@"Observers\ColorScaleObserver" + type.Name);
             m_vectorKernel = MyKernelFactory.Instance.Kernel(MyKernelFactory.Instance.DevCount - 1, @"Observers\ColorScaleObserverSingle", "DrawVectorsKernel");

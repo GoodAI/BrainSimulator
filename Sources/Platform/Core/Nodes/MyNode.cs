@@ -109,6 +109,8 @@ namespace GoodAI.Core.Nodes
                 }
 
                 MyMemoryManager.Instance.RemoveBlock(this, memBlock);
+
+                memBlock.FreeMemory();  // Make sure memBlock.IsAllocated is false.
             }
         }
 
