@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace GoodAI.Core.Memory
 {
     /// <summary>
-    /// Node members derived from this interface can have inner memory blocks (they are created automatically).
+    /// This interface allows to mark node properties that have nested memory blocks (they are created automatically).
     /// Input or output memory blocks are not supported.
     /// </summary>
     public interface IMemBlockOwner
@@ -17,7 +17,7 @@ namespace GoodAI.Core.Memory
     }
 
     /// <summary>
-    /// TODO(Premek)
+    /// More strict version of IMemBlockOwner that requires the UpdateMemoryBlocks method.
     /// </summary>
     public interface IMemBlockOwnerUpdatable : IMemBlockOwner
     {

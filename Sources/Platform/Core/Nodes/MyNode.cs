@@ -89,11 +89,27 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+        // TODO(Premek): consider removing the Experimental status some time in the future.
+        /// <summary>
+        /// Creates memory blocks on an instace as if it were a Node, and registeres them with the memory manager.
+        /// Input blocks are skipped, output attribute is ignored.
+        /// Should be called only in the design time.
+        /// EXPERIMENTAL: May be broken in some unexpected way.
+        /// </summary>
+        /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
         protected void CreateNestedMemoryBlocks(object memBlockOwner)
         {
             CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()));
         }
 
+        // TODO(Premek): consider removing the Experimental status some time in the future.
+        /// <summary>
+        /// Unregisteres memory block from the memory manager, and frees the memory (should be already free in the desing time).
+        /// Observers pointing to these memory blocks will stop showing anything (they will not be closed automatically).
+        /// Should be called only in the design time.
+        /// EXPERIMENTAL: May be broken in some unexpected way.
+        /// </summary>
+        /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
         protected void DestroyNestedMemoryBlocks(object memBlockOwner)
         {
             var memBlocksInfo = FindNestedMemoryBlocks(memBlockOwner.GetType());
@@ -110,7 +126,7 @@ namespace GoodAI.Core.Nodes
 
                 MyMemoryManager.Instance.RemoveBlock(this, memBlock);
 
-                memBlock.FreeMemory();  // Make sure memBlock.IsAllocated is false.
+                memBlock.FreeMemory();  // Make sure memBlock.IsAllocated is false so that observers know it.
             }
         }
 
