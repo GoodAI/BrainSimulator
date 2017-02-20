@@ -244,6 +244,50 @@ namespace GoodAI.Modules.GridWorld
     /// definitions of custom maps here
     /// </summary>
     /// 
+    public class MyMapM : AbstractMap
+    {
+        protected override void DefineArray()
+        {
+            m_array = new int[]
+            {
+                1, 0, 1,
+                0, A, 0,
+                1, 0, 1,
+                
+            };
+            m_width = 3;
+            m_height = 3;
+        }
+
+        protected override void DefineMovingObjects()
+        {
+            MovingObjects = new MyMovingObject[0];
+        }
+
+        protected override void DefineStaticObjects()
+        {
+            //MyDoor door2 = new MyDoor();
+            //door2.TurnOff();
+            //this.PlaceObjectTo(new int2(2, 3), door2);
+
+            //DoorControl dc = new DoorControl();
+            //dc.myObjects.Add(door2);
+            //this.PlaceObjectTo(new int2(0, 2), dc);
+
+            //DoorControl dc2 = new DoorControl();
+            //dc2.myObjects.Add(door2);
+            //this.PlaceObjectTo(new int2(1, 4), dc2);
+
+
+            StaticObjects = new MyStaticObject[] { };
+
+        }
+    }
+
+    /// <summary>
+    /// definitions of custom maps here
+    /// </summary>
+    /// 
     public class MyMapK : AbstractMap
     {
         protected override void DefineArray()
