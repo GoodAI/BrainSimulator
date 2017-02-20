@@ -94,9 +94,21 @@ namespace GoodAI.Modules.Harm
     [Description("Action Selection"), MyTaskInfo(OneShot = false)]
     public class MySimpleSortTask : MyTask<MyActionSelectionNode>
     {
+
+        public enum OperationModeType
+        {
+            Deterministic,
+            Stochastic
+        }
+
+        [MyBrowsable, Category("Operation Mode"),
+        Description("How does this node choose the action. Deterministic - chooses greedily the best action. Stochastic - probability of the action is proportional to the UtilityInput.")]
+        [YAXSerializableField(DefaultValue = OperationModeType.Deterministic)]
+        public OperationModeType OperationMode { get; set; }
+
+
         [MyBrowsable, Category("Randomization"),
         Description("Minimum probability of randomization (in case that Motivation=1)")]
-
         [YAXSerializableField(DefaultValue = 0.1f)]
         public float MinEpsilon { get; set; }
 
@@ -167,10 +179,40 @@ namespace GoodAI.Modules.Harm
                 epsilon = MinEpsilon;
             }
 
+            
             if (m_rnd.NextDouble() <= epsilon)
             {
                 Owner.MaxUtilInd.Host[0] = m_rnd.Next(Owner.UtilityInput.Count);
+            } else
+            {
+                if (OperationMode == OperationModeType.Stochastic)
+                {
+                    Owner.UtilityInput.SafeCopyToHost();
+
+                    float sumUtility = 0;
+                    for (int i = 0; i < Owner.UtilityInput.Count; i++)
+                    {
+                        sumUtility += Owner.UtilityInput.Host[i];
+                    }
+                    if (sumUtility > 0) //if sumUtility == 0, we keep the index chosen by deterministic method, i.e., a random one
+                    {
+                        double r = m_rnd.NextDouble() * sumUtility;
+
+                        //choose the input coresponding to this r with probability proportional to the UtilityInput values
+                        sumUtility = 0;
+                        for (int i = 0; i < Owner.UtilityInput.Count; i++)
+                        {
+                            sumUtility += Owner.UtilityInput.Host[i];
+                            if (r < sumUtility)
+                            {
+                                Owner.MaxUtilInd.Host[0] = i;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
+
             Owner.MaxUtilInd.SafeCopyToDevice();
             if (UseOneOfN)
             {
@@ -181,6 +223,8 @@ namespace GoodAI.Modules.Harm
                 Owner.UtilityInput.SafeCopyToHost();
                 m_setKernel.Run(Owner.Output, Owner.MaxUtilInd, Owner.UtilityInput.Count, Owner.UtilityInput.Host[Owner.MaxUtilInd.Host[0]]);
             }
+
+
         }
 
         private List<int> GetListOfMaxValues(MyMemoryBlock<float> data)
@@ -204,5 +248,5 @@ namespace GoodAI.Modules.Harm
             }
             return maxIndexes;
         }
-    }       
+    }
 }
