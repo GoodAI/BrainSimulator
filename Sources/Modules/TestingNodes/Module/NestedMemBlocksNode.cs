@@ -106,6 +106,17 @@ namespace GoodAI.Modules.TestingNodes
         internal MyMemoryBlock<float> Baz { get; set; }
     }
 
+    /// <summary>For testing custom memory block name prefixes.</summary>
+    public class PrefixedBazer : Bazer, IMemBlockNamePrefix
+    {
+        public string MemBlockNamePrefix { get; }
+
+        public PrefixedBazer(string namePrefix)
+        {
+            MemBlockNamePrefix = namePrefix;
+        }
+    }
+
     /// <summary>A class with nested memory block to test memory persistence.</summary>
     public class Persistor
     {
@@ -113,6 +124,12 @@ namespace GoodAI.Modules.TestingNodes
         private MyMemoryBlock<float> Vinyl { get; set; }
 
         private int m_step;
+        private readonly float m_multiplier;
+
+        public Persistor(float multiplier = 1.0f)
+        {
+            m_multiplier = multiplier;
+        }
 
         public void UpdateMemoryBlocks()
         {
@@ -134,7 +151,7 @@ namespace GoodAI.Modules.TestingNodes
 
             // Just do something with a clear temporal pattern.
             Vinyl.SafeCopyToHost();
-            Vinyl.Host[(m_step / 100) % Vinyl.Count] = (float) Math.Sqrt(m_step);
+            Vinyl.Host[(m_step / 20) % Vinyl.Count] = (float) Math.Sqrt(m_step) * m_multiplier;
             Vinyl.SafeCopyToDevice();
         }
     }
@@ -168,8 +185,14 @@ namespace GoodAI.Modules.TestingNodes
         // And it does not have to be a property, it can be just a field.
         private readonly Bazer m_bazer;
 
+        // For testing the IMemBlockNamePrefix interface.
+        private PrefixedBazer PrefixedBazer { get; } = new PrefixedBazer("pf.");
+
         // For testing persistence (save/load memory block contents).
         internal Persistor Persistor { get; }
+
+        // The same class again to test namespaces.
+        internal Persistor Progressor { get; }
 
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Input => GetInput(0);
@@ -211,7 +234,10 @@ namespace GoodAI.Modules.TestingNodes
             UpdateNestedNodeType(m_nestedNodeType);
 
             Persistor = new Persistor();
-            CreateNestedMemoryBlocks(Persistor);
+            CreateNestedMemoryBlocks(Persistor, "Per_");
+
+            Progressor = new Persistor(-2.0f);
+            CreateNestedMemoryBlocks(Progressor, "Pro_");
         }
 
         public override void UpdateMemoryBlocks()
@@ -228,6 +254,7 @@ namespace GoodAI.Modules.TestingNodes
             m_bazer.Baz.Count = 3 * count;
 
             Persistor.UpdateMemoryBlocks();
+            Progressor.UpdateMemoryBlocks();
         }
 
         private void UpdateNestedNodeType(NestedNodeTypeEnum nestedNodeType)
@@ -270,6 +297,7 @@ namespace GoodAI.Modules.TestingNodes
             Owner.MemBlockCowboyLateInit.Run(Owner.Input);
             Owner.PolymorphNestedNode.Run(Owner.Input);
             Owner.Persistor.Execute();
+            Owner.Progressor.Execute();
         }
     }
 }

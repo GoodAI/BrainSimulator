@@ -52,6 +52,10 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+        #endregion
+
+        #region Memory blocks initialization
+
         private void CreateMemoryBlocks()
         {
             CreateMemoryBlocksInner(this, GetInfo().OwnedMemoryBlocks);
@@ -63,7 +67,7 @@ namespace GoodAI.Core.Nodes
         {
             foreach (var nestedBlocksPair in GetInfo().NestedMemoryBlocks)
             {
-                var memBlockOwner = nestedBlocksPair.Key.GetValue(this);  // Get instance using property info
+                var memBlockOwner = nestedBlocksPair.Key.GetValue(this);  // Get instance using property info.
                 if (memBlockOwner == null)
                 {
                     MyLog.WARNING.WriteLine($"Nested mem. block instance for {nestedBlocksPair.Key.Name} not found.");
@@ -74,12 +78,20 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos)
+        private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos, string namePrefix = "")
         {
+            var usePrefix = (string.IsNullOrEmpty(namePrefix) && (memBlockOwner is IMemBlockNamePrefix))
+                ? ((IMemBlockNamePrefix) memBlockOwner).MemBlockNamePrefix
+                : namePrefix;
+
+            var existingMemBlockNames = MyMemoryManager.Instance.GetBlocks(this).Select(mb => mb.Name).ToList();
+
             foreach (PropertyInfo pInfo in listOfBlockInfos)
             {
                 MyAbstractMemoryBlock mb = MyMemoryManager.Instance.CreateMemoryBlock(this, pInfo.PropertyType);
-                mb.Name = pInfo.Name;
+
+                mb.Name = GetUniqueMemBlockName(usePrefix + pInfo.Name, existingMemBlockNames);
+
                 mb.Persistable = pInfo.GetCustomAttribute<MyPersistableAttribute>(true) != null;
                 mb.Unmanaged = pInfo.GetCustomAttribute<MyUnmanagedAttribute>(true) != null;
                 mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
@@ -87,6 +99,27 @@ namespace GoodAI.Core.Nodes
 
                 pInfo.SetValue(memBlockOwner, mb);
             }
+        }
+
+        private string GetUniqueMemBlockName(string suggestedName, List<string> existingNames)
+        {
+            if (!existingNames.Contains(suggestedName))
+                return suggestedName;
+
+            for (int i = 2; i < 1000; i++)
+            {
+                string assignedName = $"{suggestedName}{i}";
+
+                if (existingNames.Contains(assignedName))
+                    continue;
+
+                existingNames.Add(assignedName);
+                MyLog.WARNING.WriteLine("Detected name collision in [nested] memory blocks."
+                    + $" Generated name '{assignedName}'. Use better prefix or name it manually.");
+                return assignedName;
+            }
+
+            throw new InvalidOperationException("Could not find a unique name.");
         }
 
         // TODO(Premek): consider removing the Experimental status some time in the future.
@@ -97,9 +130,11 @@ namespace GoodAI.Core.Nodes
         /// EXPERIMENTAL: May be broken in some unexpected way.
         /// </summary>
         /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
-        protected void CreateNestedMemoryBlocks(object memBlockOwner)
+        /// <param name="namePrefix">Name prefix for all memory blocks of the instance to prevent name collisions.
+        /// Overrides value from IMemBlockNamePrefix (if implemented).</param>
+        protected void CreateNestedMemoryBlocks(object memBlockOwner, string namePrefix = "")
         {
-            CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()));
+            CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()), namePrefix);
         }
 
         // TODO(Premek): consider removing the Experimental status some time in the future.

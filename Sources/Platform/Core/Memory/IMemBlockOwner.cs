@@ -23,4 +23,12 @@ namespace GoodAI.Core.Memory
     {
         void UpdateMemoryBlocks();
     }
+
+    /// <summary>
+    /// Allows to specify custom name prefix for nested memory blocks.
+    /// </summary>
+    public interface IMemBlockNamePrefix : IMemBlockOwner
+    {
+        string MemBlockNamePrefix { get; }
+    }
 }
