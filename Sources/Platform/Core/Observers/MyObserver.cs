@@ -39,6 +39,7 @@ namespace GoodAI.Core.Observers
             m_userResetNeeded = true;
         }
 
+
         public bool ViewResetNeeded { get; set; }
 
         public void TriggerViewReset()
@@ -46,12 +47,23 @@ namespace GoodAI.Core.Observers
             ViewResetNeeded = true;
         }
 
+
         public uint SimulationStep { get; private set; }
 
         public bool Initialized { get; set; }
-        public bool Active { get; set; }        
+
+        /// <summary>
+        /// Is set from outside for example when the observer is not visible. (Compare with IsReady.)
+        /// </summary>
+        public bool Active { get; set; }
+
+        /// <summary>
+        /// Indicate if the observer is able to render anything. (Compare with Active.)
+        /// </summary>
+        public virtual bool IsReady => IsTargetReady;
 
         private object m_target;
+
         public object GenericTarget
         {
             get { return m_target; }
@@ -63,7 +75,13 @@ namespace GoodAI.Core.Observers
             }
         }
 
+        /// <summary>
+        /// Observers should override this if their target can be disposed. For example check MyAbstractMemoryBlock.IsAllocated.
+        /// </summary>
+        protected virtual bool IsTargetReady => true;
+
         protected virtual void Reset() { }
+        protected virtual void PrepareExecution() { }
         protected abstract void Execute();
 
         protected MyAbstractObserver()
@@ -122,20 +140,17 @@ namespace GoodAI.Core.Observers
                 CreateVertexVBO();
             }
 
-            if (m_cudaTextureSource != null)
-            {
-                m_cudaTextureSource.Map();
-            }
-
-            if (m_cudaVertexSource != null)
-            {
-                m_cudaVertexSource.Map();
-            }
+            m_cudaTextureSource?.Map();
+            m_cudaVertexSource?.Map();
 
             try
             {
                 PrepareExecution();
-                Execute();
+
+                if (IsTargetReady)
+                {
+                    Execute();
+                }
             }
             finally
             {
@@ -171,8 +186,6 @@ namespace GoodAI.Core.Observers
             GL.UnmapBuffer(bufferTarget);
             GL.BindBuffer(bufferTarget, 0);
         }
-
-        protected virtual void PrepareExecution() { }
 
         #endregion
 

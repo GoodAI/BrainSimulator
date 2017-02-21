@@ -52,19 +52,128 @@ namespace GoodAI.Core.Nodes
             }
         }
 
-        protected void CreateMemoryBlocks()
+        #endregion
+
+        #region Memory blocks initialization
+
+        private void CreateMemoryBlocks()
         {
-            foreach (PropertyInfo pInfo in GetInfo().OwnedMemoryBlocks)
+            CreateMemoryBlocksInner(this, GetInfo().OwnedMemoryBlocks);
+
+            CreateNestedMemoryBlocks();
+        }
+
+        private void CreateNestedMemoryBlocks()
+        {
+            foreach (var nestedBlocksPair in GetInfo().NestedMemoryBlocks)
+            {
+                var memBlockOwner = nestedBlocksPair.Key.GetValue(this);  // Get instance using property info.
+                if (memBlockOwner == null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested mem. block instance for {nestedBlocksPair.Key.Name} not found.");
+                    continue;
+                }
+
+                CreateMemoryBlocksInner(memBlockOwner, nestedBlocksPair.Value);
+            }
+        }
+
+        private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos, string namePrefix = "")
+        {
+            var usePrefix = (string.IsNullOrEmpty(namePrefix) && (memBlockOwner is IMemBlockNamePrefix))
+                ? ((IMemBlockNamePrefix) memBlockOwner).MemBlockNamePrefix
+                : namePrefix;
+
+            var existingMemBlockNames = MyMemoryManager.Instance.GetBlocks(this).Select(mb => mb.Name).ToList();
+
+            foreach (PropertyInfo pInfo in listOfBlockInfos)
             {
                 MyAbstractMemoryBlock mb = MyMemoryManager.Instance.CreateMemoryBlock(this, pInfo.PropertyType);
-                mb.Name = pInfo.Name;
+
+                mb.Name = GetUniqueMemBlockName(usePrefix + pInfo.Name, existingMemBlockNames);
+
                 mb.Persistable = pInfo.GetCustomAttribute<MyPersistableAttribute>(true) != null;
                 mb.Unmanaged = pInfo.GetCustomAttribute<MyUnmanagedAttribute>(true) != null;
                 mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
                 mb.IsDynamic = pInfo.GetCustomAttribute<DynamicBlockAttribute>(true) != null;
 
-                pInfo.SetValue(this, mb);
+                pInfo.SetValue(memBlockOwner, mb);
             }
+        }
+
+        private string GetUniqueMemBlockName(string suggestedName, List<string> existingNames)
+        {
+            if (!existingNames.Contains(suggestedName))
+                return suggestedName;
+
+            for (int i = 2; i < 1000; i++)
+            {
+                string assignedName = $"{suggestedName}{i}";
+
+                if (existingNames.Contains(assignedName))
+                    continue;
+
+                existingNames.Add(assignedName);
+                MyLog.WARNING.WriteLine("Detected name collision in [nested] memory blocks."
+                    + $" Generated name '{assignedName}'. Use better prefix or name it manually.");
+                return assignedName;
+            }
+
+            throw new InvalidOperationException("Could not find a unique name.");
+        }
+
+        // TODO(Premek): consider removing the Experimental status some time in the future.
+        /// <summary>
+        /// Creates memory blocks on an instace as if it were a Node, and registeres them with the memory manager.
+        /// Input blocks are skipped, output attribute is ignored.
+        /// Should be called only in the design time.
+        /// EXPERIMENTAL: May be broken in some unexpected way.
+        /// </summary>
+        /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
+        /// <param name="namePrefix">Name prefix for all memory blocks of the instance to prevent name collisions.
+        /// Overrides value from IMemBlockNamePrefix (if implemented).</param>
+        protected void CreateNestedMemoryBlocks(object memBlockOwner, string namePrefix = "")
+        {
+            CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()), namePrefix);
+        }
+
+        // TODO(Premek): consider removing the Experimental status some time in the future.
+        /// <summary>
+        /// Unregisteres memory block from the memory manager, and frees the memory (should be already free in the desing time).
+        /// Observers pointing to these memory blocks will stop showing anything (they will not be closed automatically).
+        /// Should be called only in the design time.
+        /// EXPERIMENTAL: May be broken in some unexpected way.
+        /// </summary>
+        /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
+        protected void DestroyNestedMemoryBlocks(object memBlockOwner)
+        {
+            var memBlocksInfo = FindNestedMemoryBlocks(memBlockOwner.GetType());
+
+            foreach (var pInfo in memBlocksInfo)
+            {
+                var memBlock = pInfo.GetValue(memBlockOwner) as MyAbstractMemoryBlock;
+                if (memBlock == null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested memory block '{pInfo.Name}'"
+                        + $" instance not found on type {memBlockOwner.GetType().Name}.");
+                    continue;
+                }
+
+                MyMemoryManager.Instance.RemoveBlock(this, memBlock);
+
+                memBlock.FreeMemory();  // Make sure memBlock.IsAllocated is false so that observers know it.
+            }
+        }
+
+        private static List<PropertyInfo> FindNestedMemoryBlocks(Type memBlockOwnerType)
+        {
+            List<PropertyInfo> memBlocksInfo = MyNodeInfo.CollectNestedMemBlocks(memBlockOwnerType);
+            if (!memBlocksInfo.Any())
+            {
+                MyLog.WARNING.WriteLine($"Nested memory blocks not found on type '{memBlockOwnerType.Name}'");
+            }
+
+            return memBlocksInfo;
         }
 
         #endregion

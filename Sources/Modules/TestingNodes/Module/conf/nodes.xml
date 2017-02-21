@@ -10,5 +10,8 @@
     <Node type="GoodAI.Modules.TestingNodes.BrainUnitNode" CanBeAdded="true">
       <Label>Testing</Label>
     </Node>
+    <Node type="GoodAI.Modules.TestingNodes.NestedMemBlocksNode" CanBeAdded="true">
+      <Label>Testing</Label>
+    </Node>
   </KnownNodes>
 </Configuration>

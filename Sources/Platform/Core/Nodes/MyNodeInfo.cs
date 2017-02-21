@@ -18,9 +18,10 @@ namespace GoodAI.Core.Nodes
 
         public List<PropertyInfo> InitiableProperties { get; private set; }
         
-        public List<PropertyInfo> OwnedMemoryBlocks { get; private set; }
+        public List<PropertyInfo> OwnedMemoryBlocks { get; }
         public List<PropertyInfo> InputBlocks { get; private set; }
         public List<PropertyInfo> OutputBlocks { get; private set; }
+        public Dictionary<PropertyInfo, List<PropertyInfo>> NestedMemoryBlocks { get; }
 
         public List<PropertyInfo> RegisteredSignals { get; private set; }
 
@@ -36,6 +37,7 @@ namespace GoodAI.Core.Nodes
             OwnedMemoryBlocks = new List<PropertyInfo>();
             InputBlocks = new List<PropertyInfo>();
             OutputBlocks = new List<PropertyInfo>();
+            NestedMemoryBlocks = new Dictionary<PropertyInfo, List<PropertyInfo>>();
 
             RegisteredSignals = new List<PropertyInfo>();
 
@@ -94,6 +96,10 @@ namespace GoodAI.Core.Nodes
                         }
                     }                        
                 }
+                else if (typeof(IMemBlockOwner).IsAssignableFrom(pInfo.PropertyType))
+                {
+                    CollectNestedMemBlocks(nodeInfo, pInfo);
+                }
                 else if (typeof(MySignal).IsAssignableFrom(pInfo.PropertyType))
                 {
                     nodeInfo.RegisteredSignals.Add(pInfo);
@@ -119,6 +125,49 @@ namespace GoodAI.Core.Nodes
                     p => p.PropertyType.GetCustomAttribute<MyTaskInfoAttribute>(true)?.Order ?? 0));
 
             NODE_INFO[type] = nodeInfo;
+        }
+
+        private static void CollectNestedMemBlocks(MyNodeInfo nodeInfo, PropertyInfo memBlockOwnerInfo)
+        {
+            var nestedMemBlocks = CollectNestedMemBlocks(memBlockOwnerInfo.PropertyType);
+            if (!nestedMemBlocks.Any())
+                return;
+
+            if (nodeInfo.NestedMemoryBlocks.ContainsKey(memBlockOwnerInfo))
+            {
+                throw new InvalidOperationException($"Nested mem blocks for {memBlockOwnerInfo.Name} already collected.");
+            }
+
+            nodeInfo.NestedMemoryBlocks[memBlockOwnerInfo] = nestedMemBlocks;
+        }
+
+        public static List<PropertyInfo> CollectNestedMemBlocks(Type memBlockOwnerType)
+        {
+            var result = new List<PropertyInfo>();
+
+            foreach (PropertyInfo pInfo in memBlockOwnerType.GetProperties(
+                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+            {
+                if (!typeof(MyAbstractMemoryBlock).IsAssignableFrom(pInfo.PropertyType))
+                {
+                    continue;
+                }
+
+                if (pInfo.GetCustomAttribute<MyInputBlockAttribute>(true) != null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested block '{pInfo.Name}' can't be input (skipped).");
+                    continue;
+                }
+
+                if (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
+                {
+                    MyLog.WARNING.WriteLine($"Nested block '{pInfo.Name}' output attribute ignored.");
+                }
+
+                result.Add(pInfo);
+            }
+
+            return result;
         }
 
         public static MyNodeInfo Get(Type type)

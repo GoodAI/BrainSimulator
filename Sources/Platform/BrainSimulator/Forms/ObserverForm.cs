@@ -115,7 +115,7 @@ namespace GoodAI.BrainSimulator.Forms
             GL.MatrixMode(MatrixMode.Modelview);
             GL.LoadIdentity();              
 
-            if (Active)
+            if (Active && Observer.IsReady)
             {
                 if (Observer.ViewMode != MyAbstractObserver.ViewMethod.Fit_2D)
                 {

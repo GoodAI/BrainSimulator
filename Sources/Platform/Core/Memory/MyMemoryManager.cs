@@ -11,18 +11,7 @@ namespace GoodAI.Core.Memory
     {
         private static MyMemoryManager SINGLETON;
         
-        public static MyMemoryManager Instance
-        {
-            get
-            {
-                //return MyKernelFactoryOld.Instance;
-                if (SINGLETON == null)
-                {
-                    SINGLETON = new MyMemoryManager();
-                }
-                return SINGLETON;
-            }
-        }
+        public static MyMemoryManager Instance => SINGLETON ?? (SINGLETON = new MyMemoryManager());
 
         /// <summary>
         /// A disposable backup of a MyMemoryManager instance.
