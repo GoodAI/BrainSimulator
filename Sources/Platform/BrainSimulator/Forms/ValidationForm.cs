@@ -1,6 +1,7 @@
 ﻿using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -33,7 +34,7 @@ namespace GoodAI.BrainSimulator.Forms
                     {
                         ListViewItem item = new ListViewItem(new string[] { message.Sender.Name, message.Message });
                         item.Tag = message.Sender;
-                        item.ImageIndex = (int)message.Level;                        
+                        item.ImageIndex = (int)message.Level;
 
                         listView.Items.Add(item);
                     }
@@ -44,7 +45,11 @@ namespace GoodAI.BrainSimulator.Forms
                         listView.Items.Add(item);
                     }
                 }
-            }            
+            }
+
+            if (listView.Items.Count > 0)
+                foreach (ColumnHeader column in listView.Columns.Cast<ColumnHeader>())
+                    column.AutoResize(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private void ValidationForm_Load(object sender, EventArgs e)
