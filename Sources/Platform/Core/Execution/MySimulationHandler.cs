@@ -306,7 +306,7 @@ namespace GoodAI.Core.Execution
 
                 try
                 {
-                    // If the simulation is in between two steps, we allow for model changes, block reallocation etc.
+                    // If the simulation is in between two steps, we allow for model changes, memory block reallocation etc.
                     if (Simulation.IsStepFinished)
                     {
                         Simulation.PerformModelChanges();

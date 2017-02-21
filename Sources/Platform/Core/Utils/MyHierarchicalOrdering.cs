@@ -46,25 +46,23 @@ namespace GoodAI.Core.Utils
 
         private HashSet<MyNode> CollectWorkingNodes(MyNodeGroup nodeGroup)
         {
-            HashSet<MyNode> nodes = new HashSet<MyNode>();            
+            var nodes = new HashSet<MyNode>();
 
-            MyNodeGroup.IteratorAction action = delegate(MyNode node)
+            nodeGroup.Iterate(false, node =>
             {
                 if (node is MyWorkingNode)
                 {
                     node.TopologicalOrder = -1;
                     nodes.Add(node);
                 }
-            };
-
-            nodeGroup.Iterate(false, action);
+            });
 
             return nodes;
         }
 
         private HashSet<MyNode> FindDestinations(MyNodeGroup nodeGroup, HashSet<MyNode> nodes, ref IList<MyConnection> lowPriorityConnections)
         {
-            HashSet<MyNode> destinations = new HashSet<MyNode>(nodes);
+            var destinations = new HashSet<MyNode>(nodes);
             
             foreach (MyNode node in nodes)
             {

@@ -141,6 +141,7 @@ namespace GoodAI.Core.Execution
         /// Executes all children elements
         public virtual void Execute()
         {
+            // ReSharper disable once ForCanBeConvertedToForeach -- Performance critical loop.
             for (int i = 0; i < m_children.Length; i++)
             {
                 IMyExecutable child = m_children[i];

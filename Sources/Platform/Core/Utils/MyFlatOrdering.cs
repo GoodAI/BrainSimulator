@@ -11,11 +11,11 @@ namespace GoodAI.Core.Utils
 
     public class MyFlatOrdering : IMyOrderingAlgorithm
     {
-        HashSet<MyNode> m_destinations = new HashSet<MyNode>();
-        HashSet<MyNode> m_nodes = new HashSet<MyNode>();
-        List<MyNode> m_orderedNodes = new List<MyNode>();
+        readonly HashSet<MyNode> m_destinations = new HashSet<MyNode>();
+        readonly HashSet<MyNode> m_nodes = new HashSet<MyNode>();
+        readonly List<MyNode> m_orderedNodes = new List<MyNode>();
 
-        private int currentOrder;
+        private int m_currentOrder;
 
         public List<MyNode> EvaluateOrder(MyNodeGroup nodeGroup)
         {
@@ -36,7 +36,7 @@ namespace GoodAI.Core.Utils
                 }
             }
 
-            currentOrder = 1;
+            m_currentOrder = 1;
 
             foreach (MyNode destNode in m_destinations)
             {
@@ -111,8 +111,8 @@ namespace GoodAI.Core.Utils
                 }
             }
 
-            node.TopologicalOrder = currentOrder;
-            currentOrder++;
+            node.TopologicalOrder = m_currentOrder;
+            m_currentOrder++;
         }       
     }
 }

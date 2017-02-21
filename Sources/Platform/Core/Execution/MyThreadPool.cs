@@ -17,8 +17,8 @@ namespace GoodAI.Core.Execution
 
         public delegate void ThreadHandler(int threadId);
 
-        private ThreadHandler m_initThread;
-        private ThreadHandler m_executeThread;
+        private readonly ThreadHandler m_initThread;
+        private readonly ThreadHandler m_executeThread;
 
         public MyThreadPool(int numOfThreads, ThreadHandler initThread, ThreadHandler executeThread)
         {

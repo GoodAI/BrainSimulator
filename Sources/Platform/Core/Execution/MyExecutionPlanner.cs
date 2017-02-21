@@ -51,13 +51,13 @@ namespace GoodAI.Core.Execution
             if (initNodes != null)
                 initBlocks.AddRange(initNodes.Select(node => CreateNodeExecutionPlan(node, true)));
 
-            executionPlan.InitStepPlan = new MyExecutionBlock(initBlocks.ToArray());
-            executionPlan.InitStepPlan.Name = "Initialization";
+            executionPlan.InitStepPlan = new MyExecutionBlock(initBlocks.ToArray())
+            { Name = "Initialization" };
 
             executionPlan.StandardStepPlan = new MyExecutionBlock(
                 CreateNodeExecutionPlan(project.World, false),
-                CreateNodeExecutionPlan(project.Network, false));
-            executionPlan.StandardStepPlan.Name = "Simulation";
+                CreateNodeExecutionPlan(project.Network, false))
+            { Name = "Simulation" };
 
             return executionPlan;
         }
@@ -111,14 +111,10 @@ namespace GoodAI.Core.Execution
             IMyCustomExecutionPlanner executionPlannerNode = node as IMyCustomExecutionPlanner;
             if (executionPlannerNode != null)
             {
-                if (initPhase)
-                {
-                    resultPlan = executionPlannerNode.CreateCustomInitPhasePlan(defaultPlan);
-                }
-                else
-                {
-                    resultPlan = executionPlannerNode.CreateCustomExecutionPlan(defaultPlan);
-                }
+                resultPlan = initPhase
+                    ? executionPlannerNode.CreateCustomInitPhasePlan(defaultPlan)
+                    : executionPlannerNode.CreateCustomExecutionPlan(defaultPlan);
+
                 resultPlan.Name = defaultPlan.Name;
             }
 
@@ -136,72 +132,4 @@ namespace GoodAI.Core.Execution
             return resultPlan;
         }
     }
-
-    /* NOT USABLE ANYMORE
-    public class MyTaskwiseExecution : IMyExecutionStrategy
-    {
-        public MyExecutionBlock PlanExecution(List<MyWorkingNode> orderedNodes)
-        {
-            Dictionary<Type, List<MyTask>> taskTable = new Dictionary<Type,List<MyTask>>();
-            List<Type> taskOrder = new List<Type>();            
-
-            foreach (MyWorkingNode node in orderedNodes.OrderBy(x => x.TopologicalOrder))
-            {
-                foreach (Type taskType in node.KnownTasks)
-                {
-                    if (!taskTable.ContainsKey(taskType))
-                    {
-                        taskTable.Add(taskType, new List<MyTask>());
-                        taskOrder.Add(taskType);
-                    }
-                    taskTable[taskType].Add(node.GetTask(taskType));
-                }
-            }
-
-            List<MyTask> result = new List<MyTask>();
-            taskOrder.ForEach(t => result.AddRange(taskTable[t]));
-
-            return new MyExecutionBlock(result.ToArray());
-        }
-    }
-
-    
-    public class MySequentialFirstExecution : IMyExecutionStrategy
-    {
-        public List<MyTask> PlanExecution(List<MyWorkingNode> nodes)
-        {
-            List<MyTask> result = new List<MyTask>();
-
-            Dictionary<Type, List<MyTask>> taskTable = new Dictionary<Type, List<MyTask>>();
-            List<Type> taskOrder = new List<Type>();
-            
-            foreach (MyWorkingNode node in nodes.OrderBy(x => x.TopologicalOrder))
-            {
-                if (node.Sequential)
-                {
-                    foreach (Type taskType in node.KnownTasks)
-                    {
-                        result.Add(node.GetTask(taskType));
-                    }
-                }
-                else
-                {
-                    foreach (Type taskType in node.KnownTasks)
-                    {
-                        if (!taskTable.ContainsKey(taskType))
-                        {
-                            taskTable.Add(taskType, new List<MyTask>());
-                            taskOrder.Add(taskType);
-                        }
-                        taskTable[taskType].Add(node.GetTask(taskType));
-                    }
-                }
-            }
-            
-            taskOrder.ForEach(t => result.AddRange(taskTable[t]));
-
-            return result;
-        }
-    }
-     * */
 }

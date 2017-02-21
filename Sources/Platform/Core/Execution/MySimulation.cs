@@ -346,7 +346,7 @@ namespace GoodAI.Core.Execution
                     ResumeThreads();
             }
 
-            //mainly for observers
+            // Mainly for observers.
             if (InDebugMode && stepByStepRun)
             {
                 CheckSimulationSetup();
@@ -361,7 +361,7 @@ namespace GoodAI.Core.Execution
             {
                 CheckSimulationSetup();
 
-                bool doAutoSave = SimulationStep > 0 && AutoSaveInterval > 0 && SimulationStep%AutoSaveInterval == 0;
+                bool doAutoSave = (SimulationStep > 0) && (AutoSaveInterval > 0) && (SimulationStep % AutoSaveInterval == 0);
 
                 if (doAutoSave)
                 {
