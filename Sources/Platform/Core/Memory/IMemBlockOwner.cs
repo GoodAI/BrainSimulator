@@ -29,6 +29,9 @@ namespace GoodAI.Core.Memory
     /// </summary>
     public interface IMemBlockNamePrefix : IMemBlockOwner
     {
+        /// <summary>
+        /// Name prefix used for all nested memory blocks of the instance. Must contain only characters valid in file names.
+        /// </summary>
         string MemBlockNamePrefix { get; }
     }
 }

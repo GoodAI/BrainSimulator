@@ -78,6 +78,7 @@ namespace GoodAI.Core.Nodes
             }
         }
 
+        // TODO(Premek): check for invalid characters in the namePrefix
         private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos, string namePrefix = "")
         {
             var usePrefix = (string.IsNullOrEmpty(namePrefix) && (memBlockOwner is IMemBlockNamePrefix))
@@ -131,7 +132,7 @@ namespace GoodAI.Core.Nodes
         /// </summary>
         /// <param name="memBlockOwner">The target instance that is searched for memory block properties</param>
         /// <param name="namePrefix">Name prefix for all memory blocks of the instance to prevent name collisions.
-        /// Overrides value from IMemBlockNamePrefix (if implemented).</param>
+        /// Overrides value from IMemBlockNamePrefix (if implemented). Should contain only characters valid for file names.</param>
         protected void CreateNestedMemoryBlocks(object memBlockOwner, string namePrefix = "")
         {
             CreateMemoryBlocksInner(memBlockOwner, FindNestedMemoryBlocks(memBlockOwner.GetType()), namePrefix);
