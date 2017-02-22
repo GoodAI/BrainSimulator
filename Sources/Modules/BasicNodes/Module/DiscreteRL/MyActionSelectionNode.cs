@@ -183,9 +183,7 @@ namespace GoodAI.Modules.Harm
             if (m_rnd.NextDouble() <= epsilon)
             {
                 Owner.MaxUtilInd.Host[0] = m_rnd.Next(Owner.UtilityInput.Count);
-            } else
-            {
-                if (OperationMode == OperationModeType.Stochastic)
+            } else if (OperationMode == OperationModeType.Stochastic)
                 {
                     Owner.UtilityInput.SafeCopyToHost();
 
@@ -211,7 +209,7 @@ namespace GoodAI.Modules.Harm
                         }
                     }
                 }
-            }
+         
 
             Owner.MaxUtilInd.SafeCopyToDevice();
             if (UseOneOfN)
