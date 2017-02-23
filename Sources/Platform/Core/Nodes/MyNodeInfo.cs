@@ -26,7 +26,7 @@ namespace GoodAI.Core.Nodes
         public List<PropertyInfo> RegisteredSignals { get; private set; }
 
         public Dictionary<string, PropertyInfo> KnownTasks { get; private set; }
-        public List<PropertyInfo> TaskOrder { get; private set; }
+        public List<PropertyInfo> OrderedTasks { get; private set; }
 
         public Dictionary<string, List<PropertyInfo>> TaskGroups { get; private set; }
 
@@ -42,7 +42,7 @@ namespace GoodAI.Core.Nodes
             RegisteredSignals = new List<PropertyInfo>();
 
             KnownTasks = new Dictionary<string, PropertyInfo>();            
-            TaskOrder = new List<PropertyInfo>();
+            OrderedTasks = new List<PropertyInfo>();
             TaskGroups = new Dictionary<string, List<PropertyInfo>>();
         }        
 
@@ -62,7 +62,7 @@ namespace GoodAI.Core.Nodes
                 if (typeof(MyTask).IsAssignableFrom(pInfo.PropertyType))
                 {
                     nodeInfo.KnownTasks.Add(pInfo.Name, pInfo);
-                    nodeInfo.TaskOrder.Add(pInfo);
+                    nodeInfo.OrderedTasks.Add(pInfo);
 
                     MyTaskGroupAttribute groupAttr = pInfo.GetCustomAttribute<MyTaskGroupAttribute>(true);
 
@@ -119,8 +119,8 @@ namespace GoodAI.Core.Nodes
             nodeInfo.OutputBlocks = new List<PropertyInfo>(
                 nodeInfo.OutputBlocks.OrderBy(p => p.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
 
-            nodeInfo.TaskOrder = new List<PropertyInfo>(
-                nodeInfo.TaskOrder.OrderBy(
+            nodeInfo.OrderedTasks = new List<PropertyInfo>(
+                nodeInfo.OrderedTasks.OrderBy(
                     // check pInfo.PropertyType because MyTaskInfo is a class attribute not property attribute
                     p => p.PropertyType.GetCustomAttribute<MyTaskInfoAttribute>(true)?.Order ?? 0));
 

@@ -61,7 +61,7 @@ namespace GoodAI.BrainSimulator.Forms
             listView.Items.Clear();
             if (m_target != null)
             {
-                foreach (PropertyInfo taskPropInfo in m_target.GetInfo().TaskOrder)
+                foreach (PropertyInfo taskPropInfo in m_target.GetInfo().OrderedTasks)
                 {
                     MyTask task = m_target.GetTaskByPropertyName(taskPropInfo.Name);
 

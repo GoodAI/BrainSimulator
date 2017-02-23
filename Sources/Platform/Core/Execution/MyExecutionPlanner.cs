@@ -71,11 +71,11 @@ namespace GoodAI.Core.Execution
                 defaultPlanContent.Add(new MyIncomingSignalTask(node));
             }
 
-            foreach (var taskPropertyInfo in node.GetInfo().TaskOrder)
+            foreach (var taskPropertyInfo in node.GetInfo().OrderedTasks)
             {
                 MyTask task = node.GetTaskByPropertyName(taskPropertyInfo.Name);
 
-                if (task != null && !task.DesignTime && (initPhase && task.OneShot || !initPhase && !task.OneShot))
+                if ((task != null) && !task.DesignTime && (initPhase && task.OneShot || !initPhase && !task.OneShot))
                 {
                     defaultPlanContent.Add(task);
                 }
@@ -84,9 +84,7 @@ namespace GoodAI.Core.Execution
             MyNodeGroup nodeGroup = node as MyNodeGroup;
             if (nodeGroup != null)
             {
-                IEnumerable<MyNode> children = nodeGroup.Children.OrderBy(x => x.TopologicalOrder);
-
-                foreach (MyNode childNode in children)
+                foreach (MyNode childNode in nodeGroup.Children.OrderBy(x => x.TopologicalOrder))
                 {
                     MyWorkingNode childWorkingNode = childNode as MyWorkingNode;
                     if (childWorkingNode != null)

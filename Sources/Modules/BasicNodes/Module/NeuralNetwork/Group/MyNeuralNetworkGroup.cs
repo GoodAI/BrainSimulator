@@ -81,9 +81,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             return null;
         }
 
-        //[MyTaskGroup("BackPropagation")]
-        //public MyvSGDfdTask vSGD { get; protected set; }
-
         public MyInitNNGroupTask InitGroup { get; protected set; }
         public MyIncrementTimeStepTask IncrementTimeStep { get; protected set; }
         public MyDecrementTimeStepTask DecrementTimeStep { get; protected set; }
@@ -95,12 +92,6 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             InputBranches = 2; // usually 2 inputs (input, target or input, reward)
             OutputBranches = 1; // usually 1 output (output or action)
         }  //parameterless constructor
-
-        //Memory blocks size rules
-        public override void UpdateMemoryBlocks()
-        {
-            base.UpdateMemoryBlocks();
-        }
 
         private List<IMyExecutable> GetTasks(MyWorkingNode node)
         {
@@ -156,39 +147,46 @@ namespace GoodAI.Modules.NeuralNetwork.Group
 
         public virtual MyExecutionBlock CreateCustomExecutionPlan(MyExecutionBlock defaultPlan)
         {
-            List<IMyExecutable> selected = new List<IMyExecutable>();
             List<IMyExecutable> newPlan = new List<IMyExecutable>();
 
-            List<IMyExecutable> BPTTSingleStep = new List<IMyExecutable>();
-            List<IMyExecutable> BPTTAllSteps = new List<IMyExecutable>();
+            List<IMyExecutable> bpttSingleStep = new List<IMyExecutable>();
+            List<IMyExecutable> bpttAllSteps = new List<IMyExecutable>();
             
             // copy default plan content to new plan content
             foreach (IMyExecutable groupTask in defaultPlan.Children)
+            {
                 if (groupTask.GetType() == typeof(MyExecutionBlock))
+                {
                     foreach (IMyExecutable nodeTask in (groupTask as MyExecutionBlock).Children)
                         newPlan.Add(nodeTask); // add individual node tasks
+                }
                 else
+                {
                     newPlan.Add(groupTask); // add group tasks
+                }
+            }
 
             // remove group backprop tasks (they should be called from the individual layers)
             // DO NOT remove RBM tasks
             // DO NOT remove the currently selected backprop task (it handles batch learning)
-            selected = newPlan.Where(task => task is MyAbstractBackpropTask &&  !(task.Enabled) && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
+            List<IMyExecutable> selected = newPlan.Where(task =>
+                (task is MyAbstractBackpropTask) && !task.Enabled && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList();
             newPlan.RemoveAll(selected.Contains);
             // bbpt single step
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
-            BPTTSingleStep.AddRange(newPlan.Where(task => task is MyGradientCheckTask).ToList());
-            BPTTSingleStep.Add(DecrementTimeStep);
+            bpttSingleStep.AddRange(newPlan.Where(task => task is IMyDeltaTask).ToList().Reverse<IMyExecutable>());
+            bpttSingleStep.AddRange(newPlan.Where(task => task is MyLSTMPartialDerivativesTask).ToList());
+            bpttSingleStep.AddRange(newPlan.Where(task => task is MyGradientCheckTask).ToList());
+            bpttSingleStep.Add(DecrementTimeStep);
 
             // backprop until unfolded (timestep=0)
-            MyExecutionBlock BPTTLoop = new MyLoopBlock(i => TimeStep != -1,
-                BPTTSingleStep.ToArray()
+            MyExecutionBlock bpttLoop = new MyLoopBlock(i => TimeStep != -1,
+                bpttSingleStep.ToArray()
             );
 
 
             // if learning is globally disabled, removed update weights tasks
-            MyExecutionBlock UpdateWeightsIfNotDisabled = new MyIfBlock(() => GetActiveBackpropTask() != null && GetActiveBackpropTask().DisableLearning == false,
+            MyExecutionBlock updateWeightsIfNotDisabled = new MyIfBlock(() =>
+                (GetActiveBackpropTask() != null) && (GetActiveBackpropTask().DisableLearning == false),
                 newPlan.Where(task => task is IMyUpdateWeightsTask).ToArray()
             );
             if (GetActiveBackpropTask() != null && GetActiveBackpropTask().DisableLearning)
@@ -196,18 +194,15 @@ namespace GoodAI.Modules.NeuralNetwork.Group
                 MyLog.WARNING.WriteLine("Learning is globally disabled for the network " + this.Name + " in the " + GetActiveBackpropTask().Name + " backprop task.");
             }
 
-
-            // bptt architecture
-            BPTTAllSteps.Add(BPTTLoop);
-            BPTTAllSteps.Add(IncrementTimeStep);
-            BPTTAllSteps.Add(RunTemporalBlocksMode);
-            BPTTAllSteps.Add(UpdateWeightsIfNotDisabled);
-            BPTTAllSteps.Add(DecrementTimeStep);
+            // BPTT architecture
+            bpttAllSteps.Add(bpttLoop);
+            bpttAllSteps.Add(IncrementTimeStep);
+            bpttAllSteps.Add(RunTemporalBlocksMode);
+            bpttAllSteps.Add(updateWeightsIfNotDisabled);
+            bpttAllSteps.Add(DecrementTimeStep);
 
             // if current time is time for bbp, do it
-            MyExecutionBlock BPTTExecuteBPTTIfTimeCountReachedSequenceLength = new MyIfBlock(() => TimeStep == SequenceLength-1,
-                BPTTAllSteps.ToArray()
-            );
+            var bpttExecuteBpttAtEndOfTimeSequence = new MyIfBlock(() => TimeStep == SequenceLength - 1, bpttAllSteps.ToArray());
 
             // remove group backprop tasks (they should be called from the individual layers)
             newPlan.RemoveAll(newPlan.Where(task => task is MyAbstractBackpropTask && !(task is MyRBMLearningTask || task is MyRBMReconstructionTask)).ToList().Contains);
@@ -238,7 +233,7 @@ namespace GoodAI.Modules.NeuralNetwork.Group
             newPlan.RemoveAll(selected.Contains);
             newPlan.InsertRange(newPlan.IndexOf(newPlan.FindLast(task => task is IMyForwardTask)) + 1, selected.Reverse<IMyExecutable>());
 
-            newPlan.Add(BPTTExecuteBPTTIfTimeCountReachedSequenceLength);
+            newPlan.Add(bpttExecuteBpttAtEndOfTimeSequence);
 
             // return new plan as MyExecutionBlock
             return new MyExecutionBlock(newPlan.ToArray());

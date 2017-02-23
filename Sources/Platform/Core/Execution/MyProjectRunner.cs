@@ -214,7 +214,7 @@ namespace GoodAI.Core.Execution
         /// <returns>Task</returns>
         protected MyTask GetTaskByType(MyWorkingNode node, Type type)
         {
-            foreach (PropertyInfo taskPropInfo in node.GetInfo().TaskOrder)
+            foreach (PropertyInfo taskPropInfo in node.GetInfo().OrderedTasks)
             {
                 MyTask task = node.GetTaskByPropertyName(taskPropInfo.Name);
                 if (task.GetType().ToString() == type.ToString())

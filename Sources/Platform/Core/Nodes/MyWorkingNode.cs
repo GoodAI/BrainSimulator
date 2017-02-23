@@ -173,7 +173,7 @@ namespace GoodAI.Core.Nodes
         {
             if (m_tasks.Count > 0)
             {
-                (GetInfo().TaskOrder[0].GetValue(this) as MyTask).Enabled = true;                
+                (GetInfo().OrderedTasks[0].GetValue(this) as MyTask).Enabled = true;                
             }
         }   
      

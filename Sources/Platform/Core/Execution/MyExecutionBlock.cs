@@ -12,46 +12,36 @@ namespace GoodAI.Core.Execution
     {
         public static bool IsProfiling { get; set; }
 
-        public bool Enabled { get { return true; } }        
+        public bool Enabled => true;
         public uint SimulationStep { get; set; }
         public virtual string Name { get; set; }
 
         public MyExecutionBlock Parent { get; private set; }
 
-        protected IMyExecutable[] m_children;
+        protected readonly IMyExecutable[] m_children;
         protected int m_childIterator = 0;
 
         public readonly IDictionary<IMyExecutable, TimeSpan> ProfilingInfo;
         private readonly Stopwatch m_profilingStopwatch = new Stopwatch();
 
         /// Element which is to be run next
-        public IMyExecutable CurrentChild
-        {
-            get
-            {
-                return (m_childIterator < m_children.Length)
-                    ? m_children[m_childIterator]
-                    : null;
-            }
-        }
+        public IMyExecutable CurrentChild => (m_childIterator < m_children.Length)
+            ? m_children[m_childIterator]
+            : null;
 
         public IMyExecutable NextChild
         {
             get
             {
                 int nextIndex = m_childIterator + 1;
-                if (nextIndex < m_children.Length)
-                    return m_children[nextIndex];
-
-                return null;
+                return nextIndex < m_children.Length
+                    ? m_children[nextIndex]
+                    : null;
             }
         }
 
         /// All child elements
-        public IMyExecutable[] Children
-        {
-            get { return m_children; }
-        }
+        public IMyExecutable[] Children => m_children;
 
         /// <summary>
         /// Creates MyExecutionBlock from given IMyExecutable elements
@@ -75,45 +65,42 @@ namespace GoodAI.Core.Execution
         /// Executes current IMyExecutable children and moves to next one
         public virtual MyExecutionBlock ExecuteStep()
         {
-            if (m_childIterator < m_children.Length)
-            {
-                IMyExecutable currentChild = m_children[m_childIterator];
-                m_childIterator++;
-
-                var childList = currentChild as MyExecutionBlock;
-                if (childList != null)
-                {
-                    childList.Reset();
-
-                    // Profiling an inner block.
-                    if (IsProfiling)
-                        m_profilingStopwatch.Restart();
-
-                    return childList;
-                }
-                else
-                {
-                    if (currentChild.Enabled)
-                    {
-                        MyLog.DEBUG.WriteLine("Executing: " + currentChild.Name);
-                        currentChild.SimulationStep = SimulationStep;
-
-                        if (IsProfiling)
-                            ProfilingExecute(currentChild);
-                        else
-                            currentChild.Execute();
-                    }
-                    return this;
-                }
-            }
-            else
+            if (m_childIterator >= m_children.Length)
             {
                 // Control goes back to parent, en its measurement of this block.
-                if (IsProfiling && Parent != null)
-                    Parent.EndChildBlockMeasuring(this);
+                if (IsProfiling)
+                    Parent?.EndChildBlockMeasuring(this);
 
                 return Parent;
             }
+
+            IMyExecutable currentChild = m_children[m_childIterator];
+            m_childIterator++;
+
+            var childList = currentChild as MyExecutionBlock;
+            if (childList != null)
+            {
+                childList.Reset();
+
+                // Profiling an inner block.
+                if (IsProfiling)
+                    m_profilingStopwatch.Restart();
+
+                return childList;
+            }
+
+            if (currentChild.Enabled)
+            {
+                MyLog.DEBUG.WriteLine("Executing: " + currentChild.Name);
+                currentChild.SimulationStep = SimulationStep;
+
+                if (IsProfiling)
+                    ProfilingExecute(currentChild);
+                else
+                    currentChild.Execute();
+            }
+
+            return this;
         }
 
         private void EndChildBlockMeasuring(MyExecutionBlock block)
@@ -204,7 +191,7 @@ namespace GoodAI.Core.Execution
     {
         public Func<bool> Condition { get; private set; }   // Function evaluating the condition. Block is run, when function returns true
         private bool m_testPassed;
-        public override string Name { get { return Condition() ? "If (passed)" : "If (not passed)"; } }
+        public override string Name => Condition() ? "If (passed)" : "If (not passed)";
 
         /// <summary>
         /// Constructor
@@ -228,18 +215,14 @@ namespace GoodAI.Core.Execution
             {
                 return base.ExecuteStep();
             }
-            else 
-            {               
-                if (Condition())
-                {             
-                    m_testPassed = true;
-                    return this;
-                }
-                else 
-                {                 
-                    return Parent;
-                }
+
+            if (Condition())
+            {             
+                m_testPassed = true;
+                return this;
             }
+
+            return Parent;
         }
 
         public override void Execute()
@@ -284,21 +267,17 @@ namespace GoodAI.Core.Execution
             {
                 return base.ExecuteStep();                               
             }
-            else
-            {                
-                if (Condition(m_loopIterator))                
-                {
-                    m_testPassed = true;
-                    m_loopIterator++;
-                    base.Reset();
+
+            if (Condition(m_loopIterator))                
+            {
+                m_testPassed = true;
+                m_loopIterator++;
+                base.Reset();
                     
-                    return this;
-                }
-                else
-                {
-                    return Parent;
-                }
+                return this;
             }
+
+            return Parent;
         }
 
         public override void Execute()
