@@ -53,8 +53,8 @@ namespace ToyWorldTests.World
             TestingToyWorld toyWorld = new TestingToyWorld(map, tilesetTableStreamReader);
             toyWorld.SetRegister(new AutoupdateRegister());
 
-            Mock<IAutoupdateableGameActor> mock1 = new Mock<IAutoupdateableGameActor>();
-            Mock<IAutoupdateableGameActor> mock2 = new Mock<IAutoupdateableGameActor>();
+            Mock<IAutoupdateable> mock1 = new Mock<IAutoupdateable>();
+            Mock<IAutoupdateable> mock2 = new Mock<IAutoupdateable>();
             toyWorld.AutoupdateRegister.Register(mock1.Object, 1);
             toyWorld.AutoupdateRegister.Register(mock2.Object, 2);
 
@@ -62,14 +62,14 @@ namespace ToyWorldTests.World
             toyWorld.Update();
 
             // Assert
-            mock1.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()));
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()), Times.Never());
+            mock1.Verify(x => x.Update(It.IsAny<Atlas>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()), Times.Never());
 
             // Act
             toyWorld.Update();
 
             // Assert
-            mock2.Verify(x => x.Update(It.IsAny<Atlas>(), It.IsAny<TilesetTable>()));
+            mock2.Verify(x => x.Update(It.IsAny<Atlas>()));
         }
 
         [Fact]

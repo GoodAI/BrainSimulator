@@ -27,7 +27,7 @@ namespace ToyWorldTests.World
             PickUp pickUp = new PickUp(actor.Object);
 
             // Act
-            pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2(), LayerType.ObstacleInteractable), atlas.Object, It.IsAny<ITilesetTable>());
+            pickUp.Resolve(new GameActorPosition(targetActor.Object, new Vector2(), LayerType.ObstacleInteractable), atlas.Object);
 
             // Assert
             picker.Verify(x => x.AddToInventory(It.IsAny<IPickableGameActor>()));

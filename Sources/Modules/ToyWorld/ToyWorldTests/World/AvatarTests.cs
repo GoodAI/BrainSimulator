@@ -71,7 +71,7 @@ namespace ToyWorldTests.World
             Assert.Equal(null, m_avatarPickuper.Tool);
 
             // Act
-            m_avatarPickuper.Update(m_worldPickupWorld.Atlas, It.IsAny<TilesetTable>());
+            m_avatarPickuper.Update(m_worldPickupWorld.Atlas);
 
             // Assert
             Assert.IsType<Apple>(m_avatarPickuper.Tool);
@@ -86,7 +86,7 @@ namespace ToyWorldTests.World
             m_avatarPickuper.PickUp = true;
 
             // Act
-            m_avatarPickuper.Update(m_worldPickupWorld.Atlas, It.IsAny<TilesetTable>());
+            m_avatarPickuper.Update(m_worldPickupWorld.Atlas);
 
             // Assert
             Assert.Null(m_avatarPickuper.Tool);
@@ -110,7 +110,7 @@ namespace ToyWorldTests.World
             // Act
             for (int i = 0; i < 100; i++)
             {
-                m_eater.Update(m_worldPickupWorld.Atlas, It.IsAny<TilesetTable>());
+                m_eater.Update(m_worldPickupWorld.Atlas);
             }
 
             // Assert
@@ -125,7 +125,7 @@ namespace ToyWorldTests.World
             m_eater.Interact = true;
 
             // Act
-            m_eater.Update(m_worldPickupWorld.Atlas, It.IsAny<TilesetTable>());
+            m_eater.Update(m_worldPickupWorld.Atlas);
 
             // Assert
             Assert.Equal(m_eater.Energy, 1);

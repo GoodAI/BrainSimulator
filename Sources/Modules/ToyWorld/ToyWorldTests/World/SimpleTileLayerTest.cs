@@ -21,9 +21,9 @@ namespace ToyWorldTests.World
 
         public SimpleTileLayerTest()
         {
-            var tilesetMock0 = new Mock<ITilesetTable>();
+            var tilesetMock0 = new Mock<TilesetTable>();
             tilesetMock0.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(0);
-            var tilesetMock1 = new Mock<ITilesetTable>();
+            var tilesetMock1 = new Mock<TilesetTable>();
             tilesetMock1.Setup(x => x.TileNumber(It.IsAny<string>())).Returns(1);
 
             var mockTile1 = new Mock<Tile>(MockBehavior.Default, tilesetMock0.Object);
