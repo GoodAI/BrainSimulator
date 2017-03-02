@@ -25,7 +25,7 @@ namespace GoodAI.Modules.Vision
         //----------------------------------------------------------------------------
         // :: MEMORY BLOCKS ::
         [MyInputBlock(0)]
-        public MyMemoryBlock<float> Image
+        public MyMemoryBlock<float> ImageInput
         {
             get { return GetInput(0); }
         }
@@ -42,9 +42,14 @@ namespace GoodAI.Modules.Vision
             get { return GetInput(2); }
         }
 
+        [MyInputBlock(3)]
+        public MyMemoryBlock<float> MaskValuesInput
+        {
+            get { return GetInput(3); }
+        }
 
         [MyOutputBlock(0)]
-        public MyMemoryBlock<float> Output
+        public MyMemoryBlock<float> MaskOutput
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
@@ -61,18 +66,18 @@ namespace GoodAI.Modules.Vision
         // :: INITS  ::
         public override void UpdateMemoryBlocks()
         {
-            int dim0 = (Image != null && Image.Dims.Rank >= 1) ? Image.Dims[0] : 1;
-            int dim1 = (Image != null && Image.Dims.Rank >= 2) ? Image.Dims[1] : 1;
-            int dim2 = (Image != null && Image.Dims.Rank >= 3) ? Image.Dims[2] : 1;
+            int dim0 = (ImageInput != null && ImageInput.Dims.Rank >= 1) ? ImageInput.Dims[0] : 1;
+            int dim1 = (ImageInput != null && ImageInput.Dims.Rank >= 2) ? ImageInput.Dims[1] : 1;
+            int dim2 = (ImageInput != null && ImageInput.Dims.Rank >= 3) ? ImageInput.Dims[2] : 1;
 
-            if (Image.Dims.Rank < 3)
+            if (ImageInput.Dims.Rank < 3)
             {
-                Output.Dims = new TensorDimensions(dim0, dim1);
+                MaskOutput.Dims = new TensorDimensions(dim0, dim1);
                 MaskedImageOutput.Dims = new TensorDimensions(dim0, dim1);
             }
             else
             {
-                Output.Dims = new TensorDimensions(dim0, dim1, dim2);
+                MaskOutput.Dims = new TensorDimensions(dim0, dim1, dim2);
                 MaskedImageOutput.Dims = new TensorDimensions(dim0, dim1, dim2);
             }
         }
@@ -80,8 +85,13 @@ namespace GoodAI.Modules.Vision
         public override void Validate(MyValidator validator)
         {
             //base.Validate(validator); /// base checking 
-            validator.AssertError(Image != null, this, "No input image available");
-            validator.AssertError(Image.Dims.Rank >= 2, this, "Input image should have rank at least 2 (2 dimensions)");
+            validator.AssertError(ImageInput != null, this, "No input image available");
+            validator.AssertError(ImageInput.Dims.Rank >= 2, this, "Input image should have rank at least 2 (2 dimensions)");
+
+            if (MaskValuesInput != null && ImageInput != null && MaskValuesInput.Count != ImageInput.Count)
+            {
+                validator.AddError(this, "MaskValuesInput.Count != Image.Count");
+            }
         }
 
         public MaskCreationExecuteTask Execute { get; private set; }
@@ -89,19 +99,22 @@ namespace GoodAI.Modules.Vision
         [Description("Execute")]
         public class MaskCreationExecuteTask : MyTask<MaskCreationNode>
         {
-            MyCudaKernel kerX, kerY;
+            MyCudaKernel kerX, kerY, maskInputKernel;
             MyCudaKernel m_multElementwiseKernel;
 
             public override void Init(int nGPU)
             {
                 kerX = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "SetMatrixVauleMinMaxX");
-                kerX.SetupExecution(Owner.Output.Count);
+                kerX.SetupExecution(Owner.MaskOutput.Count);
 
                 kerY = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "SetMatrixVauleMinMaxY");
-                kerY.SetupExecution(Owner.Output.Count);
+                kerY.SetupExecution(Owner.MaskOutput.Count);
+
+                maskInputKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "MaskInput");
+                maskInputKernel.SetupExecution(Owner.MaskOutput.Count);
 
                 m_multElementwiseKernel = MyKernelFactory.Instance.KernelVector(Owner.GPU, KernelVector.ElementwiseMult);
-                m_multElementwiseKernel.SetupExecution(Owner.Output.Count);
+                m_multElementwiseKernel.SetupExecution(Owner.MaskOutput.Count);
             }
 
             private bool CropHasUsefullValueAndCopy2Host(MyMemoryBlock<float> Crop)
@@ -117,37 +130,50 @@ namespace GoodAI.Modules.Vision
 
             public override void Execute()
             {
-                Owner.Output.Fill(1.0f);
+                Owner.MaskOutput.Fill(1.0f);
 
                 if (CropHasUsefullValueAndCopy2Host(Owner.XCrop))
                 {
                     if (Owner.XCrop.Host[0] > 0f)
                     {
-                        kerX.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, 0, (int)(Owner.XCrop.Host[0] * Owner.Output.Dims[0]), 0f);
+                        kerX.Run(Owner.MaskOutput, Owner.MaskOutput.Dims[0], Owner.MaskOutput.Count, 0, (int)(Owner.XCrop.Host[0] * Owner.MaskOutput.Dims[0]), 0f);
                     }
                     else
                     {
-                        kerX.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, (int)Owner.Output.Dims[0] + (int)(Owner.XCrop.Host[0] * Owner.Output.Dims[0]), (int)Owner.Output.Dims[0], 0f);
+                        kerX.Run(Owner.MaskOutput, Owner.MaskOutput.Dims[0], Owner.MaskOutput.Count, (int)Owner.MaskOutput.Dims[0] + (int)(Owner.XCrop.Host[0] * Owner.MaskOutput.Dims[0]), (int)Owner.MaskOutput.Dims[0], 0f);
                     }
                 }
                 if (CropHasUsefullValueAndCopy2Host(Owner.YCrop))
                 {
                     if (Owner.YCrop.Host[0] > 0f)
                     {
-                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, 0, (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[1]), 0f);
+                        kerY.Run(Owner.MaskOutput, Owner.MaskOutput.Dims[0], Owner.MaskOutput.Count, 0, (int)(Owner.YCrop.Host[0] * Owner.MaskOutput.Dims[1]), 0f);
                     }
                     else
                     {
-                        kerY.Run(Owner.Output, Owner.Output.Dims[0], Owner.Output.Count, (int)Owner.Output.Dims[1] + (int)(Owner.YCrop.Host[0] * Owner.Output.Dims[1]), (int)Owner.Output.Dims[1], 0f);
+                        kerY.Run(Owner.MaskOutput, Owner.MaskOutput.Dims[0], Owner.MaskOutput.Count, (int)Owner.MaskOutput.Dims[1] + (int)(Owner.YCrop.Host[0] * Owner.MaskOutput.Dims[1]), (int)Owner.MaskOutput.Dims[1], 0f);
                     }
                 }
 
-                m_multElementwiseKernel.Run(
-                    Owner.Image,
-                    Owner.Output,
-                    Owner.MaskedImageOutput,
-                    Owner.Image.Count
-                    );
+                if (Owner.MaskValuesInput != null)
+                {
+                    maskInputKernel.Run(
+                        Owner.ImageInput,
+                        Owner.MaskOutput,
+                        Owner.MaskValuesInput,
+                        Owner.MaskedImageOutput,
+                        Owner.ImageInput.Count
+                        );
+                }
+                else
+                {
+                    m_multElementwiseKernel.Run(
+                        Owner.ImageInput,
+                        Owner.MaskOutput,
+                        Owner.MaskedImageOutput,
+                        Owner.ImageInput.Count
+                        );
+                }
             }
         }
     }
