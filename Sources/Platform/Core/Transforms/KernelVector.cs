@@ -6,7 +6,6 @@ namespace GoodAI.Modules.Transforms
     public enum KernelVector
     {
         ScalarAdd,
-        ScalarAdd_Segmented,
         ScalarMult,
         ScalarMultThenAdd,
         ElementwiseAbs,
@@ -19,7 +18,8 @@ namespace GoodAI.Modules.Transforms
         ElementwiseAdd_WeightedOffsetted,
         ElementwiseDiv,
         ElementwiseMult,
-        ElementwiseMult_Segmented,
+        ElementwiseMult_Segmented_Repeat,
+        ElementwiseMult_Segmented_Stretch,
         ElementwiseSub,
         CrossMult,
         OtherAverage
