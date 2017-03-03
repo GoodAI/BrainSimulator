@@ -44,7 +44,18 @@ namespace GoodAI.Core.Nodes
             KnownTasks = new Dictionary<string, PropertyInfo>();            
             OrderedTasks = new List<PropertyInfo>();
             TaskGroups = new Dictionary<string, List<PropertyInfo>>();
-        }        
+        }
+
+        public static MyNodeInfo Get(Type type)
+        {
+            return NODE_INFO[type];
+        }
+
+        internal static bool IsOutputMemoryBlock(PropertyInfo pInfo)
+        {
+            return (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
+                || (pInfo.GetCustomAttribute<MyNonpersistableOutputBlockAttribute>(true) != null);
+        }
 
         internal static void CollectNodeInfo(Type type)
         {
@@ -90,7 +101,7 @@ namespace GoodAI.Core.Nodes
                             nodeInfo.OwnedMemoryBlocks.Add(pInfo);
                         }
 
-                        if (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
+                        if (IsOutputMemoryBlock(pInfo))
                         {
                             nodeInfo.OutputBlocks.Add(pInfo);
                         }
@@ -159,7 +170,7 @@ namespace GoodAI.Core.Nodes
                     continue;
                 }
 
-                if (pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null)
+                if (IsOutputMemoryBlock(pInfo))
                 {
                     MyLog.WARNING.WriteLine($"Nested block '{pInfo.Name}' output attribute ignored.");
                 }
@@ -168,11 +179,6 @@ namespace GoodAI.Core.Nodes
             }
 
             return result;
-        }
-
-        public static MyNodeInfo Get(Type type)
-        {
-            return NODE_INFO[type];
         }
     }
 }

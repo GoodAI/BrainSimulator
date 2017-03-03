@@ -93,9 +93,9 @@ namespace GoodAI.Core.Nodes
 
                 mb.Name = GetUniqueMemBlockName(usePrefix + pInfo.Name, existingMemBlockNames);
 
+                mb.IsOutput = MyNodeInfo.IsOutputMemoryBlock(pInfo);
                 mb.Persistable = pInfo.GetCustomAttribute<MyPersistableAttribute>(true) != null;
                 mb.Unmanaged = pInfo.GetCustomAttribute<MyUnmanagedAttribute>(true) != null;
-                mb.IsOutput = pInfo.GetCustomAttribute<MyOutputBlockAttribute>(true) != null;
                 mb.IsDynamic = pInfo.GetCustomAttribute<DynamicBlockAttribute>(true) != null;
 
                 pInfo.SetValue(memBlockOwner, mb);

@@ -68,6 +68,16 @@ namespace GoodAI.Core.Utils
     }
 
     [AttributeUsage(AttributeTargets.Property)]
+    public class MyNonpersistableOutputBlockAttribute : MyBlockOrderAttribute
+    {
+        public MyNonpersistableOutputBlockAttribute()
+        { }
+
+        public MyNonpersistableOutputBlockAttribute(int order) : base(order)
+        { }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
     public class MyPersistableAttribute : MyBlockOrderAttribute
     {
         public MyPersistableAttribute()
