@@ -24,20 +24,20 @@ namespace GoodAI.Core.Utils
     {
         public MyTaskGroupAttribute(string name)
         {
-            Name = name;            
+            Name = name;
         }
 
-        public string Name { get; private set; }        
+        public string Name { get; private set; }
     }
 
     [AttributeUsage(AttributeTargets.Class)]
     public class MyNodeInfoAttribute : Attribute
     {
-        public bool FixedOutput { get; set; }     
+        public bool FixedOutput { get; set; }
 
         public MyNodeInfoAttribute()
         {
-            FixedOutput = false;            
+            FixedOutput = false;
         }
     }
 
@@ -48,39 +48,50 @@ namespace GoodAI.Core.Utils
     }
 
     [AttributeUsage(AttributeTargets.Property)]
-    public class MyInputBlockAttribute : Attribute
+    public class MyInputBlockAttribute : MyBlockOrderAttribute
     {
-        public int Order { get; internal set; }
-
         public MyInputBlockAttribute()
-        {
-            Order = -1;            
-        }
+        { }
 
-        public MyInputBlockAttribute(int order)
-        {
-            Order = order;
-        }
+        public MyInputBlockAttribute(int order): base(order)
+        { }
     }
 
     [AttributeUsage(AttributeTargets.Property)]
     public class MyOutputBlockAttribute : MyPersistableAttribute
     {
+        public MyOutputBlockAttribute()
+        { }
+
+        public MyOutputBlockAttribute(int order) : base(order)
+        { }
+    }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class MyPersistableAttribute : MyBlockOrderAttribute
+    {
+        public MyPersistableAttribute()
+        { }
+
+        public MyPersistableAttribute(int order): base(order)
+        { }
+    }    
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public abstract class MyBlockOrderAttribute : Attribute
+    {
         public int Order { get; internal set; }
 
-        public MyOutputBlockAttribute()
+        protected MyBlockOrderAttribute()
         {
             Order = -1;            
         }
 
-        public MyOutputBlockAttribute(int order)
+        protected MyBlockOrderAttribute(int order)
         {
             Order = order;
         }
     }
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public class MyPersistableAttribute : Attribute { }    
 
     [AttributeUsage(AttributeTargets.Property)]
     public class MyUnmanagedAttribute : Attribute 

@@ -114,10 +114,10 @@ namespace GoodAI.Core.Nodes
             }
 
             nodeInfo.InputBlocks = new List<PropertyInfo>(
-                nodeInfo.InputBlocks.OrderBy(p => p.GetCustomAttribute<MyInputBlockAttribute>(true).Order));
+                nodeInfo.InputBlocks.OrderBy(p => p.GetCustomAttribute<MyBlockOrderAttribute>(true).Order));
 
             nodeInfo.OutputBlocks = new List<PropertyInfo>(
-                nodeInfo.OutputBlocks.OrderBy(p => p.GetCustomAttribute<MyOutputBlockAttribute>(true).Order));
+                nodeInfo.OutputBlocks.OrderBy(p => p.GetCustomAttribute<MyBlockOrderAttribute>(true).Order));
 
             nodeInfo.OrderedTasks = new List<PropertyInfo>(
                 nodeInfo.OrderedTasks.OrderBy(
