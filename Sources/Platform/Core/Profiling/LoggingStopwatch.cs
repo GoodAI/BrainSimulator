@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Core.Utils;
+using GoodAI.Core;
 
 namespace GoodAI.Platform.Core.Profiling
 {
@@ -125,6 +126,13 @@ namespace GoodAI.Platform.Core.Profiling
             m_lastSegmentRef = m_segments[key] as TimeSegment;
 
             m_stopwatch.Restart();
+        }
+
+        public void SynchronizeAndStartNewSegment(string key, int nGPU)
+        {
+            MyKernelFactory.Instance.GetContextByGPU(nGPU).Synchronize();
+
+            StartNewSegment(key);
         }
 
         private void CloseSegment()
