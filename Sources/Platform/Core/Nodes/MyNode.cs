@@ -70,7 +70,8 @@ namespace GoodAI.Core.Nodes
                 var memBlockOwner = nestedBlocksPair.Key.GetValue(this);  // Get instance using property info.
                 if (memBlockOwner == null)
                 {
-                    MyLog.WARNING.WriteLine($"Nested mem. block instance for {nestedBlocksPair.Key.Name} not found.");
+                    MyLog.INFO.WriteLine(
+                        $"Info: Nested mem. block instance for {nestedBlocksPair.Key.Name} not found. Assuming late init.");
                     continue;
                 }
 
@@ -81,6 +82,9 @@ namespace GoodAI.Core.Nodes
         // TODO(Premek): check for invalid characters in the namePrefix
         private void CreateMemoryBlocksInner(object memBlockOwner, List<PropertyInfo> listOfBlockInfos, string namePrefix = "")
         {
+            if (listOfBlockInfos.Count == 0)
+                return;
+
             var usePrefix = (string.IsNullOrEmpty(namePrefix) && (memBlockOwner is IMemBlockNamePrefix))
                 ? ((IMemBlockNamePrefix) memBlockOwner).MemBlockNamePrefix
                 : namePrefix;
