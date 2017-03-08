@@ -1,0 +1,496 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GoodAI.ToyWorld</name>
+    </assembly>
+    <members>
+        <member name="T:GoodAI.ToyWorld.Language.Heap`1">
+            <summary>
+            The class implements a heap and is based on code by Ohad Schneider.
+            http://stackoverflow.com/questions/102398/priority-queue-in-net
+            </summary>
+            <typeparam name="T">The type of element in the heap</typeparam>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Language.LabeledVector">
+            <summary>
+            Vectors with string labels and basic vector operations
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.LabeledVector.Add(System.Single[],System.Single[])">
+            <summary>
+            Performs elementwise addition of vectors.
+            </summary>
+            <param name="vector1">a vector</param>
+            <param name="vector2">another vector</param>
+            <returns>the sum of the vectors</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.LabeledVector.Subtract(System.Single[],System.Single[])">
+            <summary>
+            Performs elementwise subtraction of vectors.
+            </summary>
+            <param name="vector1">first vector</param>
+            <param name="vector2">second vector</param>
+            <returns>the difference between the vectors</returns>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:GoodAI.ToyWorld.Language.AbstractNBestList`1" -->
+        <member name="P:GoodAI.ToyWorld.Language.AbstractNBestList`1.NumberOfItems">
+            <summary>
+            The number of items (N) in the N-best list
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.AbstractNBestList`1.IsBetter(System.Single)">
+            <summary>
+            Tests if a score beats the current lowest scorer or the list isn't 
+            full.
+            </summary>
+            <param name="score">A score</param>
+            <returns>True if better than the current lowest scorer</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.AbstractNBestList`1.Insert(System.Single,`0)">
+            <summary>
+            Adds an item without checking the score.
+            </summary>
+            <param name="score">The score of the item</param>
+            <param name="item">The item</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.AbstractNBestList`1.InsertIfBetter(System.Single,`0)">
+            <summary>
+            Inserts the item if its score beats the current lowest scorer,
+            replacing the lowest scorer.
+            </summary>
+            <param name="score">The score of the item</param>
+            <param name="item">The item</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.AbstractNBestList`1.GetSortedList">
+            <summary>
+            Returns a list of scores and items, sorted by descending score
+            </summary>
+            <returns>Sorted list of scored items</returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Language.NBestList`1">
+            <summary>
+            The concrete N-best list is implemented using a heap.
+            </summary>
+            <typeparam name="T">The item type</typeparam>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.NBestList`1.heap">
+            <summary>
+            The heap that tracks the elements in the N-best list
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.NBestList`1.#ctor(System.Int32)">
+            <summary>
+            Constructs the N-best list
+            </summary>
+            <param name="numberOfItems">The number of items (N) in the list</param>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Language.TextProcessing">
+            <summary>
+            Handles text-based language processing in the Toy World language interface.
+            Currently, this is limited to simple tokenization.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Language.Vocabulary">
+            <summary>
+            Words and word vectors.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.Language.Vocabulary.WordVectorType">
+            <summary>
+            The vector type describes the vectors and decides how out-of-vocabulary
+            words are handled.
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.WordVectorType.Random">
+            <summary>
+            Random points in hypercube
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.WordVectorType.RandomNormalized">
+            <summary>
+            Random points on hypersphere
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.WordVectorType.OneOfN">
+            <summary>
+            One-of-N encoding
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.WordVectorType.Learned">
+            <summary>
+            Embeddings learned by training on a corpus
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.VectorType">
+            <summary>
+            The vector type used (see WordVectorType)
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Language.Vocabulary.NumberOfDimensions">
+            <summary>
+            The number of dimension of the vector space
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary._newVectorLock">
+            <summary>
+            Only allow one thread at a time to create a new vector
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.Language.Vocabulary.Size">
+            <summary>
+            The vocabulary size
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary._labeledVectorDictionary">
+            <summary>
+            Dictionary for label-to-vector lookup
+            </summary>
+        </member>
+        <member name="F:GoodAI.ToyWorld.Language.Vocabulary.rnd">
+            <summary>
+            Random number generator for making random vectors
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.#ctor(System.Int32,GoodAI.ToyWorld.Language.Vocabulary.WordVectorType)">
+            <summary>
+            Constructs the Vocabulary.
+            </summary>
+            <param name="vectorDimensions">The number of word vector dimensions</param>
+            <param name="vectorType">The vector type used</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.Add(System.String,System.Single[])">
+            <summary>
+            Adds a labeled vector to the vocabulary.
+            </summary>
+            <param name="label">The label</param>
+            <param name="vector">The vector</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.Add(System.String)">
+            <summary>
+            Adds a labeled vector to the vocabulary, assigning a default (random) value
+            to the vector.
+            </summary>
+            <param name="label">The label</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.VectorFromLabel(System.String)">
+            <summary>
+            Retrieves the vector that corresponds to a label.
+            </summary>
+            <param name="label">The label to look up</param>
+            <returns>The vector corresponding to the label</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.GetOOVVector(System.String)">
+            <summary>
+            Returns a new vector for an out-of-vocabulary word.
+            </summary>
+            <returns>Word vector</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.MakeNewVector">
+            <summary>
+            Creates a new vector.
+            </summary>
+            <returns>The new vector</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.MakeRandomVector">
+            <summary>
+            Creates a random vector uniformly distributed over the vector space.
+            Components are in [0, 1[.
+            </summary>
+            <returns>Random vector</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.MakeOneOfNVector">
+            <summary>
+            Creates a new one-of-N vector.
+            </summary>
+            <returns>One-of-N vector</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.IsZero(System.Single[])">
+            <summary>
+            Returns true if the argument is the zero vector.
+            </summary>
+            <param name="vector">The input vector</param>
+            <returns>True if all elements are zero</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.FindNearestNeighbors(GoodAI.ToyWorld.Language.LabeledVector,System.Int32)">
+            <summary>
+            Finds the vectors most similar to the input vector. If the input is
+            the zero vector, an empty list is returned.
+            </summary>
+            <param name="vector">The input vector</param>
+            <param name="neighborhoodSize">The number of neighbors to retrieve</param>
+            <returns>A list of neighboring vectors sorted by descending cosine similarity</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.FindNearestNeighbors(System.Single[],System.Int32)">
+            <summary>
+            Finds the vectors most similar to the input vector. If the input is
+            the zero vector, an empty list is returned.
+            </summary>
+            <param name="vector">The input vector</param>
+            <param name="neighborhoodSize">The number of neighbors to retrieve</param>
+            <returns>A list of neighboring vectors sorted by descending cosine similarity</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.ReadTextFile(System.String)">
+            <summary>
+            Loads the vocabulary from a file in text format (e.g., word2vec)
+            </summary>
+            <param name="path">The path to the vocabulary text file</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.Read(System.IO.StreamReader)">
+            <summary>
+            Loads the vocabulary from text using a StreamReader
+            </summary>
+            <param name="vocabularyReader">The reader</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.ReadFileHeader(System.IO.StreamReader)">
+            <summary>
+            Reads the first part of a text file. The header consists of a 
+            single line with one or two fields: 
+            [number_of_vectors] number_of_dimensions
+            The word2vec text format uses both fields.
+            </summary>
+            <param name="vocabularyReader">A reader to an open text file</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.ReadLabeledVectors(System.IO.StreamReader)">
+            <summary>
+            Reads labeled vectors from a text file.
+            </summary>
+            <param name="vocabularyReader">A reader to an open text file</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.Language.Vocabulary.ReadLineFields(System.IO.StreamReader)">
+            <summary>
+            Reads a line and splits it on whitespace into fields.
+            </summary>
+            <param name="vocabularyReader">The file stream reader</param>
+            <returns>The fields of the input line</returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.ToyWorld">
+            <author>GoodAI</author>
+            <meta>mm,mp,mv,ms</meta>
+            <status>Working</status>
+            <summary> A continuous 2D learning environment.</summary>
+            <description>
+            <p>
+            A more generally customizable continuous 2D world (has a prototype 3D version). The agent can control an avatar that moves in <br />
+            a simple environment and can interact with various objects. The world is viewed from top-down in 2D mode and from the avatar's <br />
+            view in the 3D mode.
+            </p>
+            <p>
+            For a more detailed description please see the <a href="http://docs.goodai.com/brainsimulator/examples/toyworld/index.html">Toy World's overview page</a>.
+            </p>
+            </description>
+        </member>
+        <member name="M:GoodAI.ToyWorld.ToyWorld.GetSignalNode(System.Int32)">
+            <summary>
+            Returns Signal node with given index (from 0 to SignalCount)
+            </summary>
+            <param name="index">Index of Signal node</param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.ToyWorld.GetSignalMemoryBlock(System.Int32)">
+            <summary>
+            Returns memory block assigned to Signal with given index (from 0 to SignalCount)
+            </summary>
+            <param name="index">Index of Signal</param>
+            <returns></returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.ToyWorld.TWInitTask">
+            <summary>
+            Initializes the ToyWorld core and sets up render requests.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.ToyWorld.TWGetInputTask">
+            <summary>
+            Encodes Brain Simulator control outputs and provides them to the ToyWorld's avatar.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.ToyWorld.TWUpdateTask">
+            <summary>
+            Performs a ToyWorld simulation step: updates game objects, resolves their actions, renders the scene and copies visual and other outputs to input memory blocks.
+            </summary>
+        </member>
+        <member name="T:GoodAI.ToyWorld.VectorToWord">
+            <author>Simon Andersson</author>
+            <status>Work in progress</status>
+            <summary>Word to vector node</summary>
+            <description>
+            Translates vectors to words. Contains a memory block with the nearest 
+            neighbors of the input vectors. Works only in ToyWorld.
+            </description>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.InputVectors">
+            <summary>
+            The input word vectors
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.OutputWords">
+            <summary>
+            The output words. 
+            While the data are chars, they are currenly stored as floats for 
+            compatibility with nodes that use floats.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.NeighborWords">
+            <summary>
+            The labels of the nearest neighbors of each input vector
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.NeighborSimilarities">
+            <summary>
+            The similarity scores for the nearest neighbors of each input vector
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.MaxTextLength">
+            <summary>
+            The maximum amount of text to output
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.MaxWordLength">
+            <summary>
+            The maximum length for a word
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.MaxNumberOfWords">
+            <summary>
+            The maximum number of words to output
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.NumberOfNeighbors">
+            <summary>
+            The number of neighbors of each word vectors to record in memory block
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.Vocabulary">
+            <summary>
+            The word vector vocabulary
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.NumberOfDimensions">
+            <summary>
+            The dimensionality of the word vector space
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.VectorToWord.InputWordCount">
+            <summary>
+            Number of input words
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.VectorToWord.GetInputVector(System.Int32)">
+            <summary>
+            Gets the word vector corresponding to the word index.
+            </summary>
+            <param name="wordIndex">The index (0..) of the word</param>
+            <returns>A word vector</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.VectorToWord.FindNearestNeighbors(System.Single[])">
+            <summary>
+            Finds nearest neighbors of a word vector.
+            </summary>
+            <param name="vector">Word vector</param>
+            <returns>List of neighbors and similarities</returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.TranslateVectorToWordTask">
+            <summary>
+            Translate word vectors into words 
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.TranslateVectorToWordTask.Flatten(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Turns two dimensions into one array dimension.
+            </summary>
+            <param name="index1">First index</param>
+            <param name="size1">Number of elements along first dimension</param>
+            <param name="index2">Second index</param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.TranslateVectorToWordTask.Flatten(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Turns three dimensions into one array dimension.
+            </summary>
+            <param name="index1">First index</param>
+            <param name="size1">Number of elements along first dimension</param>
+            <param name="index2">Second index</param>
+            <param name="size2">Number of elements along second dimension</param>
+            <param name="index3">Third index</param>
+            <returns></returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.TranslateVectorToWordTask.CopyToOutput(System.String)">
+            <summary>
+            Copies the text to the output block.
+            </summary>
+            <param name="outputText">The text to copy</param>
+        </member>
+        <member name="M:GoodAI.ToyWorld.TranslateVectorToWordTask.AppendWord(System.Text.StringBuilder,System.String)">
+            <summary>
+            Appends a word, inserting space between words.
+            </summary>
+            <param name="builder">The string builder</param>
+            <param name="word">The word to add</param>
+        </member>
+        <member name="T:GoodAI.ToyWorld.WordToVector">
+            <author>Simon Andersson</author>
+            <status>Work in progress</status>
+            <summary>Word to vector node</summary>
+            <description>Translates words to vectors. Only works in ToyWorld.</description>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.Translate">
+            <summary>
+            Translate words into vectors
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.TextInput">
+            <summary>
+            The input text.
+            While the data are chars, they are currenly stored as floats for 
+            compatibility with nodes that use floats.
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.Output">
+            <summary>
+            The output vectors
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.MaxNumberOfWords">
+            <summary>
+            The maximum number of words in the text input buffer
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.Vocabulary">
+            <summary>
+            The word vector vocabulary
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.NumberOfDimensions">
+            <summary>
+            The dimensionality of the word vector space
+            </summary>
+        </member>
+        <member name="P:GoodAI.ToyWorld.WordToVector.InputWords">
+            <summary>
+            The input text as an array of words
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.WordToVector.UpdateWordInput">
+            <summary>
+            Update the input words if necessary
+            </summary>
+        </member>
+        <member name="M:GoodAI.ToyWorld.WordToVector.GetStringFromInput">
+            <summary>
+            Extract a string from the input text 
+            </summary>
+            <returns>Input text as a string</returns>
+        </member>
+        <member name="M:GoodAI.ToyWorld.WordToVector.SplitTextInput(System.String)">
+            <summary>
+            Split the input text into words
+            </summary>
+            <param name="input">Input text</param>
+            <returns>An array of words</returns>
+        </member>
+        <member name="T:GoodAI.ToyWorld.TranslateWordToVectorTask">
+            <summary>
+            Translate words into word vectors
+            </summary>
+        </member>
+    </members>
+</doc>
