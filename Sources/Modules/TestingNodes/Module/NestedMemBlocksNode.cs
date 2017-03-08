@@ -197,6 +197,14 @@ namespace GoodAI.Modules.TestingNodes
         [MyInputBlock(0)]
         public MyMemoryBlock<float> Input => GetInput(0);
 
+        // TODO(Premek): Move to another testing node to reduce the mess.
+        [MyNonpersistableOutputBlock(0)]
+        public MyMemoryBlock<float> VolatileOutput
+        {
+            get { return GetOutput(0); }
+            set { SetOutput(0, value); }
+        }
+
         public enum NestedNodeTypeEnum
         {
             Cowboy,
@@ -255,6 +263,8 @@ namespace GoodAI.Modules.TestingNodes
 
             Persistor.UpdateMemoryBlocks();
             Progressor.UpdateMemoryBlocks();
+
+            VolatileOutput.Dims = new TensorDimensions(100, 100);
         }
 
         private void UpdateNestedNodeType(NestedNodeTypeEnum nestedNodeType)
@@ -287,6 +297,8 @@ namespace GoodAI.Modules.TestingNodes
     [Description("Run sub-node"), MyTaskInfo]
     public class NestedBlockTask : MyTask<NestedMemBlocksNode>
     {
+        private int m_step;
+
         public override void Init(int nGPU)
         {
         }
@@ -298,6 +310,12 @@ namespace GoodAI.Modules.TestingNodes
             Owner.PolymorphNestedNode.Run(Owner.Input);
             Owner.Persistor.Execute();
             Owner.Progressor.Execute();
+
+            // Just do something with a clear temporal pattern.
+            var memBlock = Owner.VolatileOutput;
+            memBlock.SafeCopyToHost();
+            memBlock.Host[(m_step++ / 5) % memBlock.Count] = (float)Math.Sqrt(m_step);
+            memBlock.SafeCopyToDevice();
         }
     }
 }
