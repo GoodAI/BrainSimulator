@@ -67,6 +67,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "World", "..\ToyWorld\World\World.csproj", "{3831266C-24FE-4DD6-A4CC-39D0EF33C299}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyWorldConversation", "..\BrainSimToyWorld\ToyWorldConversation\ToyWorldConversation.csproj", "{99EEE01B-4697-415C-969B-3767139473D3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4B4762C5-D0CC-4F18-9DC4-34698ED536B8} = {4B4762C5-D0CC-4F18-9DC4-34698ED536B8}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
