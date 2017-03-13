@@ -41,49 +41,49 @@ namespace GoodAI.ToyWorld
 
         #region Memblocks
 
-        [MyOutputBlock(0), MyUnmanaged]
+        [MyNonpersistableOutputBlock(0), MyUnmanaged]
         public MyMemoryBlock<float> VisualFov
         {
             get { return GetOutput(0); }
             set { SetOutput(0, value); }
         }
 
-        [MyOutputBlock(1), MyUnmanaged]
+        [MyNonpersistableOutputBlock(1), MyUnmanaged]
         public MyMemoryBlock<float> VisualFovDepth
         {
             get { return GetOutput(1); }
             set { SetOutput(1, value); }
         }
 
-        [MyOutputBlock(2), MyUnmanaged]
+        [MyNonpersistableOutputBlock(2), MyUnmanaged]
         public MyMemoryBlock<float> VisualFof
         {
             get { return GetOutput(2); }
             set { SetOutput(2, value); }
         }
 
-        [MyOutputBlock(3), MyUnmanaged]
+        [MyNonpersistableOutputBlock(3), MyUnmanaged]
         public MyMemoryBlock<float> VisualFofDepth
         {
             get { return GetOutput(3); }
             set { SetOutput(3, value); }
         }
 
-        [MyOutputBlock(4), MyUnmanaged]
+        [MyNonpersistableOutputBlock(4), MyUnmanaged]
         public MyMemoryBlock<float> VisualFree
         {
             get { return GetOutput(4); }
             set { SetOutput(4, value); }
         }
 
-        [MyOutputBlock(5), MyUnmanaged]
+        [MyNonpersistableOutputBlock(5), MyUnmanaged]
         public MyMemoryBlock<float> VisualFreeDepth
         {
             get { return GetOutput(5); }
             set { SetOutput(5, value); }
         }
 
-        [MyOutputBlock(6), MyUnmanaged]
+        [MyNonpersistableOutputBlock(6), MyUnmanaged]
         public MyMemoryBlock<float> VisualTool
         {
             get { return GetOutput(6); }
@@ -91,14 +91,14 @@ namespace GoodAI.ToyWorld
         }
 
 
-        [MyOutputBlock(7)]
+        [MyNonpersistableOutputBlock(7)]
         public MyMemoryBlock<float> Text
         {
             get { return GetOutput(7); }
             set { SetOutput(7, value); }
         }
 
-        [MyOutputBlock(8)]
+        [MyNonpersistableOutputBlock(8)]
         public MyMemoryBlock<float> ChosenActions
         {
             get { return GetOutput(8); }

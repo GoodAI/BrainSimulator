@@ -55,26 +55,6 @@ extern "C"
 		}
 	}
 
-	//Add different scalar to each segment (elementwise)
-	__global__ void ScalarAdd_Segmented(
-		float* scalars,	//vector of N scalars
-		float* input,	//input vector divisible into N segments
-		float* output,	//output vector of the same length as input
-		int noSegments, //number of segments == N
-		int count		//length of the input vector
-	)
-	{
-		int id = GetId();
-
-		int segmentID;
-
-		if (id < count)
-		{
-			segmentID = count / noSegments;
-			output[id] = input[id] + scalars[segmentID];
-		}
-	}
-
 	// O_i = scalar * B_i
 	__global__ void ScalarMult(
 		float * output,
@@ -216,19 +196,6 @@ extern "C"
 		}
 	}
 
-	__global__ void ElementwiseAdd_Weighted(
-		float* a,
-		float* b,
-		float* out,
-		float weightA,
-		float weightB,
-		int count
-	)
-	{
-		device_ElementwiseAdd_Weighted(a, b, out, weightA, weightB, count);
-	}
-
-
 	__global__ void ElementwiseAdd_Offsetted(
 		float* result,
 		float* a,
@@ -245,6 +212,58 @@ extern "C"
 		{
 			result[id + resultOffset] = a[id + aOffset] + b[id + bOffset];
 		}
+	}
+
+	// elementwise adition of two vectors, first vector is (expected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
+	__global__ void ElementwiseAdd_Segmented_Repeat(
+		float* out,
+		float* a,
+		float* b,
+		int lengthA,
+		int count
+	)
+	{
+		int id = GetId();
+
+		int idA;
+
+		if (id < count)
+		{
+			idA = id % lengthA;
+			out[id] = a[idA] + b[id];
+		}
+	}
+
+	// elementwise addition of two vectors, each element of the vector a (it is expected to be shorter than b) is used multiple times over whole segment of the vector b. Vectors b and out should have the same length.
+	__global__ void ElementwiseAdd_Segmented_Stretch(
+		float* out,
+		float* a,
+		float* b,
+		int lengthA,  // = noSegments 
+		int count  //length of the output and vector b
+	)
+	{
+		int id = GetId();
+
+		int segmentId;
+
+		if (id < count)
+		{
+			segmentId = id / (count / lengthA);
+			out[id] = a[segmentId] + b[id];
+		}
+	}
+
+	__global__ void ElementwiseAdd_Weighted(
+		float* a,
+		float* b,
+		float* out,
+		float weightA,
+		float weightB,
+		int count
+	)
+	{
+		device_ElementwiseAdd_Weighted(a, b, out, weightA, weightB, count);
 	}
 
 	// output is wa*a + wb*b, zero otherwise. a and b can be offsetted
@@ -308,11 +327,12 @@ extern "C"
 		}
 	}
 
-	// elementwise multiplication of probabilities, first vector is (expected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
-	__global__ void ElementwiseMult_Segmented(
+
+	// elementwise multiplication of two vectors, first vector is (expected to be shorter) used multiple times over and over. Vectors b and out should have the same length.
+	__global__ void ElementwiseMult_Segmented_Repeat(
+		float* out,
 		float* a,
 		float* b,
-		float* out,
 		int lengthA,
 		int count
 	)
@@ -325,6 +345,26 @@ extern "C"
 		{
 			idA = id % lengthA;
 			out[id] = a[idA] * b[id];
+		}
+	}
+
+	// elementwise multiplication of two vectors, each element of the vector a (it is expected to be shorter than b) is used multiple times over whole segment of the vector b. Vectors b and out should have the same length.
+	__global__ void ElementwiseMult_Segmented_Stretch(
+		float* out,
+		float* a,
+		float* b,
+		int lengthA,  // = noSegments 
+		int count  //length of the output and vector b
+	)
+	{
+		int id = GetId();
+
+		int segmentId;
+
+		if (id < count)
+		{
+			segmentId = id / (count / lengthA);
+			out[id] = a[segmentId] * b[id];
 		}
 	}
 
