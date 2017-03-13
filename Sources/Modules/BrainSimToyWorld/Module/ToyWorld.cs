@@ -134,7 +134,7 @@ namespace GoodAI.ToyWorld
         public bool CopyDataThroughCPU { get; set; }
 
         [MyBrowsable, Category("Runtime"), DisplayName("Copy depth data")]
-        [YAXSerializableField(DefaultValue = false)]
+        [YAXSerializableField(DefaultValue = true)]
         public bool CopyDepthData { get; set; }
 
 
