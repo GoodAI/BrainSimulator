@@ -96,11 +96,12 @@ namespace World.Lua
                 inputTextBox.Clear();
                 inputTextBox.Enabled = false;
 
-                if (command.StartsWith("execute "))
+                const string executeCommand = "execute ";
+                if (command.StartsWith(executeCommand))
                 {
                     try
                     {
-                        string substring = command.Substring(8);
+                        string substring = command.Substring(executeCommand.Length);
                         StreamReader sr = new StreamReader(new FileStream(substring, FileMode.Open));
                         string readToEnd = sr.ReadToEnd();
                         command = readToEnd;
@@ -135,6 +136,7 @@ namespace World.Lua
         private void PrintHelp()
         {
             PrintLines(@"Type 'help [object]' for list of accessible methods.
+For lua script execution (.lua) type 'execute D:\script.lua'.
 If you want to stop an execution, press <Esc> key
 
 Useful objects:
