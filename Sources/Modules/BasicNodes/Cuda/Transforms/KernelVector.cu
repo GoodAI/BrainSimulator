@@ -239,7 +239,7 @@ extern "C"
 		float* out,
 		float* a,
 		float* b,
-		int lengthA,  // = noSegments 
+		int noSegments,  // = length A 
 		int count  //length of the output and vector b
 	)
 	{
@@ -249,7 +249,7 @@ extern "C"
 
 		if (id < count)
 		{
-			segmentId = id / (count / lengthA);
+			segmentId = id / (count / noSegments);
 			out[id] = a[segmentId] + b[id];
 		}
 	}
