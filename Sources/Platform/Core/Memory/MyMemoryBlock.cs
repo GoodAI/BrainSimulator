@@ -124,6 +124,11 @@ namespace GoodAI.Core.Memory
         }
 
         /// <summary>
+        /// Element size (or item size, or type size).
+        /// </summary>
+        protected static readonly int ESize = Marshal.SizeOf(typeof(T));
+
+        /// <summary>
         /// Obsolete: ColumnHint is deprecated, please use Dims instead. 
         /// </summary>
         /// We are not using the annotation, because that would generate a sh*tload of warnings.
@@ -188,10 +193,10 @@ namespace GoodAI.Core.Memory
 
                     if (!Unmanaged)
                     {
-                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T) + ", " + Count * Marshal.SizeOf(typeof(T)));
+                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T) + ", " + Count * ESize);
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
-                           Count * Marshal.SizeOf(typeof(T))));
+                           Count * ESize));
 
                         Fill(0);
                     }
@@ -200,7 +205,7 @@ namespace GoodAI.Core.Memory
                         if (ExternalPointer != 0)
                         {
                             Device[Owner.GPU] = new CudaDeviceVariable<T>(
-                                new CUdeviceptr(ExternalPointer), Count * Marshal.SizeOf(typeof(T)));
+                                new CUdeviceptr(ExternalPointer), Count * ESize);
                         }
                         else
                         {
@@ -278,7 +283,7 @@ namespace GoodAI.Core.Memory
             {
                 newDeviceMemory = new CudaDeviceVariable<T>(
                     MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
-                        newCount * Marshal.SizeOf(typeof(T))));
+                        newCount * ESize));
 
                 newDeviceMemory.Memset(BitConverter.ToUInt32(BitConverter.GetBytes(0), 0));
             }
@@ -334,8 +339,7 @@ namespace GoodAI.Core.Memory
 
             if (OnDevice)
             {
-                int size = Marshal.SizeOf(typeof(T));
-                Device[Owner.GPU].CopyToDevice(Host, size * offset, size * offset, size * length);
+                Device[Owner.GPU].CopyToDevice(Host, ESize * offset, ESize * offset, ESize * length);
                 return true;
             }
             else return false;
@@ -363,22 +367,69 @@ namespace GoodAI.Core.Memory
 
             if (OnDevice)
             {
-                int size = Marshal.SizeOf(typeof(T));
-                Device[Owner.GPU].CopyToHost(Host, size * offset, size * offset, size * length);
+                Device[Owner.GPU].CopyToHost(Host, ESize * offset, ESize * offset, ESize * length);
             }
         }
 
         public virtual void CopyFromMemoryBlock(MyMemoryBlock<T> source, int srcOffset, int destOffset, int count)
         {
-            int size = Marshal.SizeOf(typeof(T));
-            Device[Owner.GPU].CopyToDevice(source.GetDevice(Owner.GPU), srcOffset * size, destOffset * size, count * size);
+            Device[Owner.GPU].CopyToDevice(
+                source.GetDevice(Owner.GPU), srcOffset * ESize, destOffset * ESize, count * ESize);
         }
 
         public virtual void CopyToMemoryBlock(MyMemoryBlock<T> destination, int srcOffset, int destOffset, int count)
         {
-            int size = Marshal.SizeOf(typeof(T));
-            destination.GetDevice(Owner.GPU).CopyToDevice(Device[Owner.GPU], srcOffset * size, destOffset * size, count * size);
+            destination.GetDevice(Owner.GPU).CopyToDevice(
+                Device[Owner.GPU], srcOffset * ESize, destOffset * ESize, count * ESize);
         }
+
+        // TODO(Premek): Add more copy functions to be consistent with Async variants. (And cleanup the API in general.)
+
+        #region Async copy device to device
+
+        public virtual void CopyFromMemoryBlockAsync(MyMemoryBlock<T> source, int srcOffset, int destOffset, int count,
+            CudaStream stream = null)
+        {
+            Device[Owner.GPU].AsyncCopyToDevice(
+                source.GetDevice(Owner.GPU), srcOffset * ESize, destOffset * ESize, count * ESize,
+                MyKernelFactory.GetCuStreamOrDefault(stream));
+        }
+
+        public virtual void CopyToMemoryBlockAsync(MyMemoryBlock<T> destination, int srcOffset, int destOffset, int count,
+            CudaStream stream = null)
+        {
+            destination.GetDevice(Owner.GPU).AsyncCopyToDevice(
+                Device[Owner.GPU], srcOffset * ESize, destOffset * ESize, count * ESize,
+                MyKernelFactory.GetCuStreamOrDefault(stream));
+        }
+
+        public virtual void CopyFromMemoryBlockAsync(MyMemoryBlock<T> source, int count, CudaStream stream = null)
+        {
+            CopyFromMemoryBlockAsync(source, 0, 0, count, stream);
+        }
+
+        public virtual void CopyToMemoryBlockAsync(MyMemoryBlock<T> destination, int count, CudaStream stream = null)
+        {
+            CopyToMemoryBlockAsync(destination, 0, 0, count, stream);
+        }
+
+        /// <summary>
+        /// Asynchonously copies the whole source block or part of it when the destination is not large enough.
+        /// </summary>
+        public virtual void CopyFromMemoryBlockAsync(MyMemoryBlock<T> source, CudaStream stream = null)
+        {
+            Device[Owner.GPU].AsyncCopyToDevice(source.GetDevice(Owner.GPU), MyKernelFactory.GetCuStreamOrDefault(stream));
+        }
+
+        /// <summary>
+        /// Asynchonously copies the whole block or part of it when the destination is not large enough.
+        /// </summary>
+        public virtual void CopyToMemoryBlockAsync(MyMemoryBlock<T> destination, CudaStream stream = null)
+        {
+            destination.GetDevice(Owner.GPU).AsyncCopyToDevice(Device[Owner.GPU], MyKernelFactory.GetCuStreamOrDefault(stream));
+        }
+
+        #endregion
 
         protected void CopyToGPU(int nGPU)
         {
@@ -409,7 +460,7 @@ namespace GoodAI.Core.Memory
                     {
                         Device[nGPU] = new CudaDeviceVariable<T>(
                             MyKernelFactory.Instance.GetContextByGPU(nGPU).AllocateMemory(
-                            Count * Marshal.SizeOf(typeof(T))));
+                            Count * ESize));
 
                         CopyToGPU(nGPU);
                         Shared = true;
@@ -465,7 +516,7 @@ namespace GoodAI.Core.Memory
 
         public override SizeT GetSize()
         {
-            return Count * Marshal.SizeOf(typeof(T));
+            return Count * ESize;
         }
 
         public override void Synchronize()
@@ -526,7 +577,7 @@ namespace GoodAI.Core.Memory
 
             if (OnDevice && index < Count)
             {
-                Device[Owner.GPU].CopyToHost(ref value, index * Marshal.SizeOf(typeof(T)));
+                Device[Owner.GPU].CopyToHost(ref value, index * ESize);
             }
 
             return value;

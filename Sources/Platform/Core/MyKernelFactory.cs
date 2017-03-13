@@ -86,9 +86,7 @@ namespace GoodAI.Core
         {
             ConvertMemoryBlocksToDevicePtrs(args);
 
-            CUstream cuStream = stream?.Stream ?? CUstream.StreamPerThread;
-
-            m_kernel.RunAsync(cuStream, args);
+            m_kernel.RunAsync(MyKernelFactory.GetCuStreamOrDefault(stream), args);
         }
 
         public void SetupExecution(int numOfParallelUnits)
@@ -409,6 +407,20 @@ namespace GoodAI.Core
             m_contexts[nGPU].SetCurrent();
         }
 
+        private static CUstream GetDefaultCuStream()
+        {
+            return CUstream.StreamPerThread;
+        }
+        
+        /// <summary>
+        /// Extracts CUstream form a CudaStream or, if the stream is null, returns a default (currently StreamPerThread)
+        /// </summary>
+        public static CUstream GetCuStreamOrDefault(CudaStream stream = null)
+        {
+            return stream?.Stream ?? GetDefaultCuStream();
+        }
+
+
         /**
          * Creates all CUDA contexts
          */
@@ -436,7 +448,7 @@ namespace GoodAI.Core
             m_randDevices[GPU] = new CudaRandDevice(GeneratorType.PseudoDefault);
             m_randDevices[GPU].SetPseudoRandomGeneratorSeed((ulong)DateTime.Now.Ticks.GetHashCode());
 
-            m_streams[GPU] = new CudaStream(CUstream.StreamPerThread);
+            m_streams[GPU] = new CudaStream(GetDefaultCuStream());
 
             m_contextAlive[GPU] = true;
         }
