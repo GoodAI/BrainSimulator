@@ -535,22 +535,42 @@ namespace GoodAI.Core.Memory
 
         public virtual void Fill(float value)
         {
-            Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
+            Fill(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 
         public virtual void Fill(int value)
         {
-            Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
+            Fill(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
         }
 
         public virtual void Fill(uint value)
         {
-            Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
+            Device[Owner.GPU].Memset(value);
         }
 
+
+        /// <summary>
+        /// Obsolete. (This too float specific, not used much currently (if at all), and a bit confusing.)
+        /// </summary>
+        [Obsolete]
         public virtual void Fill(bool value)
         {
             Device[Owner.GPU].Memset(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0));
+        }
+
+        public virtual void FillAsync(float value, CudaStream stream = null)
+        {
+            FillAsync(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0), stream);
+        }
+
+        public virtual void FillAsync(int value, CudaStream stream = null)
+        {
+            FillAsync(BitConverter.ToUInt32(BitConverter.GetBytes(value), 0), stream);
+        }
+
+        public virtual void FillAsync(uint value, CudaStream stream = null)
+        {
+            Device[Owner.GPU].MemsetAsync(value, MyKernelFactory.GetCuStreamOrDefault(stream));
         }
 
         public override void Fill(byte[] srcBuffer)
