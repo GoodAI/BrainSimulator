@@ -303,7 +303,7 @@ namespace GoodAI.Core.Execution
         public override void AllocateMemory()
         {
             CheckSimulationSetup();
-
+            ResetTotalMemoryAllocatedCounter();
             AllocateMemory(AllNodes);
         }
 
@@ -312,6 +312,11 @@ namespace GoodAI.Core.Execution
             MyKernelFactory.Instance.SetCurrent(0);
             foreach (MyWorkingNode node in nodes)
                 MyMemoryManager.Instance.AllocateBlocks(node, false);
+        }
+
+        private void ResetTotalMemoryAllocatedCounter()
+        {
+            MyAbstractMemoryBlock.TotalMemoryAllocatedCounter = 0;
         }
 
         /// <summary>
