@@ -47,7 +47,18 @@ namespace Game
 
         public IAvatarControls GetActions()
         {
-            return m_avatarControls;
+            float desiredForwardSpeed = DesiredForwardSpeed();
+            float desiredRightSpeed = DesiredRightSpeed();
+            float desiredLeftRotation = m_avatar.DesiredLeftRotation;
+            bool interact = m_avatar.Interact;
+            bool pickUp = m_avatar.PickUp;
+            bool use = m_avatar.UseTool;
+            var fof = m_avatar.Fof;
+
+            AvatarControls realAvatarControls = new AvatarControls(int.MaxValue, 
+                desiredForwardSpeed, desiredRightSpeed, desiredLeftRotation, interact, use, pickUp, fof);
+            //return m_avatarControls;
+            return realAvatarControls;
         }
 
         public IStats GetStats()
@@ -78,15 +89,20 @@ namespace Game
             m_avatar.DesiredSpeed = jointSpeed;
 
             float jointDirection =
-                MathHelper.WrapAngle(m_avatar.Rotation
-                                     + (float)Math.Atan2(m_avatarControls.DesiredForwardSpeed, m_avatarControls.DesiredRightSpeed)
-                                     - MathHelper.PiOver2); // Our zero angle is the up direction (instead of right)
+                JointDirection(fSpeed, rSpeed);
             m_avatar.Direction = jointDirection;
             m_avatar.DesiredLeftRotation = m_avatarControls.DesiredLeftRotation;
             m_avatar.Interact = m_avatarControls.Interact;
             m_avatar.PickUp = m_avatarControls.PickUp;
             m_avatar.UseTool = m_avatarControls.Use;
             m_avatar.Fof = m_avatarControls.Fof;
+        }
+
+        private float JointDirection(float fSpeed, float rSpeed)
+        {
+            return MathHelper.WrapAngle(m_avatar.Rotation
+                                        + (float)Math.Atan2(fSpeed, rSpeed)
+                                        - MathHelper.PiOver2); // Our zero angle is the up direction (instead of right)
         }
 
         /// <summary>
@@ -105,5 +121,33 @@ namespace Game
             float jointSpeed = Math.Max(Math.Abs(fSpeed), Math.Abs(rSpeed));
             return jointSpeed;
         }
+
+        private float DesiredForwardSpeed()
+        {
+            var a1 = Math.Cos(m_avatar.Rotation);
+            var a2 = Math.Sin(m_avatar.Rotation);
+
+            var b1 = Math.Cos(m_avatar.Direction) * m_avatar.DesiredSpeed;
+            var b2 = Math.Sin(m_avatar.Direction) * m_avatar.DesiredSpeed;
+
+            var lapt = a1 * a1 + a2 * a2;
+            var atb = a1 * b1 + a2 * b2;
+
+            return (float) (atb / lapt);
+        }
+
+        private float DesiredRightSpeed()
+        {
+            var b1 = Math.Cos(m_avatar.Direction) * m_avatar.DesiredSpeed;
+            var b2 = Math.Sin(m_avatar.Direction) * m_avatar.DesiredSpeed;
+
+            var lb = Math.Sqrt(b1 * b1 + b2 * b2);
+
+            var sinTh = Math.Sin(m_avatar.Rotation - m_avatar.Direction);
+
+            return (float) (sinTh * lb);
+        }
+
+
     }
 }
