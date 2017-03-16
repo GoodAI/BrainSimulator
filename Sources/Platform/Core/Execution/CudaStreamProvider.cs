@@ -8,17 +8,29 @@ using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Core.Execution
 {
-    internal class CudaStreamProvider
+    public class CudaStreamProvider
     {
         public static CudaStreamProvider Instance { get; } = new CudaStreamProvider();
 
-        public CudaStream CurrentStream { get; } = new CudaStream(CUstream.StreamPerThread);
+        public CudaStream CurrentStream => m_streamPool[m_currentIndex];
 
-        private readonly int StreamsPerThread = 8;
+        private const int StreamsPerThread = 8;
+
+        private readonly CudaStream[] m_streamPool = new CudaStream[StreamsPerThread];
+
+        private int m_currentIndex = 0;
+
+        private CudaStreamProvider()
+        {
+            for (var i = 0; i < StreamsPerThread; i++)
+            {
+                m_streamPool[i] = new CudaStream();
+            }
+        }
 
         public void SwitchToNextStream()
         {
-            // TODO
+            m_currentIndex = (m_currentIndex + 1) % StreamsPerThread;
         }
     }
 }
