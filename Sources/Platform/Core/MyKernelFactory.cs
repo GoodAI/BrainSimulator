@@ -414,7 +414,7 @@ namespace GoodAI.Core
         /// </summary>
         public static CUstream GetCuStreamOrDefault(CudaStream stream = null)
         {
-            return stream?.Stream ?? GetDefaultCuStream();
+            return stream?.Stream ?? CudaStreamProvider.Instance.CurrentStream.Stream;
         }
 
 

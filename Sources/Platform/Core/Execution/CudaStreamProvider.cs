@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GoodAI.Core.Utils;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 
@@ -31,6 +32,8 @@ namespace GoodAI.Core.Execution
         public void SwitchToNextStream()
         {
             m_currentIndex = (m_currentIndex + 1) % StreamsPerThread;
+
+            //MyLog.DEBUG.WriteLine($"Switched to cuda stream #{m_currentIndex}");
         }
     }
 }
