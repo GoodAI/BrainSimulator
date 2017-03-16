@@ -14,6 +14,8 @@ namespace GoodAI.Platform.Core.Profiling
     {
         private readonly Stopwatch m_stopwatch = new Stopwatch();
 
+        #region inner class TimeSegment
+
         private class TimeSegment
         {
             public TimeSegment(string title)
@@ -82,6 +84,7 @@ namespace GoodAI.Platform.Core.Profiling
             }
         }
 
+        #endregion
 
         private readonly OrderedDictionary m_segments = new OrderedDictionary(capacity: 16);
 
@@ -97,6 +100,9 @@ namespace GoodAI.Platform.Core.Profiling
         public object ContextId { get; set; }
 
         private string ContextName => (ContextId.GetHashCode() % 10000).ToString().PadLeft(4);
+
+        public int GpuNo { get; set; }
+        public bool SynchronizeGpu { get; set; }
 
         public LoggingStopwatch(string title = "", int iterationCountPerBatch = 20, bool shouldHideFirstBatch = false)
         {
@@ -115,6 +121,9 @@ namespace GoodAI.Platform.Core.Profiling
 
         public void StartNewSegment(string key)
         {
+            if (SynchronizeGpu)
+                MyKernelFactory.Instance.GetContextByGPU(GpuNo).Synchronize();
+
             if (m_stopwatch.IsRunning)
                 CloseSegment();
 
@@ -128,10 +137,10 @@ namespace GoodAI.Platform.Core.Profiling
             m_stopwatch.Restart();
         }
 
-        public void SynchronizeAndStartNewSegment(string key, int nGPU)
+        [Obsolete]
+        public void SynchronizeAndStartNewSegment(string key, int gpuNo)
         {
-            MyKernelFactory.Instance.GetContextByGPU(nGPU).Synchronize();
-
+            GpuNo = gpuNo;
             StartNewSegment(key);
         }
 
