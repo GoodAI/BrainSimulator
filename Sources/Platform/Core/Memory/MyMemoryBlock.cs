@@ -198,7 +198,7 @@ namespace GoodAI.Core.Memory
 
                     if (!Unmanaged)
                     {
-                        MyLog.DEBUG.WriteLine("Allocating ({0}, {1}): {2}, {3} bytes (total: {4} MB )", Name, Dims.Print(true), typeof(T), Count * ESize, TotalMemoryAllocatedCounter / (1024 * 1024));
+                        MyLog.DEBUG.WriteLine($"Allocating ({Name}, {Dims.Print(true)}): {typeof(T)}, {Count * ESize} bytes (total: {TotalMemoryAllocatedCounter / (1024 * 1024)} MB )");
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
                            Count * ESize));
