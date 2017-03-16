@@ -65,7 +65,7 @@ namespace GoodAI.Core.Memory
                     m_unmanaged = value;
                 }
             }
-    }
+        }
         public SizeT ExternalPointer { get; set; }
 
         public abstract bool IsAllocated { get; }
@@ -98,6 +98,8 @@ namespace GoodAI.Core.Memory
 
         public abstract void GetValueAt<T>(ref T value, int index);
 
+        public static int TotalMemoryAllocatedCounter { get; set; }
+
         public MyAbstractMemoryBlock()
         {
             // TODO(HonzaS): Dependency injection.
@@ -107,6 +109,7 @@ namespace GoodAI.Core.Memory
 
     public class MyMemoryBlock<T> : MyAbstractMemoryBlock where T : struct
     {
+
         protected virtual CudaDeviceVariable<T>[] Device { get; set; }
 
         public T[] Host { get; protected set; }
@@ -191,9 +194,11 @@ namespace GoodAI.Core.Memory
                 {
                     Device = new CudaDeviceVariable<T>[MyKernelFactory.Instance.DevCount];
 
+                    TotalMemoryAllocatedCounter += Count * ESize;
+
                     if (!Unmanaged)
                     {
-                        MyLog.DEBUG.WriteLine("Allocating: " + typeof(T) + ", " + Count * ESize);
+                        MyLog.DEBUG.WriteLine($"Allocating ({Name}, {Dims.Print(true)}): {typeof(T)}, {Count * ESize} bytes (total: {TotalMemoryAllocatedCounter / (1024 * 1024)} MB )");
                         Device[Owner.GPU] = new CudaDeviceVariable<T>(
                            MyKernelFactory.Instance.GetContextByGPU(Owner.GPU).AllocateMemory(
                            Count * ESize));
