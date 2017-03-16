@@ -183,7 +183,7 @@ namespace GoodAI.Core.Configuration
                 {
                     // Missing nodes.xml is OK for UI extensions.
                     if (!file.Name.EndsWith(".GUI.dll"))
-                        MyLog.WARNING.WriteLine($"Module {file.Name} not loaded (OK for UI extensions): " + e.Message);
+                        MyLog.INFO.WriteLine($"Module {file.Name} skipped for now (may be loaded as UI module): " + e.Message);
                 }
                 else
                 {
