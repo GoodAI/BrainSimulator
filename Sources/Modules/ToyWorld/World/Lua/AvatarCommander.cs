@@ -168,6 +168,7 @@ namespace World.Lua
         /// <returns></returns>
         private bool GoToI(params object[] parameters)
         {
+            ResetAvatarsActions();
             Vector2 targetPosition = (Vector2)parameters[0];
             float targetDistance = (float)parameters[1];
             float distance = Vector2.Distance(targetPosition, m_currentAvatar.Position);
@@ -199,6 +200,7 @@ namespace World.Lua
         /// <returns></returns>
         private bool RotateToI(params object[] a)
         {
+            ResetAvatarsActions();
             float targetRotation = (float) a[0];
             float precision = (float) a[1];
             float diff = CalculateDifferenceBetweenAngles(m_currentAvatar.Rotation, targetRotation);
@@ -230,6 +232,14 @@ namespace World.Lua
             return difference;
         }
 
+        public void ResetAvatarsActions()
+        {
+            m_currentAvatar.DesiredSpeed = 0;
+            m_currentAvatar.DesiredLeftRotation = 0;
+            m_currentAvatar.Interact = false;
+            m_currentAvatar.PickUp = false;
+            m_currentAvatar.UseTool = false;
+        }
 
         public string CurrentRoom()
         {
