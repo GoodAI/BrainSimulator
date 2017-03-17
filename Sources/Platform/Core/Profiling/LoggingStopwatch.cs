@@ -14,6 +14,8 @@ namespace GoodAI.Platform.Core.Profiling
     {
         private readonly Stopwatch m_stopwatch = new Stopwatch();
 
+        #region inner class TimeSegment
+
         private class TimeSegment
         {
             public TimeSegment(string title)
@@ -82,6 +84,7 @@ namespace GoodAI.Platform.Core.Profiling
             }
         }
 
+        #endregion
 
         private readonly OrderedDictionary m_segments = new OrderedDictionary(capacity: 16);
 
@@ -98,6 +101,14 @@ namespace GoodAI.Platform.Core.Profiling
 
         private string ContextName => (ContextId.GetHashCode() % 10000).ToString().PadLeft(4);
 
+        /// <summary>
+        /// Switch the Swiss stopwatch on and off. Should not be changed while running.
+        /// </summary>
+        public bool Enabled { get; set; } = true;
+
+        public int GpuNo { get; set; }
+        public bool SynchronizeGpu { get; set; } = false;
+
         public LoggingStopwatch(string title = "", int iterationCountPerBatch = 20, bool shouldHideFirstBatch = false)
         {
             m_title = title;
@@ -109,12 +120,21 @@ namespace GoodAI.Platform.Core.Profiling
 
         public void Start()
         {
+            if (!Enabled)
+                return;
+
             m_lastSegmentRef = null;
             m_stopwatch.Restart();
         }
 
         public void StartNewSegment(string key)
         {
+            if (!Enabled)
+                return;
+
+            if (SynchronizeGpu)
+                MyKernelFactory.Instance.GetContextByGPU(GpuNo).Synchronize();
+
             if (m_stopwatch.IsRunning)
                 CloseSegment();
 
@@ -128,15 +148,18 @@ namespace GoodAI.Platform.Core.Profiling
             m_stopwatch.Restart();
         }
 
-        public void SynchronizeAndStartNewSegment(string key, int nGPU)
+        [Obsolete]
+        public void SynchronizeAndStartNewSegment(string key, int gpuNo)
         {
-            MyKernelFactory.Instance.GetContextByGPU(nGPU).Synchronize();
-
+            GpuNo = gpuNo;
             StartNewSegment(key);
         }
 
         private void CloseSegment()
         {
+            if (!Enabled)
+                return;
+
             var elapsedTicks = m_stopwatch.ElapsedTicks;
             m_lastSegmentRef?.AddElapsedTicks(elapsedTicks);
 
@@ -145,6 +168,9 @@ namespace GoodAI.Platform.Core.Profiling
 
         public void StopAndSometimesPrintStats()
         {
+            if (!Enabled)
+                return;
+
             m_stopwatch.Stop();
 
             CloseSegment();
@@ -200,5 +226,6 @@ namespace GoodAI.Platform.Core.Profiling
         {
             return ticks * 1000L * 1000L / Stopwatch.Frequency;
         }
-    }
+
+     }
 }
