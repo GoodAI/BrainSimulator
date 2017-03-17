@@ -4,22 +4,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GoodAI.Core.Utils;
+using GoodAI.Platform.Core.Profiling;
 using ManagedCuda;
 using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Core.Execution
 {
-    public class CudaStreamProvider
+    internal class CudaStreamProvider
     {
         public static CudaStreamProvider Instance { get; } = new CudaStreamProvider();
 
         public CudaStream CurrentStream => m_streamPool[m_currentIndex];
 
-        private const int StreamsPerThread = 8;
+        private const int StreamsPerThread = 16;
 
         private readonly CudaStream[] m_streamPool = new CudaStream[StreamsPerThread];
 
         private int m_currentIndex = 0;
+
+        private readonly LoggingStopwatch m_stopwatch = new LoggingStopwatch("SyncAllStreams", 100) { Enabled = false };
 
         private CudaStreamProvider()
         {
@@ -33,7 +36,20 @@ namespace GoodAI.Core.Execution
         {
             m_currentIndex = (m_currentIndex + 1) % StreamsPerThread;
 
-            //MyLog.DEBUG.WriteLine($"Switched to cuda stream #{m_currentIndex}");
+            MyLog.DEBUG.WriteLine($"Switched to cuda stream #{m_currentIndex}");
+        }
+
+        public void SynchronizeAllStreams()
+        {
+            m_stopwatch.Start();
+
+            // (Synchronizing the whole context would take roughtly the same time.)
+            foreach (var cudaStream in m_streamPool)
+            {
+                cudaStream.Synchronize();
+            }
+
+            m_stopwatch.StopAndSometimesPrintStats();
         }
     }
 }

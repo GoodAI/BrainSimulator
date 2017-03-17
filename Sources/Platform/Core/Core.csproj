@@ -112,6 +112,7 @@
     <Compile Include="Dashboard\ProxyPropertyDescriptor.cs" />
     <Compile Include="Execution\CudaStreamHandle.cs" />
     <Compile Include="Execution\CudaStreamProvider.cs" />
+    <Compile Include="Execution\CudaSyncHelper.cs" />
     <Compile Include="Execution\MyExecutionBlock.cs" />
     <Compile Include="Execution\MyProjectRunner.cs" />
     <Compile Include="Execution\MySimulation.cs" />
