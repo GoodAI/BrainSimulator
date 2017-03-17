@@ -26,7 +26,8 @@ namespace World.Atlas.Layers
 
         private float m_summer; // Local copy of the Atlas' summer
         private Vector3 m_summerCache;
-        private bool IsWinter { get { return m_summer < 0.25f; } }
+        private bool IsWinter => m_summer < 0.25f;
+        private bool m_isWinterEnabled;
 
         private int m_tileCount;
 
@@ -96,6 +97,7 @@ namespace World.Atlas.Layers
         public void UpdateTileStates(Atlas atlas)
         {
             m_summer = atlas.Summer;
+            m_isWinterEnabled = atlas.IsWinterEnabled;
         }
 
 
@@ -207,7 +209,7 @@ namespace World.Atlas.Layers
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private ushort GetDefaultTileOffset(int x, int y, int defaultTileOffset)
         {
-            if (!IsWinter)
+            if (!m_isWinterEnabled || !IsWinter)
                 return (ushort)defaultTileOffset;
 
             m_summerCache.X = x;

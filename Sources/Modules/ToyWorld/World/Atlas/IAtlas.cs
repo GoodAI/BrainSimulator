@@ -168,6 +168,8 @@ namespace World.Atlas
 
         TimeSpan DayLength { get; set; }
 
+        bool IsWinterEnabled { get; set; }
+
         /// <summary>
         /// Date and Time is currently affecting Temperature.
         /// </summary>

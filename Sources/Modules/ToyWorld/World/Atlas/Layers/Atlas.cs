@@ -322,6 +322,7 @@ namespace World.Atlas.Layers
         // 1 is Jun/Jul
         public float Summer { get; private set; }
         public float Day { get; private set; }
+        public bool IsWinterEnabled { get; set; } = true;
 
         public void IncrementTime(int days = 0, int hours = 0, int minutes = 0, int seconds = 10, int millis = 0)
         {
