@@ -24,6 +24,7 @@ namespace GoodAI.Modules.Transforms
         ElementwiseMult_Segmented_Stretch,
         ElementwiseSub,
         CrossMult,
+        CrossMult_Segmented,
         OtherAverage
     }
 }
