@@ -9,7 +9,7 @@ namespace GoodAI.Platform.Core.Profiling
 {
     public class SimSpeedRunningAverage
     {
-        private const int IntervalCount = 30;
+        private const int IntervalCount = 10;
         private readonly long m_minRecordIntervalTicks;
 
         private struct TimePoint
