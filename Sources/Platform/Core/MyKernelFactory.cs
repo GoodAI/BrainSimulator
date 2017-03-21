@@ -1,4 +1,5 @@
 ﻿using GoodAI.Core.Configuration;
+using GoodAI.Core.Execution;
 using GoodAI.Core.Memory;
 using GoodAI.Core.Nodes;
 using GoodAI.Core.Utils;
@@ -23,7 +24,7 @@ namespace GoodAI.Core
         protected CudaKernel m_kernel;
         protected int m_GPU;
 
-        private CudaStream m_stream;
+        private CudaStreamHandle m_streamHandle;
 
         public string KernelName { get { return m_kernel.KernelName; } }
         public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set { m_kernel.BlockDimensions = value; } }
@@ -44,30 +45,26 @@ namespace GoodAI.Core
         public void SetConstantVariable<T>(string name, T value) where T : struct { m_kernel.SetConstantVariable<T>(name, value); }
         //public void SetConstantVariable(string name, CUdeviceptr value) { m_kernel.SetConstantVariable(name, value); } 
 
-        public MyCudaKernel(CudaKernel kernel, int GPU, CudaStream stream)
+        private MyCudaKernel(CudaKernel kernel, int GPU, CudaStreamHandle streamHandle)
         {
             m_GPU = GPU;
-            m_stream = stream;
+            m_streamHandle = streamHandle;
 
             m_kernel = kernel;
             MAX_THREADS = m_kernel.MaxThreadsPerBlock;
         }
 
-        public MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStream stream = null)
-            : this(new CudaKernel(kernelName, module, cuda), GPU, stream)
+        internal MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStreamHandle streamHandle)
+            : this(new CudaKernel(kernelName, module, cuda), GPU, streamHandle)
         { }
 
         /// <summary>
-        /// Runs the kernel asynchronously when a non-null CudaStream was injected via the constructor
-        /// or synchronously when it was not.
+        /// Runs the kernel asynchronously (in the cuda stream provided by the stream handle injected into the constructor).
         /// </summary>
         /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void Run(params object[] args)
         {
-            if (m_stream != null)
-                RunAsync(m_stream, args);
-            else
-                RunSync(args);
+            RunAsync(m_streamHandle.CurrentStream, args);
         }
 
         /// <summary>Runs the kernel in synchronous mode.</summary>
@@ -216,35 +213,35 @@ namespace GoodAI.Core
             }
         }
 
-        private MyCudaKernel TryLoadPtx(int GPU, string ptxFileName, string kernelName, bool forceNewInstance, string additionalLinkDependencyPath, bool isFallback = false)
+        private MyCudaKernel LoadPtxAndCreateKernel(int GPU, string ptxFileName, string kernelName, bool forceNewInstance,
+            string additionalLinkDependencyPath, bool isFallback = false)
         {
-            if (m_ptxModules[GPU].ContainsKey(ptxFileName) && !forceNewInstance)
-                return new MyCudaKernel(kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU, m_streams[GPU]);
-
-            try
+            if (!m_ptxModules[GPU].ContainsKey(ptxFileName) || forceNewInstance)
             {
-                CUmodule module;
-
-                if (additionalLinkDependencyPath == null)
-                    module = m_contexts[GPU].LoadModule(ptxFileName);
-                else
-                    module = LoadPtxWithLinker(GPU, ptxFileName, additionalLinkDependencyPath);
-
-                m_ptxModules[GPU][ptxFileName] = module;
-                return new MyCudaKernel(kernelName, module, m_contexts[GPU], GPU, m_streams[GPU]);
-            }
-            catch (Exception e)
-            {
-                if (!isFallback && additionalLinkDependencyPath == null)
+                try
                 {
-                    // Simple loading failed, try extended linkage
-                    MyLog.WARNING.WriteLine("Kernel loading failed. Fallback to extended linkage...");
-                    return KernelInternal(GPU, ptxFileName, kernelName, forceNewInstance, extendedLinkage: true, isFallback: true);
+                    m_ptxModules[GPU][ptxFileName] = (additionalLinkDependencyPath == null)
+                        ? m_contexts[GPU].LoadModule(ptxFileName)
+                        : LoadPtxWithLinker(GPU, ptxFileName, additionalLinkDependencyPath);
                 }
-                // Fallback to simple wouldn't make much sense, so we don't do it..
+                catch (Exception e)
+                {
+                    if (!isFallback && additionalLinkDependencyPath == null)
+                    {
+                        // Simple loading failed, try extended linkage
+                        MyLog.WARNING.WriteLine("Kernel loading failed. Fallback to extended linkage...");
+                        return KernelInternal(GPU, ptxFileName, kernelName, forceNewInstance, extendedLinkage: true,
+                            isFallback: true);
+                    }
+                    // Fallback to simple wouldn't make much sense, so we don't do it..
 
-                throw new CudaException($"{e.Message} ({ptxFileName})", e);
+                    throw new CudaException($"{e.Message} ({ptxFileName})", e);
+                }
             }
+
+            return new MyCudaKernel(
+                kernelName, m_ptxModules[GPU][ptxFileName], m_contexts[GPU], GPU,
+                new CudaStreamHandle(CudaStreamProvider.Instance));
         }
 
         private string GetCudaLibPath(string fileName)
@@ -302,7 +299,7 @@ namespace GoodAI.Core
                 }
             }
 
-            return TryLoadPtx(GPU, ptxFileName, kernelName, forceNewInstance, cudaRtPath, isFallback);
+            return LoadPtxAndCreateKernel(GPU, ptxFileName, kernelName, forceNewInstance, cudaRtPath, isFallback);
         }
 
         public MyCudaKernel Kernel(int GPU, string ptxFolder, string ptxFileName, string kernelName, bool forceNewInstance = false, bool extendedLinkage = false)
@@ -417,7 +414,7 @@ namespace GoodAI.Core
         /// </summary>
         public static CUstream GetCuStreamOrDefault(CudaStream stream = null)
         {
-            return stream?.Stream ?? GetDefaultCuStream();
+            return stream?.Stream ?? CudaStreamProvider.Instance.CurrentStream.Stream;
         }
 
 
