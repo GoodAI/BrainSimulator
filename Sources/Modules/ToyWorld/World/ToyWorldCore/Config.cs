@@ -25,7 +25,7 @@ namespace World.ToyWorldCore
         public TimeSpan YearLength{ get { return new TimeSpan(15,0,0,0); } }
         public TimeSpan DayLengh { get { return new TimeSpan(1,0,0,0); } }
 
-        public int SignalCount { get { return 4; } }
+        public int SignalCount { get { return 7; } }
 
         public int FruitSpawnPeriod { get { return 5000; } }
         public int FruitSpawnRange { get { return 1000; } }
