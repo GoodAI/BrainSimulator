@@ -169,6 +169,7 @@
     <Compile Include="Scripting\MyCSharpNode.cs" />
     <Compile Include="Scripting\MyCSharpNodeGroup.cs" />
     <Compile Include="Testing\MyKWM2SymbolNode.cs" />
+    <Compile Include="Testing\SlowAsyncNode.cs" />
     <Compile Include="TetrisWorld\MyTetrisEngine.cs" />
     <Compile Include="TetrisWorld\MyTetrisWorld.cs" />
     <Compile Include="TextProcessing\MyAssociativeNetworkWorld.cs" />
