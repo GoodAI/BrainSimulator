@@ -26,7 +26,7 @@ namespace GoodAI.Core
 
         private CudaStreamHandle m_streamHandle;
 
-        public string KernelName { get { return m_kernel.KernelName; } }
+        public string KernelName => m_kernel.KernelName;
         public dim3 BlockDimensions { get { return m_kernel.BlockDimensions; } set { m_kernel.BlockDimensions = value; } }
         public dim3 GridDimensions { get { return m_kernel.GridDimensions; } set { m_kernel.GridDimensions = value; } }
         public uint DynamicSharedMemory { get { return m_kernel.DynamicSharedMemory; } set { m_kernel.DynamicSharedMemory = value; } }
@@ -52,6 +52,7 @@ namespace GoodAI.Core
 
             m_kernel = kernel;
             MAX_THREADS = m_kernel.MaxThreadsPerBlock;
+            m_kernel.BlockDimensions = new dim3(0, 0, 0);  // Ensure this is later initialized to some explicit values.
         }
 
         internal MyCudaKernel(string kernelName, CUmodule module, CudaContext cuda, int GPU, CudaStreamHandle streamHandle)
@@ -71,6 +72,7 @@ namespace GoodAI.Core
         /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void RunSync(params object[] args)
         {
+            CheckExecutionSetup();
             ConvertMemoryBlocksToDevicePtrs(args);
 
             m_kernel.Run(args);
@@ -81,6 +83,7 @@ namespace GoodAI.Core
         /// <param name="args">MyMemoryBlock arguments are automatically converted to device pointers.</param>
         public void RunAsync(CudaStream stream, params object[] args)
         {
+            CheckExecutionSetup();
             ConvertMemoryBlocksToDevicePtrs(args);
 
             m_kernel.RunAsync(MyKernelFactory.GetCuStreamOrDefault(stream), args);
@@ -104,6 +107,12 @@ namespace GoodAI.Core
         {
             m_kernel.BlockDimensions = blockDimensions;
             m_kernel.GridDimensions = gridDimensions;
+        }
+
+        private void CheckExecutionSetup()
+        {
+            if ((m_kernel.BlockDimensions.x == 0) || (m_kernel.GridDimensions.x == 0))
+                throw new CudaException($"Block or grid dimensions not set for {KernelName}. Forgot to call SetupExecution?");
         }
 
         private void ConvertMemoryBlocksToDevicePtrs(object[] args)
