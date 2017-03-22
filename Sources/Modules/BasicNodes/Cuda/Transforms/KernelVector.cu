@@ -407,6 +407,30 @@ extern "C"
 		}
 	}
 
+	//multiplies each row from matrixA with each row from matrixB in a crossproduct manner, i.e., the two vectors are multiplied as matrices so that result is a matrix where output_ij = a_i * b_j. The oberall result is then a tensor output_ijk, where k goeas over rows in the matrices.
+	__global__ void CrossMult_Segmented(
+		float* output,	//tensor noColumnsA * noColumnsB * noRows
+		float* matrixA,
+		float* matrixB,
+		int noColumnsA,
+		int noColumnsB,
+		int noRows
+	)
+	{
+		int id = GetId();
+
+		int i, j, k;
+
+		if (id < noColumnsA * noColumnsB * noRows)
+		{
+			i = id % noColumnsA;
+			j = (id / noColumnsA) % noColumnsB;
+			k = id / (noColumnsA * noColumnsB);
+
+			output[id] = matrixA[i + k * noColumnsA] * matrixB[j + k * noColumnsB];
+		}
+	}
+
 	__global__ void OtherAverage(
 		float* a,
 		float* b,
