@@ -186,6 +186,11 @@ namespace World.Lua
             stepFunc(parameters);
         }
 
+        public void WaitOne()
+        {
+            m_scriptSynchronization.WaitOne();
+        }
+
         public void StopScript()
         {
             m_stopScript = true;
