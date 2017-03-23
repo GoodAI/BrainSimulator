@@ -243,6 +243,10 @@ namespace World.ToyWorldCore
 
         #endregion
 
+        public void RunLuaScript(string scriptPath)
+        {
+            m_luaConsole.RunScript(scriptPath);
+        }
 
         public List<int> GetAvatarsIds()
         {

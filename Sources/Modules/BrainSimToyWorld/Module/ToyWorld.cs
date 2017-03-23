@@ -146,6 +146,11 @@ namespace GoodAI.ToyWorld
         [YAXSerializableField(DefaultValue = null), YAXCustomSerializer(typeof(MyPathSerializer))]
         public string SaveFile { get; set; }
 
+        [MyBrowsable, Category("Lua"), Editor(typeof(FileNameEditor), typeof(UITypeEditor))]
+        [YAXSerializableField(DefaultValue = ""), YAXCustomSerializer(typeof(MyPathSerializer))]
+        [Description("Path to a lua script to execute at start. (leave blank for no script)")]
+        public string RunFile { get; set; }
+
         [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
         [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Autodetect)]
         public ControlMapper.ControlMode ControlModeVisible { get; set; } // only for the user - do not use otherwise
@@ -338,6 +343,7 @@ namespace GoodAI.ToyWorld
 
             validator.AssertError(File.Exists(SaveFile), this, "Please specify a correct SaveFile path in world properties.");
             validator.AssertError(File.Exists(TilesetTable), this, "Please specify a correct TilesetTable path in world properties.");
+            validator.AssertError(RunFile == "" || File.Exists(RunFile), this, "Please enter an existing lua script file in world properties.");
 
             validator.AssertError(FoFSize > 0, this, "FoF size has to be positive.");
             validator.AssertError(FoFResWidth > 0, this, "FoF resolution width has to be positive.");
@@ -400,6 +406,7 @@ namespace GoodAI.ToyWorld
                     new FileStream(SaveFile, FileMode.Open, FileAccess.Read, FileShare.Read),
                     new StreamReader(TilesetTable));
             GameCtrl = GameFactory.GetThreadSafeGameController(setup);
+            GameCtrl.LuaScriptPath = RunFile;
             GameCtrl.Init();
         }
 

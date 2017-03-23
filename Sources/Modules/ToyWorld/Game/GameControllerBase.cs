@@ -24,6 +24,8 @@ namespace Game
 
         public ToyWorld World { get; private set; }
 
+        public string LuaScriptPath { get; set; }
+
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
@@ -80,6 +82,12 @@ namespace Game
             }
 
             // Controls should be already set
+
+            if (LuaScriptPath != "")
+            {
+                World.RunLuaScript(LuaScriptPath);
+                LuaScriptPath = "";
+            }
 
             World.Update();
 
