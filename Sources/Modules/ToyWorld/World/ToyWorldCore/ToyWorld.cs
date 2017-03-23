@@ -95,12 +95,36 @@ namespace World.ToyWorldCore
                 return avatar != null ? avatar.PuppetControlled ? 1 : 0 : -1;
             };
 
+            Func<IAtlas, float> avatarPositionX = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.Position.X : 0f;
+            };
+
+            Func<IAtlas, float> avatarPositionY = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.Position.Y : 0f;
+            };
+
+            Func<IAtlas, float> avatarRotation = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                // in radians, zero = avatar is lookning on the top
+                return avatar != null ? avatar.Rotation % (2 * (float)Math.PI) : 0f;
+            };
+
+
             SignalDispatchers = new Dictionary<string, Func<IAtlas, float>>();
 
             SignalDispatchers.Add("Item", inventoryItem);
             SignalDispatchers.Add("Energy", avatarEnergy);
             SignalDispatchers.Add("Rested", avatarRested);
             SignalDispatchers.Add("Puppet", puppetControl);
+            SignalDispatchers.Add("AbsPosX", avatarPositionX);
+            SignalDispatchers.Add("AbsPosY", avatarPositionY);
+            SignalDispatchers.Add("Rotation", avatarRotation);
+
             // if you add a new signal, change the SignalCount variable accordingly
 
             Debug.Assert(TWConfig.Instance.SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
@@ -108,7 +132,7 @@ namespace World.ToyWorldCore
 
         private void InitAtlas(Map tmxDeserializedMap)
         {
-            Action<GameActor> initializer = delegate(GameActor actor)
+            Action<GameActor> initializer = delegate (GameActor actor)
             {
                 IAutoupdateable updateable = actor as IAutoupdateable;
                 if (updateable != null && updateable.NextUpdateAfter > 0)
