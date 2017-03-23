@@ -72,7 +72,10 @@ namespace World.Lua
 
         public Thread ExecuteChunk(string command, Action<string> performAfterFinished = null)
         {
-            m_thread = new Thread(() => RunScript(command, performAfterFinished));
+            m_thread = new Thread(() => RunScript(command, performAfterFinished))
+            {
+                IsBackground = true
+            };
             m_thread.Start();
             Thread.Sleep(1);
             return m_thread;
@@ -186,9 +189,18 @@ namespace World.Lua
             stepFunc(parameters);
         }
 
-        public void WaitOne()
+        /// <summary>
+        /// Useful for outside lua scripts - to synchronize (WaitOne) + check where it should still continue.
+        /// Intended use case:
+        /// while le:Synchronize() do
+        ///     stuff()
+        /// end
+        /// </summary>
+        /// <returns>true when script execution may continue, false otherwise</returns>
+        public bool Synchronize()
         {
             m_scriptSynchronization.WaitOne();
+            return !m_stopScript;
         }
 
         public void StopScript()
