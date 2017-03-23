@@ -2,12 +2,10 @@
 
 namespace GoodAI.ToyWorldAPI
 {
-    public interface IMessageSender
+    public interface IMessanger
     {
-        /// <summary>
-        /// Message obtained from avatar
-        /// </summary>
-        event MessageEventHandler NewMessage;
+        string InMessage { get; set; }
+        string OutMessage { get; set; }
     }
 
     public class MessageEventArgs : EventArgs

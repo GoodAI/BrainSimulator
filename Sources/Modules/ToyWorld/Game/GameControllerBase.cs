@@ -13,6 +13,9 @@ namespace Game
 {
     public abstract class GameControllerBase : IGameController
     {
+        public string InMessage { get; set; }
+        public string OutMessage { get; set; }
+
         private bool m_initialized;
         private readonly GameSetup m_gameSetup;
 
@@ -24,7 +27,6 @@ namespace Game
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
 
-        public event MessageEventHandler NewMessage = delegate { };
 
         protected GameControllerBase(ToyWorldRenderer renderer, GameSetup setup)
         {
@@ -37,7 +39,6 @@ namespace Game
             m_renderer?.Dispose();
             World?.Dispose();
         }
-
 
         #region IGameController overrides
 

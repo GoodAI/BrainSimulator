@@ -10,33 +10,19 @@ namespace Game
     {
         private readonly IAvatar m_avatar;
         private AvatarControls m_avatarControls;
-        private string m_messageOut;
 
-        public event MessageEventHandler NewMessage = delegate { };
+        public string InMessage { get; set; }
 
-        public string MessageOut
+        public string OutMessage
         {
-            get { return m_messageOut; }
-            set
-            {
-                m_messageOut = value;
-                NewMessage(this, new MessageEventArgs(m_messageOut));
-            }
+            get { return m_avatar.OutMessage; }
+            set { m_avatar.OutMessage = value; }
         }
-
-        public string MessageIn { get; set; }
 
         public AvatarController(IAvatar avatar)
         {
             m_avatar = avatar;
             m_avatarControls = new AvatarControls(int.MaxValue);
-
-            avatar.NewMessage += avatar_NewMessage;
-        }
-
-        private void avatar_NewMessage(object sender, MessageEventArgs e)
-        {
-            NewMessage(this, e);
         }
 
         public void SetActions(IAvatarControls actions)
@@ -147,7 +133,5 @@ namespace Game
 
             return (float) (sinTh * lb);
         }
-
-
     }
 }

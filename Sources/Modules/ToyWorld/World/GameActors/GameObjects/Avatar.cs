@@ -14,7 +14,7 @@ using World.GameActors.Tiles.ObstacleInteractable;
 
 namespace World.GameActors.GameObjects
 {
-    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPickGameObject, IMessageSender
+    public interface IAvatar : IAvatarControllable, ICharacter, IAutoupdateable, ICanPickGameObject, IMessanger
     {
         /// <summary>
         /// Avatar unique Id for connecting from outside. Specified in .tmx file.
@@ -49,8 +49,6 @@ namespace World.GameActors.GameObjects
 
     public class Avatar : Character, IAvatar
     {
-        public event MessageEventHandler NewMessage = delegate { };
-
         private float m_energy;
         private float m_rested;
         private float m_temperature;
@@ -381,5 +379,8 @@ namespace World.GameActors.GameObjects
             value = Math.Max(value, min);
             value = Math.Min(value, max);
         }
+
+        public string OutMessage { get; set; }
+        public string InMessage { get; set; }
     }
 }

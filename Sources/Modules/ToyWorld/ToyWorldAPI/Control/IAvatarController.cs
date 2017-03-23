@@ -5,11 +5,8 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     ///
     /// </summary>
-    public interface IAvatarController : IMessageSender
+    public interface IAvatarController : IMessanger
     {
-        string MessageIn { get; set; }
-        string MessageOut { get; set; }
-
         /// <summary>
         ///
         /// </summary>

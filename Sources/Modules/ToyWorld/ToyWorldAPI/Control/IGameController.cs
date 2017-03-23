@@ -7,7 +7,7 @@ namespace GoodAI.ToyWorld.Control
     /// <summary>
     ///
     /// </summary>
-    public interface IGameController : IDisposable, IMessageSender
+    public interface IGameController : IDisposable, IMessanger
     {
         /// <summary>
         ///

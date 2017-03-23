@@ -156,13 +156,27 @@ namespace World.Lua
         {
             for (int i = 0; i < repetitions; i++)
             {
+                m_scriptSynchronization.WaitOne();
                 if (m_stopScript)
                 {
                     m_stopScript = false;
                     return;
                 }
-                m_scriptSynchronization.WaitOne();
                 stepFunc(parameters);
+            }
+        }
+
+        public void Repeat(Action stepFunc, int repetitions)
+        {
+            for (int i = 0; i < repetitions; i++)
+            {
+                m_scriptSynchronization.WaitOne();
+                if (m_stopScript)
+                {
+                    m_stopScript = false;
+                    return;
+                }
+                stepFunc();
             }
         }
 

@@ -445,16 +445,18 @@ namespace GoodAI.ToyWorld
 
             private void SendMessageToBrain()
             {
-                string message = Owner.AvatarCtrl.MessageIn;
+                string message = Owner.AvatarCtrl.OutMessage;
 
                 SetMessageTextBlock(message);
             }
 
             private void SetMessageTextBlock(string message)
             {
+                for (int i = 0; i < Owner.Text.Count; ++i)
+                    Owner.Text.Host[i] = 0;
+
                 if (message == null)
                 {
-                    Owner.Text.Fill(0);
                     return;
                 }
                 for (int i = 0; i < message.Length; ++i)
@@ -468,7 +470,7 @@ namespace GoodAI.ToyWorld
                 if (Owner.TextIn == null)
                     return;
                 Owner.TextIn.SafeCopyToHost();
-                Owner.AvatarCtrl.MessageOut = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
+                Owner.AvatarCtrl.InMessage = string.Join("", Owner.TextIn.Host.Select(x => (char)x));
             }
         }
     }
