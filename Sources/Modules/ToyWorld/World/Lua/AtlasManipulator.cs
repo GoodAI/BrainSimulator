@@ -26,17 +26,24 @@ namespace World.Lua
             Type t = GameActor.GetGameActorType(type);
             if (t == null) throw new Exception("Object of type " + type + " not found in assembly.");
 
-            GameActor ga = (GameActor)Activator.CreateInstance(t);
-            if (t.IsSubclassOf(typeof(Tile)))
+            int xi = (int) x;
+            int yi = (int) y;
+            GameActor ga;
+
+            if (t.IsSubclassOf(typeof(DynamicTile)))
             {
-                int xi = (int) x;
-                int yi = (int) y;
-                m_atlas.Add(new GameActorPosition(ga, new Vector2(xi, yi), Layer(layer)));
+                ga = (GameActor)Activator.CreateInstance(t, new Vector2I(xi, yi));
+            }
+            else if (t.IsSubclassOf(typeof(Tile)))
+            {
+                ga = (GameActor)Activator.CreateInstance(t);
             }
             else
             {
                 throw new Exception("Object of type " + t + " is not subclass of Tile.");
             }
+
+            m_atlas.Add(new GameActorPosition(ga, new Vector2(xi, yi), Layer(layer)));
         }
 
         public void DestroyTile(string layer, int x, int y)
