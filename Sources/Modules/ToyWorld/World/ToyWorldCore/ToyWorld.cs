@@ -120,6 +120,11 @@ namespace World.ToyWorldCore
                 return avatar != null ? avatar.Rotation % (2 * (float)Math.PI) : 0f;
             };
 
+            Func<IAtlas, float> avatarReward = x =>
+            {
+                IAvatar avatar = x.GetAvatars().FirstOrDefault();
+                return avatar != null ? avatar.Reward : 0;
+            };
 
             SignalDispatchers = new Dictionary<string, Func<IAtlas, float>>();
 
@@ -130,7 +135,7 @@ namespace World.ToyWorldCore
             SignalDispatchers.Add("AbsPosX", avatarPositionX);
             SignalDispatchers.Add("AbsPosY", avatarPositionY);
             SignalDispatchers.Add("Rotation", avatarRotation);
-
+            SignalDispatchers.Add("Reward", avatarReward);
             // if you add a new signal, change the SignalCount variable accordingly
 
             Debug.Assert(TWConfig.Instance.SignalCount == SignalDispatchers.Count, "Number of signals has to be defined in SignalCount!");
