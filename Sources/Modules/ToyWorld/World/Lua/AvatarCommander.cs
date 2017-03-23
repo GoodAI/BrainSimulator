@@ -14,6 +14,8 @@ namespace World.Lua
         private readonly IAvatar m_currentAvatar;
         private readonly LuaExecutor m_le;
 
+        private readonly float ToWorldSpeedCoef = new Physics.BasicAvatarMover().MaximumSpeed;
+
         public AvatarCommander(LuaExecutor ex, IAtlas atlas)
         {
             m_atlas = atlas;
@@ -24,6 +26,11 @@ namespace World.Lua
             ex.State["avatar"] = m_currentAvatar;
 
             m_le = ex;
+        }
+
+        public void StrafeTo(float x, float y)
+        {
+            m_le.Do(StrafeToI, new Vector2(x + 0.5f, y + 0.5f), 1e-5f);
         }
 
         public void GoTo(Vector2 position)
@@ -189,6 +196,30 @@ namespace World.Lua
                     m_currentAvatar.DesiredSpeed = distance * 0.3f;
                 }
             }
+            return false;
+        }
+
+        private bool StrafeToI(params object[] parameters)
+        {
+            ResetAvatarsActions();
+            Vector2 targetPosition = (Vector2)parameters[0];
+            float targetDistance = (float)parameters[1];
+
+            float distance = Vector2.Distance(targetPosition, m_currentAvatar.Position);
+            if (distance <= targetDistance) return true; //done
+
+            m_currentAvatar.Direction = -Vector2.AngleTo(m_currentAvatar.Position, targetPosition);
+
+            if (distance > ToWorldSpeedCoef)
+            {
+                m_currentAvatar.DesiredSpeed = 1;
+            }
+            else
+            {
+                // should reach exact target in one step
+                m_currentAvatar.DesiredSpeed = distance / ToWorldSpeedCoef;
+            }
+
             return false;
         }
 
