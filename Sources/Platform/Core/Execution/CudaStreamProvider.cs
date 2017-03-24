@@ -10,7 +10,7 @@ using ManagedCuda.BasicTypes;
 
 namespace GoodAI.Core.Execution
 {
-    internal class CudaStreamProvider
+    internal sealed class CudaStreamProvider : IDisposable
     {
         public static CudaStreamProvider Instance { get; } = new CudaStreamProvider();
 
@@ -50,6 +50,23 @@ namespace GoodAI.Core.Execution
             }
 
             m_stopwatch.StopAndSometimesPrintStats();
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            foreach (var cudaStream in m_streamPool)
+                cudaStream.Dispose();
+        }
+
+        public void Dispose()
+        {
+            ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
+
+        ~CudaStreamProvider()
+        {
+            ReleaseUnmanagedResources();
         }
     }
 }
