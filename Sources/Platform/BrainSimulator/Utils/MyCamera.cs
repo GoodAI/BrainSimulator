@@ -15,6 +15,7 @@ namespace GoodAI.BrainSimulator.Utils
         protected MouseButtons m_mouseState = 0;
 
         protected const float ZOOM_SENSITIVITY = 0.005f;
+        protected const float PAN_SENSITIVITY = 0.0012f;
 
         public abstract MyCameraData CameraSetup { get; set; }        
 
@@ -56,8 +57,6 @@ namespace GoodAI.BrainSimulator.Utils
     public class MyZoomAndPanCamera : MyCamera
     {
         private Vector3 m_zoomAndPan;
-
-        private const float PAN_SENSITIVITY = 0.0012f;
 
         public MyZoomAndPanCamera(GLControl glControl) : base(glControl)
         {           
@@ -113,32 +112,40 @@ namespace GoodAI.BrainSimulator.Utils
 
     public class MyOrbitCamera : MyCamera
     {
-        private float m_radius;
         private float m_azimuth;
         private float m_inclination;
+        private Vector3 m_translation;
         
-        private const float ORBIT_SENSITIVITY = 0.75f;
+        private const float ORBIT_SENSITIVITY = 0.5f;
 
         public MyOrbitCamera(GLControl glControl) : base(glControl)
         {           
-            m_radius = 5.0f;
-            m_inclination = 30.0f;
             m_azimuth = -45.0f;
+            m_inclination = 30.0f;
+            m_translation = new Vector3(0, 0, -5);
         }
 
         protected override void ProcessMouseMovement()
         {            
+            Vector2 mouseDelta = m_mouseLastPos - m_mousePos;
+
+            if ((m_mouseState & MouseButtons.Left) > 0)
+            {
+                m_translation.X += mouseDelta.X * PAN_SENSITIVITY * m_translation.Z;
+                m_translation.Y -= mouseDelta.Y * PAN_SENSITIVITY * m_translation.Z;
+
+                m_glControl.Invalidate();
+            }
+
             if ((m_mouseState & MouseButtons.Middle) > 0)
             {
-                Vector2 mouseDelta = m_mouseLastPos - m_mousePos;
-                m_radius *= 1 + (mouseDelta.X + mouseDelta.Y) * ZOOM_SENSITIVITY;
+                m_translation.Z *= 1 + (mouseDelta.X + mouseDelta.Y) * ZOOM_SENSITIVITY; 
 
                 m_glControl.Invalidate();
             }
 
             if ((m_mouseState & MouseButtons.Right) > 0)
             {
-                Vector2 mouseDelta = m_mouseLastPos - m_mousePos;
                 m_azimuth += -mouseDelta.X * ORBIT_SENSITIVITY;
                 m_inclination += -mouseDelta.Y * ORBIT_SENSITIVITY;
 
@@ -148,7 +155,7 @@ namespace GoodAI.BrainSimulator.Utils
 
         public override void ApplyCameraTransform()
         {
-            GL.Translate(0, 0, -m_radius);
+            GL.Translate(m_translation);
             GL.Rotate(m_inclination, 1, 0, 0);
             GL.Rotate(m_azimuth, 0, 1, 0);            
         }
@@ -160,17 +167,21 @@ namespace GoodAI.BrainSimulator.Utils
                 MyCameraData result = new MyCameraData()
                 {
                     CameraType = MyAbstractObserver.ViewMethod.Orbit_3D,
-                    X = m_azimuth,
-                    Y = m_inclination,
-                    Z = m_radius,                    
+                    Azimuth = m_azimuth,
+                    Inclination = m_inclination,
+                    X = m_translation.X,                    
+                    Y = m_translation.Y,                    
+                    Z = -m_translation.Z,                    
                 };
                 return result;
             }
             set
             {
-                m_azimuth = value.X;
-                m_inclination = value.Y;
-                m_radius = value.Z;
+                m_azimuth = value.Azimuth;
+                m_inclination = value.Inclination;
+                m_translation.X = value.X;
+                m_translation.Y = value.Y;
+                m_translation.Z = -value.Z;
             }
         }
     }
