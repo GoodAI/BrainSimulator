@@ -60,6 +60,13 @@ namespace World.Lua
             Invoke(new Action(Close));
         }
 
+        public void RunScript(string scriptPath)
+        {
+            string script = File.ReadAllText(scriptPath);
+            inputTextBox.BeginInvoke((Action)(() => { inputTextBox.Enabled = false; }));
+            m_lex.ExecuteChunk(script, PrintResultAndActivateInput);
+        }
+
         private void LuaConsole_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
@@ -102,9 +109,7 @@ namespace World.Lua
                     try
                     {
                         string substring = command.Substring(executeCommand.Length);
-                        StreamReader sr = new StreamReader(new FileStream(substring, FileMode.Open));
-                        string readToEnd = sr.ReadToEnd();
-                        command = readToEnd;
+                        command = File.ReadAllText(substring);
                     }
                     catch (Exception)
                     {

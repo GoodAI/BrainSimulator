@@ -42,6 +42,11 @@ namespace World.GameActors.GameObjects
         bool PuppetControlled { get; set; }
 
         /// <summary>
+        /// Received reward [-1,1]
+        /// </summary>
+        float Reward { get; set; }
+
+        /// <summary>
         /// Tool in hand. Can be picked up and laid down.
         /// </summary>
         IPickableGameActor Tool { get; set; }
@@ -52,6 +57,7 @@ namespace World.GameActors.GameObjects
         private float m_energy;
         private float m_rested;
         private float m_temperature;
+        private float m_reward;
         private const float ENERGY_FOR_CARRYING = 0.001f;
         private const float ENERGY_FOR_EATING_FRUIT = 0.25f;
         private const float ENERGY_FOR_ACTION = 0.001f;
@@ -91,6 +97,16 @@ namespace World.GameActors.GameObjects
             {
                 m_rested = value;
                 BoundValue(ref m_rested, 0, 1);
+            }
+        }
+
+        public float Reward
+        {
+            get { return m_reward; }
+            set
+            {
+                m_reward = value;
+                BoundValue(ref m_reward, -1, 1);
             }
         }
 

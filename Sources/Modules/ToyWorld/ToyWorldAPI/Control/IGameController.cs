@@ -10,6 +10,11 @@ namespace GoodAI.ToyWorld.Control
     public interface IGameController : IDisposable, IMessanger
     {
         /// <summary>
+        /// Path of a lua script that gets executed just once when MakeStep is called
+        /// </summary>
+        string LuaScriptPath { get; set; }
+
+        /// <summary>
         ///
         /// </summary>
         void Init();
