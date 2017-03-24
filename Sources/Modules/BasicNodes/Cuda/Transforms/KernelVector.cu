@@ -407,7 +407,7 @@ extern "C"
 		}
 	}
 
-	//multiplies each row from matrixA with each row from matrixB in a crossproduct manner, i.e., the two vectors are multiplied as matrices so that result is a matrix where output_ij = a_i * b_j. The oberall result is then a tensor output_ijk, where k goeas over rows in the matrices.
+	//multiplies each row from matrixA with each row from matrixB in a crossproduct manner, i.e., the two vectors are multiplied as matrices so that result is a matrix where output_ij = a_i * b_j. The overall result is then a tensor output_ijk, where k goes over rows in the matrices.
 	__global__ void CrossMult_Segmented(
 		float* output,	//tensor noColumnsA * noColumnsB * noRows
 		float* matrixA,
@@ -423,9 +423,9 @@ extern "C"
 
 		if (id < noColumnsA * noColumnsB * noRows)
 		{
-			i = id % noColumnsA;
-			j = (id / noColumnsA) % noColumnsB;
-			k = id / (noColumnsA * noColumnsB);
+			i = id % noColumnsA;                //columns in A
+			j = (id / noColumnsA) % noColumnsB; //columns in B
+			k = id / (noColumnsA * noColumnsB); //rows in both A and B, third dimension in the resulting tensor
 
 			output[id] = matrixA[i + k * noColumnsA] * matrixB[j + k * noColumnsB];
 		}
