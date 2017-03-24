@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using GoodAI.Core.Nodes;
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using GoodAI.Platform.Core.Profiling;
+using YAXLib;
 
 namespace GoodAI.Modules.Testing
 {
@@ -22,6 +24,11 @@ namespace GoodAI.Modules.Testing
     /// </description>
     public sealed class SlowAsyncNode : MyWorkingNode
     {
+
+        [MyBrowsable, Category("Parallelization Hacks"), YAXSerializableField(DefaultValue = CudaSyncHelper.NoLayer)]
+        [Description("Layer number to provide info for cuda stream synchronization")]
+        public int LayerNumber { get; set; } = CudaSyncHelper.NoLayer;
+
         [MyInputBlock]
         public MyMemoryBlock<float> Input => GetInput(0);
 
@@ -53,7 +60,7 @@ namespace GoodAI.Modules.Testing
 
         public override void Execute()
         {
-            CudaSyncHelper.Instance.SwitchToNextStream();
+            CudaSyncHelper.Instance.OnStartExecute(Owner.LayerNumber);
 
             const int cycleCountThousands = 100;
 

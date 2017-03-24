@@ -14,8 +14,10 @@ namespace GoodAI.Core.Execution
     {
         public static CudaSyncHelper Instance { get; } = new CudaSyncHelper(null);
 
-        private int m_lastLayerNumber = -1;
-        private int m_topLayerNumber = -1;
+        public const int NoLayer = -1;
+
+        private int m_lastLayerNumber = NoLayer;
+        private int m_callsWithinLayer;
 
         private readonly CudaStreamProvider m_streamProvider;
 
@@ -30,6 +32,17 @@ namespace GoodAI.Core.Execution
         /// <param name="layerNumber">Layer number of the calling node.</param>
         public void OnStartExecute(int layerNumber)
         {
+            if (layerNumber < 0)
+            {
+                if ((layerNumber == NoLayer) && (m_lastLayerNumber != NoLayer))
+                {
+                    MyLog.INFO.WriteLine($"{nameof(CudaSyncHelper)}.{nameof(OnStartExecute)}: "
+                                         + "Called with default layer even if explicit layer is used in other cases.");
+                }
+
+                return;
+            }
+
             SyncFirstInLayer(layerNumber);
 
             m_streamProvider.SwitchToNextStream();
@@ -45,7 +58,6 @@ namespace GoodAI.Core.Execution
                     $"{nameof(CudaSyncHelper)}: Layer number {layerNumber} is smaller than the last one ({m_lastLayerNumber})."
                     + " Assuming new simulation step.");
 
-                m_topLayerNumber = m_lastLayerNumber;
                 m_lastLayerNumber = -1;
             }
 
@@ -56,8 +68,20 @@ namespace GoodAI.Core.Execution
             if (layerNumber > m_lastLayerNumber)
             {
                 MyLog.DEBUG.WriteLine($"{nameof(CudaSyncHelper)}: Synchronizing at the start of a new layer ({layerNumber}).");
+
                 m_streamProvider.SynchronizeAllStreams();
+
+                m_callsWithinLayer = 0;
             }
+
+            m_callsWithinLayer++;
+            if (m_callsWithinLayer > 1000)
+            {
+                MyLog.WARNING.WriteLine($"{nameof(CudaSyncHelper)}: There has been over thousand calls from one layer."
+                                        + " You need at least two layers to enable synchronization.");
+                m_callsWithinLayer = 0;  // Only say this from time to time.
+            }
+
 
             m_lastLayerNumber = layerNumber;
         }
