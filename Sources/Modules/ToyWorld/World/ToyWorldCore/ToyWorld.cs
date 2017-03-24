@@ -33,6 +33,12 @@ namespace World.ToyWorldCore
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
 
+        public bool IsWinterEnabled
+        {
+            get { return Atlas.IsWinterEnabled; }
+            set { Atlas.IsWinterEnabled = value; }
+        }
+
         public delegate void ToyWorldDisposedHandler(object sender);
         public event ToyWorldDisposedHandler ToyWorldDisposed;
 
