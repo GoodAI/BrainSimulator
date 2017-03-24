@@ -89,6 +89,7 @@
     <CudaCompile Include="Predictions\ResetLayerKernel.cu" />
     <CudaCompile Include="RBM\RBMKernels.cu" />
     <CudaCompile Include="Retina\FindBrightSpotKernel.cu" />
+    <CudaCompile Include="Testing\Stress.cu" />
     <CudaCompile Include="Transforms\EdgeDetectionKernel.cu" />
     <CudaCompile Include="Transforms\IntervalToBinaryVector.cu" />
     <CudaCompile Include="Transforms\InvertValuesKernel.cu" />

@@ -27,6 +27,8 @@ namespace GoodAI.Platform.Core.Profiling
 
             private readonly string m_title;
 
+            public string Title => m_title;
+
             private const int MaxTitleLength = 25;
 
             public int IterCount { get; private set; }
@@ -132,9 +134,6 @@ namespace GoodAI.Platform.Core.Profiling
             if (!Enabled)
                 return;
 
-            if (SynchronizeGpu)
-                MyKernelFactory.Instance.GetContextByGPU(GpuNo).Synchronize();
-
             if (m_stopwatch.IsRunning)
                 CloseSegment();
 
@@ -157,8 +156,8 @@ namespace GoodAI.Platform.Core.Profiling
 
         private void CloseSegment()
         {
-            if (!Enabled)
-                return;
+            if (SynchronizeGpu)
+                MyKernelFactory.Instance.GetContextByGPU(GpuNo).Synchronize();
 
             var elapsedTicks = m_stopwatch.ElapsedTicks;
             m_lastSegmentRef?.AddElapsedTicks(elapsedTicks);
@@ -171,9 +170,9 @@ namespace GoodAI.Platform.Core.Profiling
             if (!Enabled)
                 return;
 
-            m_stopwatch.Stop();
-
             CloseSegment();
+
+            m_stopwatch.Stop();
 
             m_enclosingSegment.AddElapsedTicks(m_enclosingSegmentTicks);
             m_enclosingSegmentTicks = 0;
@@ -199,11 +198,17 @@ namespace GoodAI.Platform.Core.Profiling
                 {
                     segment.PrintInfo();
                 }
-            }
 
-            m_enclosingSegment.PrintInfo((m_segments.Count > 1)
-                ? "Total"
-                : $"{m_title}[{ContextName}] ");
+                m_enclosingSegment.PrintInfo("Total");
+            }
+            else
+            {
+                var title = (string.IsNullOrEmpty(m_title) && m_segments.Count > 0)
+                    ? (m_segments.Values.Cast<TimeSegment>().FirstOrDefault()?.Title ?? "(null!)")
+                    : m_title;
+
+                m_enclosingSegment.PrintInfo($"[{ContextName}] {title}");
+            }
 
         }
 

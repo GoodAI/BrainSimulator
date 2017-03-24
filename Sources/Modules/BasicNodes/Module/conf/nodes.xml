@@ -107,6 +107,10 @@
       <Label>Symbolic ML</Label>
     </Node>
 
+    <Node type="GoodAI.Modules.Testing.SlowAsyncNode" CanBeAdded="true">
+      <Label>Testing</Label>
+    </Node>
+
     <Node type="GoodAI.Modules.Common.MyGenerateInput" CanBeAdded="true" BigIcon="numGenerator_big.png" SmallIcon="numGenerator.png">
       <Label>Input &amp; Output</Label>
       <Label>Input</Label>

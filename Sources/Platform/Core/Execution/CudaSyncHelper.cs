@@ -35,6 +35,8 @@ namespace GoodAI.Core.Execution
             m_streamProvider.SwitchToNextStream();
         }
 
+        public void SwitchToNextStream() => m_streamProvider.SwitchToNextStream();
+
         private void SyncFirstInLayer(int layerNumber)
         {
             if (layerNumber < m_lastLayerNumber)
