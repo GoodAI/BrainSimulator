@@ -1,5 +1,7 @@
 ﻿
 using GoodAI.Core.Configuration;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -10,7 +12,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 14; }
+            get { return 15; }
         }
 
         public static string Convert1To2(string xml)
@@ -249,5 +251,41 @@ namespace GoodAI.Core.Versioning
 
             return document.ToString();
         }
+
+        public static string Convert14To15(string xml)
+        {
+            var document = XDocument.Parse(xml);
+
+            foreach (var observersNode in document.Root.Descendants("Observers"))
+            {
+                foreach (var windowNode in observersNode.Descendants("Window"))
+                {
+                    foreach (var camDataNode in windowNode.Descendants("CameraData"))
+                    {
+                        var camTypeAtt = camDataNode.Attribute(nameof(MyCameraData.CameraType));
+                        if (camTypeAtt != null
+                            && camTypeAtt.Value == MyAbstractObserver.ViewMethod.Orbit_3D.ToString())
+                        {
+                            var xAtt = camDataNode.Attribute("X");
+                            if (xAtt != null)
+                            {
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Azimuth), xAtt.Value);
+                                xAtt.Remove();
+                            }
+
+                            var yAtt = camDataNode.Attribute("Y");
+                            if (yAtt != null)
+                            {
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Inclination), yAtt.Value);
+                                yAtt.Remove();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return document.ToString();
+        }
+
     }
 }
