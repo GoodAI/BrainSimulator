@@ -33,6 +33,12 @@ namespace World.Lua
             m_le.Do(StrafeToI, new Vector2(x + 0.5f, y + 0.5f), 1e-5f);
         }
 
+        //performs only one step of StrafeTo
+        public void StrafeToAsync(float x, float y)
+        {
+            m_le.Do(StrafeToAsyncI, new Vector2(x + 0.5f, y + 0.5f), 1e-5f);
+        }
+
         public void GoTo(Vector2 position)
         {
             // ac:GoTo(Vector(20,30))
@@ -221,6 +227,14 @@ namespace World.Lua
             }
 
             return false;
+        }
+
+        //performs one step of StrafeToI and ends.
+        private bool StrafeToAsyncI(params object[] parameters)
+        {
+            StrafeToI(parameters);
+
+            return true; 
         }
 
         /// <summary>
