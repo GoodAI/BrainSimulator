@@ -21,10 +21,9 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-            m_mainForm.ProjectStateChanged(string.Format("Node property value changed: {0}", propertyName));
+            m_mainForm.ProjectStateChanged($"Node property value changed: {propertyName}");
         }
 
         private readonly MainForm m_mainForm;
@@ -124,26 +123,16 @@ namespace GoodAI.BrainSimulator.Forms
 
             snapshotButton.Enabled = Target is MyAbstractObserver;
 
-            if (Target is MyWorkingNode)
-            {
-                saveNodeDataButton.Enabled = true;
-                saveNodeDataButton.Checked = (Target as MyWorkingNode).SaveOnStop;
+            var workingNode = Target as MyWorkingNode;
+            var isWorkingNode = (workingNode != null);
 
-                loadNodeDataButton.Enabled = true;
-                loadNodeDataButton.Checked = (Target as MyWorkingNode).LoadOnStart;
+            saveNodeDataButton.Enabled = isWorkingNode;
+            saveNodeDataButton.Checked = workingNode?.SaveOnStop ?? false;
 
-                clearDataButton.Enabled = true;
-            }
-            else
-            {
-                saveNodeDataButton.Enabled = false;
-                saveNodeDataButton.Checked = false;
+            loadNodeDataButton.Enabled = isWorkingNode;
+            loadNodeDataButton.Checked = workingNode?.LoadOnStart ?? false;
 
-                loadNodeDataButton.Enabled = false;
-                loadNodeDataButton.Checked = false;
-
-                clearDataButton.Enabled = false;
-            }
+            clearDataButton.Enabled = isWorkingNode;
         }
 
         private void UpdateObserverList()
@@ -175,7 +164,7 @@ namespace GoodAI.BrainSimulator.Forms
             }            
         }
 
-        private String GetMenuItemName(MyObserverConfig oc)
+        private string GetMenuItemName(MyObserverConfig oc)
         {
             if (oc.ObserverType.Name.Substring(0, 2).Equals("My"))
             {
@@ -184,7 +173,7 @@ namespace GoodAI.BrainSimulator.Forms
             return oc.ObserverType.Name;
         }
 
-        void item_Click(object sender, EventArgs e)
+        private void item_Click(object sender, EventArgs e)
         {
             m_mainForm.CreateAndShowObserverView(Target as MyWorkingNode, (sender as ToolStripMenuItem).Tag as Type);
         }
@@ -248,11 +237,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dashboardButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (propertyGrid.SelectedGridItem.PropertyDescriptor == null)
-                return;
-
-            PropertyDescriptor propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
-
+            var propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
             if (propertyDescriptor != null)
                 m_mainForm.DashboardPropertyToggle(Target, propertyDescriptor.Name, dashboardButton.Checked);
         }
