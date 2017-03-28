@@ -39,18 +39,24 @@ namespace GoodAI.BrainSimulator.Forms
         public object Target
         {
             get { return propertyGrid.SelectedObject; }
-            set { 
+            set
+            {
                 propertyGrid.SelectedObject = value;
-
-                if (!(value is MyNode))
-                {
-                    dashboardButton.Enabled = false;
-                }
-
-                UpdateTitleAndButtons();                    
-                UpdateObserverList();                
+                UpdateUi();
             }
         }
+
+        public object[] Targets
+        {
+            get { return propertyGrid.SelectedObjects; }
+            set
+            {
+                propertyGrid.SelectedObjects = value;
+                UpdateUi();
+            }
+        }
+
+        private bool HasMultipleTargets => (Targets?.Length ?? 0) > 1;
 
         public NodePropertyForm(MainForm mainForm)
         {
@@ -99,9 +105,20 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+
+        private void UpdateUi()
+        {
+            UpdateTitleAndButtons();
+            UpdateObserverList();
+        }
+
         private void UpdateTitleAndButtons()
         {
-            if (Target is MyNode)
+            if (HasMultipleTargets)
+            {
+                nodeNameTextBox.Rtf = @"{\rtf1\ansi \b " + Targets?.Length + @" \b0 nodes selected.}";
+            }
+            else if (Target is MyNode)
             {
                 MyNode node = Target as MyNode;
                 nodeNameTextBox.Rtf = @"{\rtf1\ansi \b " + node.Name + @"\b0  - " + node.GetType().Name + "}";
@@ -119,11 +136,14 @@ namespace GoodAI.BrainSimulator.Forms
             }
 
             CanEdit = m_mainForm.SimulationHandler.State == MySimulationHandler.SimulationState.STOPPED;
-            helpButton.Enabled = Target is MyWorkingNode || Target is MyAbstractObserver;
 
-            snapshotButton.Enabled = Target is MyAbstractObserver;
+            // TODO(Premek): Allow help for multiple nodes of the same type.
+            helpButton.Enabled = !HasMultipleTargets && (Target is MyWorkingNode || Target is MyAbstractObserver);
 
-            var workingNode = Target as MyWorkingNode;
+            snapshotButton.Enabled = !HasMultipleTargets && (Target is MyAbstractObserver);
+
+            // TODO(Premek): Allow to set SaveOnStop / LoadOnStart for multiple nodes.
+            var workingNode = !HasMultipleTargets ? (Target as MyWorkingNode) : null;
             var isWorkingNode = (workingNode != null);
 
             saveNodeDataButton.Enabled = isWorkingNode;
@@ -133,12 +153,17 @@ namespace GoodAI.BrainSimulator.Forms
             loadNodeDataButton.Checked = workingNode?.LoadOnStart ?? false;
 
             clearDataButton.Enabled = isWorkingNode;
+
+            dashboardButton.Enabled = !HasMultipleTargets && (Target is MyNode);
         }
 
         private void UpdateObserverList()
         {
             observerDropDownButton.DropDownItems.Clear();
             observerDropDownButton.Enabled = false;
+
+            if (HasMultipleTargets)
+                return;
 
             Dictionary<Type, MyObserverConfig> observers = null;
 

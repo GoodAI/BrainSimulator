@@ -217,7 +217,7 @@ namespace GoodAI.BrainSimulator.Forms
         void OnConnectionAdded(object sender, AcceptNodeConnectionEventArgs e)
         {
             bool isHidden = (Control.ModifierKeys & Keys.Shift) != 0;            
-			
+            
             MyNode fromNode = (e.Connection.From.Node as MyNodeView).Node;
             MyNode toNode = (e.Connection.To.Node as MyNodeView).Node;
 
@@ -400,6 +400,19 @@ namespace GoodAI.BrainSimulator.Forms
                     m_mainForm.TaskView.Target = null;
                 }
             }
+            else if (Desktop.FocusElement is NodeSelection)
+            {
+                var nodeSelection = (NodeSelection) Desktop.FocusElement;
+
+                m_mainForm.NodePropertyView.Targets = nodeSelection.Nodes
+                    .Select(it => it as MyNodeView)
+                    .Where(it => it != null)
+                    .Select(nodeView => nodeView.Node).Cast<object>().ToArray();
+
+                m_mainForm.TaskView.Target = null;
+                m_mainForm.MemoryBlocksView.Target = null;
+                m_mainForm.HelpView.Target = null;
+            }
             else
             {
                 m_mainForm.NodePropertyView.Target = null;
@@ -566,6 +579,7 @@ namespace GoodAI.BrainSimulator.Forms
             Settings.Default.QuickToolBarNodes.Add(nodeConfig.NodeType.Name);
 
             // TODO: Add undo here if we also want to undo non-model-related actions
+
         }
 
         private static bool CanAcceptNode(IDataObject data, out MyNodeConfig nodeConfig)
