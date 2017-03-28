@@ -279,11 +279,12 @@ namespace World.Lua
 
         public void ResetAvatarsActions()
         {
-            m_currentAvatar.DesiredSpeed = 0;
-            m_currentAvatar.DesiredLeftRotation = 0;
-            m_currentAvatar.Interact = false;
-            m_currentAvatar.PickUp = false;
-            m_currentAvatar.UseTool = false;
+            //TODO: solve problem of sometimes not doing the puppet action
+          //  m_currentAvatar.DesiredSpeed = 0;
+        //    m_currentAvatar.DesiredLeftRotation = 0;
+         //   m_currentAvatar.Interact = false;
+         //   m_currentAvatar.PickUp = false;
+         //   m_currentAvatar.UseTool = false;
         }
 
         public string CurrentRoom()
