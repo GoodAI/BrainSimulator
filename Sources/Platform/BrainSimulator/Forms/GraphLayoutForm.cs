@@ -400,16 +400,17 @@ namespace GoodAI.BrainSimulator.Forms
                     m_mainForm.TaskView.Target = null;
                 }
             }
-            else if (Desktop.FocusElement is NodeSelection)
+            else if (Desktop.FocusElement is Graph.NodeSelection)
             {
-                var nodeSelection = (NodeSelection) Desktop.FocusElement;
-
-                m_mainForm.NodePropertyView.Targets = nodeSelection.Nodes
+                var selectedNodesList = ((Graph.NodeSelection) Desktop.FocusElement).Nodes
                     .Select(it => it as MyNodeView)
                     .Where(it => it != null)
-                    .Select(nodeView => nodeView.Node).Cast<object>().ToArray();
+                    .Select(nodeView => nodeView.Node).ToList();
 
-                m_mainForm.TaskView.Target = null;
+                m_mainForm.NodePropertyView.Targets = selectedNodesList.Cast<object>().ToArray();
+
+                m_mainForm.TaskView.Targets = selectedNodesList.Select(it => it as MyWorkingNode);
+
                 m_mainForm.MemoryBlocksView.Target = null;
                 m_mainForm.HelpView.Target = null;
             }

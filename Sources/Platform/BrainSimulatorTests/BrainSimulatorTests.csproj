@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="MockType.cs" />
     <Compile Include="Nodes\NodeCategoryTests.cs" />
+    <Compile Include="Nodes\NodeSelectionTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

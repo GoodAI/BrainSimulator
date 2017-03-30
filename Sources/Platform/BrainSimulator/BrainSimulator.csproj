@@ -254,7 +254,9 @@
     <Compile Include="Nodes\MyUserInputView.cs" />
     <Compile Include="Nodes\MyVariableBranchView.cs" />
     <Compile Include="Nodes\NodeCategory.cs" />
+    <Compile Include="Nodes\NodeSelection.cs" />
     <Compile Include="Nodes\NodeToolStripRenderer.cs" />
+    <Compile Include="Nodes\TaskSelection.cs" />
     <Compile Include="Nodes\UiNodeInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
