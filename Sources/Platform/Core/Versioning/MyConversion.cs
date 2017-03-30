@@ -1,5 +1,7 @@
 ﻿
 using GoodAI.Core.Configuration;
+using GoodAI.Core.Observers;
+using GoodAI.Core.Utils;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -10,7 +12,7 @@ namespace GoodAI.Core.Versioning
     {
         public override int CurrentVersion
         {
-            get { return 14; }
+            get { return 15; }
         }
 
         public static string Convert1To2(string xml)
@@ -249,5 +251,41 @@ namespace GoodAI.Core.Versioning
 
             return document.ToString();
         }
+
+        public static string Convert14To15(string xml)
+        {
+            var document = XDocument.Parse(xml);
+
+            foreach (var observersNode in document.Root.Descendants("Observers"))
+            {
+                foreach (var windowNode in observersNode.Descendants("Window"))
+                {
+                    foreach (var camDataNode in windowNode.Descendants("CameraData"))
+                    {
+                        var camTypeAttr = camDataNode.Attribute(nameof(MyCameraData.CameraType));
+                        if (camTypeAttr != null
+                            && camTypeAttr.Value == nameof(MyAbstractObserver.ViewMethod.Orbit_3D))
+                        {
+                            var xAttr = camDataNode.Attribute("X");
+                            if (xAttr != null)
+                            {
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Azimuth), xAttr.Value);
+                                xAttr.Remove();
+                            }
+
+                            var yAttr = camDataNode.Attribute("Y");
+                            if (yAttr != null)
+                            {
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Inclination), yAttr.Value);
+                                yAttr.Remove();
+                            }
+                        }
+                    }
+                }
+            }
+
+            return document.ToString();
+        }
+
     }
 }

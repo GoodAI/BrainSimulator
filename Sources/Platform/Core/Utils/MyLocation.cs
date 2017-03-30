@@ -28,6 +28,10 @@ namespace GoodAI.Core.Utils
         public MyAbstractObserver.ViewMethod CameraType { get; set; }
 
         [YAXAttributeForClass]
+        public float Azimuth { get; set; }
+        [YAXAttributeForClass]
+        public float Inclination { get; set; }
+        [YAXAttributeForClass]
         public float X { get; set; }
         [YAXAttributeForClass]
         public float Y { get; set; }
