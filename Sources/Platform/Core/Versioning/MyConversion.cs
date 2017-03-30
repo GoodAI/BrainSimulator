@@ -262,22 +262,22 @@ namespace GoodAI.Core.Versioning
                 {
                     foreach (var camDataNode in windowNode.Descendants("CameraData"))
                     {
-                        var camTypeAtt = camDataNode.Attribute(nameof(MyCameraData.CameraType));
-                        if (camTypeAtt != null
-                            && camTypeAtt.Value == MyAbstractObserver.ViewMethod.Orbit_3D.ToString())
+                        var camTypeAttr = camDataNode.Attribute(nameof(MyCameraData.CameraType));
+                        if (camTypeAttr != null
+                            && camTypeAttr.Value == nameof(MyAbstractObserver.ViewMethod.Orbit_3D))
                         {
-                            var xAtt = camDataNode.Attribute("X");
-                            if (xAtt != null)
+                            var xAttr = camDataNode.Attribute("X");
+                            if (xAttr != null)
                             {
-                                camDataNode.SetAttributeValue(nameof(MyCameraData.Azimuth), xAtt.Value);
-                                xAtt.Remove();
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Azimuth), xAttr.Value);
+                                xAttr.Remove();
                             }
 
-                            var yAtt = camDataNode.Attribute("Y");
-                            if (yAtt != null)
+                            var yAttr = camDataNode.Attribute("Y");
+                            if (yAttr != null)
                             {
-                                camDataNode.SetAttributeValue(nameof(MyCameraData.Inclination), yAtt.Value);
-                                yAtt.Remove();
+                                camDataNode.SetAttributeValue(nameof(MyCameraData.Inclination), yAttr.Value);
+                                yAttr.Remove();
                             }
                         }
                     }
