@@ -25,6 +25,7 @@ namespace Game
         public ToyWorld World { get; private set; }
 
         public string LuaScriptPath { get; set; }
+        public bool LuaThoroughSync { get; set; }
 
         private Dictionary<int, IAvatar> m_avatars;
         private Dictionary<int, AvatarController> m_avatarControllers;
@@ -54,6 +55,7 @@ namespace Game
             m_gameSetup.SaveFile.Close();
 
             World = new ToyWorld(map, m_gameSetup.TilesetFile);
+            World.LuaThoroughSync = LuaThoroughSync;
 
             m_avatars = new Dictionary<int, IAvatar>();
             foreach (int avatarId in World.GetAvatarsIds())

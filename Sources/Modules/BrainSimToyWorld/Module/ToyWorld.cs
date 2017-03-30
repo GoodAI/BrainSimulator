@@ -151,6 +151,11 @@ namespace GoodAI.ToyWorld
         [Description("Path to a lua script to execute at start. (leave blank for no script)")]
         public string RunFile { get; set; }
 
+        [MyBrowsable, Category("Lua")]
+        [YAXSerializableField(DefaultValue = true)]
+        [Description("Always wait for signal from script indicating it's done processing its step.")]
+        public bool ThoroughSync { get; set; }
+
         [MyBrowsable, Category("Controls"), DisplayName("Control mode")]
         [YAXSerializableField(DefaultValue = ControlMapper.ControlMode.Autodetect)]
         public ControlMapper.ControlMode ControlModeVisible { get; set; } // only for the user - do not use otherwise
@@ -407,6 +412,7 @@ namespace GoodAI.ToyWorld
                     new StreamReader(TilesetTable));
             GameCtrl = GameFactory.GetThreadSafeGameController(setup);
             GameCtrl.LuaScriptPath = RunFile;
+            GameCtrl.LuaThoroughSync = ThoroughSync;
             GameCtrl.Init();
         }
 

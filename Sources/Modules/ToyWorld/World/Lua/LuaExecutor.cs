@@ -165,11 +165,17 @@ namespace World.Lua
 
         public void NotifyAndWait()
         {
-            DoWorkSync.Set();
+            Notify();
+
             if (m_thread?.IsAlive == true)
             {
                 WorkDoneSync.WaitOne();
             }
+        }
+
+        public void Notify()
+        {
+            DoWorkSync.Set();
         }
 
         public void Repeat(Action<object[]> stepFunc, int repetitions, params object[] parameters)

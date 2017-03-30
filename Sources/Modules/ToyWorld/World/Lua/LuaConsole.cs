@@ -72,6 +72,11 @@ namespace World.Lua
             m_lex.NotifyAndWait();
         }
 
+        public void Notify()
+        {
+            m_lex.Notify();
+        }
+
         private void LuaConsole_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)

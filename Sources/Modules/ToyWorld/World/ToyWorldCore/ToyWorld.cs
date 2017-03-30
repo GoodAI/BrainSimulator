@@ -30,6 +30,7 @@ namespace World.ToyWorldCore
         public IAtlas Atlas { get; protected set; }
         public TilesetTable TilesetTable { get; protected set; }
         public IPhysics Physics { get; protected set; }
+        public bool LuaThoroughSync { get; set; }
 
         public bool IsWinterEnabled
         {
@@ -182,7 +183,14 @@ namespace World.ToyWorldCore
 
         public void Update()
         {
-            m_luaConsole.NotifyAndWait();
+            if (LuaThoroughSync)
+            {
+                m_luaConsole.NotifyAndWait();
+            }
+            else
+            {
+                m_luaConsole.Notify();
+            }
 
             UpdateTime();
             UpdateScheduled();
