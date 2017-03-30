@@ -17,8 +17,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void OnPropertyChanged(object target, string propertyName = null)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(target, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(target, new PropertyChangedEventArgs(propertyName));
         }
 
         private readonly MainForm m_mainForm;
@@ -64,14 +63,16 @@ namespace GoodAI.BrainSimulator.Forms
                 foreach (PropertyInfo taskPropInfo in m_target.GetInfo().OrderedTasks)
                 {
                     MyTask task = m_target.GetTaskByPropertyName(taskPropInfo.Name);
+                    if (task == null)
+                        continue;
 
-                    if (task != null)
+                    var item = new ListViewItem(new[] {task.Name, task.OneShot ? "Init" : ""})
                     {
-                        ListViewItem item = new ListViewItem(new string[] {task.Name, task.OneShot ? "Init" : ""});
-                        item.Checked = task.Enabled;
-                        item.Tag = task;
-                        listView.Items.Add(item);
-                    }
+                        Checked = task.Enabled,
+                        Tag = task
+                    };
+
+                    listView.Items.Add(item);
                 }
             }
 
@@ -96,9 +97,10 @@ namespace GoodAI.BrainSimulator.Forms
 
             foreach (ListViewItem item in listView.Items)
             {
-                if (item == null) continue;
-                MyTask task = item.Tag as MyTask;
-                item.Checked = task.Enabled;
+                if (item == null)
+                    continue;
+
+                item.Checked = (item.Tag as MyTask)?.Enabled ?? false;
             }
 
             isUpdating = false;
@@ -113,29 +115,28 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void listView_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            if (!isUpdating)
+            if (isUpdating)
+                return;
+
+            MyTask task = e.Item.Tag as MyTask;
+            if (task.DesignTime)
+                return;
+
+            task.Enabled = e.Item.Checked;
+
+            object target = task;
+            string propertyName = EnabledPropertyName;
+            if (!string.IsNullOrEmpty(task.TaskGroupName))
             {
-                MyTask task = e.Item.Tag as MyTask;
-
-                if (!task.DesignTime)
-                {
-                    task.Enabled = e.Item.Checked;
-
-                    object target = task;
-                    string propertyName = EnabledPropertyName;
-                    if (!string.IsNullOrEmpty(task.TaskGroupName))
-                    {
-                        target = task.TaskGroup;
-                        propertyName = task.TaskGroupName;
-                    }
-
-                    OnPropertyChanged(target, propertyName);
-
-                    UpdateTasksEnableState();
-
-                    task.GenericOwner.Updated();
-                }
+                target = task.TaskGroup;
+                propertyName = task.TaskGroupName;
             }
+
+            OnPropertyChanged(target, propertyName);
+
+            UpdateTasksEnableState();
+
+            task.GenericOwner.Updated();
         }
 
         private void listView_SelectedIndexChanged(object sender, EventArgs e)
@@ -173,7 +174,7 @@ namespace GoodAI.BrainSimulator.Forms
                 DrawPushButton(e, task);
             }
             
-            // Add a 2 pixel buffer the match default behavior.
+            // Add a 2 pixel buffer to match the default behavior.
             Rectangle rec = new Rectangle(e.Bounds.X + 2 + xOffset, e.Bounds.Y + 2, e.Bounds.Width - 4,
                 e.Bounds.Height - 4);
 

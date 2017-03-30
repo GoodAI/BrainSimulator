@@ -15,8 +15,7 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
             m_mainForm.ProjectStateChanged(string.Format("Task property value changed: {0}", propertyName));
         }
