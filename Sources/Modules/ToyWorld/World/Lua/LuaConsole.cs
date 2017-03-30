@@ -40,7 +40,7 @@ namespace World.Lua
             }
         }
 
-        public LuaConsole(ToyWorld toyWorld, IAtlas atlas, AutoResetEvent luaSynch)
+        public LuaConsole(ToyWorld toyWorld, IAtlas atlas)
         {
             InitializeComponent();
 
@@ -48,7 +48,7 @@ namespace World.Lua
 
             outputListBox.DataSource = m_inputOutputList;
 
-            m_lex = new LuaExecutor(atlas, luaSynch, this);
+            m_lex = new LuaExecutor(atlas, this);
 
             m_inputOutputList.Add(INVITATION_MESSAGE);
             ResetBox();
@@ -67,11 +67,16 @@ namespace World.Lua
             m_lex.ExecuteChunk(script, PrintResultAndActivateInput);
         }
 
+        public void NotifyAndWait()
+        {
+            m_lex.NotifyAndWait();
+        }
+
         private void LuaConsole_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
-                m_lex.StopScript();
+                m_lex.ShouldStopScript = true;
             }
 
             if (!inputTextBox.Enabled) return;

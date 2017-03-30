@@ -20,8 +20,6 @@ namespace World.ToyWorldCore
     public class ToyWorld : IWorld, IDisposable
     {
         private LuaConsole m_luaConsole;
-        private AutoResetEvent m_luaSynch;
-
 
         private ICollisionResolver m_collisionResolver;
         private readonly Thread m_consoleThread;
@@ -66,10 +64,9 @@ namespace World.ToyWorldCore
             TileDetectorRegister = new TileDetectorRegister(Atlas);
             RegisterSignals();
 
-            m_luaSynch = new AutoResetEvent(false);
             m_consoleThread = new Thread(() =>
             {
-                m_luaConsole = new LuaConsole(this, Atlas, m_luaSynch);
+                m_luaConsole = new LuaConsole(this, Atlas);
                 m_luaConsole.ShowDialog();
             });
             m_consoleThread.Start();
@@ -185,7 +182,7 @@ namespace World.ToyWorldCore
 
         public void Update()
         {
-            m_luaSynch.Set();
+            m_luaConsole.NotifyAndWait();
 
             UpdateTime();
             UpdateScheduled();
