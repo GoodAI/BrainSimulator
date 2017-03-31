@@ -15,6 +15,11 @@ namespace GoodAI.ToyWorld.Control
         string LuaScriptPath { get; set; }
 
         /// <summary>
+        /// Enables thorough synchronization - ToyWorldCore.ToyWorld waits in Update() for a signal from script
+        /// </summary>
+        bool LuaThoroughSync { get; set; }
+
+        /// <summary>
         ///
         /// </summary>
         void Init();

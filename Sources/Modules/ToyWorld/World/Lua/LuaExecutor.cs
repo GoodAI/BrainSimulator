@@ -14,16 +14,27 @@ namespace World.Lua
     public class LuaExecutor
     {
         public NLua.Lua State;
+        private Thread m_thread;
         private readonly IAtlas m_atlas;
-        private readonly AutoResetEvent m_scriptSynchronization;
         private readonly LuaConsole m_luaConsole;
-
         private const int MAXIMUM_NUMBER_OF_DO_METHED_CALLS = 100000;
 
-        public LuaExecutor(IAtlas atlas, AutoResetEvent scriptSynchronization, LuaConsole luaConsole = null)
+        // Do not touch those events if you don't know what you're doing! Otherwise useful for lua scripts.
+        // Intended use case:
+        // while not le.ShouldStopScript do
+        //    le.DoWorkSync:WaitOne()
+        //    stuff()
+        //    le.WorkDoneSync:Set()
+        // end
+        public AutoResetEvent DoWorkSync { get; }
+        public AutoResetEvent WorkDoneSync { get; }
+        public bool ShouldStopScript { get; set; }
+
+        public LuaExecutor(IAtlas atlas, LuaConsole luaConsole = null)
         {
             m_atlas = atlas;
-            m_scriptSynchronization = scriptSynchronization;
+            DoWorkSync = new AutoResetEvent(false);
+            WorkDoneSync = new AutoResetEvent(false);
             m_luaConsole = luaConsole;
             SetInitialState();
         }
@@ -58,21 +69,20 @@ namespace World.Lua
 
         private void OnDebugHook(object sender, DebugHookEventArgs e)
         {
-            if (!m_stopScript) return;
+            if (!ShouldStopScript) return;
             State.DoString(@"function TALuaScriptInternalStopHook(why)  error ('" +
                 "User interruption." + "'); end; debug.sethook (TALuaScriptInternalStopHook, '', 1);");
             State.DoString("lc:Print(\"Core reset!\")");
-            m_stopScript = false;
+            ShouldStopScript = false;
             SetInitialState();
         }
-
-        private Thread m_thread;
-        private bool m_stopScript;
 
 
         public Thread ExecuteChunk(string command, Action<string> performAfterFinished = null)
         {
-            m_thread = new Thread(() => RunScript(command, performAfterFinished))
+            DoWorkSync.Reset();
+            WorkDoneSync.Reset();
+            m_thread = new Thread(() => { RunScript(command, performAfterFinished); WorkDoneSync.Set(); })
             {
                 IsBackground = true
             };
@@ -84,8 +94,6 @@ namespace World.Lua
         private void RunScript(string command, Action<string> performAfterFinished = null)
         {
             StringBuilder result = new StringBuilder();
-
-            m_scriptSynchronization.WaitOne();
 
             object[] objects = null;
             try
@@ -124,8 +132,6 @@ namespace World.Lua
             }*/
 
             performAfterFinished?.Invoke(result.ToString());
-
-            m_scriptSynchronization.Set();
         }
 
         /// <summary>
@@ -139,13 +145,15 @@ namespace World.Lua
         {
             for (int i = 0; i < MAXIMUM_NUMBER_OF_DO_METHED_CALLS; i++)
             {
-                m_scriptSynchronization.WaitOne();
-                if (m_stopScript)
+                DoWorkSync.WaitOne();
+                object o = stepFunc(parameters);
+                WorkDoneSync.Set();
+
+                if (ShouldStopScript)
                 {
-                    m_stopScript = false;
+                    ShouldStopScript = false;
                     return;
                 }
-                object o = stepFunc(parameters);
                 bool end = (bool)o;
                 if (end)
                 {
@@ -155,17 +163,34 @@ namespace World.Lua
             throw new Exception("Too long time in Do function.");
         }
 
+        public void NotifyAndWait()
+        {
+            Notify();
+
+            if (m_thread?.IsAlive == true)
+            {
+                WorkDoneSync.WaitOne();
+            }
+        }
+
+        public void Notify()
+        {
+            DoWorkSync.Set();
+        }
+
         public void Repeat(Action<object[]> stepFunc, int repetitions, params object[] parameters)
         {
             for (int i = 0; i < repetitions; i++)
             {
-                m_scriptSynchronization.WaitOne();
-                if (m_stopScript)
+                DoWorkSync.WaitOne();
+                stepFunc(parameters);
+                WorkDoneSync.Set();
+
+                if (ShouldStopScript)
                 {
-                    m_stopScript = false;
+                    ShouldStopScript = false;
                     return;
                 }
-                stepFunc(parameters);
             }
         }
 
@@ -173,39 +198,22 @@ namespace World.Lua
         {
             for (int i = 0; i < repetitions; i++)
             {
-                m_scriptSynchronization.WaitOne();
-                if (m_stopScript)
+                DoWorkSync.WaitOne();
+                stepFunc();
+                WorkDoneSync.Set();
+                if (ShouldStopScript)
                 {
-                    m_stopScript = false;
+                    ShouldStopScript = false;
                     return;
                 }
-                stepFunc();
             }
         }
 
         public void Perform(Action<object[]> stepFunc, params object[] parameters)
         {
-            m_scriptSynchronization.WaitOne();
+            DoWorkSync.WaitOne();
             stepFunc(parameters);
-        }
-
-        /// <summary>
-        /// Useful for outside lua scripts - to synchronize (WaitOne) + check where it should still continue.
-        /// Intended use case:
-        /// while le:Synchronize() do
-        ///     stuff()
-        /// end
-        /// </summary>
-        /// <returns>true when script execution may continue, false otherwise</returns>
-        public bool Synchronize()
-        {
-            m_scriptSynchronization.WaitOne();
-            return !m_stopScript;
-        }
-
-        public void StopScript()
-        {
-            m_stopScript = true;
+            WorkDoneSync.Set();
         }
 
         /// <summary>
