@@ -28,15 +28,22 @@ namespace World.Lua
             m_le = ex;
         }
 
-        public void StrafeTo(float x, float y)
+        public void StrafeTo(float x, float y, float tolDist = 1e-5f)
         {
-            m_le.Do(StrafeToI, new Vector2(x + 0.5f, y + 0.5f), 1e-5f);
+            m_le.Do(StrafeToI, new Vector2(x + 0.5f, y + 0.5f), tolDist);
         }
 
-        //performs only one step of StrafeTo
-        public void StrafeToAsync(float x, float y)
+        /// <summary>
+        /// Sets up avatars controls so that it performs a strafe-step along a straight line headed to the center of
+        /// the given tile, in the next ToyWorld step. Synchronize properly when using this method from lua!
+        /// </summary>
+        /// <param name="x">x coord of a target tile</param>
+        /// <param name="x">y coord of a target tile</param>
+        /// <param name="tolDist">tolerance distance from the center of the target tile</param>
+        /// <returns>true if avatar already is within tolerance distance to the target tile, false otherwise</returns>
+        public bool StrafeToStep(int x, int y, float tolDist = 1e-5f)
         {
-            m_le.Do(StrafeToAsyncI, new Vector2(x + 0.5f, y + 0.5f), 1e-5f);
+            return StrafeToI(new Vector2(x + 0.5f, y + 0.5f), tolDist);
         }
 
         public void GoTo(Vector2 position)
@@ -229,14 +236,6 @@ namespace World.Lua
             return false;
         }
 
-        //performs one step of StrafeToI and ends.
-        private bool StrafeToAsyncI(params object[] parameters)
-        {
-            StrafeToI(parameters);
-
-            return true; 
-        }
-
         /// <summary>
         /// Step function (see LuaExecutor.Do(stepFunction, parameters))
         /// Continuously change direction towards given position.
@@ -279,12 +278,7 @@ namespace World.Lua
 
         public void ResetAvatarsActions()
         {
-            //TODO: solve problem of sometimes not doing the puppet action
-          //  m_currentAvatar.DesiredSpeed = 0;
-        //    m_currentAvatar.DesiredLeftRotation = 0;
-         //   m_currentAvatar.Interact = false;
-         //   m_currentAvatar.PickUp = false;
-         //   m_currentAvatar.UseTool = false;
+            m_currentAvatar.ResetControls();
         }
 
         public string CurrentRoom()
