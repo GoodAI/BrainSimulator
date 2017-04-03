@@ -5,10 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GoodAI.Platform.Core.Utils
+namespace GoodAI.Core.Utils
 {
     public static class EnumerableExtensions
     {
+        public static void ForEach<T>(this IEnumerable<T> sequence, Action<T> action)
+        {
+            foreach (var item in sequence)
+            {
+                action(item);
+            }
+        }
+
         public static void EachWithIndex<T>(this IEnumerable<T> input, Action<T, int> action)
         {
             int i = 0;
