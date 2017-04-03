@@ -16,12 +16,14 @@ namespace GoodAI.Modules.Vision
     /// <meta>jk, jv</meta>
     /// <status>Working</status>
     /// <summary>
-    /// ?
+    /// Hides a part of the ImageInput by using some pixels from the MaskValues instead of the ImageInput.
     /// </summary>
-    /// <description> ? </description>
+    /// <description> 
+    /// Two possibilities: choose the part of the Image to be hidden by the XCrop and YCrop values, 
+    /// or probabilistic mask specified by RandomNumbersInput and MaskProbabilityInput.
+    /// </description>
     public class MaskCreationNode : MyWorkingNode
     {
-
         //----------------------------------------------------------------------------
         // :: MEMORY BLOCKS ::
         [MyInputBlock(0)]
@@ -149,7 +151,7 @@ namespace GoodAI.Modules.Vision
 
         public abstract class AbstractMaskTask : MyTask<MaskCreationNode>
         {
-            protected MyCudaKernel m_multElementwiseKernel, maskInputKernel;
+            private MyCudaKernel m_multElementwiseKernel, maskInputKernel;
 
             public override void Init(int nGPU)
             {
@@ -203,15 +205,21 @@ namespace GoodAI.Modules.Vision
             }
         }
 
+        /// <summary>
+        /// Apply the MaskInput uniformly with probability specified by the MaskProbabilityInput. Probability for each pixel being masked is defined by the RandomNumbersInput.
+        /// If no MaskInput specified, the zeros will be used.
+        /// </summary>
         [Description("ProbabilisticMask")]
         public class ProbabilisticMaskCreation : AbstractMaskTask
         {
-            MyCudaKernel kerX, kerY;
+            private MyCudaKernel m_applyThresholdKernel;
 
             public override void Init(int nGPU)
             {
                 base.Init(nGPU);
-                // TODO kernels
+
+                m_applyThresholdKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "ApplyThreshold");
+                m_applyThresholdKernel.SetupExecution(Owner.MaskOutput.Count);
             }
 
             protected override void ProduceMask()
@@ -222,14 +230,22 @@ namespace GoodAI.Modules.Vision
                     return;
                 }
 
-                MyLog.ERROR.WriteLine("TODO implement this");
+                m_applyThresholdKernel.Run(
+                    Owner.RandomNumbersInput,
+                    Owner.MaskOutput,
+                    Owner.MaskProbabilityInput,
+                    Owner.MaskOutput.Count
+                    );
             }
         }
 
+        /// <summary>
+        /// Apply the MaskInput by the part of the image defined by the XCrop and YCrop inputs. If no MaskInput specified, the zeros will be used.
+        /// </summary>
         [Description("MaskByCoordinates")]
         public class MaskCreationExecuteTask : AbstractMaskTask
         {
-            MyCudaKernel kerX, kerY;
+            private MyCudaKernel kerX, kerY;
 
             public override void Init(int nGPU)
             {
