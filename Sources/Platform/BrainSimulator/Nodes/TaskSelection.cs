@@ -7,12 +7,20 @@ using GoodAI.Core.Task;
 
 namespace GoodAI.BrainSimulator.Nodes
 {
+    public enum Enabled3State
+    {
+        Enabled,
+        Disabled,
+        Mixed
+    }
+
     /// <summary>
     /// Represents a collection of tasks, all of the same type, gathered from a selection of nodes (again, all of the same type).
     /// See also the <see>NodeSelection</see> class.
     /// </summary>
     public class TaskSelection : IMyTaskBio
     {
+
         internal TaskSelection(PropertyInfo taskPropInfo, List<MyWorkingNode> nodes)
         {
             if (nodes.Count == 0)
@@ -46,6 +54,20 @@ namespace GoodAI.BrainSimulator.Nodes
         public string TaskGroupName => TaskSpecimen.TaskGroupName;
 
         #endregion
+
+        public Enabled3State Enabled3State
+        {
+            get
+            {
+                var enabledCount = EnumerateTasks().Count(t => t.Enabled);
+
+                return (enabledCount == 0)
+                    ? Enabled3State.Disabled
+                    : ((enabledCount == m_nodes.Count)
+                        ? Enabled3State.Enabled
+                        : Enabled3State.Mixed);
+            }
+        }
 
         private MyTask TaskSpecimen => GetCurrentTask(m_nodes.First());
 
