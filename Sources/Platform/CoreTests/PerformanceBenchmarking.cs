@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GoodAI.Platform.Core.Utils;
+using GoodAI.Core.Utils;
 using Xunit;
 
 namespace CoreTests

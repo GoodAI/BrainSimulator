@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GoodAI.Platform.Core.Utils;
+using GoodAI.Core.Utils;
 using Xunit;
 using Xunit.Extensions;
 
@@ -13,14 +13,14 @@ namespace CoreTests
 {
     public class EnumerableExtensionsTests
     {
-        public static TheoryData<ITester> TestCases = new TheoryData<ITester>()
+        public static readonly TheoryData<ITester> TestCases = new TheoryData<ITester>
         {
             new Tester<int>(new int[0]),
             new Tester<string>(new [] {"1", "@", "P"}),
             new Tester<StringBuilder>(new [] {new StringBuilder("a"), new StringBuilder("b"), new StringBuilder()})
         };
 
-        [Theory, MemberData("TestCases")]
+        [Theory, MemberData(nameof(TestCases))]
         public void EachWithIndexTest(ITester tester)
         {
             tester.TestEquality();
@@ -59,6 +59,21 @@ namespace CoreTests
             {
                 return "Tester " + m_data;
             }
+        }
+
+        private class Item
+        {
+            public bool Value = false;
+        }
+
+        [Fact]
+        public void ForEachWorks()
+        {
+            var items = new[] {new Item(), new Item(), new Item()};
+
+            items.ForEach(it => it.Value = true);
+
+            Assert.Equal(items.Length, items.Count(item => item.Value));
         }
     }
 }

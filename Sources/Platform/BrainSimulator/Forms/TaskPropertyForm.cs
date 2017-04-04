@@ -2,6 +2,7 @@
 using GoodAI.Core.Task;
 using GoodAI.Core.Utils;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using GoodAI.Core.Dashboard;
 using GoodAI.Core.Nodes;
@@ -15,19 +16,26 @@ namespace GoodAI.BrainSimulator.Forms
 
         protected virtual void OnPropertyChanged(string propertyName = null)
         {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-            m_mainForm.ProjectStateChanged(string.Format("Task property value changed: {0}", propertyName));
+            m_mainForm.ProjectStateChanged($"Task property value changed: {propertyName}");
         }
 
-        private MainForm m_mainForm;
+        private readonly MainForm m_mainForm;
 
         public MyTask Target
         {
             get { return propertyGrid.SelectedObject as MyTask; }
             set { propertyGrid.SelectedObject = value; }
         }
+
+        public object[] Targets
+        {
+            get { return propertyGrid.SelectedObjects; }
+            set { propertyGrid.SelectedObjects = value; }
+        }
+
+        private bool HasMultipleTargets => (Targets?.Length ?? 0) > 1;
 
         public TaskPropertyForm(MainForm mainForm)
         {
@@ -38,9 +46,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            OnPropertyChanged(e.ChangedItem.PropertyDescriptor.Name);
+            OnPropertyChanged(e.ChangedItem.PropertyDescriptor?.Name ?? "(null)");
 
-            Target.GenericOwner.Updated();
+            foreach (var task in Targets.Select(it => it as MyTask))
+            {
+                task?.GenericOwner.Updated();
+            }
         }
 
         public void RefreshView()
@@ -50,6 +61,12 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void dashboardButton_CheckedChanged(object sender, System.EventArgs e)
         {
+            if (HasMultipleTargets)
+            {
+                MyLog.WARNING.WriteLine($"{nameof(dashboardButton)}: bulk toggle not implemented.");
+                return;
+            }
+
             PropertyDescriptor propertyDescriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
 
             if (propertyDescriptor != null)
@@ -68,26 +85,25 @@ namespace GoodAI.BrainSimulator.Forms
 
         private void RefreshDashboardButton()
         {
-            if (ActiveControl == propertyGrid && propertyGrid.SelectedGridItem != null && Target is MyTask)
-            {
-                PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
-                if (descriptor == null)
-                    return;
-
-                if (descriptor.IsReadOnly)
-                {
-                    dashboardButton.Enabled = false;
-                    return;
-                }
-
-                // A real property has been selected.
-                dashboardButton.Enabled = true;
-                dashboardButton.Checked = m_mainForm.CheckDashboardContains(Target, descriptor.Name);
-            }
-            else
+            if (ActiveControl != propertyGrid || propertyGrid.SelectedGridItem == null || Target == null || HasMultipleTargets)
             {
                 dashboardButton.Enabled = false;
+                return;
             }
+
+            PropertyDescriptor descriptor = propertyGrid.SelectedGridItem.PropertyDescriptor;
+            if (descriptor == null)
+                return;
+
+            if (descriptor.IsReadOnly)
+            {
+                dashboardButton.Enabled = false;
+                return;
+            }
+
+            // A real property has been selected.
+            dashboardButton.Enabled = true;
+            dashboardButton.Checked = m_mainForm.CheckDashboardContains(Target, descriptor.Name);
         }
     }
 }
