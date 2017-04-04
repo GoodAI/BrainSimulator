@@ -107,13 +107,9 @@ namespace GoodAI.Modules.Vision
 
             if (Execute.Enabled)
             {
-                if (MaskValuesInput == null)
+                if (XCrop == null && YCrop == null)
                 {
-                    validator.AddError(this, "If the MaskByCoordinates is enabled, but no MaskValuesInput connected");
-                }
-                if (XCrop == null || YCrop == null)
-                {
-                    validator.AddError(this, "If the MaskByCoordinates is enabled, both the XCrop and YCrop have to be connected.");
+                    validator.AddError(this, "If the MaskByCoordinates is enabled, at least one of the XCrop and YCrop should be connected.");
                 }
             }
             else if (ProbabilisticMask.Enabled)
@@ -262,7 +258,7 @@ namespace GoodAI.Modules.Vision
             {
                 if (Crop == null)
                 {
-                    MyLog.WARNING.WriteLine("Crop named " + Crop.Name + " not connected, not cropping this dimension");
+                    MyLog.WARNING.WriteLine("One Crop not connected, not cropping this dimension");
                     return false;
                 }
                 Crop.SafeCopyToHost();
