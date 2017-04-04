@@ -9,8 +9,22 @@ using YAXLib;
 
 namespace GoodAI.Core.Task
 {
+    /// <summary>
+    /// Basic read-only info about a task (for UI rendering).
+    /// (It was originally called "info" but it could be confused with PropertyInfo or MyNodeInfo.)
+    /// </summary>
+    public interface IMyTaskBio
+    {
+        bool Enabled { get; }
+        bool OneShot { get; }
+        bool DesignTime { get; }
+        bool Forbidden { get; }
+        string Name { get; }
+        string TaskGroupName { get; }
+    }
+
     [YAXSerializeAs("Task"), YAXSerializableType(FieldsToSerialize = YAXSerializationFields.AttributedFieldsOnly)]
-    public abstract class MyTask :  IMyExecutable
+    public abstract class MyTask : IMyTaskBio, IMyExecutable
     {        
         private bool m_enabled;
 
