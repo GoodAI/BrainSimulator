@@ -8,6 +8,8 @@ namespace MNISTTests
     public class NormalizedExampleTests
     {
         private const int DataLen = 256;
+        private const int Precision = 6;
+
         private Random m_rand = new Random();
 
         [Fact]
@@ -25,8 +27,8 @@ namespace MNISTTests
             IExample example = new NormalizedExample(data, label);
 
             Assert.StrictEqual(example.Target, label);
-            Assert.Equal(example.Input.Min(), 0, 6);
-            Assert.Equal(example.Input.Max(), 1, 6);
+            Assert.Equal(example.Input.Min(), 0, Precision);
+            Assert.Equal(example.Input.Max(), 1, Precision);
         }
 
         [Fact]
@@ -40,8 +42,8 @@ namespace MNISTTests
             IExample example = new NormalizedExample(data, label);
 
             Assert.StrictEqual(example.Target, label);
-            Assert.Equal(example.Input.Min(), 0, 6);
-            Assert.Equal(example.Input.Max(), 1, 6);
+            Assert.Equal(example.Input.Min(), 0, Precision);
+            Assert.Equal(example.Input.Max(), 1, Precision);
         }
     }
 }
