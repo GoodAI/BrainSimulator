@@ -67,7 +67,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     var item = new ListViewItem(new[] {taskSelection.Name, taskSelection.OneShot ? "Init" : ""})
                     {
-                        Checked = taskSelection.Enabled,
+                        Checked = taskSelection.AllEnabled,
                         Tag = taskSelection
                     };
 
@@ -114,7 +114,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (item == null)
                     continue;
 
-                item.Checked = CastTag(item.Tag)?.Enabled ?? false;
+                item.Checked = CastTag(item.Tag).AllEnabled;
             }
 
             m_isUpdating = false;
@@ -169,7 +169,7 @@ namespace GoodAI.BrainSimulator.Forms
             if (e.ColumnIndex == 0)
                 bounds.Width = bounds.X + e.Item.SubItems[1].Bounds.X;
 
-            var tasks = CastTag(e.Item.Tag);
+            TaskSelection tasks = CastTag(e.Item.Tag);
 
             // Toggle colors if the item is highlighted.
             DrawBackgroundAndText(e, tasks.Forbidden);
@@ -182,7 +182,7 @@ namespace GoodAI.BrainSimulator.Forms
             }
             else if (e.ColumnIndex == 1 && tasks.DesignTime)
             {                
-                DrawPushButton(e, tasks.Enabled);
+                DrawPushButton(e, tasks.AllEnabled);
             }
             
             // Add a 2 pixel buffer to match the default behavior.
@@ -207,7 +207,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (tasks.Forbidden)
                     state = RadioButtonState.UncheckedDisabled;
                 else
-                    state =  e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
+                    state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
 
                 RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
                 checkboxWidth = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
@@ -222,9 +222,9 @@ namespace GoodAI.BrainSimulator.Forms
                 if (tasks.Forbidden)
                     state = CheckBoxState.UncheckedDisabled;
                 else
-                    state = (tasks.Enabled3State == Enabled3State.Enabled)
+                    state = (tasks.Enabled3State == Enabled3State.AllEnabled)
                         ? CheckBoxState.CheckedNormal
-                        : (tasks.Enabled3State == Enabled3State.Disabled)
+                        : (tasks.Enabled3State == Enabled3State.AllDisabled)
                             ? CheckBoxState.UncheckedNormal
                             : CheckBoxState.MixedNormal;
 
