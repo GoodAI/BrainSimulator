@@ -7,11 +7,18 @@ using GoodAI.Core.Task;
 
 namespace GoodAI.BrainSimulator.Nodes
 {
+    public enum Enabled3State
+    {
+        AllEnabled,
+        AllDisabled,
+        Mixed
+    }
+
     /// <summary>
     /// Represents a collection of tasks, all of the same type, gathered from a selection of nodes (again, all of the same type).
     /// See also the <see>NodeSelection</see> class.
     /// </summary>
-    public class TaskSelection : IMyTaskBio
+    public class TaskSelection
     {
         internal TaskSelection(PropertyInfo taskPropInfo, List<MyWorkingNode> nodes)
         {
@@ -28,24 +35,34 @@ namespace GoodAI.BrainSimulator.Nodes
 
         public object[] ToObjectArray() => EnumerateTasks().Cast<object>().ToArray();
 
-        #region IMyTaskBio implementation
-
         public string Name => TaskSpecimen.Name;
 
         public bool OneShot => TaskSpecimen.OneShot;
 
-        ///<summary>Returns true only if *all* tasks are enabled (3-state value would be more appropriate)</summary>
-        public bool Enabled => EnumerateTasks().All(task => task.Enabled);
+        public Enabled3State Enabled3State
+        {
+            get
+            {
+                var enabledCount = EnumerateTasks().Count(t => t.Enabled);
 
-        /// <summary>Returns tur if *any* of the tasks is Forbidden.</summary>
+                return (enabledCount == 0)
+                    ? Enabled3State.AllDisabled
+                    : ((enabledCount == m_nodes.Count)
+                        ? Enabled3State.AllEnabled
+                        : Enabled3State.Mixed);
+            }
+        }
+
+        ///<summary>Returns true only if *all* tasks are enabled (see also Enabled3State property).</summary>
+        public bool AllEnabled => (Enabled3State == Enabled3State.AllEnabled);
+
+        /// <summary>Returns true if *any* of the tasks is Forbidden.</summary>
         public bool Forbidden => EnumerateTasks().Any(task => task.Forbidden);
 
-        /// <summary>Returns tur if *any* of the tasks is DesignTime.</summary>
+        /// <summary>Returns true if *any* of the tasks is DesignTime.</summary>
         public bool DesignTime => EnumerateTasks().Any(task => task.DesignTime);
 
         public string TaskGroupName => TaskSpecimen.TaskGroupName;
-
-        #endregion
 
         private MyTask TaskSpecimen => GetCurrentTask(m_nodes.First());
 

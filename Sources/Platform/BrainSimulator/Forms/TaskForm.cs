@@ -67,7 +67,7 @@ namespace GoodAI.BrainSimulator.Forms
                 {
                     var item = new ListViewItem(new[] {taskSelection.Name, taskSelection.OneShot ? "Init" : ""})
                     {
-                        Checked = taskSelection.Enabled,
+                        Checked = taskSelection.AllEnabled,
                         Tag = taskSelection
                     };
 
@@ -114,7 +114,7 @@ namespace GoodAI.BrainSimulator.Forms
                 if (item == null)
                     continue;
 
-                item.Checked = CastTag(item.Tag)?.Enabled ?? false;
+                item.Checked = CastTag(item.Tag).AllEnabled;
             }
 
             m_isUpdating = false;
@@ -169,20 +169,20 @@ namespace GoodAI.BrainSimulator.Forms
             if (e.ColumnIndex == 0)
                 bounds.Width = bounds.X + e.Item.SubItems[1].Bounds.X;
 
-            var taskInfo = CastTag(e.Item.Tag) as IMyTaskBio;
+            TaskSelection tasks = CastTag(e.Item.Tag);
 
             // Toggle colors if the item is highlighted.
-            DrawBackgroundAndText(e, taskInfo.Forbidden);
+            DrawBackgroundAndText(e, tasks.Forbidden);
 
             int xOffset = 0;
 
             if (e.ColumnIndex == 0)
             {
-                DrawCheckBox(e, taskInfo, out xOffset);
+                DrawCheckBox(e, tasks, out xOffset);
             }
-            else if (e.ColumnIndex == 1 && taskInfo.DesignTime)
+            else if (e.ColumnIndex == 1 && tasks.DesignTime)
             {                
-                DrawPushButton(e, taskInfo.Enabled);
+                DrawPushButton(e, tasks.AllEnabled);
             }
             
             // Add a 2 pixel buffer to match the default behavior.
@@ -197,14 +197,14 @@ namespace GoodAI.BrainSimulator.Forms
             TextRenderer.DrawText(e.Graphics, e.SubItem.Text, e.Item.ListView.Font, rec, e.SubItem.ForeColor, flags);         
         }
 
-        private static void DrawCheckBox(DrawListViewSubItemEventArgs e, IMyTaskBio taskBio, out int checkboxWidth)
+        private static void DrawCheckBox(DrawListViewSubItemEventArgs e, TaskSelection tasks, out int checkboxWidth)
         {
             Point glyphPoint = new Point(4, e.Item.Position.Y + 2);
 
-            if (!string.IsNullOrEmpty(taskBio.TaskGroupName))
+            if (!string.IsNullOrEmpty(tasks.TaskGroupName))
             {
                 RadioButtonState state;
-                if (taskBio.Forbidden)
+                if (tasks.Forbidden)
                     state = RadioButtonState.UncheckedDisabled;
                 else
                     state = e.Item.Checked ? RadioButtonState.CheckedNormal : RadioButtonState.UncheckedNormal;
@@ -212,17 +212,21 @@ namespace GoodAI.BrainSimulator.Forms
                 RadioButtonRenderer.DrawRadioButton(e.Graphics, glyphPoint, state);
                 checkboxWidth = RadioButtonRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
             }
-            else if (taskBio.DesignTime)
+            else if (tasks.DesignTime)
             {
                 checkboxWidth = CheckBoxRenderer.GetGlyphSize(e.Graphics, CheckBoxState.UncheckedNormal).Width + 4;
             }
             else
             {
                 CheckBoxState state;
-                if (taskBio.Forbidden)
+                if (tasks.Forbidden)
                     state = CheckBoxState.UncheckedDisabled;
                 else
-                    state = e.Item.Checked ? CheckBoxState.CheckedNormal : CheckBoxState.UncheckedNormal;
+                    state = (tasks.Enabled3State == Enabled3State.AllEnabled)
+                        ? CheckBoxState.CheckedNormal
+                        : (tasks.Enabled3State == Enabled3State.AllDisabled)
+                            ? CheckBoxState.UncheckedNormal
+                            : CheckBoxState.MixedNormal;
 
                 CheckBoxRenderer.DrawCheckBox(e.Graphics, glyphPoint, state);
                 checkboxWidth = CheckBoxRenderer.GetGlyphSize(e.Graphics, state).Width + 4;
