@@ -244,6 +244,27 @@ extern "C"
 		}
 	}
 
+	// on places where the mask contains 0, set the image to NaN
+	__global__ void MaskByNaN(
+		float* inputImage,
+		float* mask,
+		float* outputImage,
+		int count
+	) {
+		int id = blockDim.x*blockIdx.y*gridDim.x + blockDim.x*blockIdx.x + threadIdx.x;
+
+		if (id < count)
+		{
+			if (mask[id] == 0.0f)
+			{
+				outputImage[id] = NAN;
+			}
+			else {
+				outputImage[id] = inputImage[id];
+			}
+		}
+	}
+
 	__global__ void ApplyThreshold(
 		float* probabilitiesInputs,
 		float* binaryOutput,

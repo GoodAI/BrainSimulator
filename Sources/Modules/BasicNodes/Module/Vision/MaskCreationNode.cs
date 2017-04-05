@@ -83,7 +83,7 @@ namespace GoodAI.Modules.Vision
             int dim1 = (ImageInput != null && ImageInput.Dims.Rank >= 2) ? ImageInput.Dims[1] : 1;
             int dim2 = (ImageInput != null && ImageInput.Dims.Rank >= 3) ? ImageInput.Dims[2] : 1;
 
-            if (ImageInput.Dims.Rank < 3)
+            if (ImageInput == null || ImageInput.Dims.Rank < 3)
             {
                 MaskOutput.Dims = new TensorDimensions(dim0, dim1);
                 MaskedImageOutput.Dims = new TensorDimensions(dim0, dim1);
@@ -147,12 +147,20 @@ namespace GoodAI.Modules.Vision
 
         public abstract class AbstractMaskTask : MyTask<MaskCreationNode>
         {
-            private MyCudaKernel m_multElementwiseKernel, maskInputKernel;
+            private MyCudaKernel m_multElementwiseKernel, m_maskInputKernel, m_maskInputNaN;
+
+            [MyBrowsable, Category("Mask Values"), Description("If true, the masked values (MaskOutput==0) will be always set to NaN.\n\n" +
+                "If false, the MaskValuesInput will be used, if not connected, zeros will be used.")]
+            [YAXSerializableField(DefaultValue = false)]
+            public bool MaskByNaNs { get; set; }
 
             public override void Init(int nGPU)
             {
-                maskInputKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "MaskInput");
-                maskInputKernel.SetupExecution(Owner.MaskOutput.Count);
+                m_maskInputKernel = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "MaskInput");
+                m_maskInputKernel.SetupExecution(Owner.MaskOutput.Count);
+
+                m_maskInputNaN = MyKernelFactory.Instance.Kernel(nGPU, @"Vision\VisionMath", "MaskByNaN");
+                m_maskInputNaN.SetupExecution(Owner.MaskOutput.Count);
 
                 m_multElementwiseKernel = MyKernelFactory.Instance.KernelVector(Owner.GPU, KernelVector.ElementwiseMult);
                 m_multElementwiseKernel.SetupExecution(Owner.MaskOutput.Count);
@@ -179,9 +187,18 @@ namespace GoodAI.Modules.Vision
             /// </summary>
             protected void ApplyMask()
             {
-                if (Owner.MaskValuesInput != null)
+                if (MaskByNaNs)
                 {
-                    maskInputKernel.Run(
+                    m_maskInputNaN.Run(
+                        Owner.ImageInput,
+                        Owner.MaskOutput,
+                        Owner.MaskedImageOutput,
+                        Owner.ImageInput.Count
+                        );
+                }
+                else if (Owner.MaskValuesInput != null)
+                {
+                    m_maskInputKernel.Run(
                         Owner.ImageInput,
                         Owner.MaskOutput,
                         Owner.MaskValuesInput,
