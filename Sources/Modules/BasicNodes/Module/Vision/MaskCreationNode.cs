@@ -143,6 +143,8 @@ namespace GoodAI.Modules.Vision
         public MaskCreationExecuteTask Execute { get; private set; }
         [MyTaskGroup("MaskGroup")]
         public ProbabilisticMaskCreation ProbabilisticMask { get; private set; }
+        [MyTaskGroup("MaskGroup")]
+        public MaskDisabledTask MaskDisabled { get; private set; }
 
 
         public abstract class AbstractMaskTask : MyTask<MaskCreationNode>
@@ -311,6 +313,23 @@ namespace GoodAI.Modules.Vision
                         kerY.Run(Owner.MaskOutput, Owner.MaskOutput.Dims[0], Owner.MaskOutput.Count, (int)Owner.MaskOutput.Dims[1] + (int)(Owner.YCrop.Host[0] * Owner.MaskOutput.Dims[1]), (int)Owner.MaskOutput.Dims[1], 0f);
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Just pass the image to the output, clear the mask
+        /// </summary>
+        [Description("MaskDisabled")]
+        public class MaskDisabledTask : MyTask<MaskCreationNode>
+        {
+            public override void Init(int nGPU)
+            {
+            }
+
+            public override void Execute()
+            {
+                Owner.MaskOutput.FillAsync(1f);
+                Owner.MaskedImageOutput.CopyFromMemoryBlockAsync(Owner.ImageInput, 0, 0, Owner.ImageInput.Count);
             }
         }
     }
