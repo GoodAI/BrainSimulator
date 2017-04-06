@@ -293,29 +293,24 @@ namespace GoodAI.BrainSimulator.Forms
             }
         }
 
+        private ListViewHitTestInfo GetListViewHitTest() => listView.HitTest(listView.PointToClient(MousePosition));
+
         private void listView_Click(object sender, EventArgs e)
         {
-            Point mousePos = listView.PointToClient(MousePosition);
-            ListViewHitTestInfo hitTest = listView.HitTest(mousePos);
+            ListViewHitTestInfo hitTest = GetListViewHitTest();
             int columnIndex = hitTest.Item.SubItems.IndexOf(hitTest.SubItem);
 
-            if ((columnIndex != 1) || (m_nodeSelection.Count != 1))
+            if ((columnIndex != 1) || !m_mainForm.SimulationHandler.CanStart)
                 return;
 
-            var task = CastTag(hitTest.Item.Tag)?.Task;
-            if (task == null)
-                return;
+            TaskSelection taskSelection = CastTag(hitTest.Item.Tag);
 
-            if (m_mainForm.SimulationHandler.CanStart && task.Enabled && task.DesignTime)
-            {
-                task.Execute();
-            }
+            taskSelection?.EnumerateTasks().Where(t => t.DesignTime && t.Enabled).ForEach(t => t.Execute());
         }
 
         private void listView_MouseDown(object sender, MouseEventArgs e)
         {
-            Point mousePos = listView.PointToClient(MousePosition);
-            m_lastHitTest = listView.HitTest(mousePos);
+            m_lastHitTest = GetListViewHitTest();
             listView.Invalidate();
         }
 
