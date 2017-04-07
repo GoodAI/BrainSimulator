@@ -81,7 +81,7 @@ namespace Graph.Items
 			sliderBox.Height	= SliderHeight;
 
 			// Draw label
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
+			graphics.DrawString(this.Text, MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
 			
 			// Draw inner rectangle
 			graphics.FillRectangle(Brushes.LightGray, sliderBox.X, sliderBox.Y, sliderBox.Width, sliderBox.Height);
@@ -99,7 +99,7 @@ namespace Graph.Items
 				graphics.DrawLine(Pens.Black, sliderBox.X + sliderBox.Width, sliderBox.Y, sliderBox.X + sliderBox.Width, sliderBox.Y + sliderBox.Height);
 
 			// Draw value
-			graphics.DrawString(this.Value.ToString(), SystemFonts.MenuFont, Brushes.Black, sliderRect, GraphConstants.LeftTextStringFormat);
+			graphics.DrawString(this.Value.ToString(), MenuFont, Brushes.Black, sliderRect, GraphConstants.LeftTextStringFormat);
 		}
 	}
 }

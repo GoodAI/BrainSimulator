@@ -31,8 +31,11 @@ namespace Graph.Items
 {
 	internal sealed class NodeTitleItem : NodeItem
 	{
+		// Cache this because it lights up in the profiler.
+		private static readonly Font CaptionFont = SystemFonts.CaptionFont;
+
 		#region Text
-		string			internalTitle = string.Empty;
+		string internalTitle = string.Empty;
 		public string	Title		
 		{
 			get { return internalTitle; }
@@ -46,38 +49,38 @@ namespace Graph.Items
 		}
 		#endregion
 
-        #region Icon
-        Image internalIcon = null;
-        public Image Icon
-        {
-            get
-            {
-                return internalIcon;
-            }
-            set
-            {
-                internalIcon = value;
-            }
-        }
+		#region Icon
+		Image internalIcon = null;
+		public Image Icon
+		{
+			get
+			{
+				return internalIcon;
+			}
+			set
+			{
+				internalIcon = value;
+			}
+		}
 
-        private float IconXOffset
-        {
-            get
-            {
-                if (Icon == null) return 0.0f;
-                else return Icon.Size.Width + 5.0f;
-            }
-        }
+		private float IconXOffset
+		{
+			get
+			{
+				if (Icon == null) return 0.0f;
+				else return Icon.Size.Width + 5.0f;
+			}
+		}
 
-        private float IconHeight
-        {
-            get
-            {
-                if (Icon == null) return 0.0f;
-                else return Icon.Size.Height;
-            }
-        }
-        #endregion
+		private float IconHeight
+		{
+			get
+			{
+				if (Icon == null) return 0.0f;
+				else return Icon.Size.Height;
+			}
+		}
+		#endregion
 
 		internal void ForceResize() { TextSize = Size.Empty; }
 		internal SizeF				TextSize;
@@ -89,7 +92,7 @@ namespace Graph.Items
 				if (this.TextSize.IsEmpty)
 				{
 					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.TitleHeight);
-					this.TextSize			= graphics.MeasureString(this.Title, SystemFonts.CaptionFont, size, GraphConstants.TitleMeasureStringFormat);
+					this.TextSize			= graphics.MeasureString(this.Title, CaptionFont, size, GraphConstants.TitleMeasureStringFormat);
 
 					this.TextSize.Width		= Math.Max(size.Width,  this.TextSize.Width + (GraphConstants.CornerSize * 2)) + IconXOffset;
 					this.TextSize.Height	= Math.Max(size.Height, Math.Max(this.TextSize.Height, IconHeight)) + GraphConstants.TopHeight;
@@ -97,23 +100,23 @@ namespace Graph.Items
 				return this.TextSize;
 			} else
 			{
-                return new SizeF(GraphConstants.MinimumItemWidth + IconXOffset, Math.Max(GraphConstants.TitleHeight, IconHeight) + GraphConstants.TopHeight);
+				return new SizeF(GraphConstants.MinimumItemWidth + IconXOffset, Math.Max(GraphConstants.TitleHeight, IconHeight) + GraphConstants.TopHeight);
 			}
 		}
 
 		internal override void Render(Graphics graphics, SizeF minimumSize, PointF location)
 		{
-            if (internalIcon != null)
-            {
-                location.X += IconXOffset * 0.5f;
+			if (internalIcon != null)
+			{
+				location.X += IconXOffset * 0.5f;
 
-                PointF pos = Node.bounds.Location;
-                pos.X += 5.0f;
-                pos.Y += 1.0f;
-                var rect = new RectangleF(pos, internalIcon.Size);
+				PointF pos = Node.bounds.Location;
+				pos.X += 5.0f;
+				pos.Y += 1.0f;
+				var rect = new RectangleF(pos, internalIcon.Size);
 
-                graphics.DrawImage(internalIcon, rect);
-            }
+				graphics.DrawImage(internalIcon, rect);
+			}
 
 			var size = Measure(graphics);
 			size.Width  = Math.Max(minimumSize.Width, size.Width);
@@ -122,10 +125,9 @@ namespace Graph.Items
 			size.Height -= GraphConstants.TopHeight;
 			location.Y += GraphConstants.TopHeight;
 
-			if ((state & RenderState.Hover) == RenderState.Hover)
-				graphics.DrawString(this.Title, SystemFonts.CaptionFont, Brushes.White, new RectangleF(location, size), GraphConstants.TitleStringFormat);
-			else
-				graphics.DrawString(this.Title, SystemFonts.CaptionFont, Brushes.Black, new RectangleF(location, size), GraphConstants.TitleStringFormat);
+			graphics.DrawString(this.Title, CaptionFont,
+				(state & RenderState.Hover) == RenderState.Hover ? Brushes.White : Brushes.Black,
+				new RectangleF(location, size), GraphConstants.TitleStringFormat);
 		}
 	}
 }

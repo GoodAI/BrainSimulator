@@ -36,6 +36,9 @@ namespace Graph
 
     public abstract class NodeItem : IElement
     {
+        // Cache this because it lights up in the profiler.
+        protected static readonly Font MenuFont = SystemFonts.MenuFont;
+
         public NodeItem()
         {
             this.Input = new NodeInputConnector(this, false);

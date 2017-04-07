@@ -83,11 +83,11 @@ namespace Graph.Items
 					if (this.Input.Enabled != this.Output.Enabled)
 					{
 						if (this.Input.Enabled)
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+							this.TextSize = graphics.MeasureString(this.Text, MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
 						else
-							this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
+							this.TextSize = graphics.MeasureString(this.Text, MenuFont, size, GraphConstants.RightMeasureTextStringFormat);
 					} else
-						this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+						this.TextSize = graphics.MeasureString(this.Text, MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
 
 					this.TextSize.Width  = Math.Max(size.Width, this.TextSize.Width + ColorBoxSize + Spacing);
 					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
@@ -139,7 +139,7 @@ namespace Graph.Items
 					break;
 			}
 
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, rect, format);
+			graphics.DrawString(this.Text, MenuFont, Brushes.Black, rect, format);
 
 			using (var path = GraphRenderer.CreateRoundedRectangle(colorBox.Size, colorBox.Location))
 			{

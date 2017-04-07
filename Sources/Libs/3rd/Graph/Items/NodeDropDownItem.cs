@@ -115,7 +115,7 @@ namespace Graph.Items
 				{
 					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-					this.TextSize = graphics.MeasureString(text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+					this.TextSize = graphics.MeasureString(text, MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
 					
 					this.TextSize.Width  = Math.Max(size.Width, this.TextSize.Width + 8);
 					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height + 2);
@@ -139,7 +139,7 @@ namespace Graph.Items
 			size.Height = Math.Max(minimumSize.Height, size.Height);
 
 			var path = GraphRenderer.CreateRoundedRectangle(size, location);
-            graphics.FillPath(background, path);
+			graphics.FillPath(background, path);
 
 			location.Y += 1;
 			location.X += 1;
@@ -147,11 +147,11 @@ namespace Graph.Items
 			if ((state & RenderState.Hover) == RenderState.Hover)
 			{
 				graphics.DrawPath(Pens.White, path);
-				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(text, MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
 			} else
 			{
 				graphics.DrawPath(Pens.Black, path);
-				graphics.DrawString(text, SystemFonts.MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
+				graphics.DrawString(text, MenuFont, Brushes.Black, new RectangleF(location, size), GraphConstants.LeftTextStringFormat);
 			}
 		}
 	}

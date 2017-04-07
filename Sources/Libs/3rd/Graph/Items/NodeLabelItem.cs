@@ -78,7 +78,7 @@ namespace Graph.Items
 				{
 					var size = new SizeF(GraphConstants.MinimumItemWidth, minTextHeight);
 
-					this.textSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GetTextFormat());
+					this.textSize = graphics.MeasureString(this.Text, MenuFont, size, GetTextFormat());
 
 					this.textSize.Width  = Math.Max(size.Width, this.textSize.Width);
 					this.textSize.Height = Math.Max(size.Height, this.textSize.Height);
@@ -98,7 +98,7 @@ namespace Graph.Items
 			size.Width  = Math.Max(minimumSize.Width, size.Width);
 			size.Height = Math.Max(minimumSize.Height, size.Height);
 
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.DarkSlateGray, new RectangleF(location, size), GetTextFormat());
+			graphics.DrawString(this.Text, MenuFont, Brushes.DarkSlateGray, new RectangleF(location, size), GetTextFormat());
 		}
 	}
 }

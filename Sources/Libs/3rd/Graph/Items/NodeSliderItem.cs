@@ -137,7 +137,7 @@ namespace Graph.Items
 					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 					var sliderWidth = this.MinimumSliderSize + SliderBoxSize;
 
-					this.textSize			= graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
+					this.textSize			= graphics.MeasureString(this.Text, MenuFont, size, GraphConstants.LeftMeasureTextStringFormat);
 					this.textSize.Width		= Math.Max(this.TextSize, this.textSize.Width + 4);
 					this.itemSize.Width		= Math.Max(size.Width, this.textSize.Width + sliderWidth + Spacing);
 					this.itemSize.Height	= Math.Max(size.Height, this.textSize.Height);
@@ -178,7 +178,7 @@ namespace Graph.Items
 			sliderBox.Width = SliderBoxSize;
 			sliderBox.X = sliderRect.X + (this.Value * this.sliderRect.Width) / valueSize;
 
-			graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
+			graphics.DrawString(this.Text, MenuFont, Brushes.Black, textRect, GraphConstants.LeftTextStringFormat);
 
 			using (var path = GraphRenderer.CreateRoundedRectangle(sliderRect.Size, sliderRect.Location))
 			{

@@ -109,7 +109,7 @@ namespace Graph.Items
 				{
 					var size = new Size(GraphConstants.MinimumItemWidth, GraphConstants.MinimumItemHeight);
 
-					this.TextSize = graphics.MeasureString(this.Text, SystemFonts.MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
+					this.TextSize = graphics.MeasureString(this.Text, MenuFont, size, GraphConstants.CenterMeasureTextStringFormat);
 
 					this.TextSize.Width	 = Math.Max(size.Width, this.TextSize.Width);
 					this.TextSize.Height = Math.Max(size.Height, this.TextSize.Height);
@@ -144,7 +144,7 @@ namespace Graph.Items
 						graphics.FillPath(brush, path);
 					}
 				}
-				graphics.DrawString(this.Text, SystemFonts.MenuFont, Brushes.Black, rect, GraphConstants.CenterTextStringFormat);
+				graphics.DrawString(this.Text, MenuFont, Brushes.Black, rect, GraphConstants.CenterTextStringFormat);
 
 				if ((state & RenderState.Hover) != 0)
 					graphics.DrawPath(Pens.White, path);
