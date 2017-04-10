@@ -26,6 +26,13 @@ namespace GoodAI.ToyWorld
     /// view in the 3D mode.
     /// </p>
     /// <p>
+    /// There are two possibilities of action inputs, vector of 13 float values or the keyboard input (via the DeviceInput Node), their meanings are (index of the float number or key on the keyboard):
+    /// 
+    /// forward=0/W, backward=1/S , left=2/A, right=3/D, rot_left=4/Q, rot_right=5/E, fof_left=6/J, fof_right=7/L, fof_up=8/I, fof_down=9/K, interact=10/B, use=11/N, pickup=12/M
+    /// 
+    /// </p>
+    /// 
+    /// <p>
     /// For a more detailed description please see the <a href="http://docs.goodai.com/brainsimulator/examples/toyworld/index.html">Toy World's overview page</a>.
     /// </p>
     /// </description>
