@@ -305,13 +305,13 @@ namespace GoodAI.ToyWorld
                 float rotation = ConvertBiControlToUniControl(rotRightSignal, rotLeftSignal);
                 float speed = ConvertBiControlToUniControl(fwSignal, bwSignal);
                 float rightSpeed = ConvertBiControlToUniControl(rightSignal, leftSignal);
-                float fof_x = ConvertBiControlToUniControl(fof_left, fof_right);
+                float fof_x = ConvertBiControlToUniControl(fof_right, fof_left);
                 float fof_y = ConvertBiControlToUniControl(fof_up, fof_down);
 
                 bool interact = Owner.Controls.Host[ControlMapper.Idx("interact")] > 0.5;
                 bool use = Owner.Controls.Host[ControlMapper.Idx("use")] > 0.5;
                 bool pickup = Owner.Controls.Host[ControlMapper.Idx("pickup")] > 0.5;
-
+                
                 IAvatarControls ctrl = new AvatarControls(100, speed, rightSpeed, rotation, interact, use, pickup,
                     fof: new PointF(fof_x, fof_y));
                 Owner.AvatarCtrl.SetActions(ctrl);
